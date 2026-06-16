@@ -1,1 +1,366 @@
-index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prefix & Suffix Mission</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#eef3ff,#dbeafe);
+overflow:hidden;
+}
+
+/* SCREENS */
+.screen{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+text-align:center;
+}
+
+.active{display:flex;}
+
+/* LOGO */
+#logo{
+background:white;
+}
+
+#logo img{
+width:240px;
+animation:pop 1s ease;
+}
+
+@keyframes pop{
+from{transform:scale(0.7);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+/* TOPIC */
+#topic{
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
+color:white;
+font-size:28px;
+font-weight:bold;
+padding:20px;
+}
+
+/* START */
+#start{
+background:#f4f7ff;
+}
+
+button{
+padding:14px 22px;
+border:none;
+border-radius:12px;
+background:#1e3a8a;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+/* GAME HEADER */
+.topbar{
+display:flex;
+justify-content:space-between;
+background:#1e3a8a;
+color:white;
+padding:12px;
+font-weight:bold;
+}
+
+/* CARD */
+.card{
+background:white;
+margin:12px;
+padding:15px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* QUESTION */
+.q{
+font-weight:bold;
+font-size:15px;
+margin-bottom:12px;
+line-height:1.4;
+}
+
+/* OPTIONS */
+.opt{
+display:block;
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+border:2px solid #ddd;
+background:white;
+text-align:left;
+cursor:pointer;
+transition:0.2s;
+}
+
+.opt:hover{
+background:#eff6ff;
+transform:scale(1.01);
+}
+
+/* POPUP */
+#popup{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+padding:10px 18px;
+border-radius:10px;
+color:white;
+font-weight:bold;
+display:none;
+z-index:9999;
+}
+
+.good{background:green;}
+.bad{background:red;}
+</style>
+</head>
+
+<body>
+
+<!-- LOGO -->
+<div id="logo" class="screen active">
+<img src="g6/chp2/Capitalisation_and_Punctuation/assets/innovine-logo.png">
+</div>
+
+<!-- TOPIC -->
+<div id="topic" class="screen">
+PREFIX & SUFFIX MISSION
+</div>
+
+<!-- START -->
+<div id="start" class="screen">
+<button onclick="startGame()">Start Mission</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="topbar">
+<div>Score: <span id="score">0</span>/10</div>
+<div>⏱ <span id="time">60</span>s</div>
+</div>
+
+<div class="card" id="card"></div>
+
+</div>
+
+<!-- POPUP -->
+<div id="popup"></div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="g6/chp2/Capitalisation_and_Punctuation/assets/correct.mp3"></audio>
+<audio id="wrongSound" src="g6/chp2/Capitalisation_and_Punctuation/assets/wrong.mp3"></audio>
+
+<script>
+
+let i=0,score=0,time=60,unlocked=false;
+
+/* AUDIO UNLOCK */
+function startGame(){
+unlocked=true;
+document.getElementById("start").style.display="none";
+document.getElementById("game").style.display="block";
+loadQ();
+timer();
+}
+
+/* TIMER */
+function timer(){
+setInterval(()=>{
+time--;
+document.getElementById("time").innerText=time;
+if(time<=0) endGame();
+},1000);
+}
+
+/* QUESTIONS (FULL – NOT SHORTENED) */
+const q=[
+{
+q:`Q1. Which option correctly fills ALL SIX blanks in the Science Fair poster?
+
+"Our team is working on water ___ (purify→noun). We want to ___ (design→again). The judges look for ___ (create→adjective) thinking. It is ___ (possible→not) to finish without teamwork. The project helps ___ (act→between groups) among students. We hope our ___ (invent→noun) inspires the school."`,
+options:[
+"purification / redesign / creative / impossible / interact / invention",
+"purifyment / redesign / creatious / unpossible / interact / inventment",
+"purification / design / creative / impossible / interaction / inventing",
+"purifying / redesign / creation / impossible / interact / invention"
+],
+a:0
+},
+
+{
+q:`Q2. What does prefix "re-" in redesign mean?`,
+options:[
+"Design new from scratch",
+"Design for first time",
+"Design again and improve",
+"Cannot design"
+],
+a:2
+},
+
+{
+q:`Q3. developation and interactation correction rule?`,
+options:[
+"Both correct",
+"Need -ment / -tion rules correction",
+"Both are verbs",
+"Both unchanged"
+],
+a:1
+},
+
+{
+q:`Q4. Fill Instagram caption correctly:
+creative→___, invent→___, inspire→___, pride→___`,
+options:[
+"creativity / invention / inspirational / proud",
+"creative / invention / inspiring / proudness",
+"creativeness / inventation / inspireful / proud",
+"creativity / inventment / inspireful / proud"
+],
+a:0
+},
+
+{
+q:`Q5. '-ed' in performed, interacted means?`,
+options:[
+"New meaning words",
+"Inflectional past tense only",
+"Prefix rule",
+"Noun making"
+],
+a:1
+},
+
+{
+q:`Q6. Which uses im- correctly?`,
+options:[
+"imhappy",
+"impossible",
+"imwrite",
+"imgo"
+],
+a:1
+},
+
+{
+q:`Q7. Match prefixes:
+impossible, rewrite, interact, unhappy`,
+options:[
+"not, again, between, not",
+"again, not, between, not",
+"between, not, again, not",
+"not, between, again, not"
+],
+a:0
+},
+
+{
+q:`Q8. Odd one out (not prefix meaning 'not')`,
+options:[
+"impossible",
+"invisible",
+"incomplete",
+"interact"
+],
+a:3
+},
+
+{
+q:`Q9. creativeness mistake correction`,
+options:[
+"Correct word is creativeness",
+"Should be creative after very",
+"Both correct",
+"No issue"
+],
+a:1
+},
+
+{
+q:`Q10. happy → happiness shows what?`,
+options:[
+"Meaning changes fully",
+"Adjective to noun change (-ness)",
+"Tense change",
+"Wrong sentence"
+],
+a:1
+}
+];
+
+/* LOAD */
+function loadQ(){
+let x=q[i];
+let html=`<div class="q">${x.q}</div>`;
+
+x.options.forEach((o,idx)=>{
+html+=`<button class="opt" onclick="check(${idx})">${o}</button>`;
+});
+
+document.getElementById("card").innerHTML=html;
+}
+
+/* CHECK */
+function check(ans){
+let x=q[i];
+
+if(ans===x.a){
+score++;
+document.getElementById("score").innerText=score;
+popup("Correct ✔","good");
+play("correctSound");
+}else{
+popup("Wrong ✖","bad");
+play("wrongSound");
+}
+
+setTimeout(()=>{
+i++;
+if(i<q.length) loadQ();
+else endGame();
+},800);
+}
+
+/* POPUP */
+function popup(msg,type){
+let p=document.getElementById("popup");
+p.innerText=msg;
+p.className=type;
+p.style.display="block";
+
+setTimeout(()=>p.style.display="none",800);
+}
+
+/* SOUND */
+function play(id){
+if(!unlocked) return;
+document.getElementById(id).play().catch(()=>{});
+}
+
+/* END */
+function endGame(){
+document.getElementById("game").innerHTML=
+`<div class="card"><h2>Mission Completed 🎉</h2><p>Score: ${score}/10</p></div>`;
+}
+
+</script>
+
+</body>
+</html>
