@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBQ Game</title>
+<title>CBQ - Capitalisation & Punctuation</title>
 
 <style>
 body{
@@ -14,22 +13,24 @@ background:#eef3ff;
 overflow:hidden;
 }
 
-/* SCREENS */
 .screen{
 position:fixed;
 inset:0;
 display:none;
 justify-content:center;
 align-items:center;
-text-align:center;
 flex-direction:column;
 }
 
-.show{display:flex;}
+.active{display:flex;}
 
 /* LOGO */
 #logo{
 background:white;
+}
+
+#logo img{
+width:220px;
 }
 
 /* TOPIC */
@@ -46,12 +47,11 @@ background:#f4f7ff;
 }
 
 button{
-padding:14px 20px;
+padding:14px 22px;
 border:none;
 border-radius:10px;
 background:#1e3a8a;
 color:white;
-font-size:16px;
 cursor:pointer;
 }
 
@@ -61,7 +61,6 @@ display:none;
 padding:10px;
 }
 
-/* TOP BAR */
 .topbar{
 display:flex;
 justify-content:space-between;
@@ -71,7 +70,6 @@ padding:10px;
 border-radius:10px;
 }
 
-/* CARD */
 .card{
 background:white;
 margin-top:10px;
@@ -79,19 +77,18 @@ padding:12px;
 border-radius:12px;
 }
 
-/* QUESTION */
-.q{
+.question{
+font-size:15px;
 font-weight:bold;
-font-size:14px;
 margin-bottom:10px;
+white-space:pre-line;
 }
 
-/* OPTIONS */
-.opt{
+.option{
 display:block;
 width:100%;
-padding:10px;
-margin:6px 0;
+padding:12px;
+margin:8px 0;
 border-radius:10px;
 border:2px solid #ddd;
 background:white;
@@ -110,7 +107,7 @@ border-radius:10px;
 color:white;
 font-weight:bold;
 display:none;
-z-index:9999;
+z-index:999;
 }
 
 .good{background:green;}
@@ -120,19 +117,19 @@ z-index:9999;
 
 <body>
 
-<!-- LOGO -->
-<div id="logo" class="screen show">
-<img src="g6/chp1/nouns/assets/innovine-logo.png" width="220">
+<!-- LOGO (FIXED PATH) -->
+<div id="logo" class="screen active">
+<img src="g6/chp2/Capitalisation_and_Punctuation/assets/innovine-logo.png">
 </div>
 
 <!-- TOPIC -->
 <div id="topic" class="screen">
-NOUNS MISSION
+CAPITALISATION & PUNCTUATION
 </div>
 
 <!-- START -->
 <div id="start" class="screen">
-<button onclick="enableSound()">Tap to Start</button>
+<button onclick="startGame()">Start Mission</button>
 </div>
 
 <!-- GAME -->
@@ -150,32 +147,19 @@ NOUNS MISSION
 <!-- POPUP -->
 <div id="popup"></div>
 
-<audio id="correct" src="g6/chp1/nouns/assets/correct.mp3"></audio>
-<audio id="wrong" src="g6/chp1/nouns/assets/wrong.mp3"></audio>
+<!-- AUDIO (FIXED PATHS) -->
+<audio id="correctSound" src="g6/chp2/Capitalisation_and_Punctuation/assets/correct.mp3"></audio>
+<audio id="wrongSound" src="g6/chp2/Capitalisation_and_Punctuation/assets/wrong.mp3"></audio>
+<audio id="clapSound" src="g6/chp2/Capitalisation_and_Punctuation/assets/clapping.mp3"></audio>
 
 <script>
 
-let i=0,score=0,time=60,unlocked=false;
+let i=0;
+let score=0;
+let time=60;
+let unlocked=false;
 
-/* 1. FIXED FLOW */
-setTimeout(()=>{
-document.getElementById("logo").classList.remove("show");
-document.getElementById("topic").classList.add("show");
-
-setTimeout(()=>{
-document.getElementById("topic").classList.remove("show");
-document.getElementById("start").classList.add("show");
-},3000);
-
-},5000);
-
-/* 2. SOUND UNLOCK */
-function enableSound(){
-unlocked=true;
-startGame();
-}
-
-/* 3. START GAME */
+/* START */
 function startGame(){
 document.getElementById("start").style.display="none";
 document.getElementById("game").style.display="block";
@@ -183,7 +167,7 @@ loadQ();
 timer();
 }
 
-/* 4. TIMER */
+/* TIMER */
 function timer(){
 setInterval(()=>{
 time--;
@@ -192,75 +176,88 @@ if(time<=0) endGame();
 },1000);
 }
 
-/* 5. QUESTIONS */
+/* QUESTIONS (CHAPTER 2) */
 const q=[
 {
-q:"Fix capitalisation: hey aarav are you coming to dehradun",
-a:["Hey Aarav, are you coming to Dehradun?", "wrong1", "wrong2", "wrong3"],
-c:0
+q:"Fix: hey aarav are you coming to dehradun",
+options:[
+"Hey Aarav, are you coming to Dehradun?",
+"hey aarav are you coming",
+"HEY AARAV",
+"come dehradun"
+],
+a:0
 },
 {
 q:"Correct sentence",
-a:["Yes, we visit Ganges on Tuesday.", "wrong", "wrong", "wrong"],
-c:0
+options:[
+"Yes my mom said Ganges Tuesday",
+"Yes, my mom said we visit the Ganges on Tuesday.",
+"yes ganges",
+"no capital"
+],
+a:1
 },
 {
 q:"Wow expression",
-a:["Wow! That's amazing!", "wrong", "wrong", "wrong"],
-c:0
+options:[
+"Wow that's amazing",
+"Wow! That's amazing!",
+"wow amazing",
+"wow?"
+],
+a:1
 }
 ];
 
-/* 6. LOAD */
+/* LOAD */
 function loadQ(){
 let x=q[i];
-let html=`<div class='q'>${x.q}</div>`;
+let html=`<div class='question'>${x.q}</div>`;
 
-x.a.forEach((o,idx)=>{
-html+=`<button class='opt' onclick='check(${idx})'>${o}</button>`;
+x.options.forEach((o,idx)=>{
+html+=`<button class='option' onclick='check(${idx})'>${o}</button>`;
 });
 
 document.getElementById("card").innerHTML=html;
 }
 
-/* 7. CHECK */
+/* CHECK */
 function check(ans){
 let x=q[i];
 
-if(ans===x.c){
+if(ans===x.a){
 score++;
-document.getElementById("score").innerText=score;
 show("Correct ✔","good");
-play("correct");
+play("correctSound");
 }else{
 show("Wrong ✖","bad");
-play("wrong");
+play("wrongSound");
 }
 
 setTimeout(()=>{
 i++;
 if(i<q.length) loadQ();
 else endGame();
-},900);
+},800);
 }
 
-/* 8. POPUP FIX */
+/* POPUP */
 function show(msg,type){
 let p=document.getElementById("popup");
 p.innerText=msg;
 p.className=type;
 p.style.display="block";
 
-setTimeout(()=>p.style.display="none",900);
+setTimeout(()=>p.style.display="none",800);
 }
 
-/* 9. AUDIO FIX */
+/* AUDIO FIX */
 function play(id){
-if(!unlocked) return;
 document.getElementById(id).play().catch(()=>{});
 }
 
-/* 10. END */
+/* END */
 function endGame(){
 document.getElementById("game").innerHTML=
 `<h2>Completed</h2><p>Score: ${score}</p>`;
