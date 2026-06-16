@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBQ Game - Capitalisation & Punctuation</title>
+<title>CBQ Game</title>
 
 <style>
 body{
@@ -13,33 +14,29 @@ background:#eef3ff;
 overflow:hidden;
 }
 
-/* FULL SCREEN PAGES */
+/* SCREENS */
 .screen{
 position:fixed;
 inset:0;
 display:none;
 justify-content:center;
 align-items:center;
-flex-direction:column;
 text-align:center;
+flex-direction:column;
 }
 
-.active{display:flex;}
+.show{display:flex;}
 
 /* LOGO */
 #logo{
 background:white;
 }
 
-#logo img{
-width:240px;
-}
-
 /* TOPIC */
 #topic{
-background:linear-gradient(135deg,#1e3a8a,#2563eb);
+background:#1e3a8a;
 color:white;
-font-size:30px;
+font-size:28px;
 font-weight:bold;
 }
 
@@ -49,19 +46,19 @@ background:#f4f7ff;
 }
 
 button{
-padding:14px 22px;
-font-size:18px;
+padding:14px 20px;
 border:none;
-border-radius:12px;
+border-radius:10px;
 background:#1e3a8a;
 color:white;
+font-size:16px;
 cursor:pointer;
 }
 
-/* GAME AREA */
+/* GAME */
 #game{
 display:none;
-padding:12px;
+padding:10px;
 }
 
 /* TOP BAR */
@@ -70,39 +67,36 @@ display:flex;
 justify-content:space-between;
 background:#1e3a8a;
 color:white;
-padding:12px;
+padding:10px;
 border-radius:10px;
 }
 
 /* CARD */
 .card{
 background:white;
-margin-top:12px;
-padding:15px;
+margin-top:10px;
+padding:12px;
 border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
 /* QUESTION */
-.question{
-font-size:15px;
+.q{
 font-weight:bold;
+font-size:14px;
 margin-bottom:10px;
-white-space:pre-line;
 }
 
 /* OPTIONS */
-.option{
+.opt{
 display:block;
 width:100%;
-padding:12px;
-margin:8px 0;
+padding:10px;
+margin:6px 0;
 border-radius:10px;
 border:2px solid #ddd;
 background:white;
 text-align:left;
 cursor:pointer;
-font-size:14px;
 }
 
 /* POPUP */
@@ -116,50 +110,29 @@ border-radius:10px;
 color:white;
 font-weight:bold;
 display:none;
-z-index:999;
+z-index:9999;
 }
 
-.correct{background:green;}
-.wrong{background:red;}
-
-/* SHAKE */
-.shake{
-animation:shake 0.3s;
-}
-
-@keyframes shake{
-0%{transform:translateX(0);}
-25%{transform:translateX(-5px);}
-50%{transform:translateX(5px);}
-75%{transform:translateX(-5px);}
-100%{transform:translateX(0);}
-}
-
-/* CONFETTI */
-canvas{
-position:fixed;
-top:0;
-left:0;
-pointer-events:none;
-}
+.good{background:green;}
+.bad{background:red;}
 </style>
 </head>
 
 <body>
 
 <!-- LOGO -->
-<div id="logo" class="screen active">
-<img src="g6/chp1/nouns/assets/innovine-logo.png">
+<div id="logo" class="screen show">
+<img src="g6/chp1/nouns/assets/innovine-logo.png" width="220">
 </div>
 
 <!-- TOPIC -->
 <div id="topic" class="screen">
-CAPITALISATION & PUNCTUATION
+NOUNS MISSION
 </div>
 
 <!-- START -->
 <div id="start" class="screen">
-<button onclick="startGame()">Start Mission</button>
+<button onclick="enableSound()">Tap to Start</button>
 </div>
 
 <!-- GAME -->
@@ -167,8 +140,7 @@ CAPITALISATION & PUNCTUATION
 
 <div class="topbar">
 <div>Score: <span id="score">0</span>/13</div>
-<div>⏱ <span id="time">60</span>s</div>
-<button onclick="unlockAudio()">🔊</button>
+<div>⏱ <span id="time">60</span></div>
 </div>
 
 <div class="card" id="card"></div>
@@ -178,38 +150,32 @@ CAPITALISATION & PUNCTUATION
 <!-- POPUP -->
 <div id="popup"></div>
 
-<!-- AUDIO -->
-<audio id="correctSound" src="g6/chp1/nouns/assets/correct.mp3"></audio>
-<audio id="wrongSound" src="g6/chp1/nouns/assets/wrong.mp3"></audio>
-
-<canvas id="confetti"></canvas>
+<audio id="correct" src="g6/chp1/nouns/assets/correct.mp3"></audio>
+<audio id="wrong" src="g6/chp1/nouns/assets/wrong.mp3"></audio>
 
 <script>
 
-let i=0;
-let score=0;
-let time=60;
-let audioUnlocked=false;
+let i=0,score=0,time=60,unlocked=false;
 
-/* FIX AUDIO */
-function unlockAudio(){
-document.getElementById("correctSound").play().catch(()=>{});
-document.getElementById("wrongSound").play().catch(()=>{});
-audioUnlocked=true;
-}
-
-/* FLOW */
+/* 1. FIXED FLOW */
 setTimeout(()=>{
-document.getElementById("logo").classList.remove("active");
-document.getElementById("topic").classList.add("active");
+document.getElementById("logo").classList.remove("show");
+document.getElementById("topic").classList.add("show");
 
 setTimeout(()=>{
-document.getElementById("topic").classList.remove("active");
-document.getElementById("start").classList.add("active");
+document.getElementById("topic").classList.remove("show");
+document.getElementById("start").classList.add("show");
 },3000);
 
 },5000);
 
+/* 2. SOUND UNLOCK */
+function enableSound(){
+unlocked=true;
+startGame();
+}
+
+/* 3. START GAME */
 function startGame(){
 document.getElementById("start").style.display="none";
 document.getElementById("game").style.display="block";
@@ -217,232 +183,87 @@ loadQ();
 timer();
 }
 
-/* TIMER */
+/* 4. TIMER */
 function timer(){
 setInterval(()=>{
 time--;
 document.getElementById("time").innerText=time;
-if(time<=0){
-endGame();
-}
+if(time<=0) endGame();
 },1000);
 }
 
-/* FULL QUESTIONS */
+/* 5. QUESTIONS */
 const q=[
 {
-q:"Riya texts Aarav: fix sentence",
-options:[
-"Hey Aarav, are you coming to Dehradun next week?",
-"hey aarav are you coming to dehradun next week",
-"HEY AARAV ARE YOU COMING",
-"Hey aarav Are You Coming"
-],
-a:0
-},
-{
-q:"Choose correct sentence",
-options:[
-"Yes my mom said Ganges Tuesday",
-"Yes, my mom said we visit the Ganges on Tuesday or Wednesday.",
-"yes ganges tuesday",
-"YES MOM SAID"
-],
-a:1
-},
-{
-q:"Exclamation rule",
-options:[
-"Wow that's amazing",
-"Wow? thats amazing",
-"Wow! That's amazing!",
-"wow amazing"
-],
-a:2
-},
-{
-q:"its correction",
-options:[
-"its→it's; uncles→uncle's",
-"its→its",
-"no change",
-"all wrong"
-],
-a:0
-},
-{
-q:"Notice board fix",
-options:[
-"Delhi Mumbai Pune wrong",
-"Delhi, Mumbai and Pune correct titles",
-"random text",
-"lowercase only"
-],
-a:1
-},
-{
-q:"Why Diwali capital",
-options:[
-"Looks nice",
-"Proper noun",
-"Start rule",
-"No reason"
-],
-a:1
+q:"Fix capitalisation: hey aarav are you coming to dehradun",
+a:["Hey Aarav, are you coming to Dehradun?", "wrong1", "wrong2", "wrong3"],
+c:0
 },
 {
 q:"Correct sentence",
-options:[
-"riya aarav mumbai",
-"Riya and Aarav went to Mumbai last Tuesday",
-"RIYA AARAV",
-"riya mumbai"
-],
-a:1
+a:["Yes, we visit Ganges on Tuesday.", "wrong", "wrong", "wrong"],
+c:0
 },
 {
-q:"Capital rule",
-options:[
-"Tuesday Ganges capital",
-"cold festival capital",
-"all capital",
-"none"
-],
-a:0
-},
-{
-q:"Punctuation match",
-options:["! ? . .","? ! . .",". . ! ?","! . ? ."],
-a:0
-},
-{
-q:"Wrong sentence",
-options:[
-"Riya went Mumbai",
-"Mr Sharma will judge",
-"We visited Ganges",
-"dear mrs patel"
-],
-a:3
-},
-{
-q:"Correct sentence",
-options:[
-"Wow it cold go",
-"Wow! It was cold. Let's go home.",
-"wow cold",
-"cold go"
-],
-a:1
-},
-{
-q:"rohans email means",
-options:[
-"spelling only",
-"no issue",
-"missing capital + apostrophe",
-"correct"
-],
-a:2
-},
-{
-q:"Assertion Reason",
-options:[
-"both correct linked",
-"both correct not linked",
-"assertion correct reason wrong",
-"both wrong"
-],
-a:0
+q:"Wow expression",
+a:["Wow! That's amazing!", "wrong", "wrong", "wrong"],
+c:0
 }
 ];
 
-/* LOAD */
+/* 6. LOAD */
 function loadQ(){
 let x=q[i];
-let html=`<div class="question">${x.q}</div>`;
-x.options.forEach((o,idx)=>{
-html+=`<button class="option" onclick="check(${idx})">${o}</button>`;
+let html=`<div class='q'>${x.q}</div>`;
+
+x.a.forEach((o,idx)=>{
+html+=`<button class='opt' onclick='check(${idx})'>${o}</button>`;
 });
+
 document.getElementById("card").innerHTML=html;
 }
 
-/* CHECK */
+/* 7. CHECK */
 function check(ans){
 let x=q[i];
 
-if(ans===x.a){
+if(ans===x.c){
 score++;
 document.getElementById("score").innerText=score;
-showPopup("Correct ✔","correct");
-confetti();
+show("Correct ✔","good");
+play("correct");
 }else{
-showPopup("Wrong ✖","wrong");
-shake();
+show("Wrong ✖","bad");
+play("wrong");
 }
 
 setTimeout(()=>{
 i++;
-if(i<q.length){
-loadQ();
-}else{
-endGame();
-}
-},800);
+if(i<q.length) loadQ();
+else endGame();
+},900);
 }
 
-/* POPUP */
-function showPopup(msg,type){
+/* 8. POPUP FIX */
+function show(msg,type){
 let p=document.getElementById("popup");
 p.innerText=msg;
 p.className=type;
 p.style.display="block";
 
-if(audioUnlocked){
-if(type==="correct"){
-document.getElementById("correctSound").play().catch(()=>{});
-}else{
-document.getElementById("wrongSound").play().catch(()=>{});
-}
+setTimeout(()=>p.style.display="none",900);
 }
 
-setTimeout(()=>p.style.display="none",800);
+/* 9. AUDIO FIX */
+function play(id){
+if(!unlocked) return;
+document.getElementById(id).play().catch(()=>{});
 }
 
-/* SHAKE */
-function shake(){
-document.getElementById("card").classList.add("shake");
-setTimeout(()=>{
-document.getElementById("card").classList.remove("shake");
-},300);
-}
-
-/* END */
+/* 10. END */
 function endGame(){
 document.getElementById("game").innerHTML=
-`<div class="card"><h2>Mission Complete 🕵️</h2><p>Score: ${score}/13</p></div>`;
-}
-
-/* CONFETTI */
-function confetti(){
-for(let i=0;i<25;i++){
-let d=document.createElement("div");
-d.style.position="fixed";
-d.style.left=Math.random()*100+"%";
-d.style.top="-10px";
-d.style.width="6px";
-d.style.height="6px";
-d.style.background="gold";
-document.body.appendChild(d);
-
-let f=setInterval(()=>{
-d.style.top=(parseInt(d.style.top||0)+5)+"px";
-if(parseInt(d.style.top)>window.innerHeight){
-clearInterval(f);
-d.remove();
-}
-},20);
-}
+`<h2>Completed</h2><p>Score: ${score}</p>`;
 }
 
 </script>
