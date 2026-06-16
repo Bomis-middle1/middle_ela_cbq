@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grade 6 CBQ - Nouns</title>
+<title>Mission CBQ - Nouns</title>
 
 <style>
 body{
@@ -13,11 +13,11 @@ background:#eef3ff;
 overflow:hidden;
 }
 
-/* SPLASH */
+/* FULL SCREEN PAGES */
 .screen{
+position:fixed;
+inset:0;
 display:none;
-width:100%;
-height:100vh;
 justify-content:center;
 align-items:center;
 flex-direction:column;
@@ -26,34 +26,35 @@ text-align:center;
 
 .active{display:flex;}
 
+/* LOGO */
 #logoScreen{
 background:white;
 }
 
 #logoScreen img{
 width:240px;
+animation:zoom 1s ease;
 }
 
-/* TOPIC SCREEN */
+@keyframes zoom{
+from{transform:scale(0.7);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+/* TOPIC */
 #topicScreen{
-background:#1e3a8a;
+background:linear-gradient(135deg,#1e3a8a,#3b82f6);
 color:white;
-font-size:28px;
+font-size:30px;
 font-weight:bold;
-animation:fade 1s ease;
 }
 
-@keyframes fade{
-from{opacity:0; transform:scale(0.9);}
-to{opacity:1; transform:scale(1);}
-}
-
-/* START SCREEN */
+/* START */
 #startScreen{
 background:#f4f7ff;
 }
 
-.startBtn{
+button{
 padding:15px 25px;
 font-size:18px;
 border:none;
@@ -72,7 +73,6 @@ padding:15px;
 .header{
 display:flex;
 justify-content:space-between;
-align-items:center;
 background:#1e3a8a;
 color:white;
 padding:12px;
@@ -85,16 +85,33 @@ margin-top:15px;
 padding:15px;
 border-radius:12px;
 box-shadow:0 4px 10px rgba(0,0,0,0.1);
-text-align:center;
 }
 
+/* CHAT STYLE */
+.chat{
+background:#e8f0ff;
+padding:12px;
+border-left:4px solid #1e3a8a;
+border-radius:10px;
+font-size:14px;
+line-height:1.5;
+white-space:pre-line;
+margin-bottom:10px;
+animation:fade 0.4s ease;
+}
+
+@keyframes fade{
+from{opacity:0; transform:translateY(10px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+/* QUESTION */
 .question{
-font-size:18px;
 font-weight:bold;
 margin:10px 0;
-line-height:1.4;
 }
 
+/* OPTIONS */
 .option{
 display:block;
 width:100%;
@@ -105,14 +122,12 @@ border:2px solid #ddd;
 background:#fff;
 cursor:pointer;
 text-align:left;
+transition:0.2s;
 }
 
-.option:hover{background:#f1f5ff;}
-
-img.qimg{
-width:100%;
-border-radius:10px;
-margin-bottom:10px;
+.option:hover{
+background:#f1f5ff;
+transform:scale(1.02);
 }
 
 /* RESULT */
@@ -120,7 +135,7 @@ margin-bottom:10px;
 display:none;
 text-align:center;
 padding:20px;
-font-size:20px;
+font-size:22px;
 font-weight:bold;
 }
 
@@ -136,20 +151,20 @@ pointer-events:none;
 
 <body>
 
-<!-- 1. LOGO SCREEN -->
+<!-- 1 LOGO -->
 <div id="logoScreen" class="screen active">
 <img src="g6/chp1/nouns/assets/innovine-logo.png">
 </div>
 
-<!-- 2. TOPIC SCREEN -->
+<!-- 2 TOPIC -->
 <div id="topicScreen" class="screen">
-NOUNS 🕵️‍♂️<br>
-Detective Challenge
+🕵️‍♂️ NOUNS MISSION<br>
+Delhi Trip Investigation
 </div>
 
-<!-- 3. START SCREEN -->
+<!-- 3 START -->
 <div id="startScreen" class="screen">
-<button class="startBtn" onclick="startGame()">Start the Mission</button>
+<button onclick="startGame()">Start Mission</button>
 </div>
 
 <!-- GAME -->
@@ -157,7 +172,7 @@ Detective Challenge
 
 <div class="header">
 <div>Score: <span id="score">0</span>/12</div>
-<div>Time: <span id="time">60</span>s</div>
+<div>⏱ <span id="time">60</span>s</div>
 <button onclick="toggleMute()">🔊</button>
 </div>
 
@@ -170,105 +185,130 @@ Detective Challenge
 
 <audio id="correctSound" src="g6/chp1/nouns/assets/correct.mp3"></audio>
 <audio id="wrongSound" src="g6/chp1/nouns/assets/wrong.mp3"></audio>
+<audio id="clapSound" src="g6/chp1/nouns/assets/clapping.mp3"></audio>
 
 <canvas id="confetti"></canvas>
 
 <script>
 
-let step=0;
-let i=0;
-let score=0;
-let attempts=2;
-let time=60;
-let mute=false;
+let i=0,score=0,attempts=2,time=60,mute=false;
 
 let questions=[
+
 {
-img:"g6/chp1/nouns/assets/q1.png",
-q:`Q1:
-Question: In the WhatsApp chat, Riya mentions she is visiting "Delhi" for a school trip. What kind of noun is "Delhi"?`,
+chat:true,
+q:`Q1 MISSION BRIEF:
+
+Riya: Hey! Are you coming to the Delhi trip next week?
+
+Aarav: Yes! The school has already booked the tickets for all of us and our teachers.
+I’m packing my travel kit and a thank-you card for our guide.
+
+Riya: A flock of pigeons was sitting on our school roof this morning — so cool!
+
+Aarav: Don’t forget — bring courage. The heights at Qutub Minar are scary.
+
+Riya: Our class (all 42 students) is going together. It’ll be fun!`,
+
 options:[
 "A: Common noun",
 "B: Proper noun",
 "C: Collective noun",
-"D: Material noun"
+"D: Abstract noun"
 ],
 answer:1
 },
+
 {
 q:`Q2:
-Question: Aarav says he is packing a "travel kit" for the trip. What kind of noun is "kit"?`,
-options:[
-"A: Abstract noun",
-"B: Collective noun",
-"C: Material noun",
-"D: Proper noun"
-],
+Aarav says he is packing a travel kit. Kit is a ____ noun.`,
+options:["A: Abstract","B: Collective","C: Material","D: Proper"],
 answer:1
 },
+
 {
 q:`Q3:
-Question: Riya uses the phrase "a flock of pigeons". What kind of noun is "flock"?`,
-options:["A","B","C","D"],
+A flock of pigeons is a ____ noun.`,
+options:["A: Common","B: Abstract","C: Material","D: Collective"],
 answer:3
 },
+
 {
 q:`Q4:
-Question: Aarav tells Riya to "bring courage" for the trip.`,
-options:["A","B","C","D"],
-answer:1
+Courage is a ____ noun.`,
+options:["A: Common","B: Proper","C: Collective","D: Abstract"],
+answer:3
 },
+
 {
 q:`Q5:
-Question: Class is a ___ noun.`,
+Class is a ____ noun.`,
 options:["collective","proper","material","abstract"],
 answer:0
 },
+
 {
 q:`Q6:
-Question: Which sentence uses uncountable nouns correctly?`,
-options:["A","B","C","D"],
+Which sentence uses uncountable nouns correctly?`,
+options:[
+"I bought two rices",
+"I bought rice and water bottles",
+"I bought a rice",
+"Rice are good"
+],
 answer:1
 },
+
 {
 q:`Q7:
-Question: Bangalore vs city difference`,
-options:["A","B","C","D"],
+Bangalore vs city difference`,
+options:[
+"Both proper nouns",
+"Both common nouns",
+"Proper vs common noun",
+"Both abstract nouns"
+],
 answer:2
 },
+
 {
 q:`Q8:
-Question: Sort nouns`,
-options:["A","B","C","D"],
-answer:2
+Sort nouns: mango, rice, courage, trophy`,
+options:["C U A C","C C U U","U C A C","C U C U"],
+answer:0
 },
+
 {
 q:`Q9:
-Question: Classify nouns`,
+Classify nouns correctly`,
 options:["A","B","C","D"],
 answer:2
 },
+
 {
 q:`Q10:
-Question: Odd one out`,
-options:["A","B","C","D"],
+Odd one out`,
+options:["Mango","Courage","Rice","Water"],
 answer:1
 },
+
 {
 q:`Q11:
-Question: Identify error`,
+Identify error`,
 options:["A","B","C","D"],
 answer:0
 },
+
 {
 q:`Q12:
-Question: Gaggle explanation`,
+Gaggle explanation`,
 options:["A","B","C","D"],
 answer:2
 }
+
 ];
 
-/* FLOW CONTROL */
+/* FLOW */
 setTimeout(()=>showTopic(),5000);
 
 function showTopic(){
@@ -288,30 +328,28 @@ loadQ();
 startTimer();
 }
 
-/* TIMER */
 function startTimer(){
 let t=setInterval(()=>{
 time--;
 document.getElementById("time").innerText=time;
 if(time<=0){
 clearInterval(t);
-end();
+endGame();
 }
 },1000);
 }
 
-/* LOAD QUESTION */
 function loadQ(){
 attempts=2;
 let q=questions[i];
 
 let html="";
 
-if(q.img){
-html+=`<img class='qimg' src='${q.img}'>`;
-}
-
+if(q.chat){
+html+=`<div class='chat'>${q.q}</div>`;
+}else{
 html+=`<div class='question'>${q.q}</div>`;
+}
 
 q.options.forEach((o,idx)=>{
 html+=`<button class='option' onclick='check(${idx})'>${o}</button>`;
@@ -320,7 +358,6 @@ html+=`<button class='option' onclick='check(${idx})'>${o}</button>`;
 document.getElementById("card").innerHTML=html;
 }
 
-/* CHECK */
 function check(ans){
 let q=questions[i];
 
@@ -328,6 +365,7 @@ if(ans===q.answer){
 score++;
 document.getElementById("score").innerText=score;
 play("correct");
+confetti();
 next();
 }else{
 attempts--;
@@ -338,53 +376,42 @@ if(attempts<=0) next();
 
 function next(){
 i++;
-if(i>=questions.length) end();
+if(i>=questions.length) endGame();
 else loadQ();
 }
 
-/* END */
-function end(){
-document.getElementById("game").style.display="none";
-document.getElementById("result").style.display="block";
-
-let p=(score/12)*100;
-
-let msg =
-p>=75?"🎉 Good Job":
-p>=40?"📘 Review this chapter":
-"📚 Let’s practise more";
-
-document.getElementById("result").innerText=
-`${msg}\nScore: ${score}/12`;
+function endGame(){
+document.getElementById("game").innerHTML=
+`<h2>Mission Completed 🕵️‍♂️</h2><p>Score: ${score}/12</p>`;
 }
 
 /* SOUND */
-function play(t){
+function play(type){
 if(mute) return;
-document.getElementById(t+"Sound").play();
+document.getElementById(type+"Sound").play().catch(()=>{});
 }
 
 function toggleMute(){
 mute=!mute;
 }
 
-/* SIMPLE CONFETTI */
+/* CONFETTI */
 function confetti(){
-for(let i=0;i<30;i++){
-let d=document.createElement("div");
-d.style.position="fixed";
-d.style.left=Math.random()*100+"%";
-d.style.top="-10px";
-d.style.width="6px";
-d.style.height="6px";
-d.style.background="gold";
-document.body.appendChild(d);
+for(let i=0;i<40;i++){
+let c=document.createElement("div");
+c.style.position="fixed";
+c.style.left=Math.random()*100+"%";
+c.style.top="-10px";
+c.style.width="6px";
+c.style.height="6px";
+c.style.background="gold";
+document.body.appendChild(c);
 
 let f=setInterval(()=>{
-d.style.top=(parseInt(d.style.top||0)+5)+"px";
-if(parseInt(d.style.top)>window.innerHeight){
+c.style.top=(parseInt(c.style.top||0)+5)+"px";
+if(parseInt(c.style.top)>window.innerHeight){
 clearInterval(f);
-d.remove();
+c.remove();
 }
 },20);
 }
