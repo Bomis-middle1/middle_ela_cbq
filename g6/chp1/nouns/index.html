@@ -1,1 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 6 CBQ - Nouns</title>
 
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#eef3ff;
+overflow:hidden;
+}
+
+/* SPLASH */
+.screen{
+display:none;
+width:100%;
+height:100vh;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+text-align:center;
+}
+
+.active{display:flex;}
+
+#logoScreen{
+background:white;
+}
+
+#logoScreen img{
+width:240px;
+}
+
+/* TOPIC SCREEN */
+#topicScreen{
+background:#1e3a8a;
+color:white;
+font-size:28px;
+font-weight:bold;
+animation:fade 1s ease;
+}
+
+@keyframes fade{
+from{opacity:0; transform:scale(0.9);}
+to{opacity:1; transform:scale(1);}
+}
+
+/* START SCREEN */
+#startScreen{
+background:#f4f7ff;
+}
+
+.startBtn{
+padding:15px 25px;
+font-size:18px;
+border:none;
+border-radius:12px;
+background:#1e3a8a;
+color:white;
+cursor:pointer;
+}
+
+/* GAME */
+#game{
+display:none;
+padding:15px;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#1e3a8a;
+color:white;
+padding:12px;
+border-radius:10px;
+}
+
+.card{
+background:white;
+margin-top:15px;
+padding:15px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.question{
+font-size:18px;
+font-weight:bold;
+margin:10px 0;
+line-height:1.4;
+}
+
+.option{
+display:block;
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+border:2px solid #ddd;
+background:#fff;
+cursor:pointer;
+text-align:left;
+}
+
+.option:hover{background:#f1f5ff;}
+
+img.qimg{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+/* RESULT */
+#result{
+display:none;
+text-align:center;
+padding:20px;
+font-size:20px;
+font-weight:bold;
+}
+
+/* CONFETTI */
+canvas{
+position:fixed;
+top:0;
+left:0;
+pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 1. LOGO SCREEN -->
+<div id="logoScreen" class="screen active">
+<img src="g6/chp1/nouns/assets/innovine-logo.png">
+</div>
+
+<!-- 2. TOPIC SCREEN -->
+<div id="topicScreen" class="screen">
+NOUNS 🕵️‍♂️<br>
+Detective Challenge
+</div>
+
+<!-- 3. START SCREEN -->
+<div id="startScreen" class="screen">
+<button class="startBtn" onclick="startGame()">Start the Mission</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="header">
+<div>Score: <span id="score">0</span>/12</div>
+<div>Time: <span id="time">60</span>s</div>
+<button onclick="toggleMute()">🔊</button>
+</div>
+
+<div class="card" id="card"></div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result"></div>
+
+<audio id="correctSound" src="g6/chp1/nouns/assets/correct.mp3"></audio>
+<audio id="wrongSound" src="g6/chp1/nouns/assets/wrong.mp3"></audio>
+
+<canvas id="confetti"></canvas>
+
+<script>
+
+let step=0;
+let i=0;
+let score=0;
+let attempts=2;
+let time=60;
+let mute=false;
+
+let questions=[
+{
+img:"g6/chp1/nouns/assets/q1.png",
+q:`Q1:
+Question: In the WhatsApp chat, Riya mentions she is visiting "Delhi" for a school trip. What kind of noun is "Delhi"?`,
+options:[
+"A: Common noun",
+"B: Proper noun",
+"C: Collective noun",
+"D: Material noun"
+],
+answer:1
+},
+{
+q:`Q2:
+Question: Aarav says he is packing a "travel kit" for the trip. What kind of noun is "kit"?`,
+options:[
+"A: Abstract noun",
+"B: Collective noun",
+"C: Material noun",
+"D: Proper noun"
+],
+answer:1
+},
+{
+q:`Q3:
+Question: Riya uses the phrase "a flock of pigeons". What kind of noun is "flock"?`,
+options:["A","B","C","D"],
+answer:3
+},
+{
+q:`Q4:
+Question: Aarav tells Riya to "bring courage" for the trip.`,
+options:["A","B","C","D"],
+answer:1
+},
+{
+q:`Q5:
+Question: Class is a ___ noun.`,
+options:["collective","proper","material","abstract"],
+answer:0
+},
+{
+q:`Q6:
+Question: Which sentence uses uncountable nouns correctly?`,
+options:["A","B","C","D"],
+answer:1
+},
+{
+q:`Q7:
+Question: Bangalore vs city difference`,
+options:["A","B","C","D"],
+answer:2
+},
+{
+q:`Q8:
+Question: Sort nouns`,
+options:["A","B","C","D"],
+answer:2
+},
+{
+q:`Q9:
+Question: Classify nouns`,
+options:["A","B","C","D"],
+answer:2
+},
+{
+q:`Q10:
+Question: Odd one out`,
+options:["A","B","C","D"],
+answer:1
+},
+{
+q:`Q11:
+Question: Identify error`,
+options:["A","B","C","D"],
+answer:0
+},
+{
+q:`Q12:
+Question: Gaggle explanation`,
+options:["A","B","C","D"],
+answer:2
+}
+];
+
+/* FLOW CONTROL */
+setTimeout(()=>showTopic(),5000);
+
+function showTopic(){
+document.getElementById("logoScreen").classList.remove("active");
+document.getElementById("topicScreen").classList.add("active");
+
+setTimeout(()=>{
+document.getElementById("topicScreen").classList.remove("active");
+document.getElementById("startScreen").classList.add("active");
+},3000);
+}
+
+function startGame(){
+document.getElementById("startScreen").style.display="none";
+document.getElementById("game").style.display="block";
+loadQ();
+startTimer();
+}
+
+/* TIMER */
+function startTimer(){
+let t=setInterval(()=>{
+time--;
+document.getElementById("time").innerText=time;
+if(time<=0){
+clearInterval(t);
+end();
+}
+},1000);
+}
+
+/* LOAD QUESTION */
+function loadQ(){
+attempts=2;
+let q=questions[i];
+
+let html="";
+
+if(q.img){
+html+=`<img class='qimg' src='${q.img}'>`;
+}
+
+html+=`<div class='question'>${q.q}</div>`;
+
+q.options.forEach((o,idx)=>{
+html+=`<button class='option' onclick='check(${idx})'>${o}</button>`;
+});
+
+document.getElementById("card").innerHTML=html;
+}
+
+/* CHECK */
+function check(ans){
+let q=questions[i];
+
+if(ans===q.answer){
+score++;
+document.getElementById("score").innerText=score;
+play("correct");
+next();
+}else{
+attempts--;
+play("wrong");
+if(attempts<=0) next();
+}
+}
+
+function next(){
+i++;
+if(i>=questions.length) end();
+else loadQ();
+}
+
+/* END */
+function end(){
+document.getElementById("game").style.display="none";
+document.getElementById("result").style.display="block";
+
+let p=(score/12)*100;
+
+let msg =
+p>=75?"🎉 Good Job":
+p>=40?"📘 Review this chapter":
+"📚 Let’s practise more";
+
+document.getElementById("result").innerText=
+`${msg}\nScore: ${score}/12`;
+}
+
+/* SOUND */
+function play(t){
+if(mute) return;
+document.getElementById(t+"Sound").play();
+}
+
+function toggleMute(){
+mute=!mute;
+}
+
+/* SIMPLE CONFETTI */
+function confetti(){
+for(let i=0;i<30;i++){
+let d=document.createElement("div");
+d.style.position="fixed";
+d.style.left=Math.random()*100+"%";
+d.style.top="-10px";
+d.style.width="6px";
+d.style.height="6px";
+d.style.background="gold";
+document.body.appendChild(d);
+
+let f=setInterval(()=>{
+d.style.top=(parseInt(d.style.top||0)+5)+"px";
+if(parseInt(d.style.top)>window.innerHeight){
+clearInterval(f);
+d.remove();
+}
+},20);
+}
+}
+
+</script>
+
+</body>
+</html>
