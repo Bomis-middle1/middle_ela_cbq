@@ -1,1 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBQ - Capitalisation & Punctuation</title>
 
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#eef3ff;
+overflow:hidden;
+}
+
+/* FULL SCREEN */
+.screen{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+text-align:center;
+}
+
+.active{display:flex;}
+
+/* LOGO */
+#logoScreen{
+background:white;
+}
+
+#logoScreen img{
+width:240px;
+}
+
+/* TOPIC */
+#topicScreen{
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
+color:white;
+font-size:30px;
+font-weight:bold;
+}
+
+/* START */
+#startScreen{
+background:#f4f7ff;
+}
+
+button.startBtn{
+padding:14px 24px;
+font-size:18px;
+border:none;
+border-radius:12px;
+background:#1e3a8a;
+color:white;
+cursor:pointer;
+}
+
+/* GAME UI */
+#game{
+display:none;
+height:100vh;
+flex-direction:column;
+}
+
+/* TOP BAR */
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px 16px;
+background:#1e3a8a;
+color:white;
+font-weight:bold;
+}
+
+/* QUESTION CARD */
+.card{
+margin:15px;
+background:white;
+border-radius:14px;
+padding:16px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+overflow:hidden;
+}
+
+/* QUESTION */
+.question{
+font-size:16px;
+font-weight:bold;
+line-height:1.4;
+margin-bottom:12px;
+white-space:pre-line;
+}
+
+/* OPTIONS */
+.option{
+display:block;
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+border:2px solid #ddd;
+background:#fff;
+font-size:15px;
+text-align:left;
+cursor:pointer;
+transition:0.2s;
+}
+
+.option:active{
+transform:scale(0.98);
+}
+
+.option:hover{
+background:#f1f5ff;
+}
+
+/* CHAT STYLE */
+.chat{
+background:#e8f0ff;
+border-left:4px solid #1e3a8a;
+padding:10px;
+border-radius:10px;
+font-size:13px;
+line-height:1.4;
+white-space:pre-line;
+margin-bottom:10px;
+}
+
+/* RESULT */
+#result{
+display:none;
+text-align:center;
+padding:20px;
+font-size:20px;
+font-weight:bold;
+}
+
+/* CONFETTI */
+canvas{
+position:fixed;
+top:0;
+left:0;
+pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 1 LOGO -->
+<div id="logoScreen" class="screen active">
+<img src="g6/chp1/nouns/assets/innovine-logo.png">
+</div>
+
+<!-- 2 TOPIC -->
+<div id="topicScreen" class="screen">
+CAPITALISATION & PUNCTUATION
+</div>
+
+<!-- 3 START -->
+<div id="startScreen" class="screen">
+<button class="startBtn" onclick="startGame()">Start Mission</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="topbar">
+<div>Score: <span id="score">0</span>/13</div>
+<div>⏱ <span id="time">60</span>s</div>
+</div>
+
+<div class="card" id="card"></div>
+
+</div>
+
+<!-- RESULT -->
+<div id="result"></div>
+
+<audio id="correctSound" src="g6/chp1/nouns/assets/correct.mp3"></audio>
+<audio id="wrongSound" src="g6/chp1/nouns/assets/wrong.mp3"></audio>
+
+<canvas id="confetti"></canvas>
+
+<script>
+
+let i=0;
+let score=0;
+let attempts=2;
+let time=60;
+let mute=false;
+
+/* QUESTIONS (FULL CHAPTER 2) */
+const questions=[
+
+{
+type:"chat",
+q:`Q1:
+Riya texts Aarav:
+"hey aarav are you coming to dehradun next week"`,
+options:[
+"Hey Aarav, are you coming to Dehradun next week?",
+"hey aarav are you coming to dehradun next week",
+"Hey aarav Are You Coming To Dehradun Next Week?",
+"HEY AARAV ARE YOU COMING"
+],
+answer:0
+},
+
+{
+q:"Q2: Choose correct sentence",
+options:[
+"Yes my mom said we visit Ganges on Tuesday or Wednesday",
+"Yes, my mom said we visit the Ganges on Tuesday or Wednesday.",
+"yes mom said ganges tuesday wednesday",
+"YES MY MOM SAID"
+],
+answer:1
+},
+
+{
+q:"Q3: Correct punctuation",
+options:[
+"Wow that's amazing",
+"Wow thats amazing?",
+"Wow! That's amazing!",
+"wow thats amazing"
+],
+answer:2
+},
+
+{
+q:"Q4: Choose correct correction",
+options:[
+"its→it's; uncles→uncle's",
+"its→its; uncles→uncles",
+"its→it's only",
+"no correction needed"
+],
+answer:0
+},
+
+{
+q:"Q5: Correct notice board version",
+options:[
+"Delhi Mumbai Pune errors",
+"Delhi, Mumbai and Pune + correct titles + email fixed",
+"all lowercase text",
+"random format"
+],
+answer:1
+},
+
+{
+q:"Q6: Why capitalise Diwali?",
+options:[
+"It looks important",
+"Proper noun (festival name)",
+"Sentence start rule",
+"No reason"
+],
+answer:1
+},
+
+{
+q:"Q7: Correct sentence",
+options:[
+"riya aarav mumbai",
+"Riya and Aarav went to Mumbai last Tuesday",
+"RIYA AARAV WENT",
+"riya aarav went mumbai"
+],
+answer:1
+},
+
+{
+q:"Q8: Capitalisation rule",
+options:[
+"Tuesday, Ganges capital",
+"cold, festival capital",
+"all capital",
+"none capital"
+],
+answer:0
+},
+
+{
+q:"Q9: Punctuation match",
+options:["! ? . .","? ! . .",". . ! ?","! . ? ."],
+answer:0
+},
+
+{
+q:"Q10: Find incorrect sentence",
+options:[
+"Riya went to Mumbai",
+"Mr Sharma will judge",
+"We visited Ganges",
+"dear mrs patel"
+],
+answer:3
+},
+
+{
+q:"Q11: Correct sentence",
+options:[
+"Wow it was cold lets go",
+"Wow! It was cold. Let's go home.",
+"wow cold go home",
+"wow it cold"
+],
+answer:1
+},
+
+{
+q:"Q12: “rohans email” means",
+options:[
+"Only spelling mistake",
+"No issue",
+"Missing capital + apostrophe",
+"Fully correct"
+],
+answer:2
+},
+
+{
+q:"Q13: Assertion Reason",
+options:[
+"Both correct + linked",
+"Both correct but not linked",
+"Assertion correct reason wrong",
+"Both wrong"
+],
+answer:0
+}
+
+];
+
+/* FLOW */
+setTimeout(()=>{
+document.getElementById("logoScreen").classList.remove("active");
+document.getElementById("topicScreen").classList.add("active");
+
+setTimeout(()=>{
+document.getElementById("topicScreen").classList.remove("active");
+document.getElementById("startScreen").classList.add("active");
+},3000);
+
+},5000);
+
+function startGame(){
+document.getElementById("startScreen").style.display="none";
+document.getElementById("game").style.display="flex";
+loadQ();
+timer();
+}
+
+function timer(){
+setInterval(()=>{
+time--;
+document.getElementById("time").innerText=time;
+if(time<=0) endGame();
+},1000);
+}
+
+function loadQ(){
+attempts=2;
+let q=questions[i];
+
+let html="";
+
+if(q.type==="chat"){
+html+=`<div class="chat">${q.q}</div>`;
+}else{
+html+=`<div class="question">${q.q}</div>`;
+}
+
+q.options.forEach((o,idx)=>{
+html+=`<button class="option" onclick="check(${idx})">${o}</button>`;
+});
+
+document.getElementById("card").innerHTML=html;
+}
+
+function check(ans){
+let q=questions[i];
+
+if(ans===q.answer){
+score++;
+play("correct");
+next();
+}else{
+attempts--;
+play("wrong");
+if(attempts<=0) next();
+}
+}
+
+function next(){
+i++;
+if(i>=questions.length) endGame();
+else loadQ();
+}
+
+function endGame(){
+document.getElementById("game").innerHTML=
+`<div class="card"><h2>Mission Complete 🕵️</h2><p>Score: ${score}/13</p></div>`;
+}
+
+/* SOUND */
+function play(type){
+if(mute) return;
+document.getElementById(type+"Sound").play().catch(()=>{});
+}
+
+/* CONFETTI SIMPLE */
+function confetti(){
+for(let i=0;i<40;i++){
+let d=document.createElement("div");
+d.style.position="fixed";
+d.style.left=Math.random()*100+"%";
+d.style.top="-10px";
+d.style.width="6px";
+d.style.height="6px";
+d.style.background="gold";
+document.body.appendChild(d);
+
+let f=setInterval(()=>{
+d.style.top=(parseInt(d.style.top||0)+5)+"px";
+if(parseInt(d.style.top)>window.innerHeight){
+clearInterval(f);
+d.remove();
+}
+},20);
+}
+}
+
+</script>
+
+</body>
+</html>
