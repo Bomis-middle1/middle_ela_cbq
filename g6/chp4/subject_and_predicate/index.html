@@ -1,1 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentence Detective Mission</title>
 
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f7ff;
+overflow:hidden;
+}
+
+/* SCREENS */
+.screen{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+text-align:center;
+}
+
+.active{display:flex;}
+
+/* SPLASH */
+#splash{
+background:white;
+}
+
+#splash img{
+width:240px;
+animation:fade 1.2s ease-in;
+}
+
+@keyframes fade{
+from{opacity:0;transform:scale(0.8);}
+to{opacity:1;transform:scale(1);}
+}
+
+/* INTRO */
+#intro{
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
+color:white;
+font-size:26px;
+font-weight:bold;
+}
+
+/* MISSION */
+#mission{
+background:#eef2ff;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:18px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+max-width:92%;
+}
+
+.title{
+font-size:22px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.btn{
+margin-top:18px;
+padding:14px 22px;
+background:#1e3a8a;
+color:white;
+border:none;
+border-radius:12px;
+font-size:16px;
+cursor:pointer;
+}
+
+/* GAME */
+#game{
+display:none;
+padding:10px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+background:#1e3a8a;
+color:white;
+padding:10px;
+border-radius:10px;
+font-size:14px;
+}
+
+.qbox{
+background:white;
+margin-top:10px;
+padding:14px;
+border-radius:12px;
+}
+
+.q{
+font-size:14px;
+font-weight:bold;
+margin-bottom:10px;
+line-height:1.4;
+}
+
+.opt{
+display:block;
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+border:2px solid #ddd;
+background:white;
+text-align:left;
+cursor:pointer;
+transition:0.2s;
+}
+
+.opt:active{
+transform:scale(0.97);
+}
+
+/* POPUP */
+#popup{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+padding:10px 18px;
+border-radius:10px;
+color:white;
+font-weight:bold;
+display:none;
+z-index:999;
+}
+
+.good{background:green;}
+.bad{background:red;}
+
+/* BADGE */
+#badge{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:gold;
+color:#000;
+padding:10px 14px;
+border-radius:20px;
+display:none;
+font-weight:bold;
+}
+
+/* SHAKE */
+.shake{
+animation:shake 0.3s;
+}
+
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-5px);}
+50%{transform:translateX(5px);}
+75%{transform:translateX(-5px);}
+100%{transform:translateX(0);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash" class="screen active">
+<img src="grade-6/english/chapter-4/assets/innovine-logo.png">
+</div>
+
+<!-- INTRO -->
+<div id="intro" class="screen">
+📘 CHAPTER 4<br><br>
+SUBJECT & PREDICATE<br><br>
+🕵️ Sentence Detectives
+</div>
+
+<!-- MISSION -->
+<div id="mission" class="screen">
+<div class="card">
+<div class="title">🏫 SENTENCE DETECTIVE MISSION</div>
+
+Can you identify the Subject and Predicate in every sentence?<br><br>
+
+✔ 13 Challenges<br>
+✔ 60 Seconds<br>
+✔ Grammar Detective Badge
+
+<br><br>
+<button class="btn" onclick="startGame()">START MISSION</button>
+</div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+<div class="topbar">
+<div>Score: <span id="score">0</span>/13</div>
+<div>⏰ <span id="time">60</span>s</div>
+<div onclick="toggleMute()">🔊</div>
+</div>
+
+<div class="qbox" id="qbox"></div>
+
+</div>
+
+<!-- POPUP -->
+<div id="popup"></div>
+
+<!-- BADGE -->
+<div id="badge"></div>
+
+<audio id="correct" src="grade-6/english/chapter-4/assets/correct.mp3"></audio>
+<audio id="wrong" src="grade-6/english/chapter-4/assets/wrong.mp3"></audio>
+<audio id="clap" src="grade-6/english/chapter-4/assets/clapping.mp3"></audio>
+
+<script>
+
+let i=0,score=0,time=60,attempt=1,mute=false;
+
+/* SPLASH FLOW */
+setTimeout(()=>{
+document.getElementById("splash").classList.remove("active");
+document.getElementById("intro").classList.add("active");
+
+setTimeout(()=>{
+document.getElementById("intro").classList.remove("active");
+document.getElementById("mission").classList.add("active");
+},3000);
+
+},5000);
+
+/* START */
+function startGame(){
+document.getElementById("mission").style.display="none";
+document.getElementById("game").style.display="block";
+loadQ();
+timer();
+}
+
+/* TIMER */
+function timer(){
+let t=setInterval(()=>{
+time--;
+document.getElementById("time").innerText=time;
+if(time<=0){
+clearInterval(t);
+endGame();
+}
+},1000);
+}
+
+/* QUESTIONS (UNCHANGED FULL) */
+const q=[
+{
+q:`Q1
+"The tall oak tree at the corner of our school fell during the storm."
+Identify complete subject.`,
+options:[
+"fell during the storm",
+"The tall oak tree at the corner of our school",
+"the corner of our school",
+"The tall oak tree"
+],
+a:1
+},
+{
+q:`Q2
+"The small brown puppy with the torn ear barked at the postman."
+What is simple subject?`,
+options:[
+"The small brown puppy",
+"barked at the postman",
+"puppy",
+"postman"
+],
+a:2
+},
+{
+q:`Q3
+"Across the playground ran the excited children."
+What is subject?`,
+options:[
+"Across the playground",
+"ran",
+"the excited children",
+"playground"
+],
+a:2
+},
+{
+q:`Q4
+"Are the science textbooks on the shelf?"
+Where is subject?`,
+options:[
+"Are",
+"the shelf",
+"on the shelf",
+"the science textbooks"
+],
+a:3
+},
+{
+q:`Q5
+"There are twelve students waiting outside the science lab."
+Real subject?`,
+options:[
+"There",
+"twelve",
+"the science lab",
+"twelve students"
+],
+a:3
+},
+{
+q:`Q6
+"The sleepy students slowly walked into the crowded hall."
+Simple predicate?`,
+options:[
+"slowly walked",
+"the sleepy students",
+"walked",
+"into the crowded hall"
+],
+a:2
+},
+{
+q:`Q7
+Which is complete sentence?`,
+options:[
+"Running through the fields.",
+"The children in the park.",
+"The birds sang sweetly at dawn.",
+"All the flowers in the garden."
+],
+a:2
+},
+{
+q:`Q8
+"The little girl laughed."
+Subject & predicate?`,
+options:[
+"subject is predicate",
+"subject: The little girl; predicate: laughed",
+"predicate is subject",
+"both subject"
+],
+a:1
+},
+{
+q:`Q9
+"The hungry cat drank the warm milk."
+Complete predicate?`,
+options:[
+"The hungry cat",
+"The hungry cat drank",
+"drank the warm milk",
+"the warm milk"
+],
+a:2
+},
+{
+q:`Q10
+Odd one out sentence`,
+options:[
+"The moon rose over the mountains.",
+"Because it was raining heavily.",
+"She sang a beautiful song.",
+"Dogs make wonderful pets."
+],
+a:1
+},
+{
+q:`Q11
+Which sentence has error?`,
+options:[
+"students arrive on time",
+"library books are exciting",
+"Opened last Tuesday",
+"no errors"
+],
+a:2
+},
+{
+q:`Q12
+"The young gymnast won three gold medals."
+If subject only written, effect?`,
+options:[
+"question formed",
+"command formed",
+"sentence fragment",
+"compound sentence"
+],
+a:2
+},
+{
+q:`Q13
+Every sentence needs?`,
+options:[
+"only subject",
+"only predicate",
+"both subject and predicate",
+"either one"
+],
+a:2
+}
+];
+
+/* LOAD */
+function loadQ(){
+attempt=1;
+let x=q[i];
+
+let html=`<div class="q">${x.q}</div>`;
+
+x.options.forEach((o,idx)=>{
+html+=`<button class="opt" onclick="check(${idx})">${o}</button>`;
+});
+
+document.getElementById("qbox").innerHTML=html;
+}
+
+/* CHECK */
+function check(ans){
+let x=q[i];
+
+if(ans===x.a){
+score++;
+document.getElementById("score").innerText=score;
+play("correct");
+show("🌟 Great Job!","good");
+next();
+}else{
+
+if(attempt===1){
+attempt++;
+shake();
+play("wrong");
+show("❌ Try Again!","bad");
+}else{
+shake();
+play("wrong");
+show("💡 Think: Sentence needs subject + predicate","bad");
+next();
+}
+}
+}
+
+/* NEXT */
+function next(){
+setTimeout(()=>{
+i++;
+if(i<q.length) loadQ();
+else endGame();
+},1000);
+}
+
+/* POPUP */
+function show(msg,type){
+let p=document.getElementById("popup");
+p.innerText=msg;
+p.className=type;
+p.style.display="block";
+
+setTimeout(()=>p.style.display="none",1000);
+}
+
+/* SHAKE */
+function shake(){
+document.getElementById("qbox").classList.add("shake");
+setTimeout(()=>{
+document.getElementById("qbox").classList.remove("shake");
+},300);
+}
+
+/* AUDIO */
+function play(id){
+if(mute) return;
+document.getElementById(id).play().catch(()=>{});
+}
+
+/* MUTE */
+function toggleMute(){
+mute=!mute;
+}
+
+/* END */
+function endGame(){
+document.getElementById("game").innerHTML=
+`<div class="card">
+<h2>🎉 Mission Complete</h2>
+<p>Score: ${score}/13</p>
+</div>`;
+}
+
+</script>
+
+</body>
+</html>
