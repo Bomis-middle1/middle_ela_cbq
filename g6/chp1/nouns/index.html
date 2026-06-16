@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mission CBQ - Nouns</title>
+<title>Grade 6 CBQ - Nouns Mission</title>
 
 <style>
 body{
@@ -13,7 +13,7 @@ background:#eef3ff;
 overflow:hidden;
 }
 
-/* FULL SCREEN PAGES */
+/* FULL SCREEN SCREENS */
 .screen{
 position:fixed;
 inset:0;
@@ -33,20 +33,21 @@ background:white;
 
 #logoScreen img{
 width:240px;
-animation:zoom 1s ease;
+animation:pop 1s ease;
 }
 
-@keyframes zoom{
+@keyframes pop{
 from{transform:scale(0.7);opacity:0;}
 to{transform:scale(1);opacity:1;}
 }
 
 /* TOPIC */
 #topicScreen{
-background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
 color:white;
 font-size:30px;
 font-weight:bold;
+padding:20px;
 }
 
 /* START */
@@ -55,7 +56,7 @@ background:#f4f7ff;
 }
 
 button{
-padding:15px 25px;
+padding:14px 24px;
 font-size:18px;
 border:none;
 border-radius:12px;
@@ -64,7 +65,7 @@ color:white;
 cursor:pointer;
 }
 
-/* GAME */
+/* GAME AREA */
 #game{
 display:none;
 padding:15px;
@@ -87,28 +88,24 @@ border-radius:12px;
 box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* CHAT STYLE */
+/* WHATSAPP STYLE BOX */
 .chat{
 background:#e8f0ff;
 padding:12px;
-border-left:4px solid #1e3a8a;
+border-left:5px solid #1e3a8a;
 border-radius:10px;
 font-size:14px;
 line-height:1.5;
 white-space:pre-line;
 margin-bottom:10px;
-animation:fade 0.4s ease;
-}
-
-@keyframes fade{
-from{opacity:0; transform:translateY(10px);}
-to{opacity:1; transform:translateY(0);}
+text-align:left;
 }
 
 /* QUESTION */
 .question{
 font-weight:bold;
 margin:10px 0;
+text-align:left;
 }
 
 /* OPTIONS */
@@ -127,7 +124,7 @@ transition:0.2s;
 
 .option:hover{
 background:#f1f5ff;
-transform:scale(1.02);
+transform:scale(1.01);
 }
 
 /* RESULT */
@@ -151,18 +148,18 @@ pointer-events:none;
 
 <body>
 
-<!-- 1 LOGO -->
+<!-- 1. LOGO SCREEN -->
 <div id="logoScreen" class="screen active">
 <img src="g6/chp1/nouns/assets/innovine-logo.png">
 </div>
 
-<!-- 2 TOPIC -->
+<!-- 2. TOPIC SCREEN -->
 <div id="topicScreen" class="screen">
 🕵️‍♂️ NOUNS MISSION<br>
 Delhi Trip Investigation
 </div>
 
-<!-- 3 START -->
+<!-- 3. START SCREEN -->
 <div id="startScreen" class="screen">
 <button onclick="startGame()">Start Mission</button>
 </div>
@@ -193,12 +190,11 @@ Delhi Trip Investigation
 
 let i=0,score=0,attempts=2,time=60,mute=false;
 
-let questions=[
+const questions=[
 
 {
 chat:true,
-q:`Q1 MISSION BRIEF:
-
+q:`Q1:
 Riya: Hey! Are you coming to the Delhi trip next week?
 
 Aarav: Yes! The school has already booked the tickets for all of us and our teachers.
@@ -209,7 +205,6 @@ Riya: A flock of pigeons was sitting on our school roof this morning — so cool
 Aarav: Don’t forget — bring courage. The heights at Qutub Minar are scary.
 
 Riya: Our class (all 42 students) is going together. It’ll be fun!`,
-
 options:[
 "A: Common noun",
 "B: Proper noun",
@@ -221,28 +216,43 @@ answer:1
 
 {
 q:`Q2:
-Aarav says he is packing a travel kit. Kit is a ____ noun.`,
-options:["A: Abstract","B: Collective","C: Material","D: Proper"],
+Aarav says he is packing a "travel kit". What kind of noun is "kit"?`,
+options:[
+"A: Abstract noun",
+"B: Collective noun",
+"C: Material noun",
+"D: Proper noun"
+],
 answer:1
 },
 
 {
 q:`Q3:
-A flock of pigeons is a ____ noun.`,
-options:["A: Common","B: Abstract","C: Material","D: Collective"],
+A flock of pigeons was sitting on our school roof. What kind of noun is "flock"?`,
+options:[
+"A: Common noun",
+"B: Abstract noun",
+"C: Material noun",
+"D: Collective noun"
+],
 answer:3
 },
 
 {
 q:`Q4:
-Courage is a ____ noun.`,
-options:["A: Common","B: Proper","C: Collective","D: Abstract"],
-answer:3
+Bring courage. What kind of noun is "courage"?`,
+options:[
+"A: Material noun",
+"B: Abstract noun",
+"C: Collective noun",
+"D: Proper noun"
+],
+answer:1
 },
 
 {
 q:`Q5:
-Class is a ____ noun.`,
+Class (all 42 students) is a ____ noun.`,
 options:["collective","proper","material","abstract"],
 answer:0
 },
@@ -273,7 +283,7 @@ answer:2
 
 {
 q:`Q8:
-Sort nouns: mango, rice, courage, trophy`,
+Sort: mango, rice, courage, trophy`,
 options:["C U A C","C C U U","U C A C","C U C U"],
 answer:0
 },
@@ -309,9 +319,7 @@ answer:2
 ];
 
 /* FLOW */
-setTimeout(()=>showTopic(),5000);
-
-function showTopic(){
+setTimeout(()=>{
 document.getElementById("logoScreen").classList.remove("active");
 document.getElementById("topicScreen").classList.add("active");
 
@@ -319,7 +327,8 @@ setTimeout(()=>{
 document.getElementById("topicScreen").classList.remove("active");
 document.getElementById("startScreen").classList.add("active");
 },3000);
-}
+
+},5000);
 
 function startGame(){
 document.getElementById("startScreen").style.display="none";
@@ -376,19 +385,25 @@ if(attempts<=0) next();
 
 function next(){
 i++;
-if(i>=questions.length) endGame();
-else loadQ();
+if(i>=questions.length){
+endGame();
+}else{
+loadQ();
+}
 }
 
 function endGame(){
 document.getElementById("game").innerHTML=
-`<h2>Mission Completed 🕵️‍♂️</h2><p>Score: ${score}/12</p>`;
+`<h2>Mission Completed 🕵️‍♂️</h2>
+<p>Score: ${score}/12</p>`;
 }
 
-/* SOUND */
+/* SOUND (FIXED SAFE PLAY) */
 function play(type){
 if(mute) return;
-document.getElementById(type+"Sound").play().catch(()=>{});
+let audio=document.getElementById(type+"Sound");
+audio.currentTime=0;
+audio.play().catch(()=>{});
 }
 
 function toggleMute(){
@@ -397,7 +412,7 @@ mute=!mute;
 
 /* CONFETTI */
 function confetti(){
-for(let i=0;i<40;i++){
+for(let i=0;i<35;i++){
 let c=document.createElement("div");
 c.style.position="fixed";
 c.style.left=Math.random()*100+"%";
