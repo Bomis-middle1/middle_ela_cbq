@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prefix & Suffix Mission</title>
+<title>Word Builder Mission</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:linear-gradient(135deg,#eef3ff,#dbeafe);
+background:#f3f6ff;
 overflow:hidden;
 }
 
@@ -26,73 +26,94 @@ text-align:center;
 
 .active{display:flex;}
 
-/* LOGO */
-#logo{
+/* SPLASH */
+#splash{
 background:white;
+opacity:0;
+animation:fadeIn 1s forwards;
 }
 
-#logo img{
-width:240px;
-animation:pop 1s ease;
+@keyframes fadeIn{
+to{opacity:1;}
 }
 
-@keyframes pop{
-from{transform:scale(0.7);opacity:0;}
-to{transform:scale(1);opacity:1;}
+#splash img{
+width:220px;
 }
 
-/* TOPIC */
-#topic{
+/* INTRO */
+#intro{
 background:linear-gradient(135deg,#1e3a8a,#2563eb);
 color:white;
-font-size:28px;
+font-size:26px;
 font-weight:bold;
+animation:fadeIn 0.5s;
+}
+
+/* BRIEFING */
+#brief{
+background:#eef2ff;
 padding:20px;
 }
 
-/* START */
-#start{
-background:#f4f7ff;
+.card{
+background:white;
+padding:18px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+max-width:90%;
 }
 
-button{
-padding:14px 22px;
+.title{
+font-size:22px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.btn{
+margin-top:20px;
+padding:14px 25px;
 border:none;
 border-radius:12px;
 background:#1e3a8a;
 color:white;
 font-size:16px;
 cursor:pointer;
+transition:0.2s;
 }
 
-/* GAME HEADER */
+.btn:active{
+transform:scale(0.95);
+}
+
+/* GAME */
+#game{
+display:none;
+padding:10px;
+}
+
 .topbar{
 display:flex;
 justify-content:space-between;
 background:#1e3a8a;
 color:white;
-padding:12px;
-font-weight:bold;
+padding:10px;
+border-radius:10px;
 }
 
-/* CARD */
-.card{
+.qbox{
 background:white;
-margin:12px;
-padding:15px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
+margin-top:10px;
+padding:14px;
+border-radius:12px;
 }
 
-/* QUESTION */
 .q{
 font-weight:bold;
+margin-bottom:10px;
 font-size:15px;
-margin-bottom:12px;
-line-height:1.4;
 }
 
-/* OPTIONS */
 .opt{
 display:block;
 width:100%;
@@ -106,9 +127,8 @@ cursor:pointer;
 transition:0.2s;
 }
 
-.opt:hover{
-background:#eff6ff;
-transform:scale(1.01);
+.opt:active{
+transform:scale(0.97);
 }
 
 /* POPUP */
@@ -122,58 +142,104 @@ border-radius:10px;
 color:white;
 font-weight:bold;
 display:none;
-z-index:9999;
+z-index:999;
 }
 
 .good{background:green;}
 .bad{background:red;}
+
+.tip{
+background:#fff3cd;
+color:#333;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+font-size:13px;
+}
+
+/* BADGE */
+#badge{
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#1e3a8a;
+color:white;
+padding:10px 15px;
+border-radius:20px;
+display:none;
+}
 </style>
 </head>
 
 <body>
 
-<!-- LOGO -->
-<div id="logo" class="screen active">
-<img src="g6/chp2/Capitalisation_and_Punctuation/assets/innovine-logo.png">
+<!-- SPLASH -->
+<div id="splash" class="screen active">
+<img src="g6/ch2/Capitalisation_and_Punctuation/assets/innovine-logo.png">
 </div>
 
-<!-- TOPIC -->
-<div id="topic" class="screen">
-PREFIX & SUFFIX MISSION
+<!-- INTRO -->
+<div id="intro" class="screen">
+🧠 WORD BUILDER MISSION<br><br>
+Prefix & Suffix Adventure
 </div>
 
-<!-- START -->
-<div id="start" class="screen">
-<button onclick="startGame()">Start Mission</button>
+<!-- BRIEFING -->
+<div id="brief" class="screen">
+<div class="card">
+<div class="title">🧪 SCIENCE FAIR MISSION</div>
+
+Can you help your team become<br><b>WORD BUILDERS?</b><br><br>
+
+✔ 12 Challenges<br>
+✔ 60 Seconds<br>
+✔ Earn Word Wizard Badge
+
+<button class="btn" onclick="startGame()">START MISSION</button>
+</div>
 </div>
 
 <!-- GAME -->
 <div id="game">
 
 <div class="topbar">
-<div>Score: <span id="score">0</span>/10</div>
-<div>⏱ <span id="time">60</span>s</div>
+<div>Score: <span id="score">0</span>/12</div>
+<div>⏱ <span id="time">60</span></div>
 </div>
 
-<div class="card" id="card"></div>
+<div class="qbox" id="qbox"></div>
 
 </div>
 
 <!-- POPUP -->
 <div id="popup"></div>
 
-<!-- AUDIO -->
-<audio id="correctSound" src="g6/chp2/Capitalisation_and_Punctuation/assets/correct.mp3"></audio>
-<audio id="wrongSound" src="g6/chp2/Capitalisation_and_Punctuation/assets/wrong.mp3"></audio>
+<!-- BADGE -->
+<div id="badge"></div>
+
+<audio id="correct" src="g6/ch2/Capitalisation_and_Punctuation/assets/correct.mp3"></audio>
+<audio id="wrong" src="g6/ch2/Capitalisation_and_Punctuation/assets/wrong.mp3"></audio>
 
 <script>
 
-let i=0,score=0,time=60,unlocked=false;
+let i=0,score=0,time=60,attempt=1;
 
-/* AUDIO UNLOCK */
+/* SPLASH FLOW */
+setTimeout(()=>{
+document.getElementById("splash").classList.remove("active");
+document.getElementById("intro").classList.add("active");
+
+setTimeout(()=>{
+document.getElementById("intro").classList.remove("active");
+document.getElementById("brief").classList.add("active");
+},3000);
+
+},5000);
+
+/* START */
 function startGame(){
-unlocked=true;
-document.getElementById("start").style.display="none";
+document.getElementById("brief").style.display="none";
 document.getElementById("game").style.display="block";
 loadQ();
 timer();
@@ -188,133 +254,144 @@ if(time<=0) endGame();
 },1000);
 }
 
-/* QUESTIONS (FULL – NOT SHORTENED) */
+/* QUESTIONS */
 const q=[
 {
-q:`Q1. Which option correctly fills ALL SIX blanks in the Science Fair poster?
-
-"Our team is working on water ___ (purify→noun). We want to ___ (design→again). The judges look for ___ (create→adjective) thinking. It is ___ (possible→not) to finish without teamwork. The project helps ___ (act→between groups) among students. We hope our ___ (invent→noun) inspires the school."`,
+q:`Q1. Science Fair Poster – Fill all blanks:
+Our team is working on water purification... redesign... creative thinking...`,
 options:[
-"purification / redesign / creative / impossible / interact / invention",
-"purifyment / redesign / creatious / unpossible / interact / inventment",
-"purification / design / creative / impossible / interaction / inventing",
-"purifying / redesign / creation / impossible / interact / invention"
+"A. purification / redesign / creative / impossible / interaction / invention",
+"B. purifyment / redesign / creatious / unpossible / inventment / interact",
+"C. purification / design / creative / impossible / interaction / inventing",
+"D. purifying / redesign / creation / impossible / interaction / invention"
 ],
-a:0
+a:0,
+tip:"Prefixes come before root words. Suffixes change word forms."
 },
-
 {
-q:`Q2. What does prefix "re-" in redesign mean?`,
+q:`Q2. What does 're-' in redesign mean?`,
 options:[
-"Design new from scratch",
-"Design for first time",
-"Design again and improve",
-"Cannot design"
+"A. first time design",
+"B. design again and improve",
+"C. stop designing",
+"D. design smaller"
 ],
-a:2
+a:1,
+tip:"re- means again."
 },
-
 {
-q:`Q3. developation and interactation correction rule?`,
+q:`Q3. developation vs interactation correction`,
 options:[
-"Both correct",
-"Need -ment / -tion rules correction",
-"Both are verbs",
-"Both unchanged"
+"A. correct as written",
+"B. development / interaction",
+"C. both verbs",
+"D. no change"
 ],
-a:1
+a:1,
+tip:"-tion forms noun from verb."
 },
-
 {
-q:`Q4. Fill Instagram caption correctly:
-creative→___, invent→___, inspire→___, pride→___`,
+q:`Q4. Instagram caption fill`,
 options:[
-"creativity / invention / inspirational / proud",
-"creative / invention / inspiring / proudness",
-"creativeness / inventation / inspireful / proud",
-"creativity / inventment / inspireful / proud"
+"A. creativity / invention / inspirational / proud",
+"B. creative / invent / inspiring / proudness",
+"C. creativeness / inventation / proudful / inspire",
+"D. creativity / inventment / inspireful / pride"
 ],
-a:0
+a:0,
+tip:"-ity and -ion make nouns."
 },
-
 {
-q:`Q5. '-ed' in performed, interacted means?`,
+q:`Q5. -ed in verbs means?`,
 options:[
-"New meaning words",
-"Inflectional past tense only",
-"Prefix rule",
-"Noun making"
+"A. noun form",
+"B. past tense",
+"C. adjective",
+"D. prefix"
 ],
-a:1
+a:1,
+tip:"-ed shows past action."
 },
-
 {
-q:`Q6. Which uses im- correctly?`,
+q:`Q6. Correct im- word`,
 options:[
-"imhappy",
-"impossible",
-"imwrite",
-"imgo"
+"A. imhappy",
+"B. impossible",
+"C. imwrite",
+"D. imgo"
 ],
-a:1
+a:1,
+tip:"im- means not."
 },
-
 {
-q:`Q7. Match prefixes:
-impossible, rewrite, interact, unhappy`,
+q:`Q7. Prefix meanings`,
 options:[
-"not, again, between, not",
-"again, not, between, not",
-"between, not, again, not",
-"not, between, again, not"
+"A. not again between not",
+"B. again not between not",
+"C. between again not not",
+"D. not between again not"
 ],
-a:0
+a:0,
+tip:"re=again, im=not, inter=between."
 },
-
 {
-q:`Q8. Odd one out (not prefix meaning 'not')`,
+q:`Q8. Odd one out`,
 options:[
-"impossible",
-"invisible",
-"incomplete",
-"interact"
+"A. impossible",
+"B. invisible",
+"C. incomplete",
+"D. interact"
 ],
-a:3
+a:3,
+tip:"inter means between."
 },
-
 {
-q:`Q9. creativeness mistake correction`,
+q:`Q9. creativeness error fix`,
 options:[
-"Correct word is creativeness",
-"Should be creative after very",
-"Both correct",
-"No issue"
+"A. correct",
+"B. use creative",
+"C. use creativity",
+"D. remove sentence"
 ],
-a:1
+a:1,
+tip:"very needs adjective."
 },
-
 {
-q:`Q10. happy → happiness shows what?`,
+q:`Q10. happy → happiness means`,
 options:[
-"Meaning changes fully",
-"Adjective to noun change (-ness)",
-"Tense change",
-"Wrong sentence"
+"A. meaning change",
+"B. adjective to noun",
+"C. tense change",
+"D. wrong sentence"
 ],
-a:1
+a:1,
+tip:"-ness makes noun."
+},
+{
+q:`Q11. Assertion Reason`,
+options:[
+"A. both correct linked",
+"B. both correct not linked",
+"C. assertion correct reason wrong",
+"D. both wrong"
+],
+a:0,
+tip:"-ed is inflectional."
 }
 ];
 
 /* LOAD */
 function loadQ(){
+attempt=1;
 let x=q[i];
-let html=`<div class="q">${x.q}</div>`;
+
+let html=`<div class='q'><b>${x.q}</b></div>`;
 
 x.options.forEach((o,idx)=>{
-html+=`<button class="opt" onclick="check(${idx})">${o}</button>`;
+html+=`<button class='opt' onclick='check(${idx})'>${o}</button>`;
 });
 
-document.getElementById("card").innerHTML=html;
+document.getElementById("qbox").innerHTML=html;
 }
 
 /* CHECK */
@@ -324,13 +401,47 @@ let x=q[i];
 if(ans===x.a){
 score++;
 document.getElementById("score").innerText=score;
-popup("Correct ✔","good");
-play("correctSound");
+show("Correct ✔","good");
+play("correct");
+next();
 }else{
-popup("Wrong ✖","bad");
-play("wrongSound");
+
+if(attempt===1){
+attempt++;
+show("Try Again ✖","bad");
+play("wrong");
+}else{
+show("Wrong ✔ Answer shown","bad");
+showTip(x.tip);
+next();
+}
+}
 }
 
+/* TIP */
+function showTip(t){
+let tip=document.createElement("div");
+tip.className="tip";
+tip.innerText="💡 " + t;
+document.querySelector(".qbox").appendChild(tip);
+}
+
+/* POPUP */
+function show(msg,type){
+let p=document.getElementById("popup");
+p.innerText=msg;
+p.className=type;
+p.style.display="block";
+setTimeout(()=>p.style.display="none",900);
+}
+
+/* AUDIO */
+function play(id){
+document.getElementById(id).play().catch(()=>{});
+}
+
+/* NEXT */
+function next(){
 setTimeout(()=>{
 i++;
 if(i<q.length) loadQ();
@@ -338,26 +449,28 @@ else endGame();
 },800);
 }
 
-/* POPUP */
-function popup(msg,type){
-let p=document.getElementById("popup");
-p.innerText=msg;
-p.className=type;
-p.style.display="block";
-
-setTimeout(()=>p.style.display="none",800);
-}
-
-/* SOUND */
-function play(id){
-if(!unlocked) return;
-document.getElementById(id).play().catch(()=>{});
-}
-
 /* END */
 function endGame(){
 document.getElementById("game").innerHTML=
-`<div class="card"><h2>Mission Completed 🎉</h2><p>Score: ${score}/10</p></div>`;
+`<div class="card">
+<h2>🎉 Mission Complete</h2>
+<p>Score: ${score}/12</p>
+</div>`;
+
+if(score>=10){
+showBadge("🏆 Word Wizard Badge");
+}else if(score>=7){
+showBadge("🥈 Word Builder Badge");
+}else{
+showBadge("🥉 Word Learner Badge");
+}
+}
+
+/* BADGE */
+function showBadge(text){
+let b=document.getElementById("badge");
+b.innerText=text;
+b.style.display="block";
 }
 
 </script>
