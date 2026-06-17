@@ -1,1 +1,324 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 6 - Adjectives</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:linear-gradient(135deg,#eef6ff,#ffffff);
+    overflow:hidden;
+}
+
+/* SPLASH */
+#splash{
+    position:fixed;
+    inset:0;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+#splash img{width:220px}
+
+/* SCREEN */
+.screen{display:none;height:100vh;padding:10px;}
+.active{display:block}
+
+/* CARD */
+.card{
+    max-width:900px;
+    margin:auto;
+    background:white;
+    padding:16px;
+    border-radius:16px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.12);
+    height:92vh;
+    overflow-y:auto;
+}
+
+/* TOP */
+#topbar{
+    display:flex;
+    justify-content:space-between;
+    font-weight:bold;
+}
+
+/* QUESTION */
+#question{
+    white-space:pre-wrap;
+    line-height:1.6;
+}
+
+/* OPTIONS */
+.option{
+    width:100%;
+    margin:8px 0;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#f2f2f2;
+    text-align:left;
+    cursor:pointer;
+}
+
+/* MCQ OPTIONS */
+.mcq{
+    margin-top:10px;
+}
+
+/* DRAG AREA */
+.drag-area{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:10px 0;
+}
+
+.item{
+    padding:10px;
+    background:#fff3cd;
+    border-radius:8px;
+    cursor:grab;
+    border:1px solid #ddd;
+}
+
+/* BIN */
+.bins{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin-top:10px;
+}
+
+.bin{
+    min-height:80px;
+    border:2px dashed #888;
+    border-radius:10px;
+    padding:10px;
+    text-align:center;
+    background:#f9f9f9;
+}
+
+.correct{background:#b7f7b7 !important;}
+.wrong{background:#ffb3b3 !important;}
+</style>
+</head>
+
+<body>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/clapping.mp3"></audio>
+
+<!-- SPLASH -->
+<div id="splash">
+    <img src="assets/innovine-logo.png">
+</div>
+
+<!-- INTRO -->
+<div id="intro" class="screen active">
+<div class="card">
+<h2>Grade 6 English</h2>
+<p>Chapter 6: Adjectives</p>
+<button onclick="start()" class="option">Start Quiz</button>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+<div class="card">
+
+<div id="topbar">
+<div>Score: <span id="score">0</span></div>
+<div>⏱ <span id="timer">45</span>s</div>
+</div>
+
+<div id="question"></div>
+
+<div id="dragQ3" style="display:none;">
+<p><b>Drag items into correct bins</b></p>
+
+<div class="drag-area">
+<div class="item" draggable="true" data-type="quantity">little milk</div>
+<div class="item" draggable="true" data-type="number">three apples</div>
+<div class="item" draggable="true" data-type="quantity">some bread</div>
+<div class="item" draggable="true" data-type="demonstrative">that pizza</div>
+</div>
+
+<div class="bins">
+<div class="bin" data-bin="quality">Quality</div>
+<div class="bin" data-bin="number">Number</div>
+<div class="bin" data-bin="quantity">Quantity</div>
+<div class="bin" data-bin="demonstrative">Demonstrative</div>
+</div>
+
+<button onclick="checkQ3()" class="option">Submit Answer</button>
+</div>
+
+<div id="options"></div>
+
+</div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen">
+<div class="card">
+<h2>Quiz Completed 🎉</h2>
+<p>Your Score: <span id="final"></span></p>
+<button onclick="location.reload()" class="option">Play Again</button>
+</div>
+</div>
+
+<script>
+
+let i=0,score=0,timer;
+let q3Answers = {};
+
+setTimeout(()=>document.getElementById("splash").style.display="none",5000);
+
+function start(){
+document.getElementById("intro").classList.remove("active");
+document.getElementById("quiz").classList.add("active");
+load();
+}
+
+const questions=[
+{
+type:"mcq",
+q:`Q1. Japanese and peaceful are what type of adjectives?`,
+options:["Quality/Number","Proper/Quality","Quantity/Demonstrative","Possessive/Proper"],
+a:1
+},
+{
+type:"mcq",
+q:`Q2. some and two are?`,
+options:["Quantity/Number","Quality/Quantity","Demonstrative/Number","Interrogative/Quality"],
+a:0
+},
+
+/* Q3 DRAG DROP */
+{
+type:"drag",
+q:`Q3. A fridge has four sticky notes.`,
+},
+
+{
+type:"mcq",
+q:`Q4. This vs mine usage`,
+options:["A","B","C","D"],
+a:1
+}
+];
+
+function load(){
+clearInterval(timer);
+let q=questions[i];
+
+document.getElementById("question").innerText=q.q;
+
+/* Q3 DRAG */
+if(q.type==="drag"){
+document.getElementById("dragQ3").style.display="block";
+document.getElementById("options").innerHTML="";
+}else{
+document.getElementById("dragQ3").style.display="none";
+
+let html="";
+q.options.forEach((op,idx)=>{
+html+=`<button class="option" onclick="check(${idx})">${op}</button>`;
+});
+document.getElementById("options").innerHTML=html;
+}
+
+/* TIMER */
+let t=45;
+document.getElementById("timer").innerText=t;
+
+timer=setInterval(()=>{
+t--;
+document.getElementById("timer").innerText=t;
+if(t<=0) next();
+},1000);
+}
+
+/* DRAG LOGIC */
+document.addEventListener("dragstart",(e)=>{
+if(e.target.classList.contains("item")){
+e.dataTransfer.setData("text",e.target.dataset.type);
+e.dataTransfer.setData("el",e.target.innerText);
+}
+});
+
+document.querySelectorAll(".bin").forEach(bin=>{
+bin.addEventListener("dragover",e=>e.preventDefault());
+bin.addEventListener("drop",e=>{
+let type=e.dataTransfer.getData("text");
+let text=e.dataTransfer.getData("el");
+
+let div=document.createElement("div");
+div.innerText=text;
+div.dataset.type=type;
+bin.appendChild(div);
+q3Answers[text]=bin.dataset.bin;
+});
+});
+
+function checkQ3(){
+let correct={
+"little milk":"quantity",
+"three apples":"number",
+"some bread":"quantity",
+"that pizza":"demonstrative"
+};
+
+let ok=true;
+
+for(let key in correct){
+if(q3Answers[key]!==correct[key]) ok=false;
+}
+
+if(ok){
+document.getElementById("correctSound").play();
+score++;
+}else{
+document.getElementById("wrongSound").play();
+}
+
+next();
+}
+
+function check(idx){
+let q=questions[i];
+if(idx===q.a){
+document.getElementById("correctSound").play();
+score++;
+}else{
+document.getElementById("wrongSound").play();
+}
+next();
+}
+
+function next(){
+clearInterval(timer);
+i++;
+if(i<questions.length) load();
+else end();
+}
+
+function end(){
+document.getElementById("quiz").classList.remove("active");
+document.getElementById("result").classList.add("active");
+document.getElementById("final").innerText=score;
+document.getElementById("clapSound").play();
+}
+
+</script>
+
+</body>
+</html>
