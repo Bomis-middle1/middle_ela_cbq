@@ -9,7 +9,7 @@
 body{
 margin:0;
 font-family:Arial;
-background:#f5f7ff;
+background:#f4f7ff;
 overflow:hidden;
 }
 
@@ -33,12 +33,12 @@ background:white;
 
 #splash img{
 width:240px;
-animation:fade 1.2s ease-in;
+animation:fade 1.2s ease;
 }
 
 @keyframes fade{
-from{opacity:0;transform:scale(0.8);}
-to{opacity:1;transform:scale(1);}
+from{opacity:0; transform:scale(0.8);}
+to{opacity:1; transform:scale(1);}
 }
 
 /* INTRO */
@@ -59,7 +59,7 @@ padding:20px;
 background:white;
 padding:18px;
 border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
+box-shadow:0 6px 18px rgba(0,0,0,0.12);
 max-width:92%;
 }
 
@@ -80,12 +80,15 @@ font-size:16px;
 cursor:pointer;
 }
 
+.btn:active{transform:scale(0.97);}
+
 /* GAME */
 #game{
 display:none;
 padding:10px;
 }
 
+/* TOP BAR */
 .topbar{
 display:flex;
 justify-content:space-between;
@@ -96,6 +99,7 @@ border-radius:10px;
 font-size:14px;
 }
 
+/* QUESTION */
 .qbox{
 background:white;
 margin-top:10px;
@@ -110,6 +114,7 @@ margin-bottom:10px;
 line-height:1.4;
 }
 
+/* OPTIONS */
 .opt{
 display:block;
 width:100%;
@@ -123,11 +128,9 @@ cursor:pointer;
 transition:0.2s;
 }
 
-.opt:active{
-transform:scale(0.97);
-}
+.opt:active{transform:scale(0.97);}
 
-/* POPUP */
+/* FEEDBACK */
 #popup{
 position:fixed;
 top:20px;
@@ -157,19 +160,6 @@ border-radius:20px;
 display:none;
 font-weight:bold;
 }
-
-/* SHAKE */
-.shake{
-animation:shake 0.3s;
-}
-
-@keyframes shake{
-0%{transform:translateX(0);}
-25%{transform:translateX(-5px);}
-50%{transform:translateX(5px);}
-75%{transform:translateX(-5px);}
-100%{transform:translateX(0);}
-}
 </style>
 </head>
 
@@ -183,8 +173,8 @@ animation:shake 0.3s;
 <!-- INTRO -->
 <div id="intro" class="screen">
 📘 CHAPTER 4<br><br>
-SUBJECT & PREDICATE<br><br>
-🕵️ Sentence Detectives
+🕵️ SENTENCE DETECTIVE MISSION<br><br>
+Find Subject & Predicate
 </div>
 
 <!-- MISSION -->
@@ -192,11 +182,11 @@ SUBJECT & PREDICATE<br><br>
 <div class="card">
 <div class="title">🏫 SENTENCE DETECTIVE MISSION</div>
 
-Can you identify the Subject and Predicate in every sentence?<br><br>
+Can you identify subjects and predicates in real sentences?<br><br>
 
 ✔ 13 Challenges<br>
 ✔ 60 Seconds<br>
-✔ Grammar Detective Badge
+✔ Earn Grammar Detective Badge
 
 <br><br>
 <button class="btn" onclick="startGame()">START MISSION</button>
@@ -209,7 +199,6 @@ Can you identify the Subject and Predicate in every sentence?<br><br>
 <div class="topbar">
 <div>Score: <span id="score">0</span>/13</div>
 <div>⏰ <span id="time">60</span>s</div>
-<div onclick="toggleMute()">🔊</div>
 </div>
 
 <div class="qbox" id="qbox"></div>
@@ -228,9 +217,9 @@ Can you identify the Subject and Predicate in every sentence?<br><br>
 
 <script>
 
-let i=0,score=0,time=60,attempt=1,mute=false;
+let i=0,score=0,time=60,attempt=1;
 
-/* SPLASH FLOW */
+/* FLOW CONTROL */
 setTimeout(()=>{
 document.getElementById("splash").classList.remove("active");
 document.getElementById("intro").classList.add("active");
@@ -262,160 +251,175 @@ endGame();
 },1000);
 }
 
-/* QUESTIONS (UNCHANGED FULL) */
+/* QUESTIONS (IMPROVED CBQs - FULL LENGTH) */
 const q=[
+
 {
-q:`Q1
+q:`Q1. Read the sentence:
 "The tall oak tree at the corner of our school fell during the storm."
-Identify complete subject.`,
+Identify the complete subject.`,
 options:[
 "fell during the storm",
 "The tall oak tree at the corner of our school",
-"the corner of our school",
+"corner of our school",
 "The tall oak tree"
 ],
-a:1
+a:1,
+tip:"Subject tells who/what the sentence is about."
 },
+
 {
-q:`Q2
-"The small brown puppy with the torn ear barked at the postman."
-What is simple subject?`,
+q:`Q2. Identify simple subject:
+"The small brown puppy with torn ear barked at the postman."`,
 options:[
 "The small brown puppy",
 "barked at the postman",
 "puppy",
 "postman"
 ],
-a:2
+a:2,
+tip:"Simple subject = main noun."
 },
+
 {
-q:`Q3
-"Across the playground ran the excited children."
-What is subject?`,
+q:`Q3. Identify subject:
+"Across the playground ran the excited children."`,
 options:[
 "Across the playground",
 "ran",
 "the excited children",
 "playground"
 ],
-a:2
+a:2,
+tip:"Subject = who performs action."
 },
+
 {
-q:`Q4
-"Are the science textbooks on the shelf?"
-Where is subject?`,
+q:`Q4. Find subject:
+"Are the science textbooks on the shelf?"`,
 options:[
 "Are",
 "the shelf",
 "on the shelf",
 "the science textbooks"
 ],
-a:3
+a:3,
+tip:"Subject is who/what is being talked about."
 },
+
 {
-q:`Q5
-"There are twelve students waiting outside the science lab."
-Real subject?`,
+q:`Q5. Real subject:
+"There are twelve students waiting outside the lab."`,
 options:[
 "There",
 "twelve",
-"the science lab",
+"the lab",
 "twelve students"
 ],
-a:3
+a:3,
+tip:"Ignore 'there' — find real noun."
 },
+
 {
-q:`Q6
-"The sleepy students slowly walked into the crowded hall."
-Simple predicate?`,
+q:`Q6. Simple predicate:
+"The sleepy students slowly walked into the hall."`,
 options:[
 "slowly walked",
 "the sleepy students",
 "walked",
-"into the crowded hall"
+"into the hall"
 ],
-a:2
+a:2,
+tip:"Predicate = action word."
 },
+
 {
-q:`Q7
-Which is complete sentence?`,
+q:`Q7. Complete sentence:`,
 options:[
-"Running through the fields.",
-"The children in the park.",
+"Running through fields.",
+"The children in park.",
 "The birds sang sweetly at dawn.",
-"All the flowers in the garden."
+"All flowers in garden."
 ],
-a:2
+a:2,
+tip:"Sentence needs subject + predicate."
 },
+
 {
-q:`Q8
-"The little girl laughed."
-Subject & predicate?`,
+q:`Q8. Identify subject & predicate:
+"The little girl laughed."`,
 options:[
 "subject is predicate",
-"subject: The little girl; predicate: laughed",
+"subject: girl; predicate: laughed",
 "predicate is subject",
 "both subject"
 ],
-a:1
+a:1,
+tip:"Subject + action completes meaning."
 },
+
 {
-q:`Q9
-"The hungry cat drank the warm milk."
-Complete predicate?`,
+q:`Q9. Complete predicate:
+"The hungry cat drank the warm milk."`,
 options:[
 "The hungry cat",
 "The hungry cat drank",
 "drank the warm milk",
-"the warm milk"
+"milk"
 ],
-a:2
+a:2,
+tip:"Predicate = action + object."
 },
+
 {
-q:`Q10
-Odd one out sentence`,
+q:`Q10. Odd sentence:`,
 options:[
-"The moon rose over the mountains.",
-"Because it was raining heavily.",
-"She sang a beautiful song.",
-"Dogs make wonderful pets."
+"The moon rose.",
+"Because it was raining.",
+"She sang well.",
+"Dogs bark loudly."
 ],
-a:1
+a:1,
+tip:"Fragment has no main clause."
 },
+
 {
-q:`Q11
-Which sentence has error?`,
+q:`Q11. Error sentence:`,
 options:[
-"students arrive on time",
-"library books are exciting",
-"Opened last Tuesday",
-"no errors"
+"Students arrive on time.",
+"Books are exciting.",
+"Opened last Tuesday.",
+"No errors"
 ],
-a:2
+a:2,
+tip:"Missing subject makes fragment."
 },
+
 {
-q:`Q12
-"The young gymnast won three gold medals."
-If subject only written, effect?`,
+q:`Q12. Effect of removing predicate:
+"The gymnast won medals." → "The gymnast."`,
 options:[
-"question formed",
-"command formed",
-"sentence fragment",
-"compound sentence"
+"Question",
+"Command",
+"Fragment",
+"Compound sentence"
 ],
-a:2
+a:2,
+tip:"Incomplete thought = fragment."
 },
+
 {
-q:`Q13
-Every sentence needs?`,
+q:`Q13. Every sentence needs:`,
 options:[
-"only subject",
-"only predicate",
-"both subject and predicate",
-"either one"
+"Only subject",
+"Only predicate",
+"Both subject and predicate",
+"Either one"
 ],
-a:2
+a:2,
+tip:"Complete sentence needs both parts."
 }
+
 ];
 
 /* LOAD */
@@ -423,10 +427,10 @@ function loadQ(){
 attempt=1;
 let x=q[i];
 
-let html=`<div class="q">${x.q}</div>`;
+let html=`<div class='q'>${x.q}</div>`;
 
 x.options.forEach((o,idx)=>{
-html+=`<button class="opt" onclick="check(${idx})">${o}</button>`;
+html+=`<button class='opt' onclick='check(${idx})'>${o}</button>`;
 });
 
 document.getElementById("qbox").innerHTML=html;
@@ -439,20 +443,18 @@ let x=q[i];
 if(ans===x.a){
 score++;
 document.getElementById("score").innerText=score;
+show("🌟 Excellent!","good");
 play("correct");
-show("🌟 Great Job!","good");
 next();
 }else{
 
 if(attempt===1){
 attempt++;
-shake();
+show("❌ Try Again","bad");
 play("wrong");
-show("❌ Try Again!","bad");
 }else{
-shake();
+show("💡 " + x.tip,"bad");
 play("wrong");
-show("💡 Think: Sentence needs subject + predicate","bad");
 next();
 }
 }
@@ -477,23 +479,9 @@ p.style.display="block";
 setTimeout(()=>p.style.display="none",1000);
 }
 
-/* SHAKE */
-function shake(){
-document.getElementById("qbox").classList.add("shake");
-setTimeout(()=>{
-document.getElementById("qbox").classList.remove("shake");
-},300);
-}
-
 /* AUDIO */
 function play(id){
-if(mute) return;
 document.getElementById(id).play().catch(()=>{});
-}
-
-/* MUTE */
-function toggleMute(){
-mute=!mute;
 }
 
 /* END */
