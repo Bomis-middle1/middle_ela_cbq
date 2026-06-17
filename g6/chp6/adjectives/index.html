@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Grade 6 - Adjectives</title>
+<title>Grade 6 English - Adjectives</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -21,7 +21,6 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    z-index:9999;
 }
 #splash img{width:220px}
 
@@ -29,7 +28,7 @@ body{
 .screen{display:none;height:100vh;padding:10px;}
 .active{display:block}
 
-/* CARD FIX */
+/* CARD */
 .card{
     max-width:900px;
     margin:auto;
@@ -52,17 +51,15 @@ body{
 #question{
     white-space:pre-wrap;
     line-height:1.6;
-    font-size:16px;
 }
 
 /* IMAGE */
 #qimg{
     width:60%;
-    max-height:180px;
+    max-height:170px;
     object-fit:contain;
     display:block;
     margin:10px auto;
-    border-radius:10px;
 }
 
 /* OPTIONS */
@@ -74,7 +71,6 @@ body{
     border-radius:10px;
     background:#f2f2f2;
     text-align:left;
-    font-size:16px;
     cursor:pointer;
     white-space:normal;
 }
@@ -83,15 +79,6 @@ body{
 
 .correct{background:#b7f7b7 !important;}
 .wrong{background:#ffb3b3 !important;}
-
-.btn{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:#4a90e2;
-    color:white;
-}
 </style>
 </head>
 
@@ -103,7 +90,7 @@ body{
 
 <!-- SPLASH -->
 <div id="splash">
-    <img src="assets/innovine-logo.png">
+<img src="assets/innovine-logo.png">
 </div>
 
 <!-- INTRO -->
@@ -111,7 +98,7 @@ body{
 <div class="card">
 <h2>Grade 6 English</h2>
 <p>Chapter 6: Adjectives</p>
-<button class="btn" onclick="start()">Start Quiz</button>
+<button onclick="start()" class="option">Start Quiz</button>
 </div>
 </div>
 
@@ -136,7 +123,7 @@ body{
 <div class="card">
 <h2>Quiz Completed 🎉</h2>
 <p>Your Score: <span id="final"></span>/10</p>
-<button class="btn" onclick="location.reload()">Play Again</button>
+<button onclick="location.reload()" class="option">Play Again</button>
 </div>
 </div>
 
@@ -144,7 +131,7 @@ body{
 
 const questions = [
 
-/* Q1 (VERBATIM) */
+/* Q1 EXACT */
 {
 q:`Q1. You are reading a travel brochure: "The Japanese tea ceremony is a peaceful experience."
 What types of adjectives are Japanese and peaceful?`,
@@ -157,7 +144,7 @@ options:[
 a:1
 },
 
-/* Q2 */
+/* Q2 EXACT */
 {
 q:`Q2. A chef says, "I need some sugar and two eggs for this cake."
 Identify the types of adjectives used for some and two.`,
@@ -170,7 +157,7 @@ options:[
 a:0
 },
 
-/* Q3 IMAGE (FULL TEXT RESTORED) */
+/* Q3 IMAGE EXACT */
 {
 q:`Q3. A fridge has four sticky notes.
 • We have little milk left.
@@ -188,25 +175,25 @@ options:[
 a:1
 },
 
-/* Q4 */
+/* Q4 EXACT */
 {
 q:`Q4. Read the two sentences carefully.
 Sentence A: This is my book.
 Sentence B: This book is mine.
 In which sentence is This used as a Demonstrative Adjective?`,
 options:[
-"A. Sentence A",
-"B. Sentence B",
-"C. Both sentences",
-"D. Neither sentence"
+"A. Sentence A, because \"This\" stands alone.",
+"B. Sentence B, because \"This\" describes the noun \"book.\"",
+"C. Both sentences.",
+"D. Neither sentence."
 ],
 a:1
 },
 
-/* Q5 */
+/* Q5 EXACT */
 {
 q:`Q5. Sort these adjectives into Adjectives of Number and Adjectives of Quantity.
-P. few Q. much R. several S. little`,
+P. few       Q. much     R. several      S. little`,
 options:[
 "A. Number: P, Q | Quantity: R, S",
 "B. Number: Q, S | Quantity: P, R",
@@ -216,7 +203,7 @@ options:[
 a:2
 },
 
-/* Q6 */
+/* Q6 EXACT */
 {
 q:`Q6. Classify the underlined adjectives.
 1. Whose pen is this?
@@ -232,7 +219,7 @@ options:[
 a:1
 },
 
-/* Q7 */
+/* Q7 EXACT */
 {
 q:`Q7. A teacher says, "One of these adjectives cannot describe an uncountable noun."
 Which one is it?`,
@@ -245,7 +232,7 @@ options:[
 a:3
 },
 
-/* Q8 */
+/* Q8 EXACT */
 {
 q:`Q8. A student sends this message: "I don't have many milk left in the fridge. Can you buy some?"
 Which adjective is used incorrectly, and why?`,
@@ -258,28 +245,29 @@ options:[
 a:0
 },
 
-/* Q9 */
+/* Q9 EXACT */
 {
-q:`Q9. He likes food from Italy. → He likes Italian food.
+q:`Q9. A student rewrites this sentence:
+He likes food from Italy. as -He likes Italian food.
 What change has been made?`,
 options:[
-"A. Proper Adjective used",
-"B. Quality changed",
-"C. Demonstrative changed",
-"D. Number changed"
+"A. The phrase \"from Italy\" has been replaced by the Proper Adjective Italian.",
+"B. A Proper Adjective has been changed into a Quality Adjective.",
+"C. A Demonstrative Adjective has become a Possessive Adjective.",
+"D. A Number Adjective has become a Quantity Adjective."
 ],
 a:0
 },
 
-/* Q10 */
+/* Q10 EXACT */
 {
-q:`Q10. Assertion: ten is Adjective of Number.
-Reason: It shows how many.`,
+q:`Q10. Assertion: In the phrase "ten mangoes," ten is an Adjective of Number.
+Reason: Adjectives of Number are used with countable nouns to show how many.`,
 options:[
-"A. Both correct, reason explains",
-"B. Both correct, no relation",
-"C. Assertion correct, reason wrong",
-"D. Both incorrect"
+"A. Both are correct, and the reason correctly explains the assertion.",
+"B. Both are correct, but the reason does not explain the assertion.",
+"C. The assertion is correct, but the reason is incorrect.",
+"D. Both are incorrect."
 ],
 a:0
 }
@@ -288,7 +276,6 @@ a:0
 
 let i=0,score=0,timer;
 
-/* SPLASH */
 setTimeout(()=>document.getElementById("splash").style.display="none",5000);
 
 function start(){
@@ -317,7 +304,6 @@ html+=`<button class="option" onclick="check(${idx},this)">${op}</button>`;
 });
 document.getElementById("options").innerHTML=html;
 
-/* TIMER */
 let t=45;
 document.getElementById("timer").innerText=t;
 
@@ -329,16 +315,13 @@ if(t<=0) next();
 }
 
 function check(idx,btn){
-
 if(idx===questions[i].a){
 btn.classList.add("correct");
-document.getElementById("correctSound").play();
 score++;
 document.getElementById("score").innerText=score;
 setTimeout(next,700);
 }else{
 btn.classList.add("wrong");
-document.getElementById("wrongSound").play();
 setTimeout(next,800);
 }
 }
@@ -354,7 +337,6 @@ function end(){
 document.getElementById("quiz").classList.remove("active");
 document.getElementById("result").classList.add("active");
 document.getElementById("final").innerText=score;
-document.getElementById("clapSound").play();
 }
 
 </script>
