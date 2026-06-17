@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Grade 6 - Kinds of Sentences</title>
+<title>Grade 6 English - Kinds of Sentences</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -13,10 +13,11 @@ body{
     overflow:hidden;
 }
 
+/* SPLASH */
 #splash{
     position:fixed;
     inset:0;
-    background:#fff;
+    background:white;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -24,9 +25,11 @@ body{
 }
 #splash img{width:220px}
 
+/* SCREEN */
 .screen{display:none;height:100vh;padding:15px;}
 .active{display:block}
 
+/* CARD */
 .card{
     max-width:800px;
     margin:auto;
@@ -36,20 +39,24 @@ body{
     box-shadow:0 6px 18px rgba(0,0,0,0.12);
 }
 
+/* QUESTION */
 #question{
     white-space:pre-wrap;
     line-height:1.6;
     font-size:16px;
 }
 
+/* IMAGE */
 #qimg{
     width:100%;
     max-height:240px;
     object-fit:contain;
     margin:10px 0;
     display:none;
+    border-radius:10px;
 }
 
+/* OPTIONS */
 .option{
     width:100%;
     margin:10px 0;
@@ -59,22 +66,23 @@ body{
     background:#f2f2f2;
     text-align:left;
     font-size:16px;
+    cursor:pointer;
 }
-
 .option:hover{background:#e6e6e6}
 
 .correct{background:#c8f7c5 !important;}
 .wrong{background:#ffd6d6 !important;}
 
+/* TOP */
 #topbar{
     display:flex;
     justify-content:space-between;
     font-weight:bold;
     margin-bottom:10px;
 }
-
 #timer{color:#d9534f}
 
+/* BUTTON */
 .btn{
     width:100%;
     padding:12px;
@@ -130,94 +138,153 @@ body{
 
 <script>
 
-/* ================= EXACT QUESTIONS (UNCHANGED) ================= */
+/* ================= QUESTIONS ================= */
 const questions = [
 {
-text:`Q1. You see this sticker on your water bottle:
+q:`Q1. You see this sticker on your water bottle:
 "Drink more water every day."
 What kind of sentence is it?`,
 options:["Declarative","Interrogative","Imperative","Exclamatory"],
 answer:2
 },
 {
-text:`Q2. Your friend sends you a message:
+q:`Q2. Your friend sends you a message:
 "Did you finish the science homework?"`,
 options:["Declarative","Interrogative","Imperative","Exclamatory"],
 answer:1
 },
 {
-text:`Q3. Aarav jumps into a cold swimming pool and shouts,
-"How freezing the water is!"`,
-options:["Declarative","Interrogative","Imperative","Exclamatory"],
-answer:3
+q:`Q3. Aarav jumps into a cold swimming pool and shouts,
+"How freezing the water is!"
+Later, he writes about the experience in his diary. Which sentence is the best diary entry?`,
+options:["How cold is the water?","Don't touch the cold water.","The water was very cold.","The water was not cold."],
+answer:2
 },
 {
-text:`Q4. A teacher writes:
-"He is always on time."`,
-options:["He is never on time","He is never late","Is he ever on time","He not always on time"],
+q:`Q4. A teacher writes in a report:
+"He is always on time."
+She wants to rewrite it using the word "never" without changing the meaning.
+Which sentence is correct?`,
+options:["He is never on time.","He is never late.","Is he ever on time?","He is not always on time."],
 answer:1
 },
 {
-text:`Q5. Convert to question form:
-"It was a great victory for the team."`,
-options:["Was it a great victory for the team?","It was a great victory?","Did it was victory?","How great victory!"],
+q:`Q5. After winning a match, the captain says,
+"It was a great victory for the team."
+A reporter wants to ask this as a question.
+Which sentence is correct?`,
+options:["Was it a great victory for the team?","It was a great victory for the team?","Did it was a great victory for the team?","How great the victory was!"],
 answer:0
 },
 {
-text:`Q6. The class notice board has these four notes.`,
+q:`Q6. The class notice board has these four notes.
+Note 1: The trip is on Friday.
+Note 2: Wear your school uniform!
+Note 3: What an exciting day this will be!
+Note 4: Is your permission slip ready?
+Match each note with its correct sentence type.`,
 img:"assets/question6.png",
 options:[
-"1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
-"1=Declarative, 2=Imperative, 3=Exclamatory, 4=Interrogative",
-"1=Interrogative, 2=Declarative, 3=Exclamatory, 4=Imperative",
-"1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
+"A. 1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
+"B. 1=Declarative, 2=Imperative, 3=Exclamatory, 4=Interrogative",
+"C. 1=Interrogative, 2=Declarative, 3=Exclamatory, 4=Imperative",
+"D. 1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
 ],
 answer:1
 },
 {
-text:`Q7. A student forgot punctuation.`,
+q:`Q7. A student forgot to add punctuation to these sentences.
+1. Stop talking ___
+2. Where is my bag ___
+3. I love ice cream ___
+Which option correctly completes them?`,
 img:"assets/question7.png",
-options:["! ? .",". . !","? . !","! ! ?"],
+options:["A. ! ? .","B. . . !","C. ? . !","D. ! ! ?"],
 answer:0
 },
 {
-text:`Q8. Which is negative declarative sentence?`,
-options:["Don't go","Why not","She does not like apples","What a shame"],
+q:`Q8. Which sentence is a negative declarative sentence?`,
+options:["A. Don't go there.","B. Why are you not coming?","C. She does not like apples.","D. What a shame that he lost!"],
 answer:2
 },
 {
-text:`Q9. Meaning of statement form`,
-options:["All live forever","No person can live forever","Can live forever","Live forever"],
+q:`Q9. A student asks,
+"Can any person live forever?"
+What is the actual meaning when written as a statement?`,
+options:["A. Every person can live forever.","B. No person can live forever.","C. Can a person live forever?","D. Live forever, everyone."],
 answer:1
 },
 {
-text:`Q10. Sort sentences`,
-options:["P,R Q,S","Q,S P,R","P,S Q,R","Q,R P,S"],
-answer:1
-},
-{
-text:`Q11. Group sentences`,
-options:["A","B","C","D"],
-answer:1
-},
-{
-text:`Q12. Odd one out`,
-options:["A","B","C","D"],
+q:`Q10. Sort these sentences into Imperative and Exclamatory.
+P. What a goal that was!
+Q. Please sit down quietly.
+R. How beautiful the sunset looks!
+S. Always respect your elders.`,
+options:[
+"A. Imperative: P, R | Exclamatory: Q, S",
+"B. Imperative: Q, R | Exclamatory: P, S",
+"C. Imperative: Q, S | Exclamatory: P, R",
+"D. Imperative: P, S | Exclamatory: Q, R"
+],
 answer:2
 },
 {
-text:`Q13. Imperative error`,
-options:["A","B","C","D"],
+q:`Q11. A student has written four sentences.
+Which option correctly groups the Imperative and Declarative sentences?`,
+options:[
+"A. Imperative: Wash your hands. / The sun rises in the east. Declarative: Close the door. / Birds fly south in winter.",
+"B. Imperative: Wash your hands. / Close the door. Declarative: The sun rises in the east. / Birds fly south in winter.",
+"C. Imperative: The sun rises in the east. / Birds fly south in winter. Declarative: Wash your hands. / Close the door.",
+"D. Imperative: Close the door. / Birds fly south in winter. Declarative: Wash your hands. / The sun rises in the east."
+],
 answer:1
 },
 {
-text:`Q14. Effect of change`,
-options:["A","B","C","D"],
+q:`Q12. Three of these are Imperative sentences.
+One is not.
+Which is the odd one out?`,
+options:[
+"A. Switch off the lights before you leave.",
+"B. Please hand in your homework tomorrow.",
+"C. What a wonderful surprise this is!",
+"D. Always tell the truth."
+],
+answer:2
+},
+{
+q:`Q13. A student is writing cooking instructions.
+Which sentence does not correctly use the Imperative form?`,
+options:[
+"A. First, wash the vegetables.",
+"B. Then, you are cutting them into small pieces.",
+"C. Add a pinch of salt.",
+"D. Serve the dish hot."
+],
 answer:1
 },
 {
-text:`Q15. Best email sentence`,
-options:["A","B","C","D"],
+q:`Q14. A student changes
+"What a terrible mess this is!"
+to
+"This is a terrible mess."
+What is the effect of this change?`,
+options:[
+"A. It becomes an Interrogative sentence.",
+"B. It loses its emotion and becomes a Declarative sentence.",
+"C. It becomes an Imperative sentence.",
+"D. It becomes grammatically incorrect."
+],
+answer:1
+},
+{
+q:`Q15. You are writing a polite email to your teacher asking them to explain a Maths problem again.
+Which sentence is the most appropriate?`,
+options:[
+"A. Explain this Maths problem again!",
+"B. Why can't you explain this problem again?",
+"C. Please explain this Maths problem again.",
+"D. You will explain this Maths problem again."
+],
 answer:2
 }
 ];
@@ -234,53 +301,35 @@ load();
 }
 
 function load(){
-
 clearInterval(timer);
+let q=questions[i];
 
-let q = questions[i];
-
-document.getElementById("question").innerText = q.text;
+document.getElementById("question").innerText=q.q;
 
 /* IMAGE */
 let img=document.getElementById("qimg");
-if(q.img){
-img.src=q.img;
-img.style.display="block";
-}else{
-img.style.display="none";
-}
+if(q.img){ img.src=q.img; img.style.display="block"; }else{ img.style.display="none"; }
 
 /* OPTIONS */
 let html="";
 q.options.forEach((op,idx)=>{
 html+=`<button class="option" onclick="check(${idx},this)">${op}</button>`;
 });
-
 document.getElementById("options").innerHTML=html;
 
 /* TIMER */
 let t=45;
 document.getElementById("timer").innerText=t;
-
 timer=setInterval(()=>{
 t--;
 document.getElementById("timer").innerText=t;
 if(t<=0) next();
 },1000);
-
 }
 
 function check(idx,btn){
-
-if(idx===questions[i].answer){
-btn.classList.add("correct");
-score++;
-document.getElementById("score").innerText=score;
-setTimeout(next,700);
-}else{
-btn.classList.add("wrong");
-setTimeout(next,900);
-}
+if(idx===questions[i].answer){ btn.classList.add("correct"); score++; document.getElementById("score").innerText=score; setTimeout(next,700);}
+else{ btn.classList.add("wrong"); setTimeout(next,900);}
 }
 
 function next(){
