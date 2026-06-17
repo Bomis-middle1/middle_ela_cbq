@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Grade 6 English - Adjectives</title>
+<title>Grade 6 - Adjectives</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -19,41 +19,34 @@ body{
     inset:0;
     background:white;
     display:flex;
-    align-items:center;
     justify-content:center;
+    align-items:center;
     z-index:9999;
 }
 #splash img{width:220px}
 
 /* SCREEN */
-.screen{
-    display:none;
-    height:100vh;
-    padding:10px;
-}
+.screen{display:none;height:100vh;padding:10px;}
 .active{display:block}
 
-/* CARD (FIXED SCROLL ISSUE) */
+/* CARD FIX */
 .card{
-    max-width:850px;
+    max-width:900px;
     margin:auto;
     background:white;
     padding:16px;
     border-radius:16px;
     box-shadow:0 6px 18px rgba(0,0,0,0.12);
-
     height:92vh;
     overflow-y:auto;
 }
 
-/* TOP BAR */
+/* TOP */
 #topbar{
     display:flex;
     justify-content:space-between;
     font-weight:bold;
-    margin-bottom:10px;
 }
-#timer{color:#d9534f}
 
 /* QUESTION */
 #question{
@@ -64,8 +57,8 @@ body{
 
 /* IMAGE */
 #qimg{
-    width:55%;
-    max-height:160px;
+    width:60%;
+    max-height:180px;
     object-fit:contain;
     display:block;
     margin:10px auto;
@@ -84,14 +77,13 @@ body{
     font-size:16px;
     cursor:pointer;
     white-space:normal;
-    word-break:break-word;
 }
+
 .option:hover{background:#e6e6e6}
 
 .correct{background:#b7f7b7 !important;}
 .wrong{background:#ffb3b3 !important;}
 
-/* BUTTON */
 .btn{
     width:100%;
     padding:12px;
@@ -99,14 +91,12 @@ body{
     border-radius:10px;
     background:#4a90e2;
     color:white;
-    font-size:16px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- AUDIO -->
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/clapping.mp3"></audio>
@@ -119,9 +109,9 @@ body{
 <!-- INTRO -->
 <div id="intro" class="screen active">
 <div class="card">
-    <h2>Grade 6 English</h2>
-    <p>Chapter 6: Adjectives</p>
-    <button class="btn" onclick="start()">Start Quiz</button>
+<h2>Grade 6 English</h2>
+<p>Chapter 6: Adjectives</p>
+<button class="btn" onclick="start()">Start Quiz</button>
 </div>
 </div>
 
@@ -130,8 +120,8 @@ body{
 <div class="card">
 
 <div id="topbar">
-    <div>Score: <span id="score">0</span></div>
-    <div>⏱ <span id="timer">45</span>s</div>
+<div>Score: <span id="score">0</span></div>
+<div>⏱ <span id="timer">45</span>s</div>
 </div>
 
 <div id="question"></div>
@@ -144,9 +134,9 @@ body{
 <!-- RESULT -->
 <div id="result" class="screen">
 <div class="card">
-    <h2>Quiz Completed 🎉</h2>
-    <p>Your Score: <span id="final"></span>/10</p>
-    <button class="btn" onclick="location.reload()">Play Again</button>
+<h2>Quiz Completed 🎉</h2>
+<p>Your Score: <span id="final"></span>/10</p>
+<button class="btn" onclick="location.reload()">Play Again</button>
 </div>
 </div>
 
@@ -154,6 +144,7 @@ body{
 
 const questions = [
 
+/* Q1 (VERBATIM) */
 {
 q:`Q1. You are reading a travel brochure: "The Japanese tea ceremony is a peaceful experience."
 What types of adjectives are Japanese and peaceful?`,
@@ -166,6 +157,7 @@ options:[
 a:1
 },
 
+/* Q2 */
 {
 q:`Q2. A chef says, "I need some sugar and two eggs for this cake."
 Identify the types of adjectives used for some and two.`,
@@ -178,8 +170,9 @@ options:[
 a:0
 },
 
+/* Q3 IMAGE (FULL TEXT RESTORED) */
 {
-q:`Q3. A fridge has four sticky notes:
+q:`Q3. A fridge has four sticky notes.
 • We have little milk left.
 • There are three apples inside.
 • Buy some bread.
@@ -195,8 +188,11 @@ options:[
 a:1
 },
 
+/* Q4 */
 {
-q:`Q4. This is my book. This book is mine.
+q:`Q4. Read the two sentences carefully.
+Sentence A: This is my book.
+Sentence B: This book is mine.
 In which sentence is This used as a Demonstrative Adjective?`,
 options:[
 "A. Sentence A",
@@ -207,20 +203,22 @@ options:[
 a:1
 },
 
+/* Q5 */
 {
-q:`Q5. Sort adjectives into Number and Quantity:
-few, much, several, little`,
+q:`Q5. Sort these adjectives into Adjectives of Number and Adjectives of Quantity.
+P. few Q. much R. several S. little`,
 options:[
-"A. Number: few, much | Quantity: several, little",
-"B. Number: much, little | Quantity: few, several",
-"C. Number: few, several | Quantity: much, little",
-"D. Number: several, little | Quantity: few, much"
+"A. Number: P, Q | Quantity: R, S",
+"B. Number: Q, S | Quantity: P, R",
+"C. Number: P, R | Quantity: Q, S",
+"D. Number: R, S | Quantity: P, Q"
 ],
 a:2
 },
 
+/* Q6 */
 {
-q:`Q6. Classify adjectives:
+q:`Q6. Classify the underlined adjectives.
 1. Whose pen is this?
 2. Her bag is on the desk.
 3. Which route is shorter?
@@ -234,8 +232,10 @@ options:[
 a:1
 },
 
+/* Q7 */
 {
-q:`Q7. Which cannot describe uncountable nouns?`,
+q:`Q7. A teacher says, "One of these adjectives cannot describe an uncountable noun."
+Which one is it?`,
 options:[
 "A. much",
 "B. little",
@@ -245,37 +245,39 @@ options:[
 a:3
 },
 
+/* Q8 */
 {
-q:`Q8. Identify error:
-I don't have many milk left. Can you buy some?`,
+q:`Q8. A student sends this message: "I don't have many milk left in the fridge. Can you buy some?"
+Which adjective is used incorrectly, and why?`,
 options:[
-"A. many → much",
-"B. some → any",
-"C. many → few",
-"D. No error"
+"A. many — milk is uncountable, so much should be used.",
+"B. some should be replaced with any.",
+"C. many should be replaced with few.",
+"D. There is no error."
 ],
 a:0
 },
 
+/* Q9 */
 {
-q:`Q9. He likes food from Italy → He likes Italian food.
-What change is made?`,
+q:`Q9. He likes food from Italy. → He likes Italian food.
+What change has been made?`,
 options:[
 "A. Proper Adjective used",
-"B. Quality changed to Quantity",
+"B. Quality changed",
 "C. Demonstrative changed",
-"D. Number adjective used"
+"D. Number changed"
 ],
 a:0
 },
 
+/* Q10 */
 {
-q:`Q10. Assertion-Reason:
-Assertion: ten is Adjective of Number.
+q:`Q10. Assertion: ten is Adjective of Number.
 Reason: It shows how many.`,
 options:[
 "A. Both correct, reason explains",
-"B. Both correct, but no relation",
+"B. Both correct, no relation",
 "C. Assertion correct, reason wrong",
 "D. Both incorrect"
 ],
