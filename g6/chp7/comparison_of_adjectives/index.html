@@ -62,6 +62,7 @@ body{
     cursor:pointer;
     white-space:normal;
 }
+
 .option:hover{background:#e6e6e6}
 
 .correct{background:#b7f7b7 !important;}
@@ -78,16 +79,16 @@ body{
 }
 </style>
 </head>
+
 <body>
 
-<!-- AUDIO -->
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/clapping.mp3"></audio>
 
 <!-- SPLASH -->
 <div id="splash">
-    <img src="assets/innovine-logo.png">
+<img src="assets/innovine-logo.png">
 </div>
 
 <!-- INTRO -->
@@ -237,7 +238,6 @@ clearInterval(timer);
 let q=questions[i];
 document.getElementById("question").innerText=q.q;
 document.getElementById("options").innerHTML="";
-document.getElementById("qimg").style.display="none";
 
 q.options.forEach((op,idx)=>{
     let btn=document.createElement("button");
