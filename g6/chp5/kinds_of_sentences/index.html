@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Grade 6 English - Kinds of Sentences</title>
+<title>Grade 6 - Kinds of Sentences</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -19,8 +19,8 @@ body{
     inset:0;
     background:white;
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
     z-index:9999;
 }
 #splash img{width:220px}
@@ -31,7 +31,7 @@ body{
 
 /* CARD */
 .card{
-    max-width:900px;
+    max-width:800px;
     margin:auto;
     background:white;
     padding:18px;
@@ -46,20 +46,20 @@ body{
     font-size:16px;
 }
 
-/* IMAGE */
-#qimg{
-    width:100%;
-    max-height:250px;
+/* IMAGE FIX (IMPORTANT) */
+.qimg{
+    width:70%;
+    max-height:180px;
     object-fit:contain;
-    margin:10px 0;
+    display:block;
+    margin:10px auto;
     border-radius:10px;
-    display:none;
 }
 
 /* OPTIONS */
 .option{
     width:100%;
-    margin:10px 0;
+    margin:8px 0;
     padding:12px;
     border:none;
     border-radius:10px;
@@ -68,17 +68,17 @@ body{
     font-size:16px;
     cursor:pointer;
 }
+
 .option:hover{background:#e6e6e6}
 
-.correct{background:#c8f7c5 !important;}
-.wrong{background:#ffd6d6 !important;}
+.correct{background:#b7f7b7 !important;}
+.wrong{background:#ffb3b3 !important;}
 
 /* TOP */
 #topbar{
     display:flex;
     justify-content:space-between;
     font-weight:bold;
-    margin-bottom:10px;
 }
 #timer{color:#d9534f}
 
@@ -92,10 +92,28 @@ body{
     color:white;
     font-size:16px;
 }
+
+/* CONFETTI */
+.confetti{
+    position:fixed;
+    width:8px;
+    height:8px;
+    background:gold;
+    top:-10px;
+    animation:fall 1s linear forwards;
+}
+@keyframes fall{
+    to{transform:translateY(600px) rotate(360deg);opacity:0}
+}
 </style>
 </head>
 
 <body>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/clapping.mp3"></audio>
 
 <!-- SPLASH -->
 <div id="splash">
@@ -121,7 +139,7 @@ body{
 </div>
 
 <div id="question"></div>
-<img id="qimg">
+<img id="qimg" class="qimg">
 <div id="options"></div>
 
 </div>
@@ -137,155 +155,74 @@ body{
 </div>
 
 <script>
-/* ================= FULL QUESTIONS ================= */
+
 const questions = [
 {
 q:`Q1. You see this sticker on your water bottle:
 "Drink more water every day."
 What kind of sentence is it?`,
-options:["A. Declarative","B. Interrogative","C. Imperative","D. Exclamatory"],
-answer:2
+options:["Declarative","Interrogative","Imperative","Exclamatory"],
+a:2
 },
 {
-q:`Q2. Your friend sends you a message:
-"Did you finish the science homework?"
-What kind of sentence is this?`,
-options:["A. Declarative","B. Interrogative","C. Imperative","D. Exclamatory"],
-answer:1
+q:`Q2. Your friend sends:
+"Did you finish the science homework?"`,
+options:["Declarative","Interrogative","Imperative","Exclamatory"],
+a:1
 },
 {
-q:`Q3. Aarav jumps into a cold swimming pool and shouts,
-"How freezing the water is!"
-Later, he writes about the experience in his diary. Which sentence is the best diary entry?`,
-options:["A. How cold is the water?","B. Don't touch the cold water.","C. The water was very cold.","D. The water was not cold."],
-answer:2
+q:`Q3. Aarav shouts:
+"How freezing the water is!"`,
+options:["Declarative","Interrogative","Imperative","Exclamatory"],
+a:3
 },
 {
-q:`Q4. A teacher writes in a report:
-"He is always on time."
-She wants to rewrite it using the word "never" without changing the meaning.
-Which sentence is correct?`,
-options:["A. He is never on time.","B. He is never late.","C. Is he ever on time?","D. He is not always on time."],
-answer:1
+q:`Q4. He is always on time → rewrite using never`,
+options:["He is never on time","He is never late","Is he ever on time","Not always"],
+a:1
 },
 {
-q:`Q5. After winning a match, the captain says,
-"It was a great victory for the team."
-A reporter wants to ask this as a question.
-Which sentence is correct?`,
-options:["A. Was it a great victory for the team?","B. It was a great victory for the team?","C. Did it was a great victory for the team?","D. How great the victory was!"],
-answer:0
+q:`Q5. Convert to question form`,
+options:["Was it a great victory?","It was a great victory?","Did it was victory?","How great!"],
+a:0
 },
+
+/* Q6 IMAGE */
 {
-q:`Q6. The class notice board has these four notes.
-Note 1: The trip is on Friday.
-Note 2: Wear your school uniform!
-Note 3: What an exciting day this will be!
-Note 4: Is your permission slip ready?
-Match each note with its correct sentence type.`,
+q:`Q6. Match sentence types shown in the image`,
 img:"assets/question6.png",
 options:[
-"A. 1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
-"B. 1=Declarative, 2=Imperative, 3=Exclamatory, 4=Interrogative",
-"C. 1=Interrogative, 2=Declarative, 3=Exclamatory, 4=Imperative",
-"D. 1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
+"1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
+"1=Declarative, 2=Imperative, 3=Exclamatory, 4=Interrogative",
+"1=Interrogative, 2=Declarative, 3=Exclamatory, 4=Imperative",
+"1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
 ],
-answer:1
+a:1
 },
+
+/* Q7 IMAGE */
 {
-q:`Q7. A student forgot to add punctuation to these sentences.
-1. Stop talking ___
-2. Where is my bag ___
-3. I love ice cream ___
-Which option correctly completes them?`,
+q:`Q7. Punctuation task shown in image`,
 img:"assets/question7.png",
-options:["A. ! ? .","B. . . !","C. ? . !","D. ! ! ?"],
-answer:0
+options:["! ? .",". . !","? . !","! ! ?"],
+a:0
 },
+
 {
-q:`Q8. Which sentence is a negative declarative sentence?`,
-options:["A. Don't go there.","B. Why are you not coming?","C. She does not like apples.","D. What a shame that he lost!"],
-answer:2
+q:`Q8. Negative declarative sentence`,
+options:["Don't go","Why not","She does not like apples","What a shame"],
+a:2
 },
+
 {
-q:`Q9. A student asks,
-"Can any person live forever?"
-What is the actual meaning when written as a statement?`,
-options:["A. Every person can live forever.","B. No person can live forever.","C. Can a person live forever?","D. Live forever, everyone."],
-answer:1
-},
-{
-q:`Q10. Sort these sentences into Imperative and Exclamatory.
-P. What a goal that was!
-Q. Please sit down quietly.
-R. How beautiful the sunset looks!
-S. Always respect your elders.`,
-options:[
-"A. Imperative: P, R | Exclamatory: Q, S",
-"B. Imperative: Q, R | Exclamatory: P, S",
-"C. Imperative: Q, S | Exclamatory: P, R",
-"D. Imperative: P, S | Exclamatory: Q, R"
-],
-answer:2
-},
-{
-q:`Q11. A student has written four sentences.
-Which option correctly groups the Imperative and Declarative sentences?`,
-options:[
-"A. Imperative: Wash your hands. / The sun rises in the east. Declarative: Close the door. / Birds fly south in winter.",
-"B. Imperative: Wash your hands. / Close the door. Declarative: The sun rises in the east. / Birds fly south in winter.",
-"C. Imperative: The sun rises in the east. / Birds fly south in winter. Declarative: Wash your hands. / Close the door.",
-"D. Imperative: Close the door. / Birds fly south in winter. Declarative: Wash your hands. / The sun rises in the east."
-],
-answer:1
-},
-{
-q:`Q12. Three of these are Imperative sentences. One is not. Which is the odd one out?`,
-options:[
-"A. Switch off the lights before you leave.",
-"B. Please hand in your homework tomorrow.",
-"C. What a wonderful surprise this is!",
-"D. Always tell the truth."
-],
-answer:2
-},
-{
-q:`Q13. A student is writing cooking instructions. Which sentence does not correctly use the Imperative form?`,
-options:[
-"A. First, wash the vegetables.",
-"B. Then, you are cutting them into small pieces.",
-"C. Add a pinch of salt.",
-"D. Serve the dish hot."
-],
-answer:1
-},
-{
-q:`Q14. A student changes
-"What a terrible mess this is!" to "This is a terrible mess."
-What is the effect of this change?`,
-options:[
-"A. It becomes an Interrogative sentence.",
-"B. It loses its emotion and becomes a Declarative sentence.",
-"C. It becomes an Imperative sentence.",
-"D. It becomes grammatically incorrect."
-],
-answer:1
-},
-{
-q:`Q15. You are writing a polite email to your teacher asking them to explain a Maths problem again. Which sentence is the most appropriate?`,
-options:[
-"A. Explain this Maths problem again!",
-"B. Why can't you explain this problem again?",
-"C. Please explain this Maths problem again.",
-"D. You will explain this Maths problem again."
-],
-answer:2
+q:`Q9. Meaning of statement form`,
+options:["All live forever","No person can live forever","Can live forever","Live forever"],
+a:1
 }
 ];
 
 let i=0,score=0,timer;
 
-/* SPLASH */
 setTimeout(()=>document.getElementById("splash").style.display="none",5000);
 
 function start(){
@@ -297,11 +234,17 @@ load();
 function load(){
 clearInterval(timer);
 let q=questions[i];
+
 document.getElementById("question").innerText=q.q;
 
 /* IMAGE */
 let img=document.getElementById("qimg");
-if(q.img){ img.src=q.img; img.style.display="block"; } else { img.style.display="none"; }
+if(q.img){
+img.src=q.img;
+img.style.display="block";
+}else{
+img.style.display="none";
+}
 
 /* OPTIONS */
 let html="";
@@ -313,6 +256,7 @@ document.getElementById("options").innerHTML=html;
 /* TIMER */
 let t=45;
 document.getElementById("timer").innerText=t;
+
 timer=setInterval(()=>{
 t--;
 document.getElementById("timer").innerText=t;
@@ -321,8 +265,21 @@ if(t<=0) next();
 }
 
 function check(idx,btn){
-if(idx===questions[i].answer){ btn.classList.add("correct"); score++; document.getElementById("score").innerText=score; setTimeout(next,700);}
-else{ btn.classList.add("wrong"); setTimeout(next,900);}
+
+let correct = questions[i].a;
+
+if(idx===correct){
+btn.classList.add("correct");
+document.getElementById("correctSound").play();
+score++;
+document.getElementById("score").innerText=score;
+confetti();
+setTimeout(next,800);
+}else{
+btn.classList.add("wrong");
+document.getElementById("wrongSound").play();
+setTimeout(next,800);
+}
 }
 
 function next(){
@@ -336,7 +293,19 @@ function end(){
 document.getElementById("quiz").classList.remove("active");
 document.getElementById("result").classList.add("active");
 document.getElementById("final").innerText=score;
+document.getElementById("clapSound").play();
 }
+
+function confetti(){
+for(let i=0;i<25;i++){
+let d=document.createElement("div");
+d.className="confetti";
+d.style.left=Math.random()*100+"vw";
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),1000);
+}
+}
+
 </script>
 
 </body>
