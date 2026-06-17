@@ -26,13 +26,15 @@ body{margin:0;font-family:Arial;background:linear-gradient(135deg,#eef6ff,#fffff
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/clapping.mp3"></audio>
 
-<div id="splash"><img src="assets/innovine-logo.png"></div>
+<div id="splash">
+<img src="assets/innovine-logo.png">
+</div>
 
 <div id="intro" class="screen active">
 <div class="card">
 <h2>Grade 6 English</h2>
 <p>Chapter 7: Comparison of Adjectives</p>
-<button onclick="start()" class="btn">Start Quiz</button>
+<button id="startBtn" class="btn">Start Quiz</button>
 </div>
 </div>
 
@@ -56,6 +58,7 @@ body{margin:0;font-family:Arial;background:linear-gradient(135deg,#eef6ff,#fffff
 </div>
 
 <script>
+// Quiz data
 const questions=[
 {q:`Q1. A YouTuber reviews two phones: "The new smartphone is thinner than the previous model."
 What is the reviewer doing by using thinner?`,options:["A. Stating a simple quality of one phone","B. Comparing two specific models to show a difference","C. Claiming this phone is the thinnest in the world","D. Expressing a negative opinion about the phone"],a:1},
@@ -102,58 +105,63 @@ What is the effect of this change?`,options:["A. It becomes grammatically incorr
 Reason: A superlative adjective identifies one person or thing as the highest or lowest within a group.`,options:["A. Both are correct, and the reason correctly explains the assertion.","B. Both are correct, but the reason does not explain the assertion.","C. The assertion is correct, but the reason is incorrect.","D. Both are incorrect."],a:0}
 ];
 
-let i=0,score=0,timer;
+let currentIndex=0,score=0,timer;
+
 setTimeout(()=>document.getElementById("splash").classList.remove("active"),5000);
+
+document.getElementById("startBtn").addEventListener("click",start);
 
 function start(){
 document.getElementById("intro").classList.remove("active");
 document.getElementById("quiz").classList.add("active");
-load();
+loadQuestion();
 }
 
-function load(){
+function loadQuestion(){
 clearInterval(timer);
-let q=questions[i];
+let q=questions[currentIndex];
 document.getElementById("question").innerText=q.q;
-document.getElementById("options").innerHTML="";
-q.options.forEach((op,idx)=>{
-    let btn=document.createElement("button");
+const optionsDiv=document.getElementById("options");
+optionsDiv.innerHTML="";
+q.options.forEach((optionText,idx)=>{
+    const btn=document.createElement("button");
     btn.className="option";
-    btn.innerText=op;
-    btn.onclick=function(){check(idx,this)};
-    document.getElementById("options").appendChild(btn);
+    btn.innerText=optionText;
+    btn.onclick=function(){checkAnswer(idx,btn)};
+    optionsDiv.appendChild(btn);
 });
 let t=45;
 document.getElementById("timer").innerText=t;
 timer=setInterval(()=>{
 t--;
 document.getElementById("timer").innerText=t;
-if(t<=0) next();
+if(t<=0) nextQuestion();
 },1000);
 }
 
-function check(idx,btn){
-if(idx===questions[i].a){
+function checkAnswer(idx,btn){
+clearInterval(timer);
+if(idx===questions[currentIndex].a){
 btn.classList.add("correct");
 document.getElementById("correctSound").play();
 score++;
 document.getElementById("score").innerText=score;
-setTimeout(next,700);
+setTimeout(nextQuestion,700);
 }else{
 btn.classList.add("wrong");
 document.getElementById("wrongSound").play();
-setTimeout(next,800);
+setTimeout(nextQuestion,800);
 }
 }
 
-function next(){
+function nextQuestion(){
 clearInterval(timer);
-i++;
-if(i<questions.length) load();
-else end();
+currentIndex++;
+if(currentIndex<questions.length) loadQuestion();
+else showResult();
 }
 
-function end(){
+function showResult(){
 document.getElementById("quiz").classList.remove("active");
 document.getElementById("result").classList.add("active");
 document.getElementById("final").innerText=score;
