@@ -4,94 +4,30 @@
 <meta charset="UTF-8">
 <title>Grade 6 English - Comparison of Adjectives</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:linear-gradient(135deg,#eef6ff,#ffffff);
-    overflow:hidden;
-}
-#splash{
-    position:fixed;
-    inset:0;
-    background:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-}
-#splash img{width:220px}
-
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#eef6ff,#ffffff);}
+#splash{position:fixed;inset:0;background:white;display:flex;justify-content:center;align-items:center;z-index:9999;}
+#splash img{width:220px;}
 .screen{display:none;height:100vh;padding:10px;}
-.active{display:block}
-
-.card{
-    max-width:900px;
-    margin:auto;
-    background:white;
-    padding:16px;
-    border-radius:16px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.12);
-    height:92vh;
-    overflow-y:auto;
-}
-
-#topbar{
-    display:flex;
-    justify-content:space-between;
-    font-weight:bold;
-    margin-bottom:10px;
-}
-
-#question{
-    white-space:pre-wrap;
-    line-height:1.6;
-    font-size:16px;
-}
-
-.option{
-    width:100%;
-    margin:8px 0;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:#f2f2f2;
-    text-align:left;
-    font-size:16px;
-    cursor:pointer;
-    white-space:normal;
-}
-
-.option:hover{background:#e6e6e6}
-
+.active{display:block;}
+.card{max-width:900px;margin:auto;background:white;padding:16px;border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,0.12);height:92vh;overflow-y:auto;}
+#topbar{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:10px;}
+#question{white-space:pre-wrap;line-height:1.6;font-size:16px;}
+.option{width:100%;margin:8px 0;padding:12px;border:none;border-radius:10px;background:#f2f2f2;text-align:left;font-size:16px;cursor:pointer;white-space:normal;}
+.option:hover{background:#e6e6e6;}
 .correct{background:#b7f7b7 !important;}
 .wrong{background:#ffb3b3 !important;}
-
-.btn{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:#4a90e2;
-    color:white;
-    font-size:16px;
-}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;background:#4a90e2;color:white;font-size:16px;}
 </style>
 </head>
-
 <body>
 
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/clapping.mp3"></audio>
 
-<!-- SPLASH -->
-<div id="splash">
-<img src="assets/innovine-logo.png">
-</div>
+<div id="splash"><img src="assets/innovine-logo.png"></div>
 
-<!-- INTRO -->
 <div id="intro" class="screen active">
 <div class="card">
 <h2>Grade 6 English</h2>
@@ -100,22 +36,17 @@ body{
 </div>
 </div>
 
-<!-- QUIZ -->
 <div id="quiz" class="screen">
 <div class="card">
-
 <div id="topbar">
 <div>Score: <span id="score">0</span></div>
 <div>⏱ <span id="timer">45</span>s</div>
 </div>
-
 <div id="question"></div>
 <div id="options"></div>
-
 </div>
 </div>
 
-<!-- RESULT -->
 <div id="result" class="screen">
 <div class="card">
 <h2>Quiz Completed 🎉</h2>
@@ -127,105 +58,52 @@ body{
 <script>
 const questions=[
 {q:`Q1. A YouTuber reviews two phones: "The new smartphone is thinner than the previous model."
-What is the reviewer doing by using thinner?`,options:[
-"A. Stating a simple quality of one phone",
-"B. Comparing two specific models to show a difference",
-"C. Claiming this phone is the thinnest in the world",
-"D. Expressing a negative opinion about the phone"],a:1},
+What is the reviewer doing by using thinner?`,options:["A. Stating a simple quality of one phone","B. Comparing two specific models to show a difference","C. Claiming this phone is the thinnest in the world","D. Expressing a negative opinion about the phone"],a:1},
 
 {q:`Q2. A commentator says: "Virat is a great batsman, but today's innings was his best."
-How does the meaning change between great and best?`,options:[
-"A. 'Great' compares him to others; 'best' describes him alone.",
-"B. 'Great' describes a general quality, while 'best' compares this innings with all his other innings.",
-"C. Both words mean exactly the same thing.",
-"D. 'Great' is incorrect; it should be 'more great'."],a:1},
+How does the meaning change between great and best?`,options:["A. 'Great' compares him to others; 'best' describes him alone.","B. 'Great' describes a general quality, while 'best' compares this innings with all his other innings.","C. Both words mean exactly the same thing.","D. 'Great' is incorrect; it should be 'more great'."],a:1},
 
-{q:`Q3. You want to tell a friend that no other city in the state is as large as Mumbai. Which sentence expresses this idea most accurately?`,options:[
-"A. Mumbai is a large city.",
-"B. Mumbai is larger than Pune.",
-"C. Mumbai is the largest city in the state.",
-"D. Pune is not as large as Mumbai."],a:2},
+{q:`Q3. You want to tell a friend that no other city in the state is as large as Mumbai. Which sentence expresses this idea most accurately?`,options:["A. Mumbai is a large city.","B. Mumbai is larger than Pune.","C. Mumbai is the largest city in the state.","D. Pune is not as large as Mumbai."],a:2},
 
 {q:`Q4. A textbook states: "Iron is heavier than wood."
-If you want to begin the sentence with Wood, which sentence is correct?`,options:[
-"A. Wood is not as heavy as iron.",
-"B. Iron is the heaviest.",
-"C. Wood is heavy.",
-"D. Iron is more heavy than wood."],a:0},
+If you want to begin the sentence with Wood, which sentence is correct?`,options:["A. Wood is not as heavy as iron.","B. Iron is the heaviest.","C. Wood is heavy.","D. Iron is more heavy than wood."],a:0},
 
 {q:`Q5. In a story, a villain is described as bad, his boss is worse, and the monster is the worst.
-Why are these called irregular comparisons?`,options:[
-"A. They follow the -er/-est rule perfectly.",
-"B. Their forms change completely instead of simply adding -er or -est.",
-"C. They are used only for negative qualities.",
-"D. They do not have a positive degree."],a:1},
+Why are these called irregular comparisons?`,options:["A. They follow the -er/-est rule perfectly.","B. Their forms change completely instead of simply adding -er or -est.","C. They are used only for negative qualities.","D. They do not have a positive degree."],a:1},
 
 {q:`Q6. A student completes these sentences. 
 1.Mount Everest is the ______ peak in the world. 
 2.This climb is ______ than most people imagine. 
 3. The view from the top is ______. 
-Choose the correct set of adjectives.`,options:[
-"A. high / difficult / wonderful",
-"B. highest / more difficult / wonderful",
-"C. highest / difficulter / most wonderful",
-"D. higher / most difficult / more wonderful"],a:1},
+Choose the correct set of adjectives.`,options:["A. high / difficult / wonderful","B. highest / more difficult / wonderful","C. highest / difficulter / most wonderful","D. higher / most difficult / more wonderful"],a:1},
 
 {q:`Q7. A teacher checks these four sentences written by students.
 1. She is the most tallest girl. 2.He runs more faster than me. 
 3. This is the best cake. 4.That box is heavier than this one. 
-Which two sentences are grammatically correct?`,options:[
-"A. Sentences 1 and 2",
-"B. Sentences 1 and 3",
-"C. Sentences 3 and 4",
-"D. Sentences 2 and 4"],a:2},
+Which two sentences are grammatically correct?`,options:["A. Sentences 1 and 2","B. Sentences 1 and 3","C. Sentences 3 and 4","D. Sentences 2 and 4"],a:2},
 
 {q:`Q8. You are comparing exactly two brothers.
-Which sentence is grammatically correct?`,options:[
-"A. Between the two brothers, Sam is the smartest.",
-"B. Between the two brothers, Sam is the smarter.",
-"C. Sam is the most smart brother.",
-"D. Sam is more smarter than his brother."],a:1},
+Which sentence is grammatically correct?`,options:["A. Between the two brothers, Sam is the smartest.","B. Between the two brothers, Sam is the smarter.","C. Sam is the most smart brother.","D. Sam is more smarter than his brother."],a:1},
 
 {q:`Q9. Sort these sentences into Comparative and Superlative degrees.
 P. This is the longest river in Asia. Q. She is taller than her sister.
-R. He is the most hardworking student in class. S. This bag is lighter than that one.`,options:[
-"A. Comparative: P, R | Superlative: Q, S",
-"B. Comparative: P, S | Superlative: Q, R",
-"C. Comparative: Q, S | Superlative: P, R",
-"D. Comparative: Q, R | Superlative: P, S"],a:2},
+R. He is the most hardworking student in class. S. This bag is lighter than that one.`,options:["A. Comparative: P, R | Superlative: Q, S","B. Comparative: P, S | Superlative: Q, R","C. Comparative: Q, S | Superlative: P, R","D. Comparative: Q, R | Superlative: P, S"],a:2},
 
-{q:`Q10. Three of the following sentences are grammatically correct. One contains an error. Which is the odd one out?`,options:[
-"A. My dog is lazier than yours.",
-"B. This is the thinnest slide in the set.",
-"C. He is the most tallest boy in class.",
-"D. Gold is the most precious metal."],a:2},
+{q:`Q10. Three of the following sentences are grammatically correct. One contains an error. Which is the odd one out?`,options:["A. My dog is lazier than yours.","B. This is the thinnest slide in the set.","C. He is the most tallest boy in class.","D. Gold is the most precious metal."],a:2},
 
 {q:`Q11. Riya texts: "I performed gooder than you in the exam, but Aarav performed the bestest."
-How should the sentence be corrected?`,options:[
-"A. I performed better than you in the exam, but Aarav performed the best.",
-"B. I performed more good than you, but Aarav performed the most best.",
-"C. I performed best than you, but Aarav performed better.",
-"D. I performed goodest than you, but Aarav performed bestest."],a:0},
+How should the sentence be corrected?`,options:["A. I performed better than you in the exam, but Aarav performed the best.","B. I performed more good than you, but Aarav performed the most best.","C. I performed best than you, but Aarav performed better.","D. I performed goodest than you, but Aarav performed bestest."],a:0},
 
 {q:`Q12. A student writes: "No other metal is as precious as gold."
 A magazine rewrites it as: "Gold is the most precious metal."
-What is the effect of this change?`,options:[
-"A. It becomes grammatically incorrect.",
-"B. The sentence becomes grammatically incorrect.",
-"C. The meaning remains the same, but the superlative form makes the statement stronger and more direct.",
-"D. The sentence changes from a fact to an opinion."],a:2},
+What is the effect of this change?`,options:["A. It becomes grammatically incorrect.","B. The sentence becomes grammatically incorrect.","C. The meaning remains the same, but the superlative form makes the statement stronger and more direct.","D. The sentence changes from a fact to an opinion."],a:2},
 
 {q:`Q13. Assertion: Before a superlative adjective, we usually use the definite article "the."
-Reason: A superlative adjective identifies one person or thing as the highest or lowest within a group.`,options:[
-"A. Both are correct, and the reason correctly explains the assertion.",
-"B. Both are correct, but the reason does not explain the assertion.",
-"C. The assertion is correct, but the reason is incorrect.",
-"D. Both are incorrect."],a:0}
+Reason: A superlative adjective identifies one person or thing as the highest or lowest within a group.`,options:["A. Both are correct, and the reason correctly explains the assertion.","B. Both are correct, but the reason does not explain the assertion.","C. The assertion is correct, but the reason is incorrect.","D. Both are incorrect."],a:0}
 ];
 
 let i=0,score=0,timer;
-
-setTimeout(()=>document.getElementById("splash").style.display="none",5000);
+setTimeout(()=>document.getElementById("splash").classList.remove("active"),5000);
 
 function start(){
 document.getElementById("intro").classList.remove("active");
@@ -238,7 +116,6 @@ clearInterval(timer);
 let q=questions[i];
 document.getElementById("question").innerText=q.q;
 document.getElementById("options").innerHTML="";
-
 q.options.forEach((op,idx)=>{
     let btn=document.createElement("button");
     btn.className="option";
@@ -246,7 +123,6 @@ q.options.forEach((op,idx)=>{
     btn.onclick=function(){check(idx,this)};
     document.getElementById("options").appendChild(btn);
 });
-
 let t=45;
 document.getElementById("timer").innerText=t;
 timer=setInterval(()=>{
@@ -284,6 +160,5 @@ document.getElementById("final").innerText=score;
 document.getElementById("clapSound").play();
 }
 </script>
-
 </body>
 </html>
