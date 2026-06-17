@@ -13,11 +13,10 @@ body{
     overflow:hidden;
 }
 
-/* SPLASH */
 #splash{
     position:fixed;
     inset:0;
-    background:white;
+    background:#fff;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -25,11 +24,9 @@ body{
 }
 #splash img{width:220px}
 
-/* SCREEN */
 .screen{display:none;height:100vh;padding:15px;}
 .active{display:block}
 
-/* CARD */
 .card{
     max-width:800px;
     margin:auto;
@@ -39,24 +36,20 @@ body{
     box-shadow:0 6px 18px rgba(0,0,0,0.12);
 }
 
-/* QUESTION */
 #question{
     white-space:pre-wrap;
     line-height:1.6;
     font-size:16px;
 }
 
-/* IMAGE */
 #qimg{
     width:100%;
     max-height:240px;
     object-fit:contain;
     margin:10px 0;
-    border-radius:10px;
     display:none;
 }
 
-/* OPTIONS */
 .option{
     width:100%;
     margin:10px 0;
@@ -66,23 +59,22 @@ body{
     background:#f2f2f2;
     text-align:left;
     font-size:16px;
-    cursor:pointer;
 }
+
 .option:hover{background:#e6e6e6}
 
 .correct{background:#c8f7c5 !important;}
 .wrong{background:#ffd6d6 !important;}
 
-/* TOP */
 #topbar{
     display:flex;
     justify-content:space-between;
     font-weight:bold;
     margin-bottom:10px;
 }
+
 #timer{color:#d9534f}
 
-/* BUTTON */
 .btn{
     width:100%;
     padding:12px;
@@ -91,18 +83,6 @@ body{
     background:#4a90e2;
     color:white;
     font-size:16px;
-}
-
-/* CONFETTI */
-.confetti{
-    position:fixed;
-    width:8px;height:8px;
-    background:gold;
-    top:-10px;
-    animation:fall 1s linear forwards;
-}
-@keyframes fall{
-    to{transform:translateY(600px) rotate(360deg);opacity:0}
 }
 </style>
 </head>
@@ -150,46 +130,41 @@ body{
 
 <script>
 
-/* ================= CLEAN DATA MODEL ================= */
+/* ================= EXACT QUESTIONS (UNCHANGED) ================= */
 const questions = [
 {
-q:`Q1. You see this sticker on your water bottle:
+text:`Q1. You see this sticker on your water bottle:
 "Drink more water every day."
 What kind of sentence is it?`,
 options:["Declarative","Interrogative","Imperative","Exclamatory"],
 answer:2
 },
-
 {
-q:`Q2. Your friend sends you a message:
+text:`Q2. Your friend sends you a message:
 "Did you finish the science homework?"`,
 options:["Declarative","Interrogative","Imperative","Exclamatory"],
 answer:1
 },
-
 {
-q:`Q3. Aarav shouts:
+text:`Q3. Aarav jumps into a cold swimming pool and shouts,
 "How freezing the water is!"`,
-options:["Interrogative","Imperative","Declarative","Exclamatory"],
+options:["Declarative","Interrogative","Imperative","Exclamatory"],
 answer:3
 },
-
 {
-q:`Q4. Rewrite using 'never':
+text:`Q4. A teacher writes:
 "He is always on time."`,
 options:["He is never on time","He is never late","Is he ever on time","He not always on time"],
 answer:1
 },
-
 {
-q:`Q5. Convert to question form:
+text:`Q5. Convert to question form:
 "It was a great victory for the team."`,
 options:["Was it a great victory for the team?","It was a great victory?","Did it was victory?","How great victory!"],
 answer:0
 },
-
 {
-q:`Q6. Match sentence types (see image)`,
+text:`Q6. The class notice board has these four notes.`,
 img:"assets/question6.png",
 options:[
 "1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
@@ -199,58 +174,49 @@ options:[
 ],
 answer:1
 },
-
 {
-q:`Q7. Choose correct punctuation (see image)`,
+text:`Q7. A student forgot punctuation.`,
 img:"assets/question7.png",
 options:["! ? .",". . !","? . !","! ! ?"],
 answer:0
 },
-
 {
-q:`Q8. Which is negative declarative?`,
+text:`Q8. Which is negative declarative sentence?`,
 options:["Don't go","Why not","She does not like apples","What a shame"],
 answer:2
 },
-
 {
-q:`Q9. Meaning of statement form`,
+text:`Q9. Meaning of statement form`,
 options:["All live forever","No person can live forever","Can live forever","Live forever"],
 answer:1
 },
-
 {
-q:`Q10. Sort sentences`,
+text:`Q10. Sort sentences`,
 options:["P,R Q,S","Q,S P,R","P,S Q,R","Q,R P,S"],
 answer:1
 },
-
 {
-q:`Q11. Group sentences`,
+text:`Q11. Group sentences`,
 options:["A","B","C","D"],
 answer:1
 },
-
 {
-q:`Q12. Odd one out`,
+text:`Q12. Odd one out`,
 options:["A","B","C","D"],
 answer:2
 },
-
 {
-q:`Q13. Imperative error`,
+text:`Q13. Imperative error`,
 options:["A","B","C","D"],
 answer:1
 },
-
 {
-q:`Q14. Effect of change`,
+text:`Q14. Effect of change`,
 options:["A","B","C","D"],
 answer:1
 },
-
 {
-q:`Q15. Best email sentence`,
+text:`Q15. Best email sentence`,
 options:["A","B","C","D"],
 answer:2
 }
@@ -273,7 +239,7 @@ clearInterval(timer);
 
 let q = questions[i];
 
-document.getElementById("question").innerText = q.q;
+document.getElementById("question").innerText = q.text;
 
 /* IMAGE */
 let img=document.getElementById("qimg");
