@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Grade 6 English - Kinds of Sentences</title>
+<title>Grade 6 - Kinds of Sentences</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -33,7 +34,7 @@ body{
 }
 .active{display:block}
 
-/* CARD (CRITICAL FIX) */
+/* QUIZ CARD (CRITICAL FIX: SCROLL ENABLED) */
 .card{
     max-width:850px;
     margin:auto;
@@ -42,8 +43,8 @@ body{
     border-radius:16px;
     box-shadow:0 6px 18px rgba(0,0,0,0.12);
 
-    height:92vh;
-    overflow-y:auto;
+    height:90vh;
+    overflow-y:auto;   /* 🔴 FIX: prevents cut-off */
 }
 
 /* TOP BAR */
@@ -51,7 +52,9 @@ body{
     display:flex;
     justify-content:space-between;
     font-weight:bold;
+    margin-bottom:10px;
 }
+#timer{color:#d9534f}
 
 /* QUESTION */
 #question{
@@ -60,10 +63,10 @@ body{
     font-size:16px;
 }
 
-/* IMAGE */
+/* IMAGE (Q6/Q7 FIX) */
 #qimg{
     width:55%;
-    max-height:150px;
+    max-height:140px;
     object-fit:contain;
     display:block;
     margin:10px auto;
@@ -82,9 +85,7 @@ body{
     font-size:16px;
     cursor:pointer;
     white-space:normal;
-    word-break:break-word;
 }
-
 .option:hover{background:#e6e6e6}
 
 .correct{background:#b7f7b7 !important;}
@@ -152,7 +153,6 @@ body{
 <script>
 
 const questions = [
-
 {
 q:`Q1. You see this sticker on your water bottle:
 "Drink more water every day."
@@ -160,42 +160,39 @@ What kind of sentence is it?`,
 options:["Declarative","Interrogative","Imperative","Exclamatory"],
 a:2
 },
-
 {
 q:`Q2. Your friend sends you a message:
 "Did you finish the science homework?"`,
 options:["Declarative","Interrogative","Imperative","Exclamatory"],
 a:1
 },
-
 {
-q:`Q3. Aarav jumps into a cold swimming pool and shouts:
+q:`Q3. Aarav jumps into a cold swimming pool and shouts,
 "How freezing the water is!"
-Later, he writes about the experience in his diary.`,
+Later, he writes about the experience in his diary. Which sentence is the best diary entry?`,
 options:["How cold is the water?","Don't touch the cold water.","The water was very cold.","The water was not cold."],
 a:2
 },
-
 {
-q:`Q4. He is always on time. Rewrite using "never".`,
-options:["He is never on time","He is never late","Is he ever on time","Not always"],
+q:`Q4. A teacher writes in a report:
+"He is always on time."
+She wants to rewrite it using the word "never" without changing the meaning.
+Which sentence is correct?`,
+options:["He is never on time.","He is never late.","Is he ever on time?","He is not always on time."],
 a:1
 },
-
 {
-q:`Q5. It was a great victory for the team. Convert to question form.`,
-options:["Was it a great victory?","It was a great victory?","Did it was victory?","How great!"],
+q:`Q5. After winning a match, the captain says,
+"It was a great victory for the team."
+A reporter wants to ask this as a question.
+Which sentence is correct?`,
+options:["Was it a great victory for the team?","It was a great victory for the team?","Did it was a great victory for the team?","How great the victory was!"],
 a:0
 },
 
-/* Q6 FULL RESTORED */
+/* Q6 FIX */
 {
-q:`Q6. The class notice board has these four notes:
-Note 1: The trip is on Friday.
-Note 2: Wear your school uniform!
-Note 3: What an exciting day this will be!
-Note 4: Is your permission slip ready?
-
+q:`Q6. The class notice board has these four notes.
 Match each note with its correct sentence type.`,
 img:"assets/question6.png",
 options:[
@@ -207,37 +204,31 @@ options:[
 a:1
 },
 
-/* Q7 FULL RESTORED */
+/* Q7 FIX */
 {
-q:`Q7. A student forgot to add punctuation to these sentences:
-1. Stop talking ___
-2. Where is my bag ___
-3. I love ice cream ___
-
-Which option correctly completes them?`,
+q:`Q7. A student forgot to add punctuation to these sentences.`,
 img:"assets/question7.png",
 options:["! ? .",". . !","? . !","! ! ?"],
 a:0
 },
 
 {
-q:`Q8. Which sentence is negative declarative?`,
-options:["Don't go","Why not","She does not like apples","What a shame"],
+q:`Q8. Which sentence is a negative declarative sentence?`,
+options:["Don't go there.","Why are you not coming?","She does not like apples.","What a shame!"],
 a:2
 },
-
 {
-q:`Q9. Meaning of statement form`,
-options:["All live forever","No person can live forever","Can live forever","Live forever"],
+q:`Q9. A student asks:
+"Can any person live forever?"
+What is the correct statement meaning?`,
+options:["Every person can live forever.","No person can live forever.","Can a person live forever?","Live forever everyone."],
 a:1
 },
-
 {
-q:`Q10. Sort sentences`,
+q:`Q10. Sort sentences into types`,
 options:["P,R | Q,S","Q,S | P,R","P,S | Q,R","Q,R | P,S"],
 a:1
 }
-
 ];
 
 let i=0,score=0,timer;
@@ -257,6 +248,7 @@ clearInterval(timer);
 let q=questions[i];
 document.getElementById("question").innerText=q.q;
 
+/* IMAGE */
 let img=document.getElementById("qimg");
 if(q.img){
 img.src=q.img;
@@ -265,12 +257,14 @@ img.style.display="block";
 img.style.display="none";
 }
 
+/* OPTIONS */
 let html="";
 q.options.forEach((op,idx)=>{
 html+=`<button class="option" onclick="check(${idx},this)">${op}</button>`;
 });
 document.getElementById("options").innerHTML=html;
 
+/* TIMER */
 let t=45;
 document.getElementById("timer").innerText=t;
 
@@ -292,7 +286,7 @@ setTimeout(next,700);
 }else{
 btn.classList.add("wrong");
 document.getElementById("wrongSound").play();
-setTimeout(next,800);
+setTimeout(next,900);
 }
 }
 
