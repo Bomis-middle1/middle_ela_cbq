@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Grade 6 - Kinds of Sentences</title>
+<title>Grade 6 English - Kinds of Sentences</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -26,10 +26,14 @@ body{
 #splash img{width:220px}
 
 /* SCREEN */
-.screen{display:none;height:100vh;padding:10px;}
+.screen{
+    display:none;
+    height:100vh;
+    padding:10px;
+}
 .active{display:block}
 
-/* CARD (IMPORTANT FIX) */
+/* CARD (CRITICAL FIX) */
 .card{
     max-width:850px;
     margin:auto;
@@ -42,7 +46,7 @@ body{
     overflow-y:auto;
 }
 
-/* TOP */
+/* TOP BAR */
 #topbar{
     display:flex;
     justify-content:space-between;
@@ -59,7 +63,7 @@ body{
 /* IMAGE */
 #qimg{
     width:55%;
-    max-height:140px;
+    max-height:150px;
     object-fit:contain;
     display:block;
     margin:10px auto;
@@ -166,47 +170,53 @@ a:1
 
 {
 q:`Q3. Aarav jumps into a cold swimming pool and shouts:
-"How freezing the water is!"`,
-options:["Declarative","Interrogative","Imperative","Exclamatory"],
-a:3
+"How freezing the water is!"
+Later, he writes about the experience in his diary.`,
+options:["How cold is the water?","Don't touch the cold water.","The water was very cold.","The water was not cold."],
+a:2
 },
 
 {
-q:`Q4. Rewrite using 'never':
-"He is always on time."`,
+q:`Q4. He is always on time. Rewrite using "never".`,
 options:["He is never on time","He is never late","Is he ever on time","Not always"],
 a:1
 },
 
 {
-q:`Q5. Convert to question form:
-"It was a great victory for the team."`,
+q:`Q5. It was a great victory for the team. Convert to question form.`,
 options:["Was it a great victory?","It was a great victory?","Did it was victory?","How great!"],
 a:0
 },
 
-/* Q6 (COMPACT FORMAT) */
+/* Q6 FULL RESTORED */
 {
-q:`Q6. The class notice board has these four notes:  
-Note 1: The trip is on Friday. Note 2: Wear your school uniform! Note 3: What an exciting day this will be! Note 4: Is your permission slip ready?  
+q:`Q6. The class notice board has these four notes:
+Note 1: The trip is on Friday.
+Note 2: Wear your school uniform!
+Note 3: What an exciting day this will be!
+Note 4: Is your permission slip ready?
+
 Match each note with its correct sentence type.`,
 img:"assets/question6.png",
 options:[
-"A. 1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
-"B. 1=Declarative, 2=Imperative, 3=Exclamatory, 4=Interrogative",
-"C. 1=Interrogative, 2=Declarative, 3=Exclamatory, 4=Imperative",
-"D. 1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
+"1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
+"1=Declarative, 2=Imperative, 3=Exclamatory, 4=Interrogative",
+"1=Interrogative, 2=Declarative, 3=Exclamatory, 4=Imperative",
+"1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
 ],
 a:1
 },
 
-/* Q7 (COMPACT FORMAT) */
+/* Q7 FULL RESTORED */
 {
-q:`Q7. A student forgot punctuation:  
-1. Stop talking ___ 2. Where is my bag ___ 3. I love ice cream ___  
+q:`Q7. A student forgot to add punctuation to these sentences:
+1. Stop talking ___
+2. Where is my bag ___
+3. I love ice cream ___
+
 Which option correctly completes them?`,
 img:"assets/question7.png",
-options:["A. ! ? .","B. . . !","C. ? . !","D. ! ! ?"],
+options:["! ? .",". . !","? . !","! ! ?"],
 a:0
 },
 
@@ -232,6 +242,7 @@ a:1
 
 let i=0,score=0,timer;
 
+/* SPLASH */
 setTimeout(()=>document.getElementById("splash").style.display="none",5000);
 
 function start(){
@@ -246,7 +257,6 @@ clearInterval(timer);
 let q=questions[i];
 document.getElementById("question").innerText=q.q;
 
-/* image */
 let img=document.getElementById("qimg");
 if(q.img){
 img.src=q.img;
@@ -255,14 +265,12 @@ img.style.display="block";
 img.style.display="none";
 }
 
-/* options */
 let html="";
 q.options.forEach((op,idx)=>{
 html+=`<button class="option" onclick="check(${idx},this)">${op}</button>`;
 });
 document.getElementById("options").innerHTML=html;
 
-/* timer */
 let t=45;
 document.getElementById("timer").innerText=t;
 
