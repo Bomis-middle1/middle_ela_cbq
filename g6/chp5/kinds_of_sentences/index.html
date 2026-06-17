@@ -26,14 +26,10 @@ body{
 #splash img{width:220px}
 
 /* SCREEN */
-.screen{
-    display:none;
-    height:100vh;
-    padding:10px;
-}
+.screen{display:none;height:100vh;padding:10px;}
 .active{display:block}
 
-/* QUIZ CARD (CRITICAL FIX: SCROLL ENABLED) */
+/* CARD (IMPORTANT FIX) */
 .card{
     max-width:850px;
     margin:auto;
@@ -42,18 +38,16 @@ body{
     border-radius:16px;
     box-shadow:0 6px 18px rgba(0,0,0,0.12);
 
-    height:90vh;
-    overflow-y:auto;   /* 🔴 FIX: prevents cut-off */
+    height:92vh;
+    overflow-y:auto;
 }
 
-/* TOP BAR */
+/* TOP */
 #topbar{
     display:flex;
     justify-content:space-between;
     font-weight:bold;
-    margin-bottom:10px;
 }
-#timer{color:#d9534f}
 
 /* QUESTION */
 #question{
@@ -62,7 +56,7 @@ body{
     font-size:16px;
 }
 
-/* IMAGE (Q6/Q7 FIX) */
+/* IMAGE */
 #qimg{
     width:55%;
     max-height:140px;
@@ -84,7 +78,9 @@ body{
     font-size:16px;
     cursor:pointer;
     white-space:normal;
+    word-break:break-word;
 }
+
 .option:hover{background:#e6e6e6}
 
 .correct{background:#b7f7b7 !important;}
@@ -152,6 +148,7 @@ body{
 <script>
 
 const questions = [
+
 {
 q:`Q1. You see this sticker on your water bottle:
 "Drink more water every day."
@@ -159,80 +156,82 @@ What kind of sentence is it?`,
 options:["Declarative","Interrogative","Imperative","Exclamatory"],
 a:2
 },
+
 {
 q:`Q2. Your friend sends you a message:
 "Did you finish the science homework?"`,
 options:["Declarative","Interrogative","Imperative","Exclamatory"],
 a:1
 },
+
 {
-q:`Q3. Aarav jumps into a cold swimming pool and shouts,
-"How freezing the water is!"
-Later, he writes about the experience in his diary. Which sentence is the best diary entry?`,
-options:["How cold is the water?","Don't touch the cold water.","The water was very cold.","The water was not cold."],
-a:2
+q:`Q3. Aarav jumps into a cold swimming pool and shouts:
+"How freezing the water is!"`,
+options:["Declarative","Interrogative","Imperative","Exclamatory"],
+a:3
 },
+
 {
-q:`Q4. A teacher writes in a report:
-"He is always on time."
-She wants to rewrite it using the word "never" without changing the meaning.
-Which sentence is correct?`,
-options:["He is never on time.","He is never late.","Is he ever on time?","He is not always on time."],
+q:`Q4. Rewrite using 'never':
+"He is always on time."`,
+options:["He is never on time","He is never late","Is he ever on time","Not always"],
 a:1
 },
+
 {
-q:`Q5. After winning a match, the captain says,
-"It was a great victory for the team."
-A reporter wants to ask this as a question.
-Which sentence is correct?`,
-options:["Was it a great victory for the team?","It was a great victory for the team?","Did it was a great victory for the team?","How great the victory was!"],
+q:`Q5. Convert to question form:
+"It was a great victory for the team."`,
+options:["Was it a great victory?","It was a great victory?","Did it was victory?","How great!"],
 a:0
 },
 
-/* Q6 FIX */
+/* Q6 (COMPACT FORMAT) */
 {
-q:`Q6. The class notice board has these four notes.
+q:`Q6. The class notice board has these four notes:  
+Note 1: The trip is on Friday. Note 2: Wear your school uniform! Note 3: What an exciting day this will be! Note 4: Is your permission slip ready?  
 Match each note with its correct sentence type.`,
 img:"assets/question6.png",
 options:[
-"1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
-"1=Declarative, 2=Imperative, 3=Exclamatory, 4=Interrogative",
-"1=Interrogative, 2=Declarative, 3=Exclamatory, 4=Imperative",
-"1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
+"A. 1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
+"B. 1=Declarative, 2=Imperative, 3=Exclamatory, 4=Interrogative",
+"C. 1=Interrogative, 2=Declarative, 3=Exclamatory, 4=Imperative",
+"D. 1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
 ],
 a:1
 },
 
-/* Q7 FIX */
+/* Q7 (COMPACT FORMAT) */
 {
-q:`Q7. A student forgot to add punctuation to these sentences.`,
+q:`Q7. A student forgot punctuation:  
+1. Stop talking ___ 2. Where is my bag ___ 3. I love ice cream ___  
+Which option correctly completes them?`,
 img:"assets/question7.png",
-options:["! ? .",". . !","? . !","! ! ?"],
+options:["A. ! ? .","B. . . !","C. ? . !","D. ! ! ?"],
 a:0
 },
 
 {
-q:`Q8. Which sentence is a negative declarative sentence?`,
-options:["Don't go there.","Why are you not coming?","She does not like apples.","What a shame!"],
+q:`Q8. Which sentence is negative declarative?`,
+options:["Don't go","Why not","She does not like apples","What a shame"],
 a:2
 },
+
 {
-q:`Q9. A student asks:
-"Can any person live forever?"
-What is the correct statement meaning?`,
-options:["Every person can live forever.","No person can live forever.","Can a person live forever?","Live forever everyone."],
+q:`Q9. Meaning of statement form`,
+options:["All live forever","No person can live forever","Can live forever","Live forever"],
 a:1
 },
+
 {
-q:`Q10. Sort sentences into types`,
+q:`Q10. Sort sentences`,
 options:["P,R | Q,S","Q,S | P,R","P,S | Q,R","Q,R | P,S"],
 a:1
 }
+
 ];
 
 let i=0,score=0,timer;
 
-/* SPLASH */
 setTimeout(()=>document.getElementById("splash").style.display="none",5000);
 
 function start(){
@@ -247,7 +246,7 @@ clearInterval(timer);
 let q=questions[i];
 document.getElementById("question").innerText=q.q;
 
-/* IMAGE */
+/* image */
 let img=document.getElementById("qimg");
 if(q.img){
 img.src=q.img;
@@ -256,14 +255,14 @@ img.style.display="block";
 img.style.display="none";
 }
 
-/* OPTIONS */
+/* options */
 let html="";
 q.options.forEach((op,idx)=>{
 html+=`<button class="option" onclick="check(${idx},this)">${op}</button>`;
 });
 document.getElementById("options").innerHTML=html;
 
-/* TIMER */
+/* timer */
 let t=45;
 document.getElementById("timer").innerText=t;
 
@@ -285,7 +284,7 @@ setTimeout(next,700);
 }else{
 btn.classList.add("wrong");
 document.getElementById("wrongSound").play();
-setTimeout(next,900);
+setTimeout(next,800);
 }
 }
 
