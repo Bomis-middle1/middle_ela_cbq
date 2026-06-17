@@ -17,10 +17,10 @@ body{
 #splash{
     position:fixed;
     inset:0;
-    background:#fff;
+    background:white;
     display:flex;
-    align-items:center;
     justify-content:center;
+    align-items:center;
     z-index:9999;
 }
 #splash img{width:220px}
@@ -46,13 +46,14 @@ body{
     font-size:16px;
 }
 
-/* IMAGE (Q6 & Q7) */
-.qimg{
+/* IMAGE */
+#qimage{
     width:100%;
-    max-height:220px;
+    max-height:250px;
     object-fit:contain;
     margin:10px 0;
     border-radius:10px;
+    display:none;
 }
 
 /* OPTIONS */
@@ -93,17 +94,8 @@ body{
     font-size:16px;
 }
 
-/* CONFETTI */
-.confetti{
-    position:fixed;
-    width:8px;height:8px;
-    background:gold;
-    top:-10px;
-    animation:fall 1s linear forwards;
-}
-@keyframes fall{
-    to{transform:translateY(600px) rotate(360deg);opacity:0}
-}
+/* RESULT */
+#result{text-align:center}
 </style>
 </head>
 
@@ -133,9 +125,8 @@ body{
 </div>
 
 <div id="question"></div>
-<img id="qimage" class="qimg" style="display:none;">
+<img id="qimage">
 <div id="options"></div>
-<div id="feedback"></div>
 
 </div>
 </div>
@@ -154,95 +145,114 @@ body{
 /* ================= QUESTIONS ================= */
 const questions = [
 
-`Q1. You see this sticker on your water bottle:
+{
+q:`Q1. You see this sticker on your water bottle:
 "Drink more water every day."
-What kind of sentence is it?
-Options:
-A. Declarative
-B. Interrogative
-C. Imperative
-D. Exclamatory
-Correct Answer: C`,
+What kind of sentence is it?`,
+o:["Declarative","Interrogative","Imperative","Exclamatory"],
+a:2
+},
 
-`Q2. Your friend sends you a message:
-"Did you finish the science homework?"
-What kind of sentence is this?
-Options:
-A. Declarative
-B. Interrogative
-C. Imperative
-D. Exclamatory
-Correct Answer: B`,
+{
+q:`Q2. Your friend sends:
+"Did you finish the science homework?"`,
+o:["Declarative","Interrogative","Imperative","Exclamatory"],
+a:1
+},
 
-`Q3. Aarav jumps into a cold swimming pool and shouts,
-"How freezing the water is!"
-Which sentence is best diary entry?
-Options:
-A. How cold is the water?
-B. Don't touch the cold water.
-C. The water was very cold.
-D. The water was not cold.
-Correct Answer: C`,
+{
+q:`Q3. "How freezing the water is!"`,
+o:["Interrogative","Imperative","Declarative","Exclamatory"],
+a:3
+},
 
-`Q4. Rewrite using "never":
-"He is always on time."
-Options:
-A. He is never on time.
-B. He is never late.
-C. Is he ever on time?
-D. He is not always on time.
-Correct Answer: B`,
+{
+q:`Q4. He is always on time → rewrite using never`,
+o:["He is never on time","He is never late","Is he ever on time","Not always"],
+a:1
+},
 
-`Q5. Make question form:
-"It was a great victory for the team."
-Options:
-A. Was it a great victory for the team?
-B. It was a great victory for the team?
-C. Did it was a great victory for the team?
-D. How great the victory was!
-Correct Answer: A`,
+{
+q:`Q5. Convert to question form`,
+o:["Was it a great victory?","It was a great victory?","Did it was victory?","How great!"],
+a:0
+},
 
-`Q6. The class notice board has these four notes.`,
-`Q7. Punctuation task.`,
-`Q8. Which sentence is negative declarative?
-Options:
-A. Don't go there.
-B. Why are you not coming?
-C. She does not like apples.
-D. What a shame!
-Correct Answer: C`,
+{
+q:`Q6. Match sentence types (see image)`,
+img:"assets/question6.png",
+o:[
+"1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
+"1=Declarative, 2=Imperative, 3=Exclamatory, 4=Interrogative",
+"1=Interrogative, 2=Declarative, 3=Exclamatory, 4=Imperative",
+"1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
+],
+a:1
+},
 
-`Q9. Meaning of question as statement?
-Options:
-A. Everyone can live forever
-B. No person can live forever
-C. Can a person live forever?
-D. Live forever
-Correct Answer: B`,
+{
+q:`Q7. Punctuation task (see image)`,
+img:"assets/question7.png",
+o:["! ? .",". . !","? . !","! ! ?"],
+a:0
+},
 
-`Q10. Sort sentences Imperative/Exclamatory
-Correct Answer: C`,
+{
+q:`Q8. Negative declarative sentence`,
+o:["Don't go","Why not","She does not like apples","What a shame"],
+a:2
+},
 
-`Q11. Group sentences correctly
-Correct Answer: B`,
+{
+q:`Q9. Meaning of statement form`,
+o:["All live forever","No person can live forever","Can live forever","Live forever"],
+a:1
+},
 
-`Q12. Odd one out
-Correct Answer: C`,
+{
+q:`Q10. Sort sentences`,
+o:["P,R Q,S","Q,S P,R","P,S Q,R","Q,R P,S"],
+a:1
+},
 
-`Q13. Imperative error sentence
-Correct Answer: B`,
+{
+q:`Q11. Group sentences`,
+o:["A","B","C","D"],
+a:1
+},
 
-`Q14. Effect of change
-Correct Answer: B`,
+{
+q:`Q12. Odd one out`,
+o:["A","B","C","D"],
+a:2
+},
 
-`Q15. Best polite email sentence
-Correct Answer: C`
+{
+q:`Q13. Imperative error`,
+o:["A","B","C","D"],
+a:1
+},
+
+{
+q:`Q14. Effect of change`,
+o:["A","B","C","D"],
+a:1
+},
+
+{
+q:`Q15. Best email sentence`,
+o:["A","B","C","D"],
+a:2
+}
+
 ];
 
 let i=0,score=0,attempt=0,timer;
 
 /* SPLASH */
-setTimeout(()=>document.getElementById("splash").style.display="none",5000);
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+},5000);
 
 function start(){
 document.getElementById("intro").classList.remove("active");
@@ -251,42 +261,30 @@ load();
 }
 
 function load(){
+
 clearInterval(timer);
 attempt=0;
 
 let q = questions[i];
-document.getElementById("feedback").innerText="";
 
 /* IMAGE HANDLING */
 let img = document.getElementById("qimage");
 
-if(i===5){
-img.src="assets/question6.png";
+if(q.img){
+img.src = q.img;
 img.style.display="block";
-}
-else if(i===6){
-img.src="assets/question7.png";
-img.style.display="block";
-}
-else{
+}else{
 img.style.display="none";
 }
 
-document.getElementById("question").innerText=q;
+document.getElementById("question").innerText = q.q;
 
 /* OPTIONS */
-let options=[];
-if(q.includes("Options:")){
-let optText = q.split("Options:")[1].split("Correct Answer")[0];
-options = optText.split("\n").filter(x=>x.trim().match(/^[A-D]\./));
-}
-
 let html="";
-options.forEach((op,idx)=>{
+q.o.forEach((op,idx)=>{
 html+=`<button class="option" onclick="check(${idx},this)">${op}</button>`;
 });
-
-document.getElementById("options").innerHTML=html;
+document.getElementById("options").innerHTML = html;
 
 /* TIMER */
 let t=45;
@@ -297,27 +295,23 @@ t--;
 document.getElementById("timer").innerText=t;
 if(t<=0) next();
 },1000);
+
 }
 
 function check(idx,btn){
-let correctIndex = getCorrectIndex(questions[i]);
 
-if(idx===correctIndex){
+let q = questions[i];
+
+if(idx === q.a){
 btn.classList.add("correct");
 score++;
 document.getElementById("score").innerText=score;
-confetti();
-setTimeout(next,900);
+setTimeout(next,800);
 }else{
 btn.classList.add("wrong");
 attempt++;
 if(attempt===2) next();
 }
-}
-
-function getCorrectIndex(q){
-let ans = q.split("Correct Answer:")[1].trim();
-return ["A","B","C","D"].indexOf(ans);
 }
 
 function next(){
@@ -333,15 +327,6 @@ document.getElementById("result").classList.add("active");
 document.getElementById("final").innerText=score;
 }
 
-function confetti(){
-for(let i=0;i<25;i++){
-let d=document.createElement("div");
-d.className="confetti";
-d.style.left=Math.random()*100+"vw";
-document.body.appendChild(d);
-setTimeout(()=>d.remove(),1000);
-}
-}
 </script>
 
 </body>
