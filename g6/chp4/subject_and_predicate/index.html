@@ -2,495 +2,344 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Subject & Predicate - Grade 6</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sentence Detective Mission</title>
 
 <style>
 body{
-margin:0;
-font-family:Arial;
-background:#f4f7ff;
-overflow:hidden;
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#e8f0ff,#ffffff);
+    overflow:hidden;
+}
+
+/* SPLASH */
+#splash{
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+#splash img{
+    width:220px;
 }
 
 /* SCREENS */
 .screen{
-position:fixed;
-inset:0;
-display:none;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-text-align:center;
+    display:none;
+    height:100vh;
+    text-align:center;
+    padding:20px;
+}
+.active{
+    display:block;
 }
 
-.active{display:flex;}
-
-/* SPLASH */
-#splash{
-background:white;
-}
-
-#splash img{
-width:240px;
-animation:fade 1.2s ease;
-}
-
-@keyframes fade{
-from{opacity:0; transform:scale(0.8);}
-to{opacity:1; transform:scale(1);}
-}
-
-/* INTRO */
-#intro{
-background:linear-gradient(135deg,#1e3a8a,#2563eb);
-color:white;
-font-size:26px;
-font-weight:bold;
-}
-
-/* MISSION */
-#mission{
-background:#eef2ff;
-padding:20px;
-}
-
+/* CONTAINER */
 .card{
-background:white;
-padding:18px;
-border-radius:15px;
-box-shadow:0 6px 18px rgba(0,0,0,0.12);
-max-width:92%;
+    max-width:700px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-.title{
-font-size:22px;
-font-weight:bold;
-margin-bottom:10px;
-}
-
+/* BUTTONS */
 .btn{
-margin-top:18px;
-padding:14px 22px;
-background:#1e3a8a;
-color:white;
-border:none;
-border-radius:12px;
-font-size:16px;
-cursor:pointer;
+    display:block;
+    width:100%;
+    margin:10px 0;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    cursor:pointer;
+    background:#f2f2f2;
+}
+.btn:hover{background:#ddd;}
+
+.correct{background:#c8f7c5 !important;}
+.wrong{background:#ffcccc !important;}
+
+#topbar{
+    display:flex;
+    justify-content:space-between;
+    font-weight:bold;
+    margin-bottom:10px;
 }
 
-.btn:active{transform:scale(0.97);}
-
-/* GAME */
-#game{
-display:none;
-padding:10px;
+#timer{
+    color:#d9534f;
 }
-
-/* TOP BAR */
-.topbar{
-display:flex;
-justify-content:space-between;
-background:#1e3a8a;
-color:white;
-padding:10px;
-border-radius:10px;
-font-size:14px;
-}
-
-/* QUESTION */
-.qbox{
-background:white;
-margin-top:10px;
-padding:14px;
-border-radius:12px;
-}
-
-.q{
-font-size:14px;
-font-weight:bold;
-margin-bottom:10px;
-line-height:1.4;
-}
-
-/* OPTIONS */
-.opt{
-display:block;
-width:100%;
-padding:12px;
-margin:8px 0;
-border-radius:10px;
-border:2px solid #ddd;
-background:white;
-text-align:left;
-cursor:pointer;
-transition:0.2s;
-}
-
-.opt:active{transform:scale(0.97);}
 
 /* FEEDBACK */
-#popup{
-position:fixed;
-top:20px;
-left:50%;
-transform:translateX(-50%);
-padding:10px 18px;
-border-radius:10px;
-color:white;
-font-weight:bold;
-display:none;
-z-index:999;
+#feedback{
+    font-size:18px;
+    margin-top:10px;
 }
 
-.good{background:green;}
-.bad{background:red;}
-
-/* BADGE */
-#badge{
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translateX(-50%);
-background:gold;
-color:#000;
-padding:10px 14px;
-border-radius:20px;
-display:none;
-font-weight:bold;
+/* CONFETTI */
+.confetti{
+    position:fixed;
+    width:8px;
+    height:8px;
+    background:gold;
+    animation: fall 1s linear forwards;
 }
+@keyframes fall{
+    0%{transform:translateY(-50px) rotate(0);}
+    100%{transform:translateY(600px) rotate(360deg);opacity:0;}
+}
+
 </style>
 </head>
 
 <body>
 
 <!-- SPLASH -->
-<div id="splash" class="screen active">
-<img src="grade-6/english/chapter-4/assets/innovine-logo.png">
+<div id="splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
 <!-- INTRO -->
-<div id="intro" class="screen">
-📘 CHAPTER 4<br><br>
-🕵️ SENTENCE DETECTIVE MISSION<br><br>
-Find Subject & Predicate
+<div id="intro" class="screen active">
+    <div class="card">
+        <h2>Subject & Predicate Challenge</h2>
+        <p>Grade 6 English - Chapter 4</p>
+        <button class="btn" onclick="startGame()">Start Game</button>
+    </div>
 </div>
 
-<!-- MISSION -->
-<div id="mission" class="screen">
-<div class="card">
-<div class="title">🏫 SENTENCE DETECTIVE MISSION</div>
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+    <div class="card">
+        <div id="topbar">
+            <div>Score: <span id="score">0</span></div>
+            <div>⏱ <span id="timer">45</span>s</div>
+        </div>
 
-Can you identify subjects and predicates in real sentences?<br><br>
-
-✔ 13 Challenges<br>
-✔ 60 Seconds<br>
-✔ Earn Grammar Detective Badge
-
-<br><br>
-<button class="btn" onclick="startGame()">START MISSION</button>
-</div>
+        <h3 id="question"></h3>
+        <div id="options"></div>
+        <div id="feedback"></div>
+    </div>
 </div>
 
-<!-- GAME -->
-<div id="game">
-
-<div class="topbar">
-<div>Score: <span id="score">0</span>/13</div>
-<div>⏰ <span id="time">60</span>s</div>
+<!-- RESULT -->
+<div id="result" class="screen">
+    <div class="card">
+        <h2>🎉 Quiz Completed!</h2>
+        <p>Your Score: <span id="finalScore"></span>/13</p>
+        <button class="btn" onclick="restart()">Play Again</button>
+    </div>
 </div>
-
-<div class="qbox" id="qbox"></div>
-
-</div>
-
-<!-- POPUP -->
-<div id="popup"></div>
-
-<!-- BADGE -->
-<div id="badge"></div>
-
-<audio id="correct" src="grade-6/english/chapter-4/assets/correct.mp3"></audio>
-<audio id="wrong" src="grade-6/english/chapter-4/assets/wrong.mp3"></audio>
-<audio id="clap" src="grade-6/english/chapter-4/assets/clapping.mp3"></audio>
 
 <script>
 
-let i=0,score=0,time=60,attempt=1;
+/* ================= QUESTIONS ================= */
+const questions = [
+{
+q:"A teacher writes: 'The tall oak tree at the corner of our school fell during the storm.' Is the student correct in underlining complete subject?",
+o:["Yes, only noun is subject","No, includes all describing words","No, predicate is subject","Yes, location is subject"],
+a:1,
+exp:"Complete subject includes all words describing the noun."
+},
+{
+q:"What is the simple subject in 'The small brown puppy barked'?",
+o:["The small brown puppy","barked","puppy","postman"],
+a:2,
+exp:"Simple subject is the main noun: 'puppy'."
+},
+{
+q:"Why does subject appear after verb in inverted sentence?",
+o:["Inverted order","Always after verb","Subject is location","Verb must come first"],
+a:0,
+exp:"Inverted sentences reverse normal word order."
+},
+{
+q:"Find subject: 'Are the science textbooks on the shelf?'",
+o:["Are","shelf","on shelf","science textbooks"],
+a:3,
+exp:"Subject is what the sentence is about: textbooks."
+},
+{
+q:"Why is 'There' not subject?",
+o:["Introduces sentence","Is verb","Is object","Is adjective"],
+a:0,
+exp:"'There' only introduces existence."
+},
+{
+q:"Simple predicate in 'students walked slowly'?",
+o:["slowly walked","students","walked","hall"],
+a:2,
+exp:"Main verb is the simple predicate."
+},
+{
+q:"Which is complete sentence?",
+o:["Running fast","Birds sang sweetly","In the park","All flowers"],
+a:1,
+exp:"Only option with subject + predicate."
+},
+{
+q:"Subject and predicate of 'The girl laughed'?",
+o:["girl-subject, laughed-predicate","laughed-subject","girl-predicate","both subject"],
+a:0,
+exp:"Correct structure is subject + predicate."
+},
+{
+q:"Complete predicate in 'cat drank milk'?",
+o:["cat","cat drank","drank milk","milk"],
+a:2,
+exp:"Predicate tells action + object."
+},
+{
+q:"Why fragment: 'Because it was raining'?",
+o:["No subject","No predicate","Incomplete thought","Too long"],
+a:2,
+exp:"Dependent clause cannot stand alone."
+},
+{
+q:"Which sentence is incorrect?",
+o:["Students arrive","Books are exciting","Opened last Tuesday","All correct"],
+a:2,
+exp:"No subject makes it incomplete."
+},
+{
+q:"What happens if predicate removed?",
+o:["Question","Command","Fragment","Compound sentence"],
+a:2,
+exp:"It becomes incomplete sentence."
+},
+{
+q:"Who is correct about sentences?",
+o:["Student","Teacher","Both","None"],
+a:1,
+exp:"Every sentence needs subject + predicate."
+}
+];
 
-/* FLOW CONTROL */
+let index=0;
+let score=0;
+let attempts=0;
+let timer;
+let timeLeft=45;
+
+/* SPLASH */
 setTimeout(()=>{
-document.getElementById("splash").classList.remove("active");
-document.getElementById("intro").classList.add("active");
-
-setTimeout(()=>{
-document.getElementById("intro").classList.remove("active");
-document.getElementById("mission").classList.add("active");
-},3000);
-
+document.getElementById("splash").style.display="none";
 },5000);
 
 /* START */
 function startGame(){
-document.getElementById("mission").style.display="none";
-document.getElementById("game").style.display="block";
+document.getElementById("intro").classList.remove("active");
+document.getElementById("quiz").classList.add("active");
 loadQ();
-timer();
 }
 
-/* TIMER */
-function timer(){
-let t=setInterval(()=>{
-time--;
-document.getElementById("time").innerText=time;
-if(time<=0){
-clearInterval(t);
-endGame();
+/* LOAD QUESTION */
+function loadQ(){
+clearInterval(timer);
+timeLeft=45;
+document.getElementById("timer").innerText=timeLeft;
+document.getElementById("feedback").innerText="";
+
+let q=questions[index];
+document.getElementById("question").innerText=q.q;
+
+let optHTML="";
+q.o.forEach((op,i)=>{
+optHTML+=`<button class="btn" onclick="check(${i},this)">${op}</button>`;
+});
+document.getElementById("options").innerHTML=optHTML;
+
+timer=setInterval(()=>{
+timeLeft--;
+document.getElementById("timer").innerText=timeLeft;
+if(timeLeft<=0){
+clearInterval(timer);
+showAnswer(false,null);
 }
 },1000);
 }
 
-/* QUESTIONS (IMPROVED CBQs - FULL LENGTH) */
-const q=[
-
-{
-q:`Q1. Read the sentence:
-"The tall oak tree at the corner of our school fell during the storm."
-Identify the complete subject.`,
-options:[
-"fell during the storm",
-"The tall oak tree at the corner of our school",
-"corner of our school",
-"The tall oak tree"
-],
-a:1,
-tip:"Subject tells who/what the sentence is about."
-},
-
-{
-q:`Q2. Identify simple subject:
-"The small brown puppy with torn ear barked at the postman."`,
-options:[
-"The small brown puppy",
-"barked at the postman",
-"puppy",
-"postman"
-],
-a:2,
-tip:"Simple subject = main noun."
-},
-
-{
-q:`Q3. Identify subject:
-"Across the playground ran the excited children."`,
-options:[
-"Across the playground",
-"ran",
-"the excited children",
-"playground"
-],
-a:2,
-tip:"Subject = who performs action."
-},
-
-{
-q:`Q4. Find subject:
-"Are the science textbooks on the shelf?"`,
-options:[
-"Are",
-"the shelf",
-"on the shelf",
-"the science textbooks"
-],
-a:3,
-tip:"Subject is who/what is being talked about."
-},
-
-{
-q:`Q5. Real subject:
-"There are twelve students waiting outside the lab."`,
-options:[
-"There",
-"twelve",
-"the lab",
-"twelve students"
-],
-a:3,
-tip:"Ignore 'there' — find real noun."
-},
-
-{
-q:`Q6. Simple predicate:
-"The sleepy students slowly walked into the hall."`,
-options:[
-"slowly walked",
-"the sleepy students",
-"walked",
-"into the hall"
-],
-a:2,
-tip:"Predicate = action word."
-},
-
-{
-q:`Q7. Complete sentence:`,
-options:[
-"Running through fields.",
-"The children in park.",
-"The birds sang sweetly at dawn.",
-"All flowers in garden."
-],
-a:2,
-tip:"Sentence needs subject + predicate."
-},
-
-{
-q:`Q8. Identify subject & predicate:
-"The little girl laughed."`,
-options:[
-"subject is predicate",
-"subject: girl; predicate: laughed",
-"predicate is subject",
-"both subject"
-],
-a:1,
-tip:"Subject + action completes meaning."
-},
-
-{
-q:`Q9. Complete predicate:
-"The hungry cat drank the warm milk."`,
-options:[
-"The hungry cat",
-"The hungry cat drank",
-"drank the warm milk",
-"milk"
-],
-a:2,
-tip:"Predicate = action + object."
-},
-
-{
-q:`Q10. Odd sentence:`,
-options:[
-"The moon rose.",
-"Because it was raining.",
-"She sang well.",
-"Dogs bark loudly."
-],
-a:1,
-tip:"Fragment has no main clause."
-},
-
-{
-q:`Q11. Error sentence:`,
-options:[
-"Students arrive on time.",
-"Books are exciting.",
-"Opened last Tuesday.",
-"No errors"
-],
-a:2,
-tip:"Missing subject makes fragment."
-},
-
-{
-q:`Q12. Effect of removing predicate:
-"The gymnast won medals." → "The gymnast."`,
-options:[
-"Question",
-"Command",
-"Fragment",
-"Compound sentence"
-],
-a:2,
-tip:"Incomplete thought = fragment."
-},
-
-{
-q:`Q13. Every sentence needs:`,
-options:[
-"Only subject",
-"Only predicate",
-"Both subject and predicate",
-"Either one"
-],
-a:2,
-tip:"Complete sentence needs both parts."
-}
-
-];
-
-/* LOAD */
-function loadQ(){
-attempt=1;
-let x=q[i];
-
-let html=`<div class='q'>${x.q}</div>`;
-
-x.options.forEach((o,idx)=>{
-html+=`<button class='opt' onclick='check(${idx})'>${o}</button>`;
-});
-
-document.getElementById("qbox").innerHTML=html;
-}
-
 /* CHECK */
-function check(ans){
-let x=q[i];
+function check(i,btn){
+let q=questions[index];
 
-if(ans===x.a){
+if(i===q.a){
+btn.classList.add("correct");
 score++;
 document.getElementById("score").innerText=score;
-show("🌟 Excellent!","good");
-play("correct");
-next();
+playSound("assets/correct.mp3");
+celebrate();
+setTimeout(next,1000);
 }else{
+btn.classList.add("wrong");
+attempts++;
+playSound("assets/wrong.mp3");
 
-if(attempt===1){
-attempt++;
-show("❌ Try Again","bad");
-play("wrong");
+if(attempts===1){
+document.getElementById("feedback").innerText="Try once more!";
 }else{
-show("💡 " + x.tip,"bad");
-play("wrong");
-next();
+showAnswer(true,q);
 }
 }
+}
+
+/* SHOW ANSWER */
+function showAnswer(correct,q){
+clearInterval(timer);
+
+if(q){
+document.getElementById("feedback").innerText="Correct Answer: "+q.o[q.a]+" | "+q.exp;
+}
+setTimeout(next,2500);
 }
 
 /* NEXT */
 function next(){
-setTimeout(()=>{
-i++;
-if(i<q.length) loadQ();
-else endGame();
-},1000);
+attempts=0;
+index++;
+if(index<questions.length){
+loadQ();
+}else{
+endGame();
 }
-
-/* POPUP */
-function show(msg,type){
-let p=document.getElementById("popup");
-p.innerText=msg;
-p.className=type;
-p.style.display="block";
-
-setTimeout(()=>p.style.display="none",1000);
-}
-
-/* AUDIO */
-function play(id){
-document.getElementById(id).play().catch(()=>{});
 }
 
 /* END */
 function endGame(){
-document.getElementById("game").innerHTML=
-`<div class="card">
-<h2>🎉 Mission Complete</h2>
-<p>Score: ${score}/13</p>
-</div>`;
+document.getElementById("quiz").classList.remove("active");
+document.getElementById("result").classList.add("active");
+document.getElementById("finalScore").innerText=score;
+playSound("assets/clapping.mp3");
+}
+
+/* RESTART */
+function restart(){
+location.reload();
+}
+
+/* SOUND */
+function playSound(src){
+let a=new Audio(src);
+a.play();
+}
+
+/* CONFETTI */
+function celebrate(){
+for(let i=0;i<20;i++){
+let d=document.createElement("div");
+d.className="confetti";
+d.style.left=Math.random()*100+"vw";
+d.style.background=["gold","skyblue","pink"][Math.floor(Math.random()*3)];
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),1000);
+}
 }
 
 </script>
