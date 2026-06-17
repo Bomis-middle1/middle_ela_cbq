@@ -31,7 +31,7 @@ body{
 
 /* CARD */
 .card{
-    max-width:800px;
+    max-width:900px;
     margin:auto;
     background:white;
     padding:18px;
@@ -49,11 +49,11 @@ body{
 /* IMAGE */
 #qimg{
     width:100%;
-    max-height:240px;
+    max-height:250px;
     object-fit:contain;
     margin:10px 0;
-    display:none;
     border-radius:10px;
+    display:none;
 }
 
 /* OPTIONS */
@@ -137,27 +137,27 @@ body{
 </div>
 
 <script>
-
-/* ================= QUESTIONS ================= */
+/* ================= FULL QUESTIONS ================= */
 const questions = [
 {
 q:`Q1. You see this sticker on your water bottle:
 "Drink more water every day."
 What kind of sentence is it?`,
-options:["Declarative","Interrogative","Imperative","Exclamatory"],
+options:["A. Declarative","B. Interrogative","C. Imperative","D. Exclamatory"],
 answer:2
 },
 {
 q:`Q2. Your friend sends you a message:
-"Did you finish the science homework?"`,
-options:["Declarative","Interrogative","Imperative","Exclamatory"],
+"Did you finish the science homework?"
+What kind of sentence is this?`,
+options:["A. Declarative","B. Interrogative","C. Imperative","D. Exclamatory"],
 answer:1
 },
 {
 q:`Q3. Aarav jumps into a cold swimming pool and shouts,
 "How freezing the water is!"
 Later, he writes about the experience in his diary. Which sentence is the best diary entry?`,
-options:["How cold is the water?","Don't touch the cold water.","The water was very cold.","The water was not cold."],
+options:["A. How cold is the water?","B. Don't touch the cold water.","C. The water was very cold.","D. The water was not cold."],
 answer:2
 },
 {
@@ -165,7 +165,7 @@ q:`Q4. A teacher writes in a report:
 "He is always on time."
 She wants to rewrite it using the word "never" without changing the meaning.
 Which sentence is correct?`,
-options:["He is never on time.","He is never late.","Is he ever on time?","He is not always on time."],
+options:["A. He is never on time.","B. He is never late.","C. Is he ever on time?","D. He is not always on time."],
 answer:1
 },
 {
@@ -173,7 +173,7 @@ q:`Q5. After winning a match, the captain says,
 "It was a great victory for the team."
 A reporter wants to ask this as a question.
 Which sentence is correct?`,
-options:["Was it a great victory for the team?","It was a great victory for the team?","Did it was a great victory for the team?","How great the victory was!"],
+options:["A. Was it a great victory for the team?","B. It was a great victory for the team?","C. Did it was a great victory for the team?","D. How great the victory was!"],
 answer:0
 },
 {
@@ -240,9 +240,7 @@ options:[
 answer:1
 },
 {
-q:`Q12. Three of these are Imperative sentences.
-One is not.
-Which is the odd one out?`,
+q:`Q12. Three of these are Imperative sentences. One is not. Which is the odd one out?`,
 options:[
 "A. Switch off the lights before you leave.",
 "B. Please hand in your homework tomorrow.",
@@ -252,8 +250,7 @@ options:[
 answer:2
 },
 {
-q:`Q13. A student is writing cooking instructions.
-Which sentence does not correctly use the Imperative form?`,
+q:`Q13. A student is writing cooking instructions. Which sentence does not correctly use the Imperative form?`,
 options:[
 "A. First, wash the vegetables.",
 "B. Then, you are cutting them into small pieces.",
@@ -264,9 +261,7 @@ answer:1
 },
 {
 q:`Q14. A student changes
-"What a terrible mess this is!"
-to
-"This is a terrible mess."
+"What a terrible mess this is!" to "This is a terrible mess."
 What is the effect of this change?`,
 options:[
 "A. It becomes an Interrogative sentence.",
@@ -277,8 +272,7 @@ options:[
 answer:1
 },
 {
-q:`Q15. You are writing a polite email to your teacher asking them to explain a Maths problem again.
-Which sentence is the most appropriate?`,
+q:`Q15. You are writing a polite email to your teacher asking them to explain a Maths problem again. Which sentence is the most appropriate?`,
 options:[
 "A. Explain this Maths problem again!",
 "B. Why can't you explain this problem again?",
@@ -303,12 +297,11 @@ load();
 function load(){
 clearInterval(timer);
 let q=questions[i];
-
 document.getElementById("question").innerText=q.q;
 
 /* IMAGE */
 let img=document.getElementById("qimg");
-if(q.img){ img.src=q.img; img.style.display="block"; }else{ img.style.display="none"; }
+if(q.img){ img.src=q.img; img.style.display="block"; } else { img.style.display="none"; }
 
 /* OPTIONS */
 let html="";
@@ -344,7 +337,6 @@ document.getElementById("quiz").classList.remove("active");
 document.getElementById("result").classList.add("active");
 document.getElementById("final").innerText=score;
 }
-
 </script>
 
 </body>
