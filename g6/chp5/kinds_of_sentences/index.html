@@ -1,1 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 6 - Kinds of Sentences</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+body{
+    margin:0;
+    font-family: Arial;
+    background: linear-gradient(135deg,#eef6ff,#ffffff);
+    overflow:hidden;
+}
+
+/* SPLASH */
+#splash{
+    position:fixed;
+    inset:0;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+}
+#splash img{width:220px}
+
+/* SCREEN */
+.screen{display:none;height:100vh;padding:15px;}
+.active{display:block}
+
+/* CARD */
+.card{
+    max-width:800px;
+    margin:auto;
+    background:white;
+    padding:18px;
+    border-radius:16px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* QUESTION */
+#question{
+    white-space:pre-wrap;
+    line-height:1.6;
+    font-size:16px;
+}
+
+/* IMAGE (Q6 & Q7) */
+.qimg{
+    width:100%;
+    max-height:220px;
+    object-fit:contain;
+    margin:10px 0;
+    border-radius:10px;
+}
+
+/* OPTIONS */
+.option{
+    width:100%;
+    margin:10px 0;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#f2f2f2;
+    text-align:left;
+    font-size:16px;
+    cursor:pointer;
+    white-space:normal;
+}
+.option:hover{background:#e6e6e6}
+
+.correct{background:#c8f7c5 !important;}
+.wrong{background:#ffd6d6 !important;}
+
+/* TOP BAR */
+#topbar{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+    font-weight:bold;
+}
+#timer{color:#d9534f}
+
+/* BUTTON */
+.btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#4a90e2;
+    color:white;
+    font-size:16px;
+}
+
+/* CONFETTI */
+.confetti{
+    position:fixed;
+    width:8px;height:8px;
+    background:gold;
+    top:-10px;
+    animation:fall 1s linear forwards;
+}
+@keyframes fall{
+    to{transform:translateY(600px) rotate(360deg);opacity:0}
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+    <img src="assets/innovine-logo.png">
+</div>
+
+<!-- INTRO -->
+<div id="intro" class="screen active">
+<div class="card">
+    <h2>Grade 6 English</h2>
+    <p>Chapter 5: Kinds of Sentences</p>
+    <button class="btn" onclick="start()">Start Quiz</button>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+<div class="card">
+
+<div id="topbar">
+    <div>Score: <span id="score">0</span></div>
+    <div>⏱ <span id="timer">45</span>s</div>
+</div>
+
+<div id="question"></div>
+<img id="qimage" class="qimg" style="display:none;">
+<div id="options"></div>
+<div id="feedback"></div>
+
+</div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen">
+<div class="card">
+    <h2>Quiz Completed 🎉</h2>
+    <p>Your Score: <span id="final"></span>/15</p>
+    <button class="btn" onclick="location.reload()">Play Again</button>
+</div>
+</div>
+
+<script>
+
+/* ================= QUESTIONS ================= */
+const questions = [
+
+`Q1. You see this sticker on your water bottle:
+"Drink more water every day."
+What kind of sentence is it?
+Options:
+A. Declarative
+B. Interrogative
+C. Imperative
+D. Exclamatory
+Correct Answer: C`,
+
+`Q2. Your friend sends you a message:
+"Did you finish the science homework?"
+What kind of sentence is this?
+Options:
+A. Declarative
+B. Interrogative
+C. Imperative
+D. Exclamatory
+Correct Answer: B`,
+
+`Q3. Aarav jumps into a cold swimming pool and shouts,
+"How freezing the water is!"
+Which sentence is best diary entry?
+Options:
+A. How cold is the water?
+B. Don't touch the cold water.
+C. The water was very cold.
+D. The water was not cold.
+Correct Answer: C`,
+
+`Q4. Rewrite using "never":
+"He is always on time."
+Options:
+A. He is never on time.
+B. He is never late.
+C. Is he ever on time?
+D. He is not always on time.
+Correct Answer: B`,
+
+`Q5. Make question form:
+"It was a great victory for the team."
+Options:
+A. Was it a great victory for the team?
+B. It was a great victory for the team?
+C. Did it was a great victory for the team?
+D. How great the victory was!
+Correct Answer: A`,
+
+`Q6. The class notice board has these four notes.`,
+`Q7. Punctuation task.`,
+`Q8. Which sentence is negative declarative?
+Options:
+A. Don't go there.
+B. Why are you not coming?
+C. She does not like apples.
+D. What a shame!
+Correct Answer: C`,
+
+`Q9. Meaning of question as statement?
+Options:
+A. Everyone can live forever
+B. No person can live forever
+C. Can a person live forever?
+D. Live forever
+Correct Answer: B`,
+
+`Q10. Sort sentences Imperative/Exclamatory
+Correct Answer: C`,
+
+`Q11. Group sentences correctly
+Correct Answer: B`,
+
+`Q12. Odd one out
+Correct Answer: C`,
+
+`Q13. Imperative error sentence
+Correct Answer: B`,
+
+`Q14. Effect of change
+Correct Answer: B`,
+
+`Q15. Best polite email sentence
+Correct Answer: C`
+];
+
+let i=0,score=0,attempt=0,timer;
+
+/* SPLASH */
+setTimeout(()=>document.getElementById("splash").style.display="none",5000);
+
+function start(){
+document.getElementById("intro").classList.remove("active");
+document.getElementById("quiz").classList.add("active");
+load();
+}
+
+function load(){
+clearInterval(timer);
+attempt=0;
+
+let q = questions[i];
+document.getElementById("feedback").innerText="";
+
+/* IMAGE HANDLING */
+let img = document.getElementById("qimage");
+
+if(i===5){
+img.src="assets/question6.png";
+img.style.display="block";
+}
+else if(i===6){
+img.src="assets/question7.png";
+img.style.display="block";
+}
+else{
+img.style.display="none";
+}
+
+document.getElementById("question").innerText=q;
+
+/* OPTIONS */
+let options=[];
+if(q.includes("Options:")){
+let optText = q.split("Options:")[1].split("Correct Answer")[0];
+options = optText.split("\n").filter(x=>x.trim().match(/^[A-D]\./));
+}
+
+let html="";
+options.forEach((op,idx)=>{
+html+=`<button class="option" onclick="check(${idx},this)">${op}</button>`;
+});
+
+document.getElementById("options").innerHTML=html;
+
+/* TIMER */
+let t=45;
+document.getElementById("timer").innerText=t;
+
+timer=setInterval(()=>{
+t--;
+document.getElementById("timer").innerText=t;
+if(t<=0) next();
+},1000);
+}
+
+function check(idx,btn){
+let correctIndex = getCorrectIndex(questions[i]);
+
+if(idx===correctIndex){
+btn.classList.add("correct");
+score++;
+document.getElementById("score").innerText=score;
+confetti();
+setTimeout(next,900);
+}else{
+btn.classList.add("wrong");
+attempt++;
+if(attempt===2) next();
+}
+}
+
+function getCorrectIndex(q){
+let ans = q.split("Correct Answer:")[1].trim();
+return ["A","B","C","D"].indexOf(ans);
+}
+
+function next(){
+clearInterval(timer);
+i++;
+if(i<questions.length) load();
+else end();
+}
+
+function end(){
+document.getElementById("quiz").classList.remove("active");
+document.getElementById("result").classList.add("active");
+document.getElementById("final").innerText=score;
+}
+
+function confetti(){
+for(let i=0;i<25;i++){
+let d=document.createElement("div");
+d.className="confetti";
+d.style.left=Math.random()*100+"vw";
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),1000);
+}
+}
+</script>
+
+</body>
+</html>
