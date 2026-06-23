@@ -1,1 +1,452 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capitalisation and Punctuation CBQ</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f8ff;
+overflow-x:hidden;
+}
+
+.screen{
+display:none;
+padding:20px;
+text-align:center;
+}
+
+.active{display:block;}
+
+.logo{
+width:180px;
+margin:auto;
+margin-top:20vh;
+}
+
+button{
+padding:12px 20px;
+margin:10px;
+border:none;
+border-radius:12px;
+font-size:16px;
+cursor:pointer;
+background:#4a90e2;
+color:white;
+}
+
+.option{
+display:block;
+background:white;
+margin:10px auto;
+padding:12px;
+border-radius:10px;
+width:90%;
+max-width:600px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+cursor:pointer;
+text-align:left;
+}
+
+.correct{background:#c8f7c5 !important;}
+.wrong{background:#f7c5c5 !important;}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px;
+background:#fff;
+position:sticky;
+top:0;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+.progress{
+height:10px;
+background:#ddd;
+border-radius:10px;
+overflow:hidden;
+margin:10px 0;
+}
+
+.progress-bar{
+height:10px;
+background:#4a90e2;
+width:0%;
+}
+
+.case-img{
+width:80%;
+max-width:500px;
+margin:10px auto;
+border-radius:12px;
+}
+
+.chat-box{
+background:#fff;
+padding:15px;
+border-radius:10px;
+width:90%;
+margin:auto;
+text-align:left;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+white-space:pre-wrap;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<div class="screen active" id="intro">
+<img src="assets/innovine-logo.png" class="logo">
+</div>
+
+<!-- START -->
+<div class="screen" id="start">
+<h2>Grade 6</h2>
+<h3>Chapter 2: Capitalisation and Punctuation</h3>
+<p>Total Questions: 15</p>
+<button onclick="startGame()">Start</button>
+</div>
+
+<!-- CASE STUDY -->
+<div class="screen" id="caseStudy">
+<img src="assets/picture-1.png" class="case-img">
+<h3>📖 Read the WhatsApp chat dialogue carefully before answering the upcoming three questions.</h3>
+
+<div class="chat-box">
+Riya texts Aarav:
+"hey aarav are you coming to dehradun next week"
+</div>
+
+<button onclick="nextFromCase()">Continue</button>
+</div>
+
+<!-- QUESTION SCREEN -->
+<div class="screen" id="quiz">
+<div class="topbar">
+<div id="score">Score: 0</div>
+<div id="timer">45</div>
+</div>
+
+<div class="progress"><div class="progress-bar" id="bar"></div></div>
+
+<h3 id="qtext"></h3>
+<div id="options"></div>
+
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="result">
+<h2>Result</h2>
+<h3 id="finalScore"></h3>
+<p id="message"></p>
+<button onclick="location.reload()">Play Again</button>
+</div>
+
+<script>
+
+let questions = [
+{
+q:`Question 1
+Riya texts Aarav:
+"hey aarav are you coming to dehradun next week"
+Which option correctly fixes all the capitalisation and punctuation errors?`,
+options:[
+"a) Hey Aarav, are you coming to Dehradun next week?",
+"b) hey aarav are you coming to dehradun next week",
+"c) Hey aarav Are You Coming To Dehradun Next Week?",
+"d) HEY AARAV ARE YOU COMING TO DEHRADUN NEXT WEEK"
+],
+a:0
+},
+{
+q:`Question 2
+Aarav writes:
+"yes my mom said we will visit the ganges on tuesday or wednesday"
+Choose the version with the correct capitalisation and end punctuation.`,
+options:[
+"a) Yes my mom said we will visit the Ganges on Tuesday or Wednesday",
+"b) Yes, my mom said we will visit the Ganges on Tuesday or Wednesday.",
+"c) yes my mom said we will visit the ganges on tuesday or wednesday.",
+"d) Yes My Mom Said We Will Visit The Ganges On Tuesday Or Wednesday."
+],
+a:1
+},
+{
+q:`Question 3
+Riya says,
+"wow thats amazing"
+while expressing strong excitement.`,
+options:[
+"a) Wow that's amazing.",
+"b) Wow thats amazing?",
+"c) Wow! That's amazing!",
+"d) wow! thats amazing!"
+],
+a:2
+},
+{
+q:`Question 4
+The school notice says:
+annual sports day is on friday 15 november`,
+options:[
+"a) annual sports day is on Friday 15 november",
+"b) Annual Sports Day is on Friday, 15 November.",
+"c) ANNUAL SPORTS DAY IS ON FRIDAY 15 NOVEMBER",
+"d) Annual sports day is on friday, 15 November."
+],
+a:1
+},
+{
+q:`Question 5
+Amit writes in his email:
+"its a lovely place"
+and
+"my uncles house."`,
+options:[
+"a) its → it's; uncles → uncle's",
+"b) its → its; uncles → uncles'",
+"c) its → it's; uncles → uncles",
+"d) No errors"
+],
+a:0
+},
+{
+q:`Question 6
+A WhatsApp chat showing Aarav's packing list: bring your camera warm clothes extra socks and snacks`,
+options:[
+"a) Bring your camera. Warm clothes. Extra socks. And snacks.",
+"b) Bring your camera, warm clothes, extra socks, and snacks.",
+"c) Bring your camera! Warm clothes! Extra socks! And snacks!",
+"d) Bring your camera warm clothes extra socks and snacks."
+],
+a:1
+},
+{
+q:`Question 7
+A school notice board shown in picture`,
+options:[
+"a",
+"b",
+"c",
+"d"
+],
+a:1,
+img:true
+},
+{
+q:`Question 8
+Meera writes "Diwali mela" in her diary.`,
+options:[
+"a",
+"b",
+"c",
+"d"
+],
+a:2
+},
+{
+q:`Question 9
+Which sentence is correctly capitalised and punctuated?`,
+options:[
+"a",
+"b",
+"c",
+"d"
+],
+a:1
+},
+{
+q:`Question 10
+Sort these words into two groups.`,
+options:[
+"a",
+"b",
+"c",
+"d"
+],
+a:2
+},
+{
+q:`Question 11
+Choose the correct punctuation mark.`,
+options:[
+"a",
+"b",
+"c",
+"d"
+],
+a:1
+},
+{
+q:`Question 12
+Which is the odd one out?`,
+options:[
+"a",
+"b",
+"c",
+"d"
+],
+a:3
+},
+{
+q:`Question 13
+Amit's email contains punctuation errors.`,
+options:[
+"a",
+"b",
+"c",
+"d"
+],
+a:1
+},
+{
+q:`Question 14
+What are the effects of missing apostrophe?`,
+options:[
+"a",
+"b",
+"c",
+"d"
+],
+a:1
+},
+{
+q:`Question 15
+Assertion Reason Question`,
+options:[
+"a",
+"b",
+"c",
+"d"
+],
+a:0
+}
+];
+
+let current=0;
+let score=0;
+let attempts=0;
+let timer;
+let time=45;
+let locked=false;
+let inCase=true;
+
+function show(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+setTimeout(()=>{
+show("start");
+},5000);
+
+function startGame(){
+show("caseStudy");
+}
+
+function nextFromCase(){
+inCase=false;
+show("quiz");
+loadQ();
+}
+
+function loadQ(){
+
+if(current===0 && !inCase){
+}
+
+let q=questions[current];
+document.getElementById("qtext").innerText=q.q;
+let optDiv=document.getElementById("options");
+optDiv.innerHTML="";
+
+q.options.forEach((o,i)=>{
+let btn=document.createElement("div");
+btn.className="option";
+btn.innerText=o;
+btn.onclick=()=>check(i,btn);
+optDiv.appendChild(btn);
+});
+
+attempts=0;
+time=45;
+startTimer();
+updateScore();
+updateBar();
+}
+
+function startTimer(){
+clearInterval(timer);
+timer=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+if(time<=0){
+check(-1,null);
+}
+},1000);
+}
+
+function check(i,btn){
+if(locked) return;
+let q=questions[current];
+
+if(i===q.a){
+score++;
+document.getElementById("score").innerText="Score: "+score;
+btn.classList.add("correct");
+playSound("correct.mp3");
+setTimeout(next,1000);
+}else{
+attempts++;
+playSound("wrong.mp3");
+if(attempts===1){
+alert("Not quite. Try again!");
+}else{
+next();
+}
+}
+}
+
+function next(){
+current++;
+if(current>=questions.length){
+end();
+}else{
+loadQ();
+}
+}
+
+function end(){
+show("result");
+document.getElementById("finalScore").innerText=score+"/"+questions.length;
+let p=(score/questions.length)*100;
+document.getElementById("message")=
+p>=75?"🎉 Good Job!":p>=40?"📚 Review this chapter":"💡 Let's practise more.";
+}
+
+function playSound(s){
+let a=new Audio("assets/"+s);
+a.play();
+}
+
+function updateScore(){
+document.getElementById("score").innerText="Score: "+score;
+}
+
+function updateBar(){
+document.getElementById("bar").style.width=((current/questions.length)*100)+"%";
+}
+
+</script>
+
+</body>
+</html>
