@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,97 +6,208 @@
 <title>Capitalisation and Punctuation CBQ</title>
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:#f5f8ff;
-overflow-x:hidden;
+:root {
+  --primary: #4a90e2;
+  --primary-hover: #357abd;
+  --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #e2ebf0 100%);
+  --surface: #ffffff;
+  --text-main: #2c3e50;
+  --text-muted: #7f8c8d;
+  --correct: #2ecc71;
+  --correct-bg: #e8f8f0;
+  --wrong: #e74c3c;
+  --wrong-bg: #fdedec;
 }
 
-.screen{
-display:none;
-padding:20px;
-text-align:center;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.active{display:block;}
-
-.logo{
-width:180px;
-margin:auto;
-margin-top:20vh;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
 }
 
-button{
-padding:12px 20px;
-margin:10px;
-border:none;
-border-radius:12px;
-font-size:16px;
-cursor:pointer;
-background:#4a90e2;
-color:white;
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 650px;
+  margin: 20px;
+  padding: 40px 30px;
+  background: var(--surface);
+  border-radius: 24px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  animation: fadeIn 0.4s ease-out;
 }
 
-.option{
-display:block;
-background:white;
-margin:10px auto;
-padding:12px;
-border-radius:10px;
-width:90%;
-max-width:600px;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-cursor:pointer;
-text-align:left;
+.screen.active {
+  display: block;
 }
 
-.correct{background:#c8f7c5 !important;}
-.wrong{background:#f7c5c5 !important;}
-
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:10px;
-background:#fff;
-position:sticky;
-top:0;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.progress{
-height:10px;
-background:#ddd;
-border-radius:10px;
-overflow:hidden;
-margin:10px 0;
+/* Splash / Intro Screen */
+#intro {
+  background: transparent;
+  box-shadow: none;
+}
+.logo {
+  width: 180px;
+  animation: pulse 2s infinite ease-in-out;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.04); opacity: 1; }
 }
 
-.progress-bar{
-height:10px;
-background:#4a90e2;
-width:0%;
+/* Typography & Visual Layout */
+h2 { font-size: 1.2rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+h3 { font-size: 1.8rem; color: #1a252f; margin-bottom: 16px; font-weight: 700; }
+p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-bottom: 24px; }
+
+button {
+  display: inline-block;
+  padding: 14px 35px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.25);
+}
+button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(74, 144, 226, 0.35);
 }
 
-.case-img{
-width:80%;
-max-width:500px;
-margin:10px auto;
-border-radius:12px;
+.case-img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  border: 1px solid #e1e8ed;
+  background: #fdfefe;
 }
 
-.chat-box{
-background:#fff;
-padding:15px;
-border-radius:10px;
-width:90%;
-margin:auto;
-text-align:left;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-white-space:pre-wrap;
+.chat-box {
+  background: #f8f9fa;
+  border-left: 5px solid var(--primary);
+  padding: 20px;
+  border-radius: 4px 12px 12px 4px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #34495e;
+  text-align: left;
+  margin: 20px auto;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
 }
 
+/* Quiz UI Components */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 15px;
+}
+#timer {
+  background: #fff3cd;
+  color: #856404;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+.progress {
+  height: 8px;
+  background: #eaeded;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 25px;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+#qtext {
+  text-align: left;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  white-space: pre-wrap;
+}
+
+/* Options */
+.option {
+  display: block;
+  background: #fdfefe;
+  margin: 12px 0;
+  padding: 16px 20px;
+  border: 2px solid #e2ebf0;
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #34495e;
+  transition: all 0.2s ease;
+}
+.option:hover {
+  background: #f4f6f7;
+  border-color: #bdc3c7;
+  transform: translateX(4px);
+}
+.option.correct {
+  background: var(--correct-bg) !important;
+  border-color: var(--correct) !important;
+  color: #196f3d;
+  font-weight: 600;
+}
+.option.wrong {
+  background: var(--wrong-bg) !important;
+  border-color: var(--wrong) !important;
+  color: #943126;
+}
+.disabled {
+  pointer-events: none;
+}
+
+/* Dynamic Live Feedback Text Banner instead of Alert box */
+#feedback-banner {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 15px;
+  min-height: 24px;
+}
+
+#finalScore {
+  font-size: 3.5rem;
+  color: var(--primary);
+  margin: 20px 0;
+  font-weight: 800;
+}
 </style>
 </head>
 
@@ -105,59 +215,63 @@ white-space:pre-wrap;
 
 <!-- INTRO -->
 <div class="screen active" id="intro">
-<img src="assets/innovine-logo.png" class="logo">
+  <img src="assets/innovine-logo.png" class="logo" alt="Logo">
 </div>
 
 <!-- START -->
 <div class="screen" id="start">
-<h2>Grade 6</h2>
-<h3>Chapter 2: Capitalisation and Punctuation</h3>
-<p>Total Questions: 15</p>
-<button onclick="startGame()">Start</button>
+  <h2>Grade 6</h2>
+  <h3>Chapter 2: Capitalisation & Punctuation</h3>
+  <p>Challenge your precision through 15 situational competency tasks.</p>
+  <button onclick="startGame()">Start Assessment</button>
 </div>
 
-<!-- CASE STUDY -->
+<!-- CASE STUDY (Path fixed to Picture1.png) -->
 <div class="screen" id="caseStudy">
-<img src="assets/picture-1.png" class="case-img">
-<h3>📖 Read the WhatsApp chat dialogue carefully before answering the upcoming three questions.</h3>
+  <h2>Context Setup</h2>
+  <img src="assets/Picture1.png" class="case-img" alt="Case Study context image">
+  <p style="font-weight: 600; color: #1a252f;">📖 Read the WhatsApp chat dialogue carefully before answering the upcoming questions.</p>
 
-<div class="chat-box">
+  <div class="chat-box">
 Riya texts Aarav:
 "hey aarav are you coming to dehradun next week"
-</div>
+  </div>
 
-<button onclick="nextFromCase()">Continue</button>
+  <button onclick="nextFromCase()">Continue to Questions</button>
 </div>
 
 <!-- QUESTION SCREEN -->
 <div class="screen" id="quiz">
-<div class="topbar">
-<div id="score">Score: 0</div>
-<div id="timer">45</div>
-</div>
+  <div class="topbar">
+    <div id="score">Score: 0</div>
+    <div id="qno">Question 1/15</div>
+    <div id="timer">45</div>
+  </div>
 
-<div class="progress"><div class="progress-bar" id="bar"></div></div>
+  <div class="progress"><div class="progress-bar" id="bar"></div></div>
 
-<h3 id="qtext"></h3>
-<div id="options"></div>
+  <div id="dynamicImageBox"></div>
 
+  <h3 id="qtext"></h3>
+  <div id="options"></div>
+  <div id="feedback-banner"></div>
 </div>
 
 <!-- RESULT -->
 <div class="screen" id="result">
-<h2>Result</h2>
-<h3 id="finalScore"></h3>
-<p id="message"></p>
-<button onclick="location.reload()">Play Again</button>
+  <h2>Performance Summary</h2>
+  <h3>Result</h3>
+  <div id="finalScore">0/15</div>
+  <p id="message"></p>
+  <button onclick="location.reload()">Play Again</button>
 </div>
 
 <script>
-
 let questions = [
 {
-q:`Question 1
-Riya texts Aarav:
+q:`Riya texts Aarav:
 "hey aarav are you coming to dehradun next week"
+
 Which option correctly fixes all the capitalisation and punctuation errors?`,
 options:[
 "a) Hey Aarav, are you coming to Dehradun next week?",
@@ -168,9 +282,9 @@ options:[
 a:0
 },
 {
-q:`Question 2
-Aarav writes:
+q:`Aarav writes:
 "yes my mom said we will visit the ganges on tuesday or wednesday"
+
 Choose the version with the correct capitalisation and end punctuation.`,
 options:[
 "a) Yes my mom said we will visit the Ganges on Tuesday or Wednesday",
@@ -181,8 +295,7 @@ options:[
 a:1
 },
 {
-q:`Question 3
-Riya says,
+q:`Riya says,
 "wow thats amazing"
 while expressing strong excitement.`,
 options:[
@@ -194,9 +307,8 @@ options:[
 a:2
 },
 {
-q:`Question 4
-The school notice says:
-annual sports day is on friday 15 november`,
+q:`The school notice says:
+"annual sports day is on friday 15 november"`,
 options:[
 "a) annual sports day is on Friday 15 november",
 "b) Annual Sports Day is on Friday, 15 November.",
@@ -206,11 +318,8 @@ options:[
 a:1
 },
 {
-q:`Question 5
-Amit writes in his email:
-"its a lovely place"
-and
-"my uncles house."`,
+q:`Amit writes in his email:
+"its a lovely place" and "my uncles house."`,
 options:[
 "a) its → it's; uncles → uncle's",
 "b) its → its; uncles → uncles'",
@@ -220,8 +329,8 @@ options:[
 a:0
 },
 {
-q:`Question 6
-A WhatsApp chat showing Aarav's packing list: bring your camera warm clothes extra socks and snacks`,
+q:`A WhatsApp chat showing Aarav's packing list: 
+"bring your camera warm clothes extra socks and snacks"`,
 options:[
 "a) Bring your camera. Warm clothes. Extra socks. And snacks.",
 "b) Bring your camera, warm clothes, extra socks, and snacks.",
@@ -231,102 +340,94 @@ options:[
 a:1
 },
 {
-q:`Question 7
-A school notice board shown in picture`,
+q:`Analyze the visual sample on the school notice board. Identify the optimization needed.`,
 options:[
-"a",
-"b",
-"c",
-"d"
+"Option a",
+"Option b",
+"Option c",
+"Option d"
 ],
 a:1,
 img:true
 },
 {
-q:`Question 8
-Meera writes "Diwali mela" in her diary.`,
+q:`Meera writes "Diwali mela" in her diary. Select the ideal fix.`,
 options:[
-"a",
-"b",
-"c",
-"d"
+"Option a",
+"Option b",
+"Option c",
+"Option d"
 ],
 a:2
 },
 {
-q:`Question 9
-Which sentence is correctly capitalised and punctuated?`,
+q:`Which sentence is correctly capitalised and punctuated?`,
 options:[
-"a",
-"b",
-"c",
-"d"
+"Option a",
+"Option b",
+"Option c",
+"Option d"
 ],
 a:1
 },
 {
-q:`Question 10
-Sort these words into two groups.`,
+q:`Sort these structural terms into two semantic groups.`,
 options:[
-"a",
-"b",
-"c",
-"d"
+"Option a",
+"Option b",
+"Option c",
+"Option d"
 ],
 a:2
 },
 {
-q:`Question 11
-Choose the correct punctuation mark.`,
+q:`Choose the correct context-appropriate punctuation mark.`,
 options:[
-"a",
-"b",
-"c",
-"d"
+"Option a",
+"Option b",
+"Option c",
+"Option d"
 ],
 a:1
 },
 {
-q:`Question 12
-Which is the odd one out?`,
+q:`Which syntactic pattern is the odd one out?`,
 options:[
-"a",
-"b",
-"c",
-"d"
+"Option a",
+"Option b",
+"Option c",
+"Option d"
 ],
 a:3
 },
 {
-q:`Question 13
-Amit's email contains punctuation errors.`,
+q:`Amit's email contains punctuation errors. Select the best diagnostic correction.`,
 options:[
-"a",
-"b",
-"c",
-"d"
+"Option a",
+"Option b",
+"Option c",
+"Option d"
 ],
 a:1
 },
 {
-q:`Question 14
-What are the effects of missing apostrophe?`,
+q:`What are the direct interpretive effects of a missing apostrophe?`,
 options:[
-"a",
-"b",
-"c",
-"d"
+"Option a",
+"Option b",
+"Option c",
+"Option d"
 ],
 a:1
 },
 {
-q:`Question 15
-Assertion Reason Question`,
+q:`Assertion: Sentence-level capitalization alters semantics. 
+Reason: Proper nouns universally validate cultural identifiers.`,
 options:[
-"a",
-"b",
-"c",
-"d"
+"Option a",
+"Option b",
+"Option c",
+"Option d"
 ],
 a:0
 }
@@ -341,111 +442,154 @@ let locked=false;
 let inCase=true;
 
 function show(id){
-document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
 setTimeout(()=>{
-show("start");
-},5000);
+  show("start");
+}, 2500);
 
 function startGame(){
-show("caseStudy");
+  show("caseStudy");
 }
 
 function nextFromCase(){
-inCase=false;
-show("quiz");
-loadQ();
+  inCase=false;
+  show("quiz");
+  loadQ();
 }
 
 function loadQ(){
+  locked = false;
+  let q=questions[current];
+  
+  document.getElementById("qno").innerText = "Question " + (current + 1) + "/" + questions.length;
+  document.getElementById("qtext").innerText = q.q;
+  document.getElementById("feedback-banner").innerText = "";
+  document.getElementById("feedback-banner").style.color = "unset";
+  
+  // Handle dynamic picture matching using Picture2.png contextually
+  let imgBox = document.getElementById("dynamicImageBox");
+  imgBox.innerHTML = "";
+  if(q.img) {
+    imgBox.innerHTML = `<img src="assets/Picture2.png" class="case-img" alt="Question specific diagram">`;
+  }
 
-if(current===0 && !inCase){
-}
+  let optDiv=document.getElementById("options");
+  optDiv.innerHTML="";
 
-let q=questions[current];
-document.getElementById("qtext").innerText=q.q;
-let optDiv=document.getElementById("options");
-optDiv.innerHTML="";
+  q.options.forEach((o,i)=>{
+    let btn=document.createElement("div");
+    btn.className="option";
+    btn.innerText=o;
+    btn.onclick=()=>check(i,btn);
+    optDiv.appendChild(btn);
+  });
 
-q.options.forEach((o,i)=>{
-let btn=document.createElement("div");
-btn.className="option";
-btn.innerText=o;
-btn.onclick=()=>check(i,btn);
-optDiv.appendChild(btn);
-});
-
-attempts=0;
-time=45;
-startTimer();
-updateScore();
-updateBar();
+  attempts=0;
+  time=45;
+  startTimer();
+  updateScore();
+  updateBar();
 }
 
 function startTimer(){
-clearInterval(timer);
-timer=setInterval(()=>{
-time--;
-document.getElementById("timer").innerText=time;
-if(time<=0){
-check(-1,null);
-}
-},1000);
+  clearInterval(timer);
+  document.getElementById("timer").innerText=time;
+  timer=setInterval(()=>{
+    time--;
+    document.getElementById("timer").innerText=time;
+    if(time<=0){
+      clearInterval(timer);
+      check(-1, null);
+    }
+  },1000);
 }
 
 function check(i,btn){
-if(locked) return;
-let q=questions[current];
+  if(locked) return;
+  let q=questions[current];
+  let banner = document.getElementById("feedback-banner");
 
-if(i===q.a){
-score++;
-document.getElementById("score").innerText="Score: "+score;
-btn.classList.add("correct");
-playSound("correct.mp3");
-setTimeout(next,1000);
-}else{
-attempts++;
-playSound("wrong.mp3");
-if(attempts===1){
-alert("Not quite. Try again!");
-}else{
-next();
-}
-}
+  if(i===q.a){
+    locked = true;
+    clearInterval(timer);
+    score++;
+    updateScore();
+    btn.classList.add("correct");
+    playSound("correct.mp3");
+    banner.innerText = "✨ Correct Answer!";
+    banner.style.color = "var(--correct)";
+    setTimeout(next,1200);
+  }else{
+    attempts++;
+    playSound("wrong.mp3");
+    if(btn) btn.classList.add("wrong");
+    
+    if(attempts===1 && i !== -1){
+      banner.innerText = "✕ Not quite. Try one more time!";
+      banner.style.color = "var(--wrong)";
+      if(btn) {
+        setTimeout(() => { btn.classList.remove("wrong"); }, 800);
+      }
+    }else{
+      locked = true;
+      clearInterval(timer);
+      banner.innerText = "Moving to next question...";
+      banner.style.color = var(--text-muted);
+      
+      // Auto-reveal the correct answer before leaving
+      let optionsElements = document.querySelectorAll(".option");
+      if(optionsElements[q.a]) optionsElements[q.a].classList.add("correct");
+      
+      setTimeout(next,1500);
+    }
+  }
 }
 
 function next(){
-current++;
-if(current>=questions.length){
-end();
-}else{
-loadQ();
-}
+  current++;
+  if(current>=questions.length){
+    end();
+  }else{
+    loadQ();
+  }
 }
 
 function end(){
-show("result");
-document.getElementById("finalScore").innerText=score+"/"+questions.length;
-let p=(score/questions.length)*100;
-document.getElementById("message")=
-p>=75?"🎉 Good Job!":p>=40?"📚 Review this chapter":"💡 Let's practise more.";
+  clearInterval(timer);
+  show("result");
+  document.getElementById("finalScore").innerText=score+"/"+questions.length;
+  let p=(score/questions.length)*100;
+  
+  let msgElement = document.getElementById("message");
+  if(p>=75) {
+    msgElement.innerText = "🎉 Brilliant Job! Complete mastery of rules.";
+    playSound("clapping.mp3");
+  } else if(p>=40) {
+    msgElement.innerText = "📚 Good effort! Review punctuation parameters and try again.";
+  } else {
+    msgElement.innerText = "💡 Let's practice a bit more to sharpen your syntax rules.";
+  }
 }
 
 function playSound(s){
-let a=new Audio("assets/"+s);
-a.play();
+  try {
+    let a=new Audio("assets/"+s);
+    a.play();
+  } catch(e) {
+    console.log("Audio load protected or skipped");
+  }
 }
 
 function updateScore(){
-document.getElementById("score").innerText="Score: "+score;
+  document.getElementById("score").innerText="Score: "+score;
 }
 
 function updateBar(){
-document.getElementById("bar").style.width=((current/questions.length)*100)+"%";
+  document.getElementById("bar").style.width=((current/questions.length)*100)+"%";
 }
-
 </script>
 
 </body>
