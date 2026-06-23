@@ -1,1 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 6 CBQ - Adjectives</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f4f7fb;
+  overflow-x:hidden;
+}
+
+.screen{
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+
+.active{display:block;}
+
+.card{
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  max-width:900px;
+  margin:auto;
+  box-shadow:0 6px 18px rgba(0,0,0,0.1);
+}
+
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.primary{background:#2d7ff9;color:white;}
+.option{
+  display:block;
+  width:100%;
+  margin:10px 0;
+  background:#eef3ff;
+  padding:12px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.option:hover{background:#dce7ff;}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+.progress{
+  height:10px;
+  background:#ddd;
+  border-radius:20px;
+  overflow:hidden;
+}
+.progress-bar{
+  height:10px;
+  background:#2d7ff9;
+  width:0%;
+}
+
+img{
+  max-width:100%;
+  border-radius:12px;
+  margin:10px 0;
+}
+
+.correctGlow{
+  animation: glow 0.6s ease-in-out 3;
+}
+@keyframes glow{
+  0%{box-shadow:0 0 0px green;}
+  50%{box-shadow:0 0 20px green;}
+  100%{box-shadow:0 0 0px green;}
+}
+
+.shake{
+  animation: shake 0.4s;
+}
+@keyframes shake{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-5px);}
+  50%{transform:translateX(5px);}
+  75%{transform:translateX(-5px);}
+  100%{transform:translateX(0);}
+}
+
+.confetti{
+  position:fixed;
+  width:10px;
+  height:10px;
+  background:gold;
+  top:0;
+  animation: fall 2s linear forwards;
+}
+@keyframes fall{
+  to{transform:translateY(100vh) rotate(360deg);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<div class="screen active" id="intro">
+  <div class="card">
+    <img src="assets/innovine-logo.png" style="height:120px;">
+    <h2>Grade 6 - CBQ Interactive</h2>
+    <p>Chapter: Adjectives</p>
+    <p>Total Questions: 10</p>
+    <button class="primary" onclick="startGame()">Start</button>
+  </div>
+</div>
+
+<!-- CONTINUE SCREEN -->
+<div class="screen" id="continueScreen">
+  <div class="card">
+    <img src="assets/picture1.png">
+    <p><b>🖼️ Read the refrigerator sticky notes carefully before answering the next question.</b></p>
+    <button class="primary" onclick="goToQuestion()">Continue</button>
+  </div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="game">
+  <div class="card">
+
+    <div class="topbar">
+      <div>Score: <span id="score">0</span></div>
+      <div>Q: <span id="qno">1</span>/10</div>
+      <div id="timer">45</div>
+    </div>
+
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+
+    <div id="qbox"></div>
+
+    <div id="options"></div>
+
+    <br>
+
+    <button onclick="toggleMute()">Mute/Unmute</button>
+    <input type="range" min="0" max="1" step="0.1" onchange="setVol(this.value)">
+    <button onclick="restart()">Restart</button>
+
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="result">
+  <div class="card">
+    <h2>Final Score: <span id="finalScore"></span></h2>
+    <h3 id="message"></h3>
+    <button class="primary" onclick="restart()">Play Again</button>
+  </div>
+</div>
+
+<audio id="correct" src="assets/correct.mp3"></audio>
+<audio id="wrong" src="assets/wrong.mp3"></audio>
+
+<script>
+
+let questions = [
+`Q1. You are reading a travel brochure: "The Japanese tea ceremony is a peaceful experience." What types of adjectives are 'Japanese' and 'peaceful'? 
+a) Quality / Number 
+b) Proper Adjective / Quality 
+c) Quantity / Demonstrative 
+d) Possessive / Proper Adjective`,
+
+`Q2. A chef says: "I need some sugar and two eggs for this cake." Identify the types of adjectives used for 'some' and 'two': 
+a) Quantity / Number  
+b) Quality / Quantity
+c) Demonstrative / Number 
+d) Interrogative / Quality`,
+
+`Q3. Picture Question`,
+
+`Q4. A student's grammar worksheet showing two sentences side by side — Sentence A: "This is my book." Sentence B: "This book is mine." In which sentence is 'This' used as an adjective?
+a) Sentence A — because 'This' replaces the noun 'book'
+b) Sentence B — because 'This' directly modifies the noun 'book'
+c) Both...
+d) Neither..`,
+
+`Q5. Sort these adjectives into two groups — Adjectives of Number and Adjectives of Quantity: P: few Q: much R: several S: little
+a) Number: P, Q — Quantity: R, S 
+b) Number: Q, S — Quantity: P, R 
+c) Number: P, R — Quantity: Q, S 
+d) Number: R, S — Quantity: P, Q`,
+
+`Q6. Classify the underlined adjective in each sentence as Possessive or Interrogative: 1. "Whose pen is this?" 2. "Her bag is on the desk." 3. "Which route is shorter?" 4. "Our team played well."
+a) 1=Possessive, 2=Interrogative, 3=Possessive, 4=Interrogative 
+b) 1=Interrogative, 2=Possessive, 3=Interrogative, 4=Possessive 
+c) 1=Interrogative, 2=Interrogative, 3=Possessive, 4=Possessive 
+d) 1=Possessive, 2=Possessive, 3=Interrogative, 4=Interrogative`,
+
+`Q7. Three of the following are Adjectives of Quantity. One is NOT. Which is the odd one out? 
+a) much
+b) little
+c) enough
+d) several`,
+
+`Q8. A student sent this text message: "I don't have many milk left in the fridge. Can you buy some?" Which adjective is used incorrectly and why? 
+a) 'many' — milk is uncountable; it should be 'much'  
+b) 'some' — it should be 'any' 
+c) 'many' — it should be 'few' 
+d) There is no error`,
+
+`Q9. A student changes "The food comes from Italy." to "It is Italian food." What change has taken place?
+a) A Quality Adjective has been changed to a Proper Adjective 
+b) A Proper Adjective has been changed to a Quality Adjective 
+c) A Demonstrative Adjective has been changed to a Possessive Adjective 
+d) A Number Adjective has been changed to a Quantity Adjective`,
+
+`Q10. Assertion: In the phrase "ten mangoes," 'ten' is an Adjective of Number. Reason: Adjectives of Number tell us how many countable nouns there are.
+a) Both are correct; the reason explains the assertion. 
+b) Both are correct; but the reason does not explain the assertion. 
+c) The assertion is correct; the reason is wrong. 
+d) Both are wrong.`
+];
+
+let answers = ["b","a","b","b","c","b","d","a","a","a"];
+
+let score = 0;
+let qIndex = 0;
+let attempts = 0;
+let timer;
+let timeLeft = 45;
+let muted = false;
+let started = false;
+
+function startGame(){
+  document.getElementById("intro").classList.remove("active");
+  document.getElementById("continueScreen").classList.add("active");
+}
+
+function goToQuestion(){
+  document.getElementById("continueScreen").classList.remove("active");
+  document.getElementById("game").classList.add("active");
+  loadQ();
+}
+
+function loadQ(){
+  attempts = 0;
+  timeLeft = 45;
+
+  document.getElementById("qno").innerText = qIndex+1;
+  document.getElementById("qbox").innerText = questions[qIndex];
+
+  if(qIndex === 2){
+    // picture already handled via continue screen
+  }
+
+  let optDiv = document.getElementById("options");
+  optDiv.innerHTML = "";
+
+  if(qIndex !== 2){
+    let opts = questions[qIndex].split("a)")[1];
+    let options = ["a","b","c","d"];
+
+    options.forEach(o=>{
+      let btn = document.createElement("button");
+      btn.className = "option";
+      btn.innerText = o.toUpperCase();
+      btn.onclick = ()=>check(o, btn);
+      optDiv.appendChild(btn);
+    });
+  }
+
+  startTimer();
+  updateBar();
+}
+
+function startTimer(){
+  clearInterval(timer);
+  timer = setInterval(()=>{
+    timeLeft--;
+    document.getElementById("timer").innerText = timeLeft;
+    if(timeLeft<=0){
+      check("timeout");
+    }
+  },1000);
+}
+
+function check(ans, btn){
+  if(attempts>=2) return;
+
+  if(ans === answers[qIndex]){
+    score++;
+    document.getElementById("score").innerText = score;
+    document.getElementById("correct").play();
+    btn.classList.add("correctGlow");
+
+    setTimeout(()=>{
+      nextQ();
+    },1200);
+
+  } else {
+    attempts++;
+    document.getElementById("wrong").play();
+    btn.classList.add("shake");
+
+    if(attempts==1){
+      alert("Not quite. Try again!");
+    } else {
+      alert("Correct Answer: " + answers[qIndex].toUpperCase());
+      nextQ();
+    }
+  }
+}
+
+function nextQ(){
+  qIndex++;
+  if(qIndex>=questions.length){
+    showResult();
+  } else {
+    loadQ();
+  }
+}
+
+function updateBar(){
+  document.getElementById("bar").style.width = ((qIndex)/questions.length)*100 + "%";
+}
+
+function showResult(){
+  document.getElementById("game").classList.remove("active");
+  document.getElementById("result").classList.add("active");
+
+  let percent = Math.round((score/questions.length)*100);
+  document.getElementById("finalScore").innerText = score + "/" + questions.length;
+
+  if(percent>=75){
+    document.getElementById("message").innerText = "🎉 Good Job!";
+  } else if(percent>=40){
+    document.getElementById("message").innerText = "📚 Review this chapter and try again.";
+  } else {
+    document.getElementById("message").innerText = "💡 Let's practise more.";
+  }
+}
+
+function restart(){
+  location.reload();
+}
+
+function toggleMute(){
+  muted = !muted;
+  document.getElementById("correct").muted = muted;
+  document.getElementById("wrong").muted = muted;
+}
+
+function setVol(v){
+  document.getElementById("correct").volume = v;
+  document.getElementById("wrong").volume = v;
+}
+
+</script>
+</body>
+</html>
