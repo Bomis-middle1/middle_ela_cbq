@@ -2,368 +2,574 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Grade 6 CBQ - Adjectives</title>
+<title>Grade 6 CBQ - Adjectives Mastery</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  background:#f4f7fb;
-  overflow-x:hidden;
+:root {
+  --primary: #2d7ff9;
+  --primary-hover: #1a65d6;
+  --surface: #ffffff;
+  --text-main: #2c3e50;
+  --text-muted: #7f8c8d;
+  --correct: #2ecc71;
+  --correct-bg: #e8f8f0;
+  --wrong: #e74c3c;
+  --wrong-bg: #fdedec;
+  
+  /* Adaptive Themes based on Adjective Categories */
+  --bg-proper: linear-gradient(135deg, #e3f2fd 0%, #f1f7fe 100%);
+  --bg-quantity: linear-gradient(135deg, #e8f5e9 0%, #f3faf4 100%);
+  --bg-number: linear-gradient(135deg, #efebe9 0%, #fdfbfb 100%);
+  --bg-possessive: linear-gradient(135deg, #f3e5f5 0%, #faf5fc 100%);
+  --bg-default: linear-gradient(135deg, #f4f7fb 0%, #eef3ff 100%);
 }
 
-.screen{
-  display:none;
-  padding:20px;
-  text-align:center;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.active{display:block;}
-
-.card{
-  background:white;
-  border-radius:16px;
-  padding:20px;
-  max-width:900px;
-  margin:auto;
-  box-shadow:0 6px 18px rgba(0,0,0,0.1);
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--bg-default);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  transition: background 0.5s ease;
 }
 
-button{
-  padding:12px 18px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:16px;
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 650px;
+  margin: 20px;
+  padding: 35px 25px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
+  text-align: center;
+  animation: fadeIn 0.4s ease-out;
 }
 
-.primary{background:#2d7ff9;color:white;}
-.option{
-  display:block;
-  width:100%;
-  margin:10px 0;
-  background:#eef3ff;
-  padding:12px;
-  border-radius:10px;
-  cursor:pointer;
+.screen.active {
+  display: flex;
+  flex-direction: column;
 }
 
-.option:hover{background:#dce7ff;}
-
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:14px;
-  margin-bottom:10px;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.progress{
-  height:10px;
-  background:#ddd;
-  border-radius:20px;
-  overflow:hidden;
-}
-.progress-bar{
-  height:10px;
-  background:#2d7ff9;
-  width:0%;
+h1 { font-size: 2rem; color: #1a252f; margin-bottom: 12px; font-weight: 800; }
+h2 { font-size: 1.1rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; font-weight: 700; }
+h3 { font-size: 1.25rem; color: #1a252f; margin-bottom: 20px; font-weight: 700; text-align: left; line-height: 1.5; width: 100%; white-space: pre-line; }
+p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-bottom: 20px; }
+
+.btn {
+  display: inline-block;
+  padding: 14px 30px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(45, 127, 249, 0.25);
 }
 
-img{
-  max-width:100%;
-  border-radius:12px;
-  margin:10px 0;
+.btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(45, 127, 249, 0.35);
 }
 
-.correctGlow{
-  animation: glow 0.6s ease-in-out 3;
+.utility-btn {
+  background: #f4f6f7;
+  color: var(--text-main);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid #e1e8ed;
+  cursor: pointer;
 }
-@keyframes glow{
-  0%{box-shadow:0 0 0px green;}
-  50%{box-shadow:0 0 20px green;}
-  100%{box-shadow:0 0 0px green;}
+.utility-btn:hover { background: #eaeded; }
+
+.picture {
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  border: 1px solid #e1e8ed;
+  background: #ffffff;
 }
 
-.shake{
-  animation: shake 0.4s;
-}
-@keyframes shake{
-  0%{transform:translateX(0);}
-  25%{transform:translateX(-5px);}
-  50%{transform:translateX(5px);}
-  75%{transform:translateX(-5px);}
-  100%{transform:translateX(0);}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 15px;
+  width: 100%;
 }
 
-.confetti{
-  position:fixed;
-  width:10px;
-  height:10px;
-  background:gold;
-  top:0;
-  animation: fall 2s linear forwards;
+.progress {
+  height: 8px;
+  background: #eaeded;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 25px;
+  width: 100%;
 }
-@keyframes fall{
-  to{transform:translateY(100vh) rotate(360deg);}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+#options {
+  width: 100%;
+}
+
+.option {
+  display: block;
+  width: 100%;
+  background: #f8fafc;
+  margin: 10px 0;
+  padding: 15px 18px;
+  border: 2px solid #e2ebf0;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  color: #34495e;
+  transition: all 0.2s ease;
+}
+
+.option:hover {
+  background: #edf4fe;
+  border-color: var(--primary);
+  transform: translateX(4px);
+}
+
+.option.correct {
+  background: var(--correct-bg) !important;
+  border-color: var(--correct) !important;
+  color: #196f3d;
+  font-weight: 600;
+}
+
+.option.wrong {
+  background: var(--wrong-bg) !important;
+  border-color: var(--wrong) !important;
+  color: #943126;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+}
+
+.disabled {
+  pointer-events: none;
+}
+
+#msg {
+  font-size: 0.98rem;
+  font-weight: 600;
+  margin-top: 15px;
+  min-height: 24px;
+  width: 100%;
+  text-align: left;
+  line-height: 1.4;
+}
+
+#finalScore {
+  font-size: 3.5rem;
+  color: var(--primary);
+  margin: 15px 0;
+  font-weight: 800;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+input[type="range"] {
+  cursor: pointer;
+  width: 50px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- INTRO -->
-<div class="screen active" id="intro">
-  <div class="card">
-    <img src="assets/innovine-logo.png" style="height:120px;">
-    <h2>Grade 6 - CBQ Interactive</h2>
-    <p>Chapter: Adjectives</p>
-    <p>Total Questions: 10</p>
-    <button class="primary" onclick="startGame()">Start</button>
-  </div>
+<!-- START SCREEN -->
+<div id="start" class="screen active">
+  <img src="assets/innovine-logo.png" style="height:100px; margin:0 auto 15px auto; object-fit:contain;" alt="Logo">
+  <h2>Grade 6 ELA</h2>
+  <h1>Adjectives Mastery</h1>
+  <p>Interactive Concept Assessment • 10 Questions</p>
+  <button class="btn" onclick="startGame()">Start Challenge</button>
 </div>
 
-<!-- CONTINUE SCREEN -->
-<div class="screen" id="continueScreen">
-  <div class="card">
-    <img src="assets/picture1.png">
-    <p><b>🖼️ Read the refrigerator sticky notes carefully before answering the next question.</b></p>
-    <button class="primary" onclick="goToQuestion()">Continue</button>
-  </div>
+<!-- IMAGE CONTEXT PANEL -->
+<div id="imageScreen" class="screen">
+  <h2>Reference Material</h2>
+  <img id="caseImage" class="picture" alt="Context Graphic">
+  <p id="imageText" style="font-weight: 600; color: #1a252f;"></p>
+  <button class="btn" onclick="continueFromImage()">Continue to Question</button>
 </div>
 
-<!-- GAME -->
-<div class="screen" id="game">
-  <div class="card">
-
-    <div class="topbar">
-      <div>Score: <span id="score">0</span></div>
-      <div>Q: <span id="qno">1</span>/10</div>
-      <div id="timer">45</div>
+<!-- MAIN QUIZ HUB -->
+<div id="quiz" class="screen">
+  <div class="topbar">
+    <div>Score: <span id="score">0</span></div>
+    <div>Question <span id="qno">1</span>/10</div>
+    <div class="control-group">
+      <button class="utility-btn" onclick="toggleMute()" id="muteBtn">🔊 Mute</button>
+      <input type="range" min="0" max="1" step="0.1" value="1" onchange="setVolume(this.value)">
+      <button class="utility-btn" onclick="restart()">🔁</button>
     </div>
-
-    <div class="progress"><div class="progress-bar" id="bar"></div></div>
-
-    <div id="qbox"></div>
-
-    <div id="options"></div>
-
-    <br>
-
-    <button onclick="toggleMute()">Mute/Unmute</button>
-    <input type="range" min="0" max="1" step="0.1" onchange="setVol(this.value)">
-    <button onclick="restart()">Restart</button>
-
   </div>
+
+  <div class="progress"><div id="bar" class="progress-bar"></div></div>
+
+  <h3 id="question"></h3>
+  <div id="options"></div>
+  <p id="msg"></p>
 </div>
 
-<!-- RESULT -->
-<div class="screen" id="result">
-  <div class="card">
-    <h2>Final Score: <span id="finalScore"></span></h2>
-    <h3 id="message"></h3>
-    <button class="primary" onclick="restart()">Play Again</button>
-  </div>
+<!-- PERFORMANCE SCOREBOARD -->
+<div id="result" class="screen">
+  <h2>Performance Summary</h2>
+  <h1>Result</h1>
+  <div id="finalScore">0/10</div>
+  <p id="perf" style="font-weight:600; color:#1a252f; margin-bottom:20px;"></p>
+  <button class="btn" onclick="restart()">Play Again</button>
 </div>
 
-<audio id="correct" src="assets/correct.mp3"></audio>
-<audio id="wrong" src="assets/wrong.mp3"></audio>
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
-
-let questions = [
-`Q1. You are reading a travel brochure: "The Japanese tea ceremony is a peaceful experience." What types of adjectives are 'Japanese' and 'peaceful'? 
-a) Quality / Number 
-b) Proper Adjective / Quality 
-c) Quantity / Demonstrative 
-d) Possessive / Proper Adjective`,
-
-`Q2. A chef says: "I need some sugar and two eggs for this cake." Identify the types of adjectives used for 'some' and 'two': 
-a) Quantity / Number  
-b) Quality / Quantity
-c) Demonstrative / Number 
-d) Interrogative / Quality`,
-
-`Q3. Picture Question`,
-
-`Q4. A student's grammar worksheet showing two sentences side by side — Sentence A: "This is my book." Sentence B: "This book is mine." In which sentence is 'This' used as an adjective?
-a) Sentence A — because 'This' replaces the noun 'book'
-b) Sentence B — because 'This' directly modifies the noun 'book'
-c) Both...
-d) Neither..`,
-
-`Q5. Sort these adjectives into two groups — Adjectives of Number and Adjectives of Quantity: P: few Q: much R: several S: little
-a) Number: P, Q — Quantity: R, S 
-b) Number: Q, S — Quantity: P, R 
-c) Number: P, R — Quantity: Q, S 
-d) Number: R, S — Quantity: P, Q`,
-
-`Q6. Classify the underlined adjective in each sentence as Possessive or Interrogative: 1. "Whose pen is this?" 2. "Her bag is on the desk." 3. "Which route is shorter?" 4. "Our team played well."
-a) 1=Possessive, 2=Interrogative, 3=Possessive, 4=Interrogative 
-b) 1=Interrogative, 2=Possessive, 3=Interrogative, 4=Possessive 
-c) 1=Interrogative, 2=Interrogative, 3=Possessive, 4=Possessive 
-d) 1=Possessive, 2=Possessive, 3=Interrogative, 4=Interrogative`,
-
-`Q7. Three of the following are Adjectives of Quantity. One is NOT. Which is the odd one out? 
-a) much
-b) little
-c) enough
-d) several`,
-
-`Q8. A student sent this text message: "I don't have many milk left in the fridge. Can you buy some?" Which adjective is used incorrectly and why? 
-a) 'many' — milk is uncountable; it should be 'much'  
-b) 'some' — it should be 'any' 
-c) 'many' — it should be 'few' 
-d) There is no error`,
-
-`Q9. A student changes "The food comes from Italy." to "It is Italian food." What change has taken place?
-a) A Quality Adjective has been changed to a Proper Adjective 
-b) A Proper Adjective has been changed to a Quality Adjective 
-c) A Demonstrative Adjective has been changed to a Possessive Adjective 
-d) A Number Adjective has been changed to a Quantity Adjective`,
-
-`Q10. Assertion: In the phrase "ten mangoes," 'ten' is an Adjective of Number. Reason: Adjectives of Number tell us how many countable nouns there are.
-a) Both are correct; the reason explains the assertion. 
-b) Both are correct; but the reason does not explain the assertion. 
-c) The assertion is correct; the reason is wrong. 
-d) Both are wrong.`
+const questions = [
+  {
+    q: "You are reading a travel brochure:\n\"The Japanese tea ceremony is a peaceful experience.\"\n\nWhat types of adjectives are 'Japanese' and 'peaceful'?",
+    options: [
+      "Quality / Number",
+      "Proper Adjective / Quality",
+      "Quantity / Demonstrative",
+      "Possessive / Proper Adjective"
+    ],
+    a: 1,
+    type: "proper",
+    h: "Look closely at nouns that have turned into capitalization modifiers.",
+    ex: "Japanese = Proper Adjective (derived from 'Japan'); Peaceful = Adjective of Quality."
+  },
+  {
+    q: "A chef says:\n\"I need some sugar and two eggs for this cake.\"\n\nIdentify the types of adjectives used for 'some' and 'two':",
+    options: [
+      "Quantity / Number",
+      "Quality / Quantity",
+      "Demonstrative / Number",
+      "Interrogative / Quality"
+    ],
+    a: 0,
+    type: "quantity",
+    h: "Distinguish between items you measure in mass versus units you count physically.",
+    ex: "Some = Quantity (uncountable sugar); Two = Number (countable eggs)."
+  },
+  {
+    q: "Match each underlined sticky note adjective from the refrigerator image to its correct category type:",
+    options: [
+      "little=Quality, three=Number, some=Quantity, that=Possessive",
+      "little=Quantity, three=Number, some=Quantity, that=Demonstrative",
+      "little=Number, three=Quantity, some=Demonstrative, that=Quality",
+      "little=Demonstrative, three=Quality, some=Number, that=Quantity"
+    ],
+    a: 1,
+    type: "quantity",
+    h: "Note how 'that' points directly at an object location.",
+    ex: "little=Quantity, three=Number, some=Quantity, that=Demonstrative.",
+    imageTrigger: 1
+  },
+  {
+    q: "A student's grammar worksheet shows two sentences side by side:\nSentence A: \"This is my book.\"\nSentence B: \"This book is mine.\"\n\nIn which sentence is 'This' used as an adjective?",
+    options: [
+      "Sentence A — because 'This' replaces the noun 'book'",
+      "Sentence B — because 'This' directly modifies the noun 'book'",
+      "Both sentences use it as an adjective",
+      "Neither sentence uses it as an adjective"
+    ],
+    a: 1,
+    type: "number",
+    h: "An adjective must sit immediately adjacent to the noun it modifies.",
+    ex: "Adjectives must modify a noun directly; in 'This book', 'This' tags the noun 'book'."
+  },
+  {
+    q: "Sort these four adjectives into two correct analytical groups — Adjectives of Number and Adjectives of Quantity:\nP: few  |  Q: much  |  R: several  |  S: little",
+    options: [
+      "Number: P, Q — Quantity: R, S",
+      "Number: Q, S — Quantity: P, R",
+      "Number: P, R — Quantity: Q, S",
+      "Number: R, S — Quantity: P, Q"
+    ],
+    a: 2,
+    type: "quantity",
+    h: "Group countable plurals separate from smooth bulk mass expressions.",
+    ex: "Few/Several = countable units (Number); Much/Little = mass volume (Quantity)."
+  },
+  {
+    q: "Classify the underlined structural adjective in each sentence as Possessive or Interrogative:\n1. \"Whose pen is this?\"\n2. \"Her bag is on the desk.\"\n3. \"Which route is shorter?\"\n4. \"Our team played well.\"",
+    options: [
+      "1=Possessive, 2=Interrogative, 3=Possessive, 4=Interrogative",
+      "1=Interrogative, 2=Possessive, 3=Interrogative, 4=Possessive",
+      "1=Interrogative, 2=Interrogative, 3=Possessive, 4=Possessive",
+      "1=Possessive, 2=Possessive, 3=Interrogative, 4=Interrogative"
+    ],
+    a: 1,
+    type: "possessive",
+    h: "Isolate the query terms from the expressions of absolute belonging.",
+    ex: "Whose/Which ask a question (Interrogative); Her/Our express belonging (Possessive)."
+  },
+  {
+    q: "Three of the following items are Adjectives of Quantity. One is NOT.\nWhich belongs to a different family as the odd one out?",
+    options: ["much", "little", "enough", "several"],
+    a: 3,
+    type: "number",
+    h: "One word is uniquely reserved exclusively for discrete countable elements.",
+    ex: "'Several' denotes distinct countable elements, making it an Adjective of Number."
+  },
+  {
+    q: "A student sent this text message:\n\"I don't have many milk left in the fridge. Can you buy some?\"\n\nWhich adjective is used incorrectly and why?",
+    options: [
+      "'many' — milk is uncountable; it should be 'much'",
+      "'some' — it should be 'any'",
+      "'many' — it should be 'few'",
+      "There is no grammatical error in this text"
+    ],
+    a: 0,
+    type: "quantity",
+    h: "Think about modifying a mass noun like fluid liquids.",
+    ex: "'Many' applies to distinct countables; liquid 'milk' is uncountable and needs 'much'."
+  },
+  {
+    q: "A student alters the core phrase:\n\"The food comes from Italy.\" ➔ \"It is Italian food.\"\n\nWhat structural change has taken place?",
+    options: [
+      "A location phrase has been transformed into a Proper Adjective",
+      "A Proper Adjective has been changed into a Quality Adjective",
+      "A Demonstrative Adjective has been changed into a Possessive Adjective",
+      "A Number Adjective has been changed into a Quantity Adjective"
+    ],
+    a: 0,
+    type: "proper",
+    h: "Analyze the properties of the word modification coming out of a country name.",
+    ex: "The phrase is replaced by 'Italian,' which acts as a Proper Adjective derived from the proper noun 'Italy'."
+  },
+  {
+    q: "Assertion: In the phrase \"ten mangoes,\" 'ten' is an Adjective of Number.\nReason: Adjectives of Number tell us how many countable nouns there are.",
+    options: [
+      "Both are correct; the reason explains the assertion correctly.",
+      "Both are correct; but the reason does not explain the assertion.",
+      "The assertion is correct; the reason is completely wrong.",
+      "Both components are completely wrong."
+    ],
+    a: 0,
+    type: "number",
+    h: "Does the structural logic directly defend the example assignment?",
+    ex: "The definition matches perfectly and directly validates the exact choice case."
+  }
 ];
 
-let answers = ["b","a","b","b","c","b","d","a","a","a"];
+let current=0, score=0, attempt=0, volume=1, mute=false;
+let imageViewed = false;
 
-let score = 0;
-let qIndex = 0;
-let attempts = 0;
-let timer;
-let timeLeft = 45;
-let muted = false;
-let started = false;
+function updateAdaptiveTheme(type) {
+  const body = document.body;
+  if (!type) {
+    body.style.background = "var(--bg-default)";
+    return;
+  }
+  switch(type.toLowerCase()) {
+    case 'proper': body.style.background = "var(--bg-proper)"; break;
+    case 'quantity': body.style.background = "var(--bg-quantity)"; break;
+    case 'number': body.style.background = "var(--bg-number)"; break;
+    case 'possessive': body.style.background = "var(--bg-possessive)"; break;
+    default: body.style.background = "var(--bg-default)";
+  }
+}
 
 function startGame(){
-  document.getElementById("intro").classList.remove("active");
-  document.getElementById("continueScreen").classList.add("active");
+  document.getElementById("start").classList.remove("active");
+  evaluateQuizTimelineStep();
 }
 
-function goToQuestion(){
-  document.getElementById("continueScreen").classList.remove("active");
-  document.getElementById("game").classList.add("active");
-  loadQ();
-}
-
-function loadQ(){
-  attempts = 0;
-  timeLeft = 45;
-
-  document.getElementById("qno").innerText = qIndex+1;
-  document.getElementById("qbox").innerText = questions[qIndex];
-
-  if(qIndex === 2){
-    // picture already handled via continue screen
+function evaluateQuizTimelineStep() {
+  if (current >= questions.length) {
+    displayFinalScoreboard();
+    return;
   }
+  
+  let q = questions[current];
+  updateAdaptiveTheme(q.type);
 
-  let optDiv = document.getElementById("options");
-  optDiv.innerHTML = "";
-
-  if(qIndex !== 2){
-    let opts = questions[qIndex].split("a)")[1];
-    let options = ["a","b","c","d"];
-
-    options.forEach(o=>{
-      let btn = document.createElement("button");
-      btn.className = "option";
-      btn.innerText = o.toUpperCase();
-      btn.onclick = ()=>check(o, btn);
-      optDiv.appendChild(btn);
-    });
+  if(q.imageTrigger && !imageViewed) {
+    showContextImage(q.imageTrigger);
+  } else {
+    imageViewed = false;
+    hideAllViewContainers();
+    document.getElementById("quiz").classList.add("active");
+    renderActiveQuestionCard();
   }
-
-  startTimer();
-  updateBar();
 }
 
-function startTimer(){
-  clearInterval(timer);
-  timer = setInterval(()=>{
-    timeLeft--;
-    document.getElementById("timer").innerText = timeLeft;
-    if(timeLeft<=0){
-      check("timeout");
-    }
-  },1000);
+function hideAllViewContainers() {
+  document.getElementById("start").classList.remove("active");
+  document.getElementById("imageScreen").classList.remove("active");
+  document.getElementById("quiz").classList.remove("active");
+  document.getElementById("result").classList.remove("active");
 }
 
-function check(ans, btn){
-  if(attempts>=2) return;
+function showContextImage(triggerId) {
+  hideAllViewContainers();
+  document.getElementById("imageScreen").classList.add("active");
+  document.getElementById("caseImage").src = "assets/picture1.png";
+  document.getElementById("imageText").innerText = "🖼️ Read the refrigerator sticky notes carefully before answering the next question.";
+}
 
-  if(ans === answers[qIndex]){
+function continueFromImage(){
+  imageViewed = true;
+  evaluateQuizTimelineStep();
+}
+
+function renderActiveQuestionCard(){
+  attempt = 0;
+  let q = questions[current];
+  
+  document.getElementById("qno").innerText = current + 1;
+  document.getElementById("bar").style.width = (current / questions.length) * 100 + "%";
+  document.getElementById("question").innerText = q.q;
+  document.getElementById("msg").innerText = "";
+  
+  let optionsContainer = document.getElementById("options");
+  optionsContainer.innerHTML = "";
+  
+  q.options.forEach((opt, idx) => {
+    let optBtn = document.createElement("div");
+    optBtn.className = "option";
+    optBtn.innerText = opt;
+    optBtn.onclick = () => checkSelectionFeedback(idx, optBtn);
+    optionsContainer.appendChild(optBtn);
+  });
+}
+
+function checkSelectionFeedback(chosenIndex, targetBtn) {
+  let q = questions[current];
+  let msgBox = document.getElementById("msg");
+  let options = document.querySelectorAll(".option");
+  
+  if(chosenIndex === q.a){
+    options.forEach(el => el.classList.add("disabled"));
+    targetBtn.classList.add("correct");
+    playAudioFile("correct");
+    
+    msgBox.innerText = "✨ Excellent! Correct Answer.";
+    msgBox.style.color = "var(--correct)";
     score++;
     document.getElementById("score").innerText = score;
-    document.getElementById("correct").play();
-    btn.classList.add("correctGlow");
-
-    setTimeout(()=>{
-      nextQ();
-    },1200);
-
+    
+    setTimeout(() => {
+      current++;
+      evaluateQuizTimelineStep();
+    }, 1500);
   } else {
-    attempts++;
-    document.getElementById("wrong").play();
-    btn.classList.add("shake");
-
-    if(attempts==1){
-      alert("Not quite. Try again!");
+    playAudioFile("wrong");
+    attempt++;
+    targetBtn.classList.add("wrong");
+    
+    if(attempt === 1){
+      msgBox.innerHTML = `✕ Not quite. Try one more time!<br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-muted);">Hint: ${q.h}</span>`;
+      msgBox.style.color = "var(--wrong)";
+      setTimeout(() => { targetBtn.classList.remove("wrong"); }, 1200);
     } else {
-      alert("Correct Answer: " + answers[qIndex].toUpperCase());
-      nextQ();
+      options.forEach(el => el.classList.add("disabled"));
+      msgBox.innerHTML = `✕ Incorrect.<br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-main);"><b>Explanation:</b> ${q.ex}</span>`;
+      msgBox.style.color = "var(--wrong)";
+      if(options[q.a]) options[q.a].classList.add("correct");
+      
+      setTimeout(() => {
+        current++;
+        evaluateQuizTimelineStep();
+      }, 3500);
     }
   }
 }
 
-function nextQ(){
-  qIndex++;
-  if(qIndex>=questions.length){
-    showResult();
-  } else {
-    loadQ();
-  }
-}
-
-function updateBar(){
-  document.getElementById("bar").style.width = ((qIndex)/questions.length)*100 + "%";
-}
-
-function showResult(){
-  document.getElementById("game").classList.remove("active");
+function displayFinalScoreboard(){
+  hideAllViewContainers();
+  updateAdaptiveTheme(null);
   document.getElementById("result").classList.add("active");
-
-  let percent = Math.round((score/questions.length)*100);
-  document.getElementById("finalScore").innerText = score + "/" + questions.length;
-
-  if(percent>=75){
-    document.getElementById("message").innerText = "🎉 Good Job!";
-  } else if(percent>=40){
-    document.getElementById("message").innerText = "📚 Review this chapter and try again.";
-  } else {
-    document.getElementById("message").innerText = "💡 Let's practise more.";
-  }
+  
+  let percent = Math.round((score / questions.length) * 100);
+  document.getElementById("finalScore").innerText = `${score}/${questions.length}`;
+  
+  let summaryText = document.getElementById("perf");
+  if(percent >= 75) summaryText.innerText = "🎉 Outstanding Work! You mastered all Adjective rules.";
+  else if(percent >= 40) summaryText.innerText = "📚 Good attempt! Review this chapter to strengthen your concepts.";
+  else summaryText.innerText = "💡 Let's practice some more exercises together next time.";
 }
 
-function restart(){
-  location.reload();
+function playAudioFile(type) {
+  if(mute) return;
+  try {
+    let sound = document.getElementById(type === "correct" ? "correctSound" : "wrongSound");
+    sound.currentTime = 0;
+    sound.volume = volume;
+    sound.play();
+  } catch(err){}
 }
 
 function toggleMute(){
-  muted = !muted;
-  document.getElementById("correct").muted = muted;
-  document.getElementById("wrong").muted = muted;
+  mute = !mute;
+  document.getElementById("muteBtn").innerText = mute ? "🔇 Unmute" : "🔊 Mute";
 }
 
-function setVol(v){
-  document.getElementById("correct").volume = v;
-  document.getElementById("wrong").volume = v;
+function setVolume(v){
+  volume = parseFloat(v);
+  document.getElementById("correctSound").volume = volume;
+  document.getElementById("wrongSound").volume = volume;
 }
 
+function restart(){
+  current = 0;
+  score = 0;
+  attempt = 0;
+  imageViewed = false;
+  document.getElementById("score").innerText = "0";
+  hideAllViewContainers();
+  updateAdaptiveTheme(null);
+  document.getElementById("start").classList.add("active");
+}
 </script>
 </body>
 </html>
