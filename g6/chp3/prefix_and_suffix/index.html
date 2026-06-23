@@ -1,1 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ - Prefix and Suffix</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+body{
+    margin:0;
+    font-family: Arial;
+    background: linear-gradient(120deg,#e3f2fd,#fff3e0);
+    overflow-x:hidden;
+}
+.screen{
+    display:none;
+    padding:20px;
+    text-align:center;
+}
+.active{display:block;}
+
+.logo{
+    width:180px;
+    margin-top:120px;
+}
+
+.card{
+    background:#fff;
+    padding:20px;
+    margin:10px auto;
+    border-radius:15px;
+    max-width:800px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn{
+    padding:12px 18px;
+    margin:8px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+    background:#1976d2;
+    color:white;
+}
+
+.option{
+    display:block;
+    width:100%;
+    margin:8px 0;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    cursor:pointer;
+    background:#fafafa;
+}
+
+.option:hover{background:#e3f2fd;}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.progress{
+    height:10px;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+}
+.progress-bar{
+    height:10px;
+    background:#4caf50;
+    width:0%;
+}
+
+.correct{background:#c8e6c9 !important;}
+.wrong{background:#ffcdd2 !important;}
+
+.timer{
+    font-weight:bold;
+    color:#d32f2f;
+}
+
+.picture{
+    max-width:100%;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div class="screen active" id="splash">
+    <img src="assets/innovine-logo.png" class="logo">
+</div>
+
+<!-- INTRO -->
+<div class="screen" id="intro">
+    <div class="card">
+        <h2>Chapter 3: Prefix and Suffix</h2>
+        <p>Grade 6 ELA CBQ</p>
+        <p>Total Questions: 15</p>
+        <button class="btn" onclick="startGame()">Start</button>
+    </div>
+</div>
+
+<!-- IMAGE VIEW -->
+<div class="screen" id="imageScreen">
+    <div class="card">
+        <img id="caseImage" class="picture">
+        <p id="imageText"></p>
+        <button class="btn" onclick="continueFromImage()">Continue</button>
+    </div>
+</div>
+
+<!-- QUESTION -->
+<div class="screen" id="quiz">
+    <div class="topbar">
+        <div>Score: <span id="score">0</span></div>
+        <div>Q <span id="qno"></span>/15</div>
+        <div class="timer">⏱ <span id="time">45</span>s</div>
+    </div>
+
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+
+    <div class="card">
+        <h3 id="question"></h3>
+        <div id="options"></div>
+        <p id="msg"></p>
+    </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="result">
+    <div class="card">
+        <h2>Result</h2>
+        <p id="finalScore"></p>
+        <button class="btn" onclick="location.reload()">Play Again</button>
+    </div>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<script>
+
+let questions = [
+{q:`Which option correctly fills ALL SIX blanks?`,o:[`a`,`b`,`c`,`d`],a:2},
+
+{q:`What does the prefix re- tell us about the team's plan?`,o:[`a`,`b`,`c`,`d`],a:2},
+
+{q:`What kind of suffix is used in both words?`,o:[`a`,`b`,`c`,`d`],a:1},
+
+{q:`What is correct noun form rule they broke?`,o:[`a`,`b`,`c`,`d`],a:0},
+
+{q:`Which option correctly completes the caption?`,o:[`a`,`b`,`c`,`d`],a:0},
+
+{q:`Which option identifies ALL word-building errors?`,o:[`a`,`b`,`c`,`d`],a:0},
+
+{q:`Which option fills five blanks correctly?`,o:[`a`,`b`,`c`,`d`],a:1},
+
+{q:`What kind of suffix is -ed?`,o:[`a`,`b`,`c`,`d`],a:1},
+
+{q:`Which uses prefix im- correctly?`,o:[`a`,`b`,`c`,`d`],a:1},
+
+{q:`Classify suffix groups correctly`,o:[`a`,`b`,`c`,`d`],a:2},
+
+{q:`Match prefix meanings`,o:[`a`,`b`,`c`,`d`],a:1},
+
+{q:`Odd one out`,o:[`a`,`b`,`c`,`d`],a:3},
+
+{q:`What is wrong in sentence?`,o:[`a`,`b`,`c`,`d`],a:1},
+
+{q:`Effect of -ness suffix`,o:[`a`,`b`,`c`,`d`],a:1},
+
+{q:`Assertion Reason question`,o:[`a`,`b`,`c`,`d`],a:2}
+];
+
+let current=0,score=0,attempt=0,timer, timeLeft=45;
+
+function startGame(){
+    document.getElementById("splash").classList.remove("active");
+    document.getElementById("intro").classList.add("active");
+}
+
+setTimeout(()=>{
+    document.getElementById("splash").classList.remove("active");
+    document.getElementById("intro").classList.add("active");
+},5000);
+
+function beginQuiz(){
+    showImage(1);
+}
+
+function showImage(q){
+    document.getElementById("intro").classList.remove("active");
+    document.getElementById("quiz").classList.remove("active");
+    document.getElementById("imageScreen").classList.add("active");
+
+    let img="",txt="";
+
+    if(q<=3){
+        img="assets/picture1.png";
+        txt="Read the Science Fair Poster carefully before answering Questions 1–3.";
+    }
+    if(q==5){
+        img="assets/picture2.png";
+        txt="Observe the picture carefully before answering the question.";
+    }
+    if(q==6){
+        img="assets/picture3.png";
+        txt="Observe the picture carefully before answering the question.";
+    }
+    if(q==7){
+        img="assets/picture4.png";
+        txt="Observe the picture carefully before answering the question.";
+    }
+
+    document.getElementById("caseImage").src=img;
+    document.getElementById("imageText").innerText=txt;
+}
+
+function continueFromImage(){
+    document.getElementById("imageScreen").classList.remove("active");
+    document.getElementById("quiz").classList.add("active");
+    loadQuestion();
+}
+
+function loadQuestion(){
+    attempt=0;
+    timeLeft=45;
+    clearInterval(timer);
+
+    document.getElementById("qno").innerText=current+1;
+    document.getElementById("question").innerText=questions[current].q;
+
+    let opt="";
+    questions[current].o.forEach((v,i)=>{
+        opt+=`<button class='option' onclick='check(${i},this)'>${v}</button>`;
+    });
+
+    document.getElementById("options").innerHTML=opt;
+
+    updateProgress();
+    startTimer();
+
+    // image triggers
+    if(current==0) showImage(1);
+    if(current==4) showImage(5);
+    if(current==5) showImage(6);
+    if(current==6) showImage(7);
+}
+
+function startTimer(){
+    timer=setInterval(()=>{
+        timeLeft--;
+        document.getElementById("time").innerText=timeLeft;
+        if(timeLeft<=0){
+            clearInterval(timer);
+            wrongAttempt();
+        }
+    },1000);
+}
+
+function check(i,btn){
+    if(i==questions[current].a){
+        document.getElementById("correctSound").play();
+        btn.classList.add("correct");
+        score++;
+        setTimeout(nextQ,1000);
+    }else{
+        wrongAttempt(btn);
+    }
+}
+
+function wrongAttempt(btn){
+    document.getElementById("wrongSound").play();
+    attempt++;
+
+    if(attempt==1){
+        document.getElementById("msg").innerText="Not quite. Try again!";
+    }else{
+        document.getElementById("msg").innerText="Correct answer shown.";
+        document.querySelectorAll(".option")[questions[current].a].classList.add("correct");
+        setTimeout(nextQ,1500);
+    }
+}
+
+function nextQ(){
+    current++;
+    if(current>=questions.length){
+        showResult();
+    }else{
+        loadQuestion();
+    }
+}
+
+function updateProgress(){
+    document.getElementById("score").innerText=score;
+    let p=(current/questions.length)*100;
+    document.getElementById("bar").style.width=p+"%";
+}
+
+function showResult(){
+    document.getElementById("quiz").classList.remove("active");
+    document.getElementById("result").classList.add("active");
+
+    let percent=Math.round((score/questions.length)*100);
+    document.getElementById("finalScore").innerText=
+    `Score: ${score}/15 (${percent}%)`;
+}
+
+</script>
+
+</body>
+</html>
