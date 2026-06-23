@@ -1,1 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ - Kinds of Sentences</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(120deg,#e3f2fd,#fff3e0,#e8f5e9);
+  overflow-x:hidden;
+}
+
+/* Splash */
+#splash {
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+}
+#splash img{
+  width:220px;
+  animation: zoom 2s ease-in-out infinite alternate;
+}
+@keyframes zoom{
+  from{transform:scale(1);}
+  to{transform:scale(1.1);}
+}
+
+/* Main container */
+#app {
+  display:none;
+  padding:15px;
+}
+
+/* Top bar */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.card{
+  background:white;
+  padding:10px;
+  border-radius:12px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.start-btn{background:#4caf50;color:white;}
+.option{background:#f1f1f1;margin:6px;padding:12px;border-radius:10px;cursor:pointer;}
+.option:hover{background:#dcedc8;}
+
+.progress{
+  width:100%;
+  height:10px;
+  background:#ddd;
+  border-radius:10px;
+  overflow:hidden;
+}
+.progress-bar{
+  height:10px;
+  background:#4caf50;
+  width:0%;
+}
+
+/* Picture screens */
+.center{
+  text-align:center;
+}
+img{
+  max-width:100%;
+  border-radius:12px;
+}
+
+/* Feedback */
+.correct{background:#c8e6c9;}
+.wrong{background:#ffcdd2;}
+
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <img src="assets/innovine-logo.png">
+</div>
+
+<div id="app">
+
+  <div class="topbar card">
+    <div id="info"></div>
+
+    <div>
+      🔊 <button onclick="toggleMute()">Mute</button>
+      <input type="range" min="0" max="1" step="0.1" onchange="setVolume(this.value)">
+      🔁 <button onclick="restart()">Restart</button>
+    </div>
+  </div>
+
+  <div class="card">
+    Score: <span id="score">0</span> |
+    Question: <span id="qno">1</span>/15
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+  </div>
+
+  <div id="screen" class="card"></div>
+
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<script>
+
+let questions = [
+{q:`You see a sticker on a water bottle that says: "Drink more water every day." What kind of sentence is this?`,options:["Declarative","Interrogative","Imperative","Exclamatory"],a:2,h:"It gives a command.",ex:"Commands are Imperative."},
+
+{q:`A friend texts you: "Did you finish the science homework?" This sentence is:`,options:["Declarative","Interrogative","Imperative","Exclamatory"],a:1,h:"It asks something.",ex:"Questions are Interrogative."},
+
+{q:`Aarav jumps into a cold pool and shouts: "How freezing the water is!" Later he writes about it in his diary as a plain statement. Which is correct?`,options:["How cold is the water?","Don't touch the cold water.","The water is very cold.","The water felt freezing."],a:2,h:"Convert emotion into statement.",ex:"Plain statement = Declarative."},
+
+{q:`A teacher is writing a report: "He is always on time." She wants to rewrite it using 'never' without changing meaning. Which is correct?`,options:["He is never on time.","He is never late.","Is he ever on time?","He is not always on time."],a:1,h:"Opposite meaning match.",ex:"Never late = same meaning."},
+
+{q:`A captain says: "It was a great victory for the team." Turn into question.`,options:["Was it a great victory for the team?","It was a great victory for the team?","Did it was a great victory for the team?","How great the victory was!"],a:0,h:"Invert helping verb.",ex:"Was + subject = question."},
+
+{img:"picture1.png"},
+
+{img:"picture2.png"},
+
+{q:`Which is a negative declarative sentence?`,options:["Don't go there.","Why are you not coming?","She does not like apples.","What a shame!"],a:2,h:"Statement with 'not'.",ex:"Negative declarative = statement."},
+
+{q:`Can any man live forever? Best declarative meaning?`,options:["Every man can live forever.","No man can live forever.","Man can live forever?","Live forever, man."],a:1,h:"Meaning conversion.",ex:"Question implies negative statement."},
+
+{q:`Sort into Imperative or Exclamatory: P, Q, R, S`,options:[
+"Imperative: P,R — Exclamatory: Q,S",
+"Imperative: Q,R — Exclamatory: P,S",
+"Imperative: Q,S — Exclamatory: P,R",
+"Imperative: P,S — Exclamatory: Q,R"
+],a:2,h:"! = exclamatory, commands = imperative.",ex:"Correct grouping."},
+
+{q:`Which group is correct Imperative/Declarative?`,options:[
+"Wrong grouping A",
+"Correct grouping B",
+"Wrong grouping C",
+"Wrong grouping D"
+],a:1,h:"Identify commands vs facts.",ex:"Correct classification."},
+
+{q:`Odd one out (Imperative set)`,options:[
+"Switch off lights",
+"Hand in homework",
+"What an exciting match!",
+"Tell the truth"
+],a:2,h:"One is emotion sentence.",ex:"Exclamatory is odd one."},
+
+{q:`Which sentence is incorrect imperative form?`,options:[
+"Wash vegetables",
+"You are cutting them",
+"Add salt",
+"Serve hot"
+],a:1,h:"Avoid 'you are + ing'.",ex:"Not imperative structure."},
+
+{q:`Effect of change to declarative`,options:[
+"Becomes question",
+"Loses emotion",
+"Becomes command",
+"Becomes wrong"
+],a:1,h:"Emotion removal.",ex:"Declarative is plain."},
+
+{q:`Best polite request`,options:[
+"Explain it again!",
+"Why can't you?",
+"Please explain again",
+"You will explain it"
+],a:2,h:"Use 'please'.",ex:"Polite imperative."}
+];
+
+let i=0,score=0,attempt=0,volume=1,mute=false;
+
+setTimeout(()=>{
+  document.getElementById("splash").style.display="none";
+  document.getElementById("app").style.display="block";
+  startMeta();
+  show(i);
+},5000);
+
+function startMeta(){
+  document.getElementById("info").innerHTML =
+  "Chapter 5: Kinds of Sentences | Grade 6 | CBQ Interactive";
+}
+
+function show(index){
+
+  document.getElementById("qno").innerText = index+1;
+  document.getElementById("bar").style.width = ((index)/questions.length)*100+"%";
+
+  let q = questions[index];
+
+  if(q.img){
+    document.getElementById("screen").innerHTML = `
+      <div class="center">
+        <img src="assets/${q.img}">
+        <p>${q.img==="picture1.png" ?
+        "🖼️ Read the classroom notice board carefully before answering the next question." :
+        "🖼️ Observe the worksheet carefully before answering the next question."}</p>
+        <button onclick="continueQ()">Continue</button>
+      </div>`;
+    return;
+  }
+
+  document.getElementById("screen").innerHTML = `
+    <h3>${q.q}</h3>
+    ${q.options.map((o,idx)=>`
+      <div class="option" onclick="check(${idx})">${o}</div>
+    `).join("")}
+    <p id="hint"></p>
+  `;
+  attempt=0;
+}
+
+function continueQ(){
+  i++;
+  show(i);
+}
+
+function check(ans){
+  let q = questions[i];
+
+  if(ans===q.a){
+    if(!mute) document.getElementById("correctSound").play();
+    score++;
+    document.getElementById("score").innerText = score;
+    document.getElementById("screen").classList.add("correct");
+
+    setTimeout(()=>{
+      document.getElementById("screen").classList.remove("correct");
+      i++;
+      if(i<questions.length) show(i);
+      else end();
+    },1200);
+
+  } else {
+    if(!mute) document.getElementById("wrongSound").play();
+    attempt++;
+
+    if(attempt===1){
+      document.getElementById("hint").innerText = "Not quite. Try again! Hint: "+q.h;
+    } else {
+      document.getElementById("hint").innerText = "Correct Answer: "+q.options[q.a]+" | "+q.ex;
+      setTimeout(()=>{
+        i++;
+        show(i);
+      },2000);
+    }
+  }
+}
+
+function end(){
+  let percent = Math.round((score/questions.length)*100);
+  let msg = percent>=75?"🎉 Good Job!":percent>=40?"📚 Review this chapter":"💡 Let's practise more";
+
+  document.getElementById("screen").innerHTML = `
+    <h2>Result</h2>
+    <h3>Score: ${score}/${questions.length}</h3>
+    <h3>${percent}%</h3>
+    <h2>${msg}</h2>
+    <button onclick="restart()">Play Again</button>
+  `;
+}
+
+function restart(){
+  location.reload();
+}
+
+function toggleMute(){
+  mute=!mute;
+}
+
+function setVolume(v){
+  volume=v;
+  document.getElementById("correctSound").volume=v;
+  document.getElementById("wrongSound").volume=v;
+}
+
+</script>
+
+</body>
+</html>
