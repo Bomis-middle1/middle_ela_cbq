@@ -2,322 +2,404 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CBQ - Prefix and Suffix</title>
+<title>CBQ - Prefix and Suffix Mastery</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{
-    margin:0;
-    font-family: Arial;
-    background: linear-gradient(120deg,#e3f2fd,#fff3e0);
-    overflow-x:hidden;
-}
-.screen{
-    display:none;
-    padding:20px;
-    text-align:center;
-}
-.active{display:block;}
-
-.logo{
-    width:180px;
-    margin-top:120px;
+:root {
+  --primary: #1976d2;
+  --primary-hover: #115293;
+  --bg-gradient: linear-gradient(135deg, #e3f2fd 0%, #fff3e0 100%);
+  --surface: #ffffff;
+  --text-main: #2c3e50;
+  --text-muted: #7f8c8d;
+  --correct: #2ecc71;
+  --correct-bg: #e8f8f0;
+  --wrong: #e74c3c;
+  --wrong-bg: #fdedec;
 }
 
-.card{
-    background:#fff;
-    padding:20px;
-    margin:10px auto;
-    border-radius:15px;
-    max-width:800px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.btn{
-    padding:12px 18px;
-    margin:8px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:16px;
-    background:#1976d2;
-    color:white;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
 }
 
-.option{
-    display:block;
-    width:100%;
-    margin:8px 0;
-    padding:12px;
-    border-radius:10px;
-    border:1px solid #ccc;
-    cursor:pointer;
-    background:#fafafa;
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 650px;
+  margin: 20px;
+  padding: 40px 30px;
+  background: var(--surface);
+  border-radius: 24px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  animation: fadeIn 0.4s ease-out;
 }
 
-.option:hover{background:#e3f2fd;}
-
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    font-size:14px;
-    margin-bottom:10px;
+.screen.active {
+  display: block;
 }
 
-.progress{
-    height:10px;
-    background:#ddd;
-    border-radius:20px;
-    overflow:hidden;
-}
-.progress-bar{
-    height:10px;
-    background:#4caf50;
-    width:0%;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.correct{background:#c8e6c9 !important;}
-.wrong{background:#ffcdd2 !important;}
-
-.timer{
-    font-weight:bold;
-    color:#d32f2f;
+/* Splash */
+#splash {
+  background: transparent;
+  box-shadow: none;
+}
+.logo {
+  width: 180px;
+  animation: pulse 2s infinite ease-in-out;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.04); opacity: 1; }
 }
 
-.picture{
-    max-width:100%;
-    border-radius:10px;
-    margin-bottom:10px;
+h2 { font-size: 1.2rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+h3 { font-size: 1.6rem; color: #1a252f; margin-bottom: 20px; font-weight: 700; text-align: left; }
+p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-bottom: 24px; }
+
+.btn {
+  display: inline-block;
+  padding: 14px 35px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(25, 118, 210, 0.25);
+}
+.btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(25, 118, 210, 0.35);
 }
 
+.picture {
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  border: 1px solid #e1e8ed;
+  background: #fdfefe;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 15px;
+}
+.timer {
+  font-weight: bold;
+  background: #fff3cd;
+  color: #856404;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+.progress {
+  height: 8px;
+  background: #eaeded;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 25px;
+}
+.progress-bar {
+  height: 100%;
+  background: #4caf50;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.option {
+  display: block;
+  width: 100%;
+  background: #fdfefe;
+  margin: 12px 0;
+  padding: 16px 20px;
+  border: 2px solid #e2ebf0;
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #34495e;
+  transition: all 0.2s ease;
+}
+.option:hover {
+  background: #f4f6f7;
+  border-color: #bdc3c7;
+  transform: translateX(4px);
+}
+.option.correct {
+  background: var(--correct-bg) !important;
+  border-color: var(--correct) !important;
+  color: #196f3d;
+  font-weight: 600;
+}
+.option.wrong {
+  background: var(--wrong-bg) !important;
+  border-color: var(--wrong) !important;
+  color: #943126;
+}
+.disabled {
+  pointer-events: none;
+}
+
+#msg {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 15px;
+  min-height: 24px;
+}
+
+#finalScore {
+  font-size: 3.5rem;
+  color: var(--primary);
+  margin: 20px 0;
+  font-weight: 800;
+}
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
 <div class="screen active" id="splash">
-    <img src="assets/innovine-logo.png" class="logo">
+  <img src="assets/innovine-logo.png" class="logo" alt="Logo">
 </div>
 
-<!-- INTRO -->
 <div class="screen" id="intro">
-    <div class="card">
-        <h2>Chapter 3: Prefix and Suffix</h2>
-        <p>Grade 6 ELA CBQ</p>
-        <p>Total Questions: 15</p>
-        <button class="btn" onclick="startGame()">Start</button>
-    </div>
+  <h2>Grade 6 ELA</h2>
+  <h3 style="text-align: center; margin-bottom: 10px;">Chapter 3: Prefix & Suffix</h3>
+  <p>Total Assessment Content: 15 Questions</p>
+  <button class="btn" onclick="beginQuiz()">Start Challenge</button>
 </div>
 
-<!-- IMAGE VIEW -->
 <div class="screen" id="imageScreen">
-    <div class="card">
-        <img id="caseImage" class="picture">
-        <p id="imageText"></p>
-        <button class="btn" onclick="continueFromImage()">Continue</button>
-    </div>
+  <h2>Context Setup</h2>
+  <img id="caseImage" class="picture" alt="Visual Context">
+  <p id="imageText" style="font-weight: 600; color: #1a252f;"></p>
+  <button class="btn" onclick="continueFromImage()">Continue to Questions</button>
 </div>
 
-<!-- QUESTION -->
 <div class="screen" id="quiz">
-    <div class="topbar">
-        <div>Score: <span id="score">0</span></div>
-        <div>Q <span id="qno"></span>/15</div>
-        <div class="timer">⏱ <span id="time">45</span>s</div>
-    </div>
+  <div class="topbar">
+    <div>Score: <span id="score">0</span></div>
+    <div>Question <span id="qno">1</span>/15</div>
+    <div class="timer">⏱ <span id="time">45</span>s</div>
+  </div>
 
-    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+  <div class="progress"><div class="progress-bar" id="bar"></div></div>
 
-    <div class="card">
-        <h3 id="question"></h3>
-        <div id="options"></div>
-        <p id="msg"></p>
-    </div>
+  <h3 id="question"></h3>
+  <div id="options"></div>
+  <p id="msg"></p>
 </div>
 
-<!-- RESULT -->
 <div class="screen" id="result">
-    <div class="card">
-        <h2>Result</h2>
-        <p id="finalScore"></p>
-        <button class="btn" onclick="location.reload()">Play Again</button>
-    </div>
+  <h2>Performance Summary</h2>
+  <h3>Result</h3>
+  <div id="finalScore">0/15</div>
+  <button class="btn" onclick="location.reload()">Play Again</button>
 </div>
 
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
-
 let questions = [
-{q:`Which option correctly fills ALL SIX blanks?`,o:[`a`,`b`,`c`,`d`],a:2},
-
-{q:`What does the prefix re- tell us about the team's plan?`,o:[`a`,`b`,`c`,`d`],a:2},
-
-{q:`What kind of suffix is used in both words?`,o:[`a`,`b`,`c`,`d`],a:1},
-
-{q:`What is correct noun form rule they broke?`,o:[`a`,`b`,`c`,`d`],a:0},
-
-{q:`Which option correctly completes the caption?`,o:[`a`,`b`,`c`,`d`],a:0},
-
-{q:`Which option identifies ALL word-building errors?`,o:[`a`,`b`,`c`,`d`],a:0},
-
-{q:`Which option fills five blanks correctly?`,o:[`a`,`b`,`c`,`d`],a:1},
-
-{q:`What kind of suffix is -ed?`,o:[`a`,`b`,`c`,`d`],a:1},
-
-{q:`Which uses prefix im- correctly?`,o:[`a`,`b`,`c`,`d`],a:1},
-
-{q:`Classify suffix groups correctly`,o:[`a`,`b`,`c`,`d`],a:2},
-
-{q:`Match prefix meanings`,o:[`a`,`b`,`c`,`d`],a:1},
-
-{q:`Odd one out`,o:[`a`,`b`,`c`,`d`],a:3},
-
-{q:`What is wrong in sentence?`,o:[`a`,`b`,`c`,`d`],a:1},
-
-{q:`Effect of -ness suffix`,o:[`a`,`b`,`c`,`d`],a:1},
-
-{q:`Assertion Reason question`,o:[`a`,`b`,`c`,`d`],a:2}
+  {q:`Which option correctly fills ALL SIX blanks?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:2, imageTrigger: 1},
+  {q:`What does the prefix re- tell us about the team's plan?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:2},
+  {q:`What kind of suffix is used in both words?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
+  {q:`What is correct noun form rule they broke?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:0},
+  {q:`Which option correctly completes the caption?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:0, imageTrigger: 2},
+  {q:`Which option identifies ALL word-building errors?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:0, imageTrigger: 3},
+  {q:`Which option fills five blanks correctly?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1, imageTrigger: 4},
+  {q:`What kind of suffix is -ed?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
+  {q:`Which uses prefix im- correctly?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
+  {q:`Classify suffix groups correctly`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:2},
+  {q:`Match prefix meanings`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
+  {q:`Odd one out`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:3},
+  {q:`What is wrong in sentence?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
+  {q:`Effect of -ness suffix`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
+  {q:`Assertion Reason question`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:2}
 ];
 
-let current=0,score=0,attempt=0,timer, timeLeft=45;
-
-function startGame(){
-    document.getElementById("splash").classList.remove("active");
-    document.getElementById("intro").classList.add("active");
-}
+let current=0, score=0, attempt=0, timer, timeLeft=45;
+let imageViewed = false;
 
 setTimeout(()=>{
-    document.getElementById("splash").classList.remove("active");
+  let splash = document.getElementById("splash");
+  if(splash.classList.contains("active")){
+    splash.classList.remove("active");
     document.getElementById("intro").classList.add("active");
-},5000);
+  }
+}, 2500);
 
 function beginQuiz(){
-    showImage(1);
+  document.getElementById("intro").classList.remove("active");
+  evaluateStep();
 }
 
-function showImage(q){
-    document.getElementById("intro").classList.remove("active");
-    document.getElementById("quiz").classList.remove("active");
-    document.getElementById("imageScreen").classList.add("active");
+function evaluateStep() {
+  let q = questions[current];
+  if(q.imageTrigger && !imageViewed) {
+    showImage(q.imageTrigger);
+  } else {
+    imageViewed = false;
+    show("quiz");
+    loadQuestion();
+  }
+}
 
-    let img="",txt="";
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
 
-    if(q<=3){
-        img="assets/picture1.png";
-        txt="Read the Science Fair Poster carefully before answering Questions 1–3.";
-    }
-    if(q==5){
-        img="assets/picture2.png";
-        txt="Observe the picture carefully before answering the question.";
-    }
-    if(q==6){
-        img="assets/picture3.png";
-        txt="Observe the picture carefully before answering the question.";
-    }
-    if(q==7){
-        img="assets/picture4.png";
-        txt="Observe the picture carefully before answering the question.";
-    }
+function showImage(triggerId){
+  show("imageScreen");
+  let img="", txt="";
 
-    document.getElementById("caseImage").src=img;
-    document.getElementById("imageText").innerText=txt;
+  // Standardized to lower-case filenames matching your GitHub repo assets folder exactly
+  if(triggerId === 1){
+    img="assets/picture1.png";
+    txt="Read the Science Fair Poster carefully before answering Questions 1–3.";
+  } else if(triggerId === 2){
+    img="assets/picture2.png";
+    txt="Observe the picture carefully before answering the question.";
+  } else if(triggerId === 3){
+    img="assets/picture3.png";
+    txt="Observe the picture carefully before answering the question.";
+  } else if(triggerId === 4){
+    img="assets/picture4.png";
+    txt="Observe the picture carefully before answering the question.";
+  }
+
+  document.getElementById("caseImage").src=img;
+  document.getElementById("imageText").innerText=txt;
 }
 
 function continueFromImage(){
-    document.getElementById("imageScreen").classList.remove("active");
-    document.getElementById("quiz").classList.add("active");
-    loadQuestion();
+  imageViewed = true;
+  evaluateStep();
 }
 
 function loadQuestion(){
-    attempt=0;
-    timeLeft=45;
-    clearInterval(timer);
+  attempt=0;
+  timeLeft=45;
+  clearInterval(timer);
 
-    document.getElementById("qno").innerText=current+1;
-    document.getElementById("question").innerText=questions[current].q;
+  let q = questions[current];
+  document.getElementById("qno").innerText = current+1;
+  document.getElementById("question").innerText = q.q;
+  document.getElementById("msg").innerText = "";
+  document.getElementById("msg").style.color = "unset";
 
-    let opt="";
-    questions[current].o.forEach((v,i)=>{
-        opt+=`<button class='option' onclick='check(${i},this)'>${v}</button>`;
-    });
+  let opt="";
+  q.o.forEach((v,i)=>{
+    opt+=`<button class='option' onclick='check(${i}, this)'>${v}</button>`;
+  });
 
-    document.getElementById("options").innerHTML=opt;
+  document.getElementById("options").innerHTML=opt;
 
-    updateProgress();
-    startTimer();
-
-    // image triggers
-    if(current==0) showImage(1);
-    if(current==4) showImage(5);
-    if(current==5) showImage(6);
-    if(current==6) showImage(7);
+  updateProgress();
+  startTimer();
 }
 
 function startTimer(){
-    timer=setInterval(()=>{
-        timeLeft--;
-        document.getElementById("time").innerText=timeLeft;
-        if(timeLeft<=0){
-            clearInterval(timer);
-            wrongAttempt();
-        }
-    },1000);
-}
-
-function check(i,btn){
-    if(i==questions[current].a){
-        document.getElementById("correctSound").play();
-        btn.classList.add("correct");
-        score++;
-        setTimeout(nextQ,1000);
-    }else{
-        wrongAttempt(btn);
+  document.getElementById("time").innerText = timeLeft;
+  timer=setInterval(()=>{
+    timeLeft--;
+    document.getElementById("time").innerText=timeLeft;
+    if(timeLeft<=0){
+      clearInterval(timer);
+      check(-1, null);
     }
+  },1000);
 }
 
-function wrongAttempt(btn){
-    document.getElementById("wrongSound").play();
+function check(i, btn){
+  let q = questions[current];
+  let msg = document.getElementById("msg");
+  let options = document.querySelectorAll(".option");
+
+  if(i === q.a){
+    clearInterval(timer);
+    document.querySelectorAll(".option").forEach(el => el.classList.add("disabled"));
+    btn.classList.add("correct");
+    try { document.getElementById("correctSound").play(); } catch(e){}
+    msg.innerText = "✨ Excellent! Correct Answer.";
+    msg.style.color = "var(--correct)";
+    score++;
+    updateProgress();
+    setTimeout(nextQ, 1200);
+  } else {
+    try { document.getElementById("wrongSound").play(); } catch(e){}
     attempt++;
+    if(btn) btn.classList.add("wrong");
 
-    if(attempt==1){
-        document.getElementById("msg").innerText="Not quite. Try again!";
-    }else{
-        document.getElementById("msg").innerText="Correct answer shown.";
-        document.querySelectorAll(".option")[questions[current].a].classList.add("correct");
-        setTimeout(nextQ,1500);
+    if(attempt === 1 && i !== -1){
+      msg.innerText = "✕ Not quite. Try one more time!";
+      msg.style.color = "var(--wrong)";
+      if(btn) {
+        setTimeout(() => { btn.classList.remove("wrong"); }, 800);
+      }
+    } else {
+      clearInterval(timer);
+      document.querySelectorAll(".option").forEach(el => el.classList.add("disabled"));
+      msg.innerText = "Moving forward...";
+      msg.style.color = "var(--text-muted)";
+      if(options[q.a]) options[q.a].classList.add("correct");
+      setTimeout(nextQ, 1500);
     }
+  }
 }
 
 function nextQ(){
-    current++;
-    if(current>=questions.length){
-        showResult();
-    }else{
-        loadQuestion();
-    }
+  current++;
+  if(current >= questions.length){
+    showResult();
+  }else{
+    evaluateStep();
+  }
 }
 
 function updateProgress(){
-    document.getElementById("score").innerText=score;
-    let p=(current/questions.length)*100;
-    document.getElementById("bar").style.width=p+"%";
+  document.getElementById("score").innerText = score;
+  let p = (current / questions.length) * 100;
+  document.getElementById("bar").style.width = p + "%";
 }
 
 function showResult(){
-    document.getElementById("quiz").classList.remove("active");
-    document.getElementById("result").classList.add("active");
-
-    let percent=Math.round((score/questions.length)*100);
-    document.getElementById("finalScore").innerText=
-    `Score: ${score}/15 (${percent}%)`;
+  show("result");
+  let percent = Math.round((score / questions.length) * 100);
+  document.getElementById("finalScore").innerText = `Score: ${score}/15 (${percent}%)`;
 }
-
 </script>
-
 </body>
 </html>
