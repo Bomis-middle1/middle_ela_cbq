@@ -58,7 +58,6 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Splash */
 #splash {
   background: transparent;
   box-shadow: none;
@@ -73,7 +72,7 @@ body {
 }
 
 h2 { font-size: 1.2rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
-h3 { font-size: 1.6rem; color: #1a252f; margin-bottom: 20px; font-weight: 700; text-align: left; }
+h3 { font-size: 1.4rem; color: #1a252f; margin-bottom: 20px; font-weight: 700; text-align: left; line-height: 1.5; }
 p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-bottom: 24px; }
 
 .btn {
@@ -97,7 +96,7 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
 
 .picture {
   width: 100%;
-  max-height: 240px;
+  max-height: 260px;
   object-fit: contain;
   margin-bottom: 20px;
   border-radius: 14px;
@@ -145,8 +144,8 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
   border-radius: 14px;
   cursor: pointer;
   text-align: left;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.98rem;
+  line-height: 1.4;
   color: #34495e;
   transition: all 0.2s ease;
 }
@@ -188,10 +187,12 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
 
 <body>
 
+<!-- SPLASH -->
 <div class="screen active" id="splash">
   <img src="assets/innovine-logo.png" class="logo" alt="Logo">
 </div>
 
+<!-- INTRO -->
 <div class="screen" id="intro">
   <h2>Grade 6 ELA</h2>
   <h3 style="text-align: center; margin-bottom: 10px;">Chapter 3: Prefix & Suffix</h3>
@@ -199,6 +200,7 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
   <button class="btn" onclick="beginQuiz()">Start Challenge</button>
 </div>
 
+<!-- IMAGE VIEW -->
 <div class="screen" id="imageScreen">
   <h2>Context Setup</h2>
   <img id="caseImage" class="picture" alt="Visual Context">
@@ -206,6 +208,7 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
   <button class="btn" onclick="continueFromImage()">Continue to Questions</button>
 </div>
 
+<!-- QUESTION -->
 <div class="screen" id="quiz">
   <div class="topbar">
     <div>Score: <span id="score">0</span></div>
@@ -220,6 +223,7 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
   <p id="msg"></p>
 </div>
 
+<!-- RESULT -->
 <div class="screen" id="result">
   <h2>Performance Summary</h2>
   <h3>Result</h3>
@@ -232,21 +236,160 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
 
 <script>
 let questions = [
-  {q:`Which option correctly fills ALL SIX blanks?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:2, imageTrigger: 1},
-  {q:`What does the prefix re- tell us about the team's plan?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:2},
-  {q:`What kind of suffix is used in both words?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
-  {q:`What is correct noun form rule they broke?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:0},
-  {q:`Which option correctly completes the caption?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:0, imageTrigger: 2},
-  {q:`Which option identifies ALL word-building errors?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:0, imageTrigger: 3},
-  {q:`Which option fills five blanks correctly?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1, imageTrigger: 4},
-  {q:`What kind of suffix is -ed?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
-  {q:`Which uses prefix im- correctly?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
-  {q:`Classify suffix groups correctly`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:2},
-  {q:`Match prefix meanings`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
-  {q:`Odd one out`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:3},
-  {q:`What is wrong in sentence?`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
-  {q:`Effect of -ness suffix`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:1},
-  {q:`Assertion Reason question`,o:[`a) Options Variant A`,`b) Options Variant B`,`c) Options Variant C`,`d) Options Variant D`],a:2}
+  {
+    q: "Which option correctly fills ALL SIX blanks on the Science Fair Poster?",
+    o: [
+      "a) purifyment / redesign / creatious / unpossible / interacting / inventment",
+      "b) purification / redesign / creative / impossible / interact / invention",
+      "c) purification / redesign / creation / impossible / interaction / invention",
+      "d) purifying / design / creative / impossible / interact / inventing"
+    ],
+    a: 2, 
+    imageTrigger: 1
+  },
+  {
+    q: "The Science Fair poster uses the word \"redesign\" (re- + design). What does the prefix re- tell us about the team's plan?",
+    o: [
+      "a) They will design something completely different from scratch.",
+      "b) They will design it for the first time.",
+      "c) They will design it again by improving their first attempt.",
+      "d) They are unable to design it."
+    ],
+    a: 2
+  },
+  {
+    q: "The poster changes purify → purification and invent → invention. What kind of suffix is used in both words, and what does it do?",
+    o: [
+      "a) Inflectional suffix—it changes the tense of the verb.",
+      "b) Derivational suffix (-tion/-ation)—it changes a verb into a noun.",
+      "c) Prefix—it adds meaning before the root word.",
+      "d) Inflectional suffix—it changes singular nouns into plural nouns."
+    ],
+    a: 1
+  },
+  {
+    q: "Rohan writes \"developation\" and Riya writes \"interactation\" in a WhatsApp chat while preparing their Science Fair project. What is the correct noun form for each word, and what rule did they break?",
+    o: [
+      "a) developation → development (-ment, not -ation); interactation → interaction (-tion directly from the root word, not -ation)",
+      "b) developation → development; interactation → interactation (correct as written)",
+      "c) Both are correct because both use the suffix -ation.",
+      "d) developation → developing; interactation → interacting."
+    ],
+    a: 0
+  },
+  {
+    q: "Riya is writing an Instagram caption about her team's Science Fair project. Which option correctly completes the caption?",
+    o: [
+      "a) creativity / invention / inspirational / proud",
+      "b) creative / invention / inspiring / proudness",
+      "c) creativeness / inventation / inspirational / proudful",
+      "d) creativity / inventment / inspireful / proud"
+    ],
+    a: 0, 
+    imageTrigger: 2
+  },
+  {
+    q: "The WhatsApp chat shows spelling and structure anomalies. Which option correctly identifies ALL the word-building errors in the chat?",
+    o: [
+      "a) successfull → successful; happyful → happy or happiness; unposssible → impossible (wrong prefix + spelling); rewrite is correctly formed using the prefix re-",
+      "b) successfull → successfully; happyful → happyful (correct); unposssible → unpossible; rewrite is incorrect",
+      "c) successfull → success; happyful → happiness; unposssible → possible; rewrite → write",
+      "d) All the words are correct—there are no word-building errors."
+    ],
+    a: 0, 
+    imageTrigger: 3
+  },
+  {
+    q: "Five newspaper headlines contain blanks. Which option correctly fills all five blanks in order?",
+    o: [
+      "a) creative / performance / interacted / development / easily",
+      "b) creativity / performance / interacted / development / easier",
+      "c) creativeness / performing / interact / developing / easier",
+      "d) creativity / performing / interaction / development / easily"
+    ],
+    a: 1, 
+    imageTrigger: 4
+  },
+  {
+    q: "A student writes: \"The teams performed, interacted and celebrated.\" The suffix -ed is added to all three verbs. What kind of suffix is this, and why?",
+    o: [
+      "a) Derivational—it creates completely new words with different meanings.",
+      "b) Inflectional—it only changes the tense. The words remain verbs and their basic meaning does not change.",
+      "c) It is a prefix, not a suffix.",
+      "d) It is a derivational suffix because it changes the verbs into nouns."
+    ],
+    a: 1
+  },
+  {
+    q: "Which of the following correctly uses the prefix im- to mean \"not\"?",
+    o: [
+      "a) imhappy",
+      "b) impossible",
+      "c) imwrite",
+      "d) imcelebrate"
+    ],
+    a: 1
+  },
+  {
+    q: "Sort these suffixes into the correct groups:\nP: -ness (happy → happiness)\nQ: -ed (talk → talked)\nR: -tion (invent → invention)\nS: -s (cat → cats)\n\nWhich option correctly classifies them?",
+    o: [
+      "a) Derivational: P, Q | Inflectional: R, S",
+      "b) Derivational: Q, S | Inflectional: P, R",
+      "c) Derivational: P, R | Inflectional: Q, S",
+      "d) Derivational: R, S | Inflectional: P, Q"
+    ],
+    a: 2
+  },
+  {
+    q: "Classify the prefix meanings for these words: [1] impossible, [2] rewrite, [3] interact, [4] unhappy. Which option correctly matches each word with the meaning of its prefix?",
+    o: [
+      "a) 1 = again, 2 = not, 3 = between, 4 = not",
+      "b) 1 = not, 2 = again, 3 = between, 4 = not",
+      "c) 1 = between, 2 = not, 3 = again, 4 = not",
+      "d) 1 = not, 2 = between, 3 = again, 4 = not"
+    ],
+    a: 1
+  },
+  {
+    q: "Three of the following words use a prefix meaning \"not.\" One word does not. Which is the odd one out?",
+    o: [
+      "a) impossible",
+      "b) invisible",
+      "c) incomplete",
+      "d) interact"
+    ],
+    a: 3
+  },
+  {
+    q: "Riya writes in the class WhatsApp group: \"Our thinking was very creativeness.\" What is wrong with the sentence, and how should it be corrected?",
+    o: [
+      "a) No error—creativeness is the correct adjective.",
+      "b) \"Creativeness\" is a noun. After \"very\", an adjective is needed, so the correct word is \"creative.\"",
+      "c) \"Creativeness\" should be replaced only with creativity because both words have the same meaning.",
+      "d) \"Very creative\" is incorrect, so very should be removed."
+    ],
+    a: 1
+  },
+  {
+    q: "A student changes the sentence: \"He is happy\" to \"He has happiness.\" What is the effect of adding the suffix -ness?",
+    o: [
+      "a) The meaning changes completely because the person is no longer happy.",
+      "b) The suffix \"-ness\" changes the adjective \"happy\" into the noun \"happiness\", changing the word class while keeping the core meaning.",
+      "c) \"-ness\" is an inflectional suffix because it changes the tense.",
+      "d) The sentence becomes grammatically incorrect because nouns cannot replace adjectives."
+    ],
+    a: 1
+  },
+  {
+    q: "Assertion: Adding -ed to talk (talk → talked) is an inflectional suffix.\nReason: It changes talk into a noun.\n\nChoose the best assessment:",
+    o: [
+      "a) Both the Assertion and the Reason are correct, and the Reason correctly explains the Assertion.",
+      "b) Both the Assertion and the Reason are correct, but the Reason does not explain the Assertion.",
+      "c) The Assertion is correct, but the Reason is incorrect because \"-ed\" changes only the tense; \"talked\" remains a verb.",
+      "d) Both the Assertion and the Reason are wrong."
+    ],
+    a: 2
+  }
 ];
 
 let current=0, score=0, attempt=0, timer, timeLeft=45;
@@ -266,6 +409,10 @@ function beginQuiz(){
 }
 
 function evaluateStep() {
+  if (current >= questions.length) {
+    showResult();
+    return;
+  }
   let q = questions[current];
   if(q.imageTrigger && !imageViewed) {
     showImage(q.imageTrigger);
@@ -285,7 +432,6 @@ function showImage(triggerId){
   show("imageScreen");
   let img="", txt="";
 
-  // Standardized to lower-case filenames matching your GitHub repo assets folder exactly
   if(triggerId === 1){
     img="assets/picture1.png";
     txt="Read the Science Fair Poster carefully before answering Questions 1–3.";
@@ -322,13 +468,17 @@ function loadQuestion(){
 
   let opt="";
   q.o.forEach((v,i)=>{
-    opt+=`<button class='option' onclick='check(${i}, this)'>${v}</button>`;
+    opt+=`<button class='option' onclick='check(${i}, this)'>${escapeHtml(v)}</button>`;
   });
 
   document.getElementById("options").innerHTML=opt;
 
   updateProgress();
   startTimer();
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function startTimer(){
@@ -382,11 +532,7 @@ function check(i, btn){
 
 function nextQ(){
   current++;
-  if(current >= questions.length){
-    showResult();
-  }else{
-    evaluateStep();
-  }
+  evaluateStep();
 }
 
 function updateProgress(){
@@ -398,7 +544,12 @@ function updateProgress(){
 function showResult(){
   show("result");
   let percent = Math.round((score / questions.length) * 100);
-  document.getElementById("finalScore").innerText = `Score: ${score}/15 (${percent}%)`;
+  document.getElementById("finalScore").innerText = `${score}/15`;
+  
+  let msg = document.getElementById("result").querySelector("h3");
+  if(percent >= 80) msg.innerText = "Incredible Job! 🏆";
+  else if(percent >= 50) msg.innerText = "Good Effort! 👍";
+  else msg.innerText = "Keep Practicing! 📝";
 }
 </script>
 </body>
