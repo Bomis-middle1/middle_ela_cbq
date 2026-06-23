@@ -2,362 +2,384 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>CBQ Interactive - Nouns</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nouns Mission</title>
 
 <style>
 body{
-margin:0;
-font-family:Arial;
-background:#eef3ff;
-overflow:hidden;
+ margin:0;
+ font-family:Arial;
+ background:linear-gradient(120deg,#e3f2fd,#fff);
+ overflow-x:hidden;
 }
 
-/* SCREENS */
 .screen{
-position:fixed;
-inset:0;
-display:none;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-text-align:center;
+ display:none;
+ padding:20px;
+ text-align:center;
 }
 
-.active{display:flex;}
+.active{display:block;}
 
-/* LOGO */
-#logoScreen{
-background:white;
+.logo{
+ width:200px;
+ margin-top:20vh;
 }
 
-#logoScreen img{
-width:220px;
+.btn{
+ padding:12px 25px;
+ font-size:18px;
+ border-radius:12px;
+ border:none;
+ background:#1976d2;
+ color:white;
+ cursor:pointer;
+ margin-top:20px;
 }
 
-/* TOPIC (FIXED TITLE) */
-#topicScreen{
-background:linear-gradient(135deg,#1e3a8a,#2563eb);
-color:white;
-font-size:34px;
-font-weight:bold;
+.question-box{
+ max-width:900px;
+ margin:auto;
+ text-align:left;
+ background:white;
+ padding:20px;
+ border-radius:12px;
+ box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-.sub{
-font-size:16px;
-margin-top:8px;
-opacity:0.9;
-}
-
-/* START */
-#startScreen{
-background:#f4f7ff;
-}
-
-button{
-padding:14px 22px;
-font-size:18px;
-border:none;
-border-radius:12px;
-background:#1e3a8a;
-color:white;
-cursor:pointer;
-}
-
-/* GAME */
-#game{
-display:none;
-padding:10px;
-}
-
-.header{
-display:flex;
-justify-content:space-between;
-background:#1e3a8a;
-color:white;
-padding:10px;
-border-radius:10px;
-font-size:14px;
-}
-
-/* CARD FIXED (NO SCROLL DESIGN) */
-.card{
-background:white;
-margin-top:10px;
-padding:12px;
-border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
-max-height:75vh;
-overflow:hidden;
-}
-
-/* CHAT SMALLER */
-.chat{
-background:#e8f0ff;
-padding:8px;
-border-left:4px solid #1e3a8a;
-border-radius:8px;
-font-size:12px;
-line-height:1.3;
-white-space:pre-line;
-margin-bottom:8px;
-}
-
-/* QUESTION SMALLER */
-.question{
-font-size:14px;
-font-weight:bold;
-margin:6px 0;
-line-height:1.3;
-}
-
-/* OPTIONS COMPACT */
 .option{
-display:block;
-width:100%;
-padding:10px;
-margin:6px 0;
-border-radius:10px;
-border:2px solid #ddd;
-background:#fff;
-cursor:pointer;
-text-align:left;
-font-size:13px;
+ padding:12px;
+ margin:10px 0;
+ background:#f1f1f1;
+ border-radius:10px;
+ cursor:pointer;
 }
 
-/* REMOVE SCROLLING SPACE ISSUE */
-.option:hover{
-background:#f1f5ff;
+.option.correct{background:#c8e6c9;}
+.option.wrong{background:#ffcdd2;}
+
+.topbar{
+ display:flex;
+ justify-content:space-between;
+ font-size:14px;
+ margin-bottom:10px;
 }
 
-/* RESULT */
-#result{
-display:none;
-text-align:center;
-padding:20px;
-font-size:20px;
-font-weight:bold;
+.progress{
+ height:10px;
+ background:#ddd;
+ border-radius:5px;
+ overflow:hidden;
 }
+
+.progress-fill{
+ height:10px;
+ background:#4caf50;
+ width:0%;
+}
+
+.case-img{
+ width:100%;
+ max-height:250px;
+ object-fit:contain;
+ margin:10px 0;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- LOGO -->
-<div id="logoScreen" class="screen active">
-<img src="g6/chp1/nouns/assets/innovine-logo.png">
-</div>
-
-<!-- TOPIC (FIXED TEXT) -->
-<div id="topicScreen" class="screen">
-NOUNS
-<div class="sub">🕵️‍♂️ Mission Challenge</div>
+<!-- INTRO -->
+<div id="intro" class="screen active">
+<img src="assets/innovine-logo.png" class="logo">
 </div>
 
 <!-- START -->
-<div id="startScreen" class="screen">
-<button onclick="startGame()">Start Mission</button>
+<div id="start" class="screen">
+<h1>Nouns in a WhatsApp Chat</h1>
+<h3>Grade 6 | English</h3>
+<h4>15 Questions</h4>
+<button class="btn" onclick="startGame()">Start</button>
 </div>
 
-<!-- GAME -->
-<div id="game">
-<div class="header">
-<div>Score: <span id="score">0</span>/12</div>
-<div>⏱ <span id="time">60</span>s</div>
-<button onclick="toggleMute()">🔊</button>
+<!-- CASE STUDY -->
+<div id="caseStudy" class="screen">
+<h2>Case Study (Questions 1–5)</h2>
+<h3>Nouns in a WhatsApp Chat</h3>
+<img src="assets/case-study-1.png" class="case-img">
+<p><b>Read the case study carefully before answering Questions 1–5.</b></p>
+<button class="btn" onclick="nextFromCase()">Continue</button>
 </div>
 
-<div class="card" id="card"></div>
+<!-- QUESTION SCREEN -->
+<div id="quiz" class="screen">
+<div class="topbar">
+<div id="score">Score: 0</div>
+<div id="qno">Q1</div>
+<div id="timer">45</div>
 </div>
 
-<audio id="correctSound" src="g6/chp1/nouns/assets/correct.mp3"></audio>
-<audio id="wrongSound" src="g6/chp1/nouns/assets/wrong.mp3"></audio>
+<div class="progress"><div class="progress-fill" id="bar"></div></div>
+
+<div id="imageBox"></div>
+
+<div class="question-box">
+<div id="questionText"></div>
+<div id="options"></div>
+</div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen">
+<h1>Result</h1>
+<h2 id="finalScore"></h2>
+<button class="btn" onclick="location.reload()">Play Again</button>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
 
-let i=0,score=0,attempts=2,time=60,mute=false;
+let current=0;
+let score=0;
+let time=45;
+let timer;
 
-/* QUESTIONS (UNCHANGED LOGIC) */
-let questions=[
-
+const questions=[
 {
-type:"chat",
-q:`Q1:
-Riya: Hey! Are you coming to the Delhi trip next week?
-
-Aarav: Yes! The school has booked tickets for all of us.
-
-Riya: A flock of pigeons was sitting on our roof.
-
-Aarav: Bring courage.
-
-Riya: Our class (42 students) is going together.`,
-options:[
-"Common noun",
-"Proper noun",
-"Collective noun",
-"Abstract noun"
-],
+q:`In the WhatsApp chat, Riya mentions she is visiting "Delhi" for a school trip. What kind of noun is "Delhi"?`,
+options:[`a) Common noun`,`b) Proper noun`,`c) Collective noun`,`d) Material noun`],
+answer:1,
+hint:"It is a specific place name."
+},
+{
+q:`Aarav says, "Our team will represent the school in the quiz competition." What kind of noun is "team"?`,
+options:[`a) Abstract noun`,`b) Collective noun`,`c) Material noun`,`d) Proper noun`],
+answer:1,
+hint:"It represents a group."
+},
+{
+q:`Riya uses the phrase "a flock of pigeons." What kind of noun is "flock"?`,
+options:[`a) Common noun`,`b) Abstract noun`,`c) Material noun`,`d) Collective noun`],
+answer:3,
+hint:"Group of animals."
+},
+{
+q:`Aarav tells Riya to "bring courage" for the trip. What kind of noun is "courage", and why?`,
+options:[`a) Material noun — it is something you can pack.`,
+`b) Abstract noun — it is a quality that cannot be seen or touched.`,
+`c) Collective noun — it groups many feelings together.`,
+`d) Proper noun — it names a specific feeling.`],
+answer:1,
+hint:"It cannot be touched."
+},
+{
+q:`Riya says, "Our class (all 42 students) is going together." Fill in the blanks correctly.
+• "Class" is a ______ noun.
+• "Students" is a ______ noun.
+• "42" shows that students are ______.`,
+options:[`a) Collective / Common / Countable`,
+`b) Proper / Abstract / Uncountable`,
+`c) Material / Proper / Collective`,
+`d) Abstract / Material / Uncountable`],
+answer:0,
+hint:"Think group + naming + number."
+},
+{
+q:`A school notice board displaying the sentence: "Teams will demonstrate the strength of iron in bridge-building."
+Classify the two underlined nouns "strength" and "iron."`,
+options:[`a) Proper noun / Common noun`,
+`b) Abstract noun / Material noun`,
+`c) Collective noun / Abstract noun`,
+`d) Material noun / Proper noun`],
 answer:1
 },
-
 {
-q:"Q2: Kit is a ____ noun.",
-options:["Abstract","Collective","Material","Proper"],
+q:`Aarav wants to correct the nouns before sending the message. Which option correctly identifies all the noun-related errors?`,
+options:[`a) book → books (plural needed); teech → teacher; milks → milk (uncountable)`,
+`b) book → books (plural needed); Rohan team → Rohan's team (shows possession); milks → milk (uncountable)`,
+`c) teech → teacher; milks → milk`,
+`d) There are no noun-related errors. Only spelling mistakes need correction.`],
+answer:1,
+image:"assets/Picture2.png"
+},
+{
+q:`Which sentence uses uncountable nouns correctly?`,
+options:[`a) I bought two rices and three waters from the market.`,
+`b) I bought two bags of rice and three bottles of water from the market.`,
+`c) I bought a rice and a water from the market.`,
+`d) Rice and water are countable nouns, so both can be used in the plural.`],
 answer:1
 },
-
 {
-q:"Q3: Flock of pigeons is ____ noun.",
-options:["Common","Abstract","Material","Collective"],
-answer:3
-},
-
-{
-q:"Q4: Courage is ____ noun.",
-options:["Material","Abstract","Collective","Proper"],
-answer:1
-},
-
-{
-q:"Q5: Class is ____ noun.",
-options:["Collective","Proper","Material","Abstract"],
-answer:0
-},
-
-{
-q:"Q6: Correct uncountable usage",
-options:[
-"I bought rices",
-"I bought rice and water bottles",
-"I bought a rice",
-"Rice are good"
-],
-answer:1
-},
-
-{
-q:"Q7: Bangalore vs city",
-options:["Both proper","Both common","Proper vs common","Both abstract"],
+q:`The school notice says:
+"Educational Trip to Bangalore City."
+Why does "Bangalore" begin with a capital letter while "city" does not?`,
+options:[`a) Both are proper nouns.`,
+`b) Both are common nouns.`,
+`c) "Bangalore" is a proper noun because it names a specific place, while "city" is a common noun because it is a general name.`,
+`d) "Bangalore" is an abstract noun, while "city" is a proper noun.`],
 answer:2
 },
-
 {
-q:"Q8: Sort nouns",
-options:["C U A C","C C U U","U C A C","C U C U"],
-answer:0
-},
-
-{
-q:"Q9: Classify nouns",
-options:["A","B","C","D"],
+q:`A grocery shop has mangoes and rice on its shelves. A prize table has trophies, and during the morning assembly the principal asks students to show courage in every competition.
+Which of these nouns can be counted individually?`,
+options:[`a) Mangoes and rice`,
+`b) Rice and courage`,
+`c) Mangoes and trophies`,
+`d) Courage and trophies`],
 answer:2
 },
-
 {
-q:"Q10: Odd one out",
-options:["Mango","Courage","Rice","Water"],
+q:`Read the following situations.
+• A jeweller keeps gold safely in a locker.
+• A teacher appreciates honesty in every student.
+• A gaggle of geese flies across the lake.
+• Mumbai hosts many cultural festivals every year.
+Which option correctly classifies the highlighted nouns?`,
+options:[`a) Honesty – Material, Gold – Abstract, Gaggle – Proper, Mumbai – Collective`,
+`b) Honesty – Collective, Gold – Material, Gaggle – Abstract, Mumbai – Proper`,
+`c) Honesty – Abstract, Gold – Material, Gaggle – Collective, Mumbai – Proper`,
+`d) Honesty – Proper, Gold – Collective, Gaggle – Material, Mumbai – Abstract`],
+answer:2
+},
+{
+q:`Look at this group of nouns:
+mango, courage, rice, water
+Which is the odd one out, and why?`,
+options:[`a) Mango — it is the only countable noun, while rice and water are uncountable and courage is an abstract noun.`,
+`b) Courage — it is the only abstract noun in the group.`,
+`c) Rice — it cannot be counted at all.`,
+`d) Water — it is the most commonly used noun.`],
 answer:1
 },
-
 {
-q:"Q11: Error question",
-options:["A","B","C","D"],
+q:`A student wrote: "The team showed many braveries and won two trophys and one certificat."
+Which option correctly identifies all three errors?`,
+options:[`a) braveries → bravery (uncountable, no plural); trophys → trophies; certificat → certificate`,
+`b) braveries → braver; trophys → trophies; certificat → certificates`,
+`c) braveries → brave; trophys → trophy; certificat → certification`,
+`d) There are no errors.`],
 answer:0
 },
-
 {
-q:"Q12: Gaggle explanation",
-options:["A","B","C","D"],
+q:`During a classroom discussion, Rohan says:"Gaggle is a proper noun because it starts the sentence."
+Riya replies:"No. It is a collective noun because it names a group as one unit."
+What causes Rohan's mistake, and what is the correct explanation?`,
+options:[`a) Rohan is correct because any noun at the beginning of a sentence becomes a proper noun.`,
+`b) Both Rohan and Riya are correct because "gaggle" is both a proper noun and a collective noun.`,
+`c) Rohan has confused capitalisation at the beginning of a sentence with the rule for proper nouns. Riya is correct because "gaggle" names a group of geese, regardless of where it appears in the sentence.`,
+`d) Neither student is correct because "gaggle" is an abstract noun.`],
 answer:2
+},
+{
+q:`Assertion: Furniture, luggage and information cannot usually be made plural by adding -s.
+Reason: These are uncountable nouns because they refer to a whole category rather than separate countable items.`,
+options:[`a) Both the Assertion and the Reason are true, and the Reason correctly explains the Assertion.`,
+`b) Both the Assertion and the Reason are true, but the Reason does not explain the Assertion.`,
+`c) The Assertion is true, but the Reason is false.`,
+`d) Both the Assertion and the Reason are false.`],
+answer:0
 }
-
 ];
 
-/* FLOW */
-setTimeout(()=>{
-document.getElementById("logoScreen").classList.remove("active");
-document.getElementById("topicScreen").classList.add("active");
+function show(id){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
 
-setTimeout(()=>{
-document.getElementById("topicScreen").classList.remove("active");
-document.getElementById("startScreen").classList.add("active");
-},3000);
-
-},5000);
+setTimeout(()=>show('start'),5000);
 
 function startGame(){
-document.getElementById("startScreen").style.display="none";
-document.getElementById("game").style.display="block";
-loadQ();
-startTimer();
+show('caseStudy');
+}
+
+function nextFromCase(){
+show('quiz');
+loadQ(0);
 }
 
 function startTimer(){
-setInterval(()=>{
+time=45;
+document.getElementById('timer').innerText=time;
+timer=setInterval(()=>{
 time--;
-document.getElementById("time").innerText=time;
-if(time<=0) endGame();
+document.getElementById('timer').innerText=time;
+if(time<=0){
+clearInterval(timer);
+check(-1);
+}
 },1000);
 }
 
-function loadQ(){
-attempts=2;
+function loadQ(i){
+current=i;
+clearInterval(timer);
+startTimer();
+
 let q=questions[i];
 
-let html="";
+document.getElementById('qno').innerText="Q"+(i+1);
+document.getElementById('score').innerText="Score: "+score;
+document.getElementById('bar').style.width=((i)/questions.length)*100+"%";
 
-if(q.type==="chat"){
-html+=`<div class='chat'>${q.q}</div>`;
-}else{
-html+=`<div class='question'>${q.q}</div>`;
+let imgBox=document.getElementById('imageBox');
+imgBox.innerHTML="";
+
+if(i<5){
+imgBox.innerHTML=`<img src="assets/Picture1.png" class="case-img">`;
+}
+if(i==6){
+imgBox.innerHTML=`<img src="assets/Picture2.png" class="case-img">`;
 }
 
+document.getElementById('questionText').innerText=q.q;
+
+let opt="";
 q.options.forEach((o,idx)=>{
-html+=`<button class='option' onclick='check(${idx})'>${o}</button>`;
+opt+=`<div class='option' onclick='check(${idx})'>${o}</div>`;
 });
 
-document.getElementById("card").innerHTML=html;
+document.getElementById('options').innerHTML=opt;
 }
 
 function check(ans){
-let q=questions[i];
+clearInterval(timer);
+let q=questions[current];
+let opts=document.querySelectorAll('.option');
 
 if(ans===q.answer){
+opts[ans].classList.add('correct');
+document.getElementById('correctSound').play();
 score++;
-play("correct");
+setTimeout(next,800);
+}
+else{
+document.getElementById('wrongSound').play();
+if(ans!=-1){
+opts[ans].classList.add('wrong');
+}
+setTimeout(()=>{
 next();
-}else{
-attempts--;
-play("wrong");
-if(attempts<=0) next();
+},1200);
 }
 }
 
 function next(){
-i++;
-if(i>=questions.length){
-endGame();
+if(current<questions.length-1){
+loadQ(current+1);
 }else{
-loadQ();
+endGame();
 }
 }
 
 function endGame(){
-document.getElementById("game").innerHTML=
-`<h2>Mission Completed 🕵️‍♂️</h2><p>Score: ${score}/12</p>`;
-}
-
-function play(type){
-if(mute) return;
-document.getElementById(type+"Sound").play().catch(()=>{});
-}
-
-function toggleMute(){
-mute=!mute;
+show('result');
+document.getElementById('finalScore').innerText=score+"/"+questions.length;
 }
 
 </script>
-
 </body>
 </html>
