@@ -2,304 +2,621 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CBQ - Kinds of Sentences</title>
+<title>CBQ Interactive - Kinds of Sentences Mastery</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+:root {
+  --primary: #1976d2;
+  --primary-hover: #115293;
+  --bg-gradient: linear-gradient(135deg, #e3f2fd 0%, #fff3e0 50%, #e8f5e9 100%);
+  --surface: #ffffff;
+  --text-main: #2c3e50;
+  --text-muted: #7f8c8d;
+  --correct: #2ecc71;
+  --correct-bg: #e8f8f0;
+  --wrong: #e74c3c;
+  --wrong-bg: #fdedec;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  margin:0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(120deg,#e3f2fd,#fff3e0,#e8f5e9);
-  overflow-x:hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
 }
 
-/* Splash */
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 650px;
+  margin: 20px;
+  padding: 40px 30px;
+  background: var(--surface);
+  border-radius: 24px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 #splash {
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:10;
-}
-#splash img{
-  width:220px;
-  animation: zoom 2s ease-in-out infinite alternate;
-}
-@keyframes zoom{
-  from{transform:scale(1);}
-  to{transform:scale(1.1);}
+  background: transparent;
+  box-shadow: none;
 }
 
-/* Main container */
-#app {
-  display:none;
-  padding:15px;
+.logo {
+  width: 180px;
+  margin-bottom: 20px;
+  animation: pulse 2s infinite ease-in-out;
 }
 
-/* Top bar */
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:10px;
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.04); opacity: 1; }
 }
 
-.card{
-  background:white;
-  padding:10px;
-  border-radius:12px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+h1 { font-size: 2rem; color: #1a252f; margin-bottom: 15px; font-weight: 800; }
+h2 { font-size: 1.2rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+h3 { font-size: 1.35rem; color: #1a252f; margin-bottom: 20px; font-weight: 700; text-align: left; line-height: 1.5; width: 100%; white-space: pre-line; }
+p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-bottom: 24px; }
+
+.btn {
+  display: inline-block;
+  padding: 14px 35px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(25, 118, 210, 0.25);
 }
 
-button{
-  padding:10px 14px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:bold;
+.btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(25, 118, 210, 0.35);
 }
 
-.start-btn{background:#4caf50;color:white;}
-.option{background:#f1f1f1;margin:6px;padding:12px;border-radius:10px;cursor:pointer;}
-.option:hover{background:#dcedc8;}
+.utility-btn {
+  background: #f4f6f7;
+  color: var(--text-main);
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid #e1e8ed;
+  cursor: pointer;
+}
+.utility-btn:hover { background: #eaeded; }
 
-.progress{
-  width:100%;
-  height:10px;
-  background:#ddd;
-  border-radius:10px;
-  overflow:hidden;
-}
-.progress-bar{
-  height:10px;
-  background:#4caf50;
-  width:0%;
-}
-
-/* Picture screens */
-.center{
-  text-align:center;
-}
-img{
-  max-width:100%;
-  border-radius:12px;
+.picture {
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  border: 1px solid #e1e8ed;
+  background: #fdfefe;
 }
 
-/* Feedback */
-.correct{background:#c8e6c9;}
-.wrong{background:#ffcdd2;}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 15px;
+  width: 100%;
+}
 
+.progress {
+  height: 8px;
+  background: #eaeded;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #4caf50;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+#options {
+  width: 100%;
+}
+
+.option {
+  display: block;
+  width: 100%;
+  background: #fdfefe;
+  margin: 12px 0;
+  padding: 16px 20px;
+  border: 2px solid #e2ebf0;
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  color: #34495e;
+  transition: all 0.2s ease;
+}
+
+.option:hover {
+  background: #f4f6f7;
+  border-color: #bdc3c7;
+  transform: translateX(4px);
+}
+
+.option.correct {
+  background: var(--correct-bg) !important;
+  border-color: var(--correct) !important;
+  color: #196f3d;
+  font-weight: 600;
+}
+
+.option.wrong {
+  background: var(--wrong-bg) !important;
+  border-color: var(--wrong) !important;
+  color: #943126;
+}
+
+.disabled {
+  pointer-events: none;
+}
+
+#msg {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 15px;
+  min-height: 24px;
+  width: 100%;
+  text-align: left;
+  line-height: 1.4;
+}
+
+#finalScore {
+  font-size: 3.5rem;
+  color: var(--primary);
+  margin: 20px 0;
+  font-weight: 800;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+input[type="range"] {
+  cursor: pointer;
+  width: 60px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
-<div id="splash">
-  <img src="assets/innovine-logo.png">
+<!-- SPLASH SCREEN -->
+<div id="splash" class="screen active">
+  <img src="assets/innovine-logo.png" class="logo" alt="Logo">
+  <h2>Loading Chapter Content...</h2>
 </div>
 
-<div id="app">
+<!-- START SCREEN -->
+<div id="start" class="screen">
+  <h2>Grade 6 ELA</h2>
+  <h1>Kinds of Sentences</h1>
+  <p>Total Assessment Content: 15 Questions</p>
+  <button class="btn" onclick="startGame()">Start Challenge</button>
+</div>
 
-  <div class="topbar card">
-    <div id="info"></div>
+<!-- IMAGE CONTEXT DISPLAY PANEL -->
+<div id="imageScreen" class="screen">
+  <h2>Reference Material</h2>
+  <img id="caseImage" class="picture" alt="Context Reference Map">
+  <p id="imageText" style="font-weight: 600; color: #1a252f;"></p>
+  <button class="btn" onclick="continueFromImage()">Continue to Question</button>
+</div>
 
-    <div>
-      🔊 <button onclick="toggleMute()">Mute</button>
-      <input type="range" min="0" max="1" step="0.1" onchange="setVolume(this.value)">
-      🔁 <button onclick="restart()">Restart</button>
+<!-- MAIN QUIZ HUB -->
+<div id="quiz" class="screen">
+  <div class="topbar">
+    <div>Score: <span id="score">0</span></div>
+    <div>Question <span id="qno">1</span>/15</div>
+    <div class="control-group">
+      <button class="utility-btn" onclick="toggleMute()" id="muteBtn">🔊 Mute</button>
+      <input type="range" min="0" max="1" step="0.1" value="1" onchange="setVolume(this.value)">
+      <button class="utility-btn" onclick="restart()">🔁</button>
     </div>
   </div>
 
-  <div class="card">
-    Score: <span id="score">0</span> |
-    Question: <span id="qno">1</span>/15
-    <div class="progress"><div class="progress-bar" id="bar"></div></div>
-  </div>
+  <div class="progress"><div id="bar" class="progress-bar"></div></div>
 
-  <div id="screen" class="card"></div>
+  <h3 id="question"></h3>
+  <div id="options"></div>
+  <p id="msg"></p>
+</div>
 
+<!-- COMPREHENSIVE PERFORMANCE SUMMARY -->
+<div id="result" class="screen">
+  <h2>Performance Summary</h2>
+  <h1>Result</h1>
+  <div id="finalScore">0/15</div>
+  <p id="perf" style="font-weight:600; color:#1a252f; margin-bottom:20px;"></p>
+  <button class="btn" onclick="restart()">Play Again</button>
 </div>
 
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
-
-let questions = [
-{q:`You see a sticker on a water bottle that says: "Drink more water every day." What kind of sentence is this?`,options:["Declarative","Interrogative","Imperative","Exclamatory"],a:2,h:"It gives a command.",ex:"Commands are Imperative."},
-
-{q:`A friend texts you: "Did you finish the science homework?" This sentence is:`,options:["Declarative","Interrogative","Imperative","Exclamatory"],a:1,h:"It asks something.",ex:"Questions are Interrogative."},
-
-{q:`Aarav jumps into a cold pool and shouts: "How freezing the water is!" Later he writes about it in his diary as a plain statement. Which is correct?`,options:["How cold is the water?","Don't touch the cold water.","The water is very cold.","The water felt freezing."],a:2,h:"Convert emotion into statement.",ex:"Plain statement = Declarative."},
-
-{q:`A teacher is writing a report: "He is always on time." She wants to rewrite it using 'never' without changing meaning. Which is correct?`,options:["He is never on time.","He is never late.","Is he ever on time?","He is not always on time."],a:1,h:"Opposite meaning match.",ex:"Never late = same meaning."},
-
-{q:`A captain says: "It was a great victory for the team." Turn into question.`,options:["Was it a great victory for the team?","It was a great victory for the team?","Did it was a great victory for the team?","How great the victory was!"],a:0,h:"Invert helping verb.",ex:"Was + subject = question."},
-
-{img:"picture1.png"},
-
-{img:"picture2.png"},
-
-{q:`Which is a negative declarative sentence?`,options:["Don't go there.","Why are you not coming?","She does not like apples.","What a shame!"],a:2,h:"Statement with 'not'.",ex:"Negative declarative = statement."},
-
-{q:`Can any man live forever? Best declarative meaning?`,options:["Every man can live forever.","No man can live forever.","Man can live forever?","Live forever, man."],a:1,h:"Meaning conversion.",ex:"Question implies negative statement."},
-
-{q:`Sort into Imperative or Exclamatory: P, Q, R, S`,options:[
-"Imperative: P,R — Exclamatory: Q,S",
-"Imperative: Q,R — Exclamatory: P,S",
-"Imperative: Q,S — Exclamatory: P,R",
-"Imperative: P,S — Exclamatory: Q,R"
-],a:2,h:"! = exclamatory, commands = imperative.",ex:"Correct grouping."},
-
-{q:`Which group is correct Imperative/Declarative?`,options:[
-"Wrong grouping A",
-"Correct grouping B",
-"Wrong grouping C",
-"Wrong grouping D"
-],a:1,h:"Identify commands vs facts.",ex:"Correct classification."},
-
-{q:`Odd one out (Imperative set)`,options:[
-"Switch off lights",
-"Hand in homework",
-"What an exciting match!",
-"Tell the truth"
-],a:2,h:"One is emotion sentence.",ex:"Exclamatory is odd one."},
-
-{q:`Which sentence is incorrect imperative form?`,options:[
-"Wash vegetables",
-"You are cutting them",
-"Add salt",
-"Serve hot"
-],a:1,h:"Avoid 'you are + ing'.",ex:"Not imperative structure."},
-
-{q:`Effect of change to declarative`,options:[
-"Becomes question",
-"Loses emotion",
-"Becomes command",
-"Becomes wrong"
-],a:1,h:"Emotion removal.",ex:"Declarative is plain."},
-
-{q:`Best polite request`,options:[
-"Explain it again!",
-"Why can't you?",
-"Please explain again",
-"You will explain it"
-],a:2,h:"Use 'please'.",ex:"Polite imperative."}
+const questions = [
+  {
+    q: "You see a sticker on a water bottle that says:\n\"Drink more water every day.\"\n\nWhat kind of sentence is this?",
+    options: ["Declarative", "Interrogative", "Imperative", "Exclamatory"],
+    a: 2,
+    h: "It gives an instruction or command.",
+    ex: "Gives an instruction/command → Imperative"
+  },
+  {
+    q: "A friend texts you:\n\"Did you finish the science homework?\"\n\nThis sentence is:",
+    options: ["Declarative", "Interrogative", "Imperative", "Exclamatory"],
+    a: 1,
+    h: "It asks a question ending with a question mark.",
+    ex: "Asks a question → Interrogative"
+  },
+  {
+    q: "Aarav jumps into a cold pool and shouts:\n\"How freezing the water is!\"\n\nLater he writes about it in his diary as a plain statement. Which is correct?",
+    options: [
+      "How cold is the water?",
+      "Don't touch the cold water.",
+      "The water is very cold.",
+      "The water felt freezing."
+    ],
+    a: 2,
+    h: "Convert raw emotion into a plain, factual assertion statement.",
+    ex: "Exclamatory converted to plain statement"
+  },
+  {
+    q: "A teacher is writing a report:\n\"He is always on time.\"\n\nShe wants to rewrite it using the word 'never' without changing the meaning. Which is correct?",
+    options: [
+      "He is never on time.",
+      "He is never late.",
+      "Is he ever on time?",
+      "He is not always on time."
+    ],
+    a: 1,
+    h: "Find a phrase where 'never' combines with an opposite word to mean 'always'.",
+    ex: "'Never late' = same positive meaning as 'always on time'"
+  },
+  {
+    q: "A captain says after a win:\n\"It was a great victory for the team.\"\n\nA reporter wants to turn this into a question. Which form is correct?",
+    options: [
+      "Was it a great victory for the team?",
+      "It was a great victory for the team?",
+      "Did it was a great victory for the team?",
+      "How great the victory was!"
+    ],
+    a: 0,
+    h: "Invert the position of the helping verb 'was' and the subject 'it'.",
+    ex: "Correct auxiliary inversion to form a question"
+  },
+  {
+    q: "Match each note from the notice board to its correct sentence type:\n\nNote 1: \"The trip is on Friday.\"\nNote 2: \"Wear your school uniform!\"\nNote 3: \"What an exciting day this will be!\"\nNote 4: \"Is your permission slip ready?\"",
+    options: [
+      "1=Declarative, 2=Exclamatory, 3=Imperative, 4=Interrogative",
+      "1=Declarative, 2=Imperative, 3=Exclamatory, 4=Interrogative",
+      "1=Interrogative, 2=Declarative, 3=Exclamatory, 4=Imperative",
+      "1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
+    ],
+    a: 1,
+    h: "Note 1 states a fact, Note 2 gives a direct order, Note 3 shows excitement, Note 4 asks a question.",
+    ex: "Note types matched correctly to all four",
+    imageTrigger: 1
+  },
+  {
+    q: "Which set of punctuation marks correctly completes the hidden slots on the student's worksheet?\n\nSentence 1: \"Stop talking ___\"\nSentence 2: \"Where is my bag ___\"\nSentence 3: \"My favourite flavour is chocolate ___\"",
+    options: [
+      "(!) / (?) / (.)",
+      "(.) / (.) / (!)",
+      "(?) / (.) / (!)",
+      "(!) / (!) / (?)"
+    ],
+    a: 0,
+    h: "Sentence 1 is an urgent command, Sentence 2 asks something, and Sentence 3 states a simple favorite fact.",
+    ex: "Commands take an exclamation mark, questions take a question mark, and statements end with a full stop.",
+    imageTrigger: 2
+  },
+  {
+    q: "Which of the following is a negative declarative sentence?",
+    options: [
+      "Don't go there.",
+      "Why are you not coming?",
+      "She does not like apples.",
+      "What a shame that he lost!"
+    ],
+    a: 2,
+    h: "Look for a clear, informative declaration statement that includes 'not'.",
+    ex: "Statement with 'not' = negative declarative"
+  },
+  {
+    q: "A student asks: \"Can any man live forever?\"\n\nWhich declarative sentence best expresses the meaning of this question?",
+    options: [
+      "Every man can live forever.",
+      "No man can live forever.",
+      "Man can live forever?",
+      "Live forever, man."
+    ],
+    a: 1,
+    h: "This rhetorical question is used to strongly imply that nobody can live forever.",
+    ex: "The rhetorical question means that no person can live forever, so the equivalent declarative sentence is 'No man can live forever.'"
+  },
+  {
+    q: "Sort these four sentences into the correct type — Imperative or Exclamatory:\n\nP: \"What a goal that was!\"\nQ: \"Please sit down quietly.\"\nR: \"How beautiful the sunset looks!\"\nS: \"Always respect your elders.\"",
+    options: [
+      "Imperative: P, R — Exclamatory: Q, S",
+      "Imperative: Q, R — Exclamatory: P, S",
+      "Imperative: Q, S — Exclamatory: P, R",
+      "Imperative: P, S — Exclamatory: Q, R"
+    ],
+    a: 2,
+    h: "Look for direct actions or requests (Q, S) versus sentences starting with 'What a' or 'How' expressing strong emotions (P, R).",
+    ex: "Q & S = Imperative; P & R = Exclamatory"
+  },
+  {
+    q: "A student wrote these four sentences. Two are Imperative and two are Declarative. Which group organizes them correctly?",
+    options: [
+      "Imperative: \"Wash your hands.\" and \"The sun rises in the east.\" — Declarative: \"Close the door.\" and \"Birds fly south in winter.\"",
+      "Imperative: \"Wash your hands.\" and \"Close the door.\" — Declarative: \"The sun rises in the east.\" and \"Birds fly south in winter.\"",
+      "Imperative: \"The sun rises in the east.\" and \"Birds fly south in winter.\" — Declarative: \"Wash your hands.\" and \"Close the door.\"",
+      "Imperative: \"Close the door.\" and \"Birds fly south in winter.\" — Declarative: \"Wash your hands.\" and \"The sun rises in the east.\""
+    ],
+    a: 1,
+    h: "Imperatives are command actions like washing or closing, while Declaratives state general world facts.",
+    ex: "Wash/Close = Imperative; Sun/Birds = Declarative"
+  },
+  {
+    q: "Three of the following are Imperative sentences. One is NOT. Which is the odd one out?",
+    options: [
+      "Switch off the lights before you leave.",
+      "Please hand in your homework tomorrow.",
+      "What an exciting football match it was!",
+      "Always tell the truth."
+    ],
+    a: 2,
+    h: "Look for the sentence that uses an exclamation point to shout out an emotional experience.",
+    ex: "Exclamatory — not Imperative"
+  },
+  {
+    q: "Riya is writing a recipe card for the school food festival. One instruction does not follow the correct Imperative sentence pattern. Which one should she correct?",
+    options: [
+      "First, wash the vegetables.",
+      "Then, you are cutting them into small pieces.",
+      "Add a pinch of salt.",
+      "Serve the dish hot."
+    ],
+    a: 1,
+    h: "Imperatives tell someone to do something directly using baseline verbs without adding helper structures like 'you are'.",
+    ex: "Imperatives don't use 'you are + -ing' form"
+  },
+  {
+    q: "A student changes \"What a terrible mess this is!\" into \"This is a terrible mess.\"\n\nWhat is the effect of this change?",
+    options: [
+      "The sentence becomes an Interrogative.",
+      "The sentence loses its emotional force and becomes a plain Declarative.",
+      "The sentence becomes an Imperative.",
+      "The sentence becomes grammatically incorrect."
+    ],
+    a: 1,
+    h: "Think about what happens when you strip down an energetic shout into a regular description.",
+    ex: "Changing exclamatory to declarative removes emotion"
+  },
+  {
+    q: "You are writing a polite email to your teacher asking them to explain a math problem again. Which sentence is the most appropriate to use?",
+    options: [
+      "Explain this math problem again!",
+      "Why can't you explain this problem again?",
+      "Please explain this math problem again.",
+      "You will explain this math problem again."
+    ],
+    a: 2,
+    h: "Look for the sentence option that includes standard, gentle request terms like 'Please'.",
+    ex: "Polite request format with 'please'"
+  }
 ];
 
-let i=0,score=0,attempt=0,volume=1,mute=false;
+let current=0, score=0, attempt=0, volume=1, mute=false;
+let imageViewed = false;
 
-setTimeout(()=>{
-  document.getElementById("splash").style.display="none";
-  document.getElementById("app").style.display="block";
-  startMeta();
-  show(i);
-},5000);
+// Handle layout routing from splash panel
+setTimeout(() => {
+  let splashScreen = document.getElementById("splash");
+  if(splashScreen.classList.contains("active")){
+    splashScreen.classList.remove("active");
+    document.getElementById("start").classList.add("active");
+  }
+}, 2500);
 
-function startMeta(){
-  document.getElementById("info").innerHTML =
-  "Chapter 5: Kinds of Sentences | Grade 6 | CBQ Interactive";
+function startGame(){
+  document.getElementById("start").classList.remove("active");
+  evaluateQuizTimelineStep();
 }
 
-function show(index){
-
-  document.getElementById("qno").innerText = index+1;
-  document.getElementById("bar").style.width = ((index)/questions.length)*100+"%";
-
-  let q = questions[index];
-
-  if(q.img){
-    document.getElementById("screen").innerHTML = `
-      <div class="center">
-        <img src="assets/${q.img}">
-        <p>${q.img==="picture1.png" ?
-        "🖼️ Read the classroom notice board carefully before answering the next question." :
-        "🖼️ Observe the worksheet carefully before answering the next question."}</p>
-        <button onclick="continueQ()">Continue</button>
-      </div>`;
+function evaluateQuizTimelineStep() {
+  if (current >= questions.length) {
+    displayFinalScoreboard();
     return;
   }
-
-  document.getElementById("screen").innerHTML = `
-    <h3>${q.q}</h3>
-    ${q.options.map((o,idx)=>`
-      <div class="option" onclick="check(${idx})">${o}</div>
-    `).join("")}
-    <p id="hint"></p>
-  `;
-  attempt=0;
+  
+  let q = questions[current];
+  if(q.imageTrigger && !imageViewed) {
+    showContextImage(q.imageTrigger);
+  } else {
+    imageViewed = false;
+    hideAllViewContainers();
+    document.getElementById("quiz").classList.add("active");
+    renderActiveQuestionCard();
+  }
 }
 
-function continueQ(){
-  i++;
-  show(i);
+function hideAllViewContainers() {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
 }
 
-function check(ans){
-  let q = questions[i];
+function showContextImage(triggerId) {
+  hideAllViewContainers();
+  document.getElementById("imageScreen").classList.add("active");
+  
+  let targetImg = triggerId === 1 ? "picture1.png" : "picture2.png";
+  let targetTxt = triggerId === 1 ? 
+    "🖼️ Read the classroom notice board carefully before answering the next question." : 
+    "🖼️ Observe the student worksheet carefully before answering the next question.";
+    
+  document.getElementById("caseImage").src = "assets/" + targetImg;
+  document.getElementById("imageText").innerText = targetTxt;
+}
 
-  if(ans===q.a){
-    if(!mute) document.getElementById("correctSound").play();
+function continueFromImage(){
+  imageViewed = true;
+  evaluateQuizTimelineStep();
+}
+
+function renderActiveQuestionCard(){
+  attempt = 0;
+  let q = questions[current];
+  
+  document.getElementById("qno").innerText = current + 1;
+  document.getElementById("bar").style.width = (current / questions.length) * 100 + "%";
+  document.getElementById("question").innerText = q.q;
+  document.getElementById("msg").innerText = "";
+  
+  let optionsContainer = document.getElementById("options");
+  optionsContainer.innerHTML = "";
+  
+  q.options.forEach((opt, idx) => {
+    let optBtn = document.createElement("div");
+    optBtn.className = "option";
+    optBtn.innerText = opt;
+    optBtn.onclick = () => checkSelectionFeedback(idx, optBtn);
+    optionsContainer.appendChild(optBtn);
+  });
+}
+
+function checkSelectionFeedback(chosenIndex, targetBtn) {
+  let q = questions[current];
+  let msgBox = document.getElementById("msg");
+  let options = document.querySelectorAll(".option");
+  
+  if(chosenIndex === q.a){
+    options.forEach(el => el.classList.add("disabled"));
+    targetBtn.classList.add("correct");
+    playAudioFile("correct");
+    
+    msgBox.innerText = "✨ Excellent! Correct Answer.";
+    msgBox.style.color = "var(--correct)";
     score++;
     document.getElementById("score").innerText = score;
-    document.getElementById("screen").classList.add("correct");
-
-    setTimeout(()=>{
-      document.getElementById("screen").classList.remove("correct");
-      i++;
-      if(i<questions.length) show(i);
-      else end();
-    },1200);
-
+    
+    setTimeout(() => {
+      current++;
+      evaluateQuizTimelineStep();
+    }, 1500);
   } else {
-    if(!mute) document.getElementById("wrongSound").play();
+    playAudioFile("wrong");
     attempt++;
-
-    if(attempt===1){
-      document.getElementById("hint").innerText = "Not quite. Try again! Hint: "+q.h;
+    targetBtn.classList.add("wrong");
+    
+    if(attempt === 1){
+      msgBox.innerHTML = `✕ Not quite. Try one more time!<br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-muted);">Hint: ${q.h}</span>`;
+      msgBox.style.color = "var(--wrong)";
+      setTimeout(() => { targetBtn.classList.remove("wrong"); }, 1000);
     } else {
-      document.getElementById("hint").innerText = "Correct Answer: "+q.options[q.a]+" | "+q.ex;
-      setTimeout(()=>{
-        i++;
-        show(i);
-      },2000);
+      options.forEach(el => el.classList.add("disabled"));
+      msgBox.innerHTML = `✕ Incorrect.<br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-main);"><b>Explanation:</b> ${q.ex}</span>`;
+      msgBox.style.color = "var(--wrong)";
+      if(options[q.a]) options[q.a].classList.add("correct");
+      
+      setTimeout(() => {
+        current++;
+        evaluateQuizTimelineStep();
+      }, 3500);
     }
   }
 }
 
-function end(){
-  let percent = Math.round((score/questions.length)*100);
-  let msg = percent>=75?"🎉 Good Job!":percent>=40?"📚 Review this chapter":"💡 Let's practise more";
-
-  document.getElementById("screen").innerHTML = `
-    <h2>Result</h2>
-    <h3>Score: ${score}/${questions.length}</h3>
-    <h3>${percent}%</h3>
-    <h2>${msg}</h2>
-    <button onclick="restart()">Play Again</button>
-  `;
+function displayFinalScoreboard(){
+  hideAllViewContainers();
+  document.getElementById("result").classList.add("active");
+  
+  let percent = Math.round((score / questions.length) * 100);
+  document.getElementById("finalScore").innerText = `${score}/${questions.length}`;
+  
+  let summaryText = document.getElementById("perf");
+  if(percent >= 75) summaryText.innerText = "🎉 Outstanding Work! You mastered sentence types.";
+  else if(percent >= 40) summaryText.innerText = "📚 Good attempt! Review this chapter to strengthen your concepts.";
+  else summaryText.innerText = "💡 Let's practice some more exercises together next time.";
 }
 
-function restart(){
-  location.reload();
+function playAudioFile(type) {
+  if(mute) return;
+  try {
+    let sound = document.getElementById(type === "correct" ? "correctSound" : "wrongSound");
+    sound.currentTime = 0;
+    sound.volume = volume;
+    sound.play();
+  } catch(err){}
 }
 
 function toggleMute(){
-  mute=!mute;
+  mute = !mute;
+  document.getElementById("muteBtn").innerText = mute ? "🔇 Unmute" : "🔊 Mute";
 }
 
 function setVolume(v){
-  volume=v;
-  document.getElementById("correctSound").volume=v;
-  document.getElementById("wrongSound").volume=v;
+  volume = parseFloat(v);
+  document.getElementById("correctSound").volume = volume;
+  document.getElementById("wrongSound").volume = volume;
 }
 
+function restart(){
+  current = 0;
+  score = 0;
+  attempt = 0;
+  imageViewed = false;
+  document.getElementById("score").innerText = "0";
+  hideAllViewContainers();
+  document.getElementById("start").classList.add("active");
+}
 </script>
-
 </body>
 </html>
