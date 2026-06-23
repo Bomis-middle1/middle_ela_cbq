@@ -194,7 +194,7 @@ button:hover {
   pointer-events: none;
 }
 
-/* Dynamic Live Feedback Text Banner instead of Alert box */
+/* Dynamic Live Feedback Text Banner */
 #feedback-banner {
   font-size: 1rem;
   font-weight: 600;
@@ -213,12 +213,10 @@ button:hover {
 
 <body>
 
-<!-- INTRO -->
 <div class="screen active" id="intro">
   <img src="assets/innovine-logo.png" class="logo" alt="Logo">
 </div>
 
-<!-- START -->
 <div class="screen" id="start">
   <h2>Grade 6</h2>
   <h3>Chapter 2: Capitalisation & Punctuation</h3>
@@ -226,7 +224,6 @@ button:hover {
   <button onclick="startGame()">Start Assessment</button>
 </div>
 
-<!-- CASE STUDY (Path fixed to Picture1.png) -->
 <div class="screen" id="caseStudy">
   <h2>Context Setup</h2>
   <img src="assets/Picture1.png" class="case-img" alt="Case Study context image">
@@ -240,7 +237,6 @@ Riya texts Aarav:
   <button onclick="nextFromCase()">Continue to Questions</button>
 </div>
 
-<!-- QUESTION SCREEN -->
 <div class="screen" id="quiz">
   <div class="topbar">
     <div id="score">Score: 0</div>
@@ -257,7 +253,6 @@ Riya texts Aarav:
   <div id="feedback-banner"></div>
 </div>
 
-<!-- RESULT -->
 <div class="screen" id="result">
   <h2>Performance Summary</h2>
   <h3>Result</h3>
@@ -446,6 +441,7 @@ function show(id){
   document.getElementById(id).classList.add("active");
 }
 
+// Timeout splash duration set to 2.5 seconds
 setTimeout(()=>{
   show("start");
 }, 2500);
@@ -469,7 +465,6 @@ function loadQ(){
   document.getElementById("feedback-banner").innerText = "";
   document.getElementById("feedback-banner").style.color = "unset";
   
-  // Handle dynamic picture matching using Picture2.png contextually
   let imgBox = document.getElementById("dynamicImageBox");
   imgBox.innerHTML = "";
   if(q.img) {
@@ -537,9 +532,8 @@ function check(i,btn){
       locked = true;
       clearInterval(timer);
       banner.innerText = "Moving to next question...";
-      banner.style.color = var(--text-muted);
+      banner.style.color = "var(--text-muted)";
       
-      // Auto-reveal the correct answer before leaving
       let optionsElements = document.querySelectorAll(".option");
       if(optionsElements[q.a]) optionsElements[q.a].classList.add("correct");
       
@@ -579,7 +573,7 @@ function playSound(s){
     let a=new Audio("assets/"+s);
     a.play();
   } catch(e) {
-    console.log("Audio load protected or skipped");
+    console.log("Audio play protected or unavailable");
   }
 }
 
