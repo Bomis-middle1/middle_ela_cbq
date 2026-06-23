@@ -6,145 +6,251 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{
- margin:0;
- font-family:Arial;
- background:linear-gradient(120deg,#e3f2fd,#fff);
- overflow-x:hidden;
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --bg-gradient: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  --surface: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --correct: #10b981;
+  --correct-bg: #ecfdf5;
+  --wrong: #ef4444;
+  --wrong-bg: #fef2f2;
 }
 
-.screen{
- display:none;
- padding:20px;
- text-align:center;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.active{display:block;}
-
-.logo{
- width:200px;
- margin-top:20vh;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
 }
 
-.btn{
- padding:12px 25px;
- font-size:18px;
- border-radius:12px;
- border:none;
- background:#1976d2;
- color:white;
- cursor:pointer;
- margin-top:20px;
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 650px;
+  margin: 20px;
+  padding: 40px 30px;
+  background: var(--surface);
+  border-radius: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  animation: fadeIn 0.4s ease-out;
 }
 
-.question-box{
- max-width:900px;
- margin:auto;
- text-align:left;
- background:white;
- padding:20px;
- border-radius:12px;
- box-shadow:0 4px 10px rgba(0,0,0,0.1);
+.screen.active {
+  display: block;
 }
 
-.option{
- padding:12px;
- margin:10px 0;
- background:#f1f1f1;
- border-radius:10px;
- cursor:pointer;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.option.correct{background:#c8e6c9;}
-.option.wrong{background:#ffcdd2;}
-
-.topbar{
- display:flex;
- justify-content:space-between;
- font-size:14px;
- margin-bottom:10px;
+/* Intro Splash */
+#intro {
+  background: transparent;
+  box-shadow: none;
+}
+.logo {
+  width: 180px;
+  animation: pulse 2s infinite ease-in-out;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
 }
 
-.progress{
- height:10px;
- background:#ddd;
- border-radius:5px;
- overflow:hidden;
+/* Typography & Layout elements */
+h1 { font-size: 2rem; color: #0f172a; margin-bottom: 12px; font-weight: 700; }
+h3 { font-size: 1.1rem; color: var(--primary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+h4 { font-size: 1rem; color: var(--text-muted); margin-bottom: 24px; }
+p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; }
+
+.btn {
+  display: inline-block;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+.btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
 }
 
-.progress-fill{
- height:10px;
- background:#4caf50;
- width:0%;
+.case-img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  margin: 20px 0;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
 }
 
-.case-img{
- width:100%;
- max-height:250px;
- object-fit:contain;
- margin:10px 0;
+/* Quiz Interface */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+#timer {
+  background: #ffedd5;
+  color: #ea580c;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+.progress {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  width: 0%;
+  transition: width 0.3s ease;
 }
 
+.question-box {
+  text-align: left;
+  margin-top: 20px;
+}
+#questionText {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.option {
+  padding: 16px 20px;
+  margin: 12px 0;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: tyranny;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+.option:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateX(4px);
+}
+.option.correct {
+  background: var(--correct-bg);
+  border-color: var(--correct);
+  color: #065f46;
+  font-weight: 600;
+}
+.option.wrong {
+  background: var(--wrong-bg);
+  border-color: var(--wrong);
+  color: #991b1b;
+}
+.disabled {
+  pointer-events: none;
+}
+
+#finalScore {
+  font-size: 3.5rem;
+  color: var(--primary);
+  margin: 20px 0;
+  font-weight: 800;
+}
 </style>
 </head>
 
 <body>
 
-<!-- INTRO -->
+<!-- INTRO SPLASH -->
 <div id="intro" class="screen active">
-<img src="assets/innovine-logo.png" class="logo">
+  <img src="assets/innovine-logo.png" class="logo" alt="Logo">
 </div>
 
 <!-- START -->
 <div id="start" class="screen">
-<h1>Nouns in a WhatsApp Chat</h1>
-<h3>Grade 6 | English</h3>
-<h4>15 Questions</h4>
-<button class="btn" onclick="startGame()">Start</button>
+  <h3>Grade 6 | English</h3>
+  <h1>Nouns in a WhatsApp Chat</h1>
+  <h4>Interactive Competency-Based Assessment</h4>
+  <p style="margin-bottom: 30px;">Test your grammar precision against 15 custom situational questions.</p>
+  <button class="btn" onclick="startGame()">Start Assessment</button>
 </div>
 
 <!-- CASE STUDY -->
 <div id="caseStudy" class="screen">
-<h2>Case Study (Questions 1–5)</h2>
-<h3>Nouns in a WhatsApp Chat</h3>
-<img src="assets/case-study-1.png" class="case-img">
-<p><b>Read the case study carefully before answering Questions 1–5.</b></p>
-<button class="btn" onclick="nextFromCase()">Continue</button>
+  <h3>Context Setup</h3>
+  <h1>Case Study (Questions 1–5)</h1>
+  <img src="assets/case-study-1.png" class="case-img" alt="Case Study context image">
+  <p style="margin-bottom: 25px;">Read the WhatsApp chat dialogue carefully before answering the upcoming five questions.</p>
+  <button class="btn" onclick="nextFromCase()">Continue to Questions</button>
 </div>
 
 <!-- QUESTION SCREEN -->
 <div id="quiz" class="screen">
-<div class="topbar">
-<div id="score">Score: 0</div>
-<div id="qno">Q1</div>
-<div id="timer">45</div>
-</div>
+  <div class="topbar">
+    <div id="score">Score: 0</div>
+    <div id="qno">Q1</div>
+    <div id="timer">45</div>
+  </div>
 
-<div class="progress"><div class="progress-fill" id="bar"></div></div>
+  <div class="progress"><div class="progress-fill" id="bar"></div></div>
 
-<div id="imageBox"></div>
+  <div id="imageBox"></div>
 
-<div class="question-box">
-<div id="questionText"></div>
-<div id="options"></div>
-</div>
+  <div class="question-box">
+    <div id="questionText"></div>
+    <div id="options"></div>
+  </div>
 </div>
 
 <!-- RESULT -->
 <div id="result" class="screen">
-<h1>Result</h1>
-<h2 id="finalScore"></h2>
-<button class="btn" onclick="location.reload()">Play Again</button>
+  <h3>Performance Summary</h3>
+  <h1>Result</h1>
+  <div id="finalScore">0/15</div>
+  <p id="feedbackText" style="margin-bottom: 30px;"></p>
+  <button class="btn" onclick="location.reload()">Play Again</button>
 </div>
 
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
-
-let current=0;
-let score=0;
-let time=45;
+let current = 0;
+let score = 0;
+let time = 45;
 let timer;
 
 const questions=[
@@ -286,100 +392,110 @@ answer:0
 ];
 
 function show(id){
-document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-setTimeout(()=>show('start'),5000);
+// Fixed Splash timeout delay to 2.5 seconds for snappier experience
+setTimeout(()=>show('start'), 2500);
 
 function startGame(){
-show('caseStudy');
+  show('caseStudy');
 }
 
 function nextFromCase(){
-show('quiz');
-loadQ(0);
+  show('quiz');
+  loadQ(0);
 }
 
 function startTimer(){
-time=45;
-document.getElementById('timer').innerText=time;
-timer=setInterval(()=>{
-time--;
-document.getElementById('timer').innerText=time;
-if(time<=0){
-clearInterval(timer);
-check(-1);
-}
-},1000);
+  time=45;
+  document.getElementById('timer').innerText=time;
+  timer=setInterval(()=>{
+    time--;
+    document.getElementById('timer').innerText=time;
+    if(time<=0){
+      clearInterval(timer);
+      check(-1);
+    }
+  },1000);
 }
 
 function loadQ(i){
-current=i;
-clearInterval(timer);
-startTimer();
+  current=i;
+  clearInterval(timer);
+  startTimer();
 
-let q=questions[i];
+  let q=questions[i];
 
-document.getElementById('qno').innerText="Q"+(i+1);
-document.getElementById('score').innerText="Score: "+score;
-document.getElementById('bar').style.width=((i)/questions.length)*100+"%";
+  document.getElementById('qno').innerText="Question "+(i+1)+"/"+questions.length;
+  document.getElementById('score').innerText="Score: "+score;
+  document.getElementById('bar').style.width=((i)/questions.length)*100+"%";
 
-let imgBox=document.getElementById('imageBox');
-imgBox.innerHTML="";
+  let imgBox=document.getElementById('imageBox');
+  imgBox.innerHTML="";
 
-if(i<5){
-imgBox.innerHTML=`<img src="assets/Picture1.png" class="case-img">`;
-}
-if(i==6){
-imgBox.innerHTML=`<img src="assets/Picture2.png" class="case-img">`;
-}
+  if(i<5){
+    imgBox.innerHTML=`<img src="assets/Picture1.png" class="case-img" alt="Question Graphic">`;
+  }
+  if(i==6){
+    imgBox.innerHTML=`<img src="assets/Picture2.png" class="case-img" alt="Question Graphic">`;
+  }
 
-document.getElementById('questionText').innerText=q.q;
+  document.getElementById('questionText').innerText=q.q;
 
-let opt="";
-q.options.forEach((o,idx)=>{
-opt+=`<div class='option' onclick='check(${idx})'>${o}</div>`;
-});
+  let opt="";
+  q.options.forEach((o,idx)=>{
+    opt+=`<div class='option' onclick='check(${idx})'>${o}</div>`;
+  });
 
-document.getElementById('options').innerHTML=opt;
+  document.getElementById('options').innerHTML=opt;
 }
 
 function check(ans){
-clearInterval(timer);
-let q=questions[current];
-let opts=document.querySelectorAll('.option');
+  clearInterval(timer);
+  let q=questions[current];
+  let opts=document.querySelectorAll('.option');
+  
+  // Disable option clicks instantly to prevent multiple taps
+  opts.forEach(o => o.classList.add('disabled'));
 
-if(ans===q.answer){
-opts[ans].classList.add('correct');
-document.getElementById('correctSound').play();
-score++;
-setTimeout(next,800);
-}
-else{
-document.getElementById('wrongSound').play();
-if(ans!=-1){
-opts[ans].classList.add('wrong');
-}
-setTimeout(()=>{
-next();
-},1200);
-}
+  if(ans===q.answer){
+    opts[ans].classList.add('correct');
+    try { document.getElementById('correctSound').play(); } catch(e){}
+    score++;
+    setTimeout(next,800);
+  }
+  else{
+    try { document.getElementById('wrongSound').play(); } catch(e){}
+    if(ans!=-1){
+      opts[ans].classList.add('wrong');
+    }
+    // Highlight correct option if the choice was wrong
+    if (opts[q.answer]) opts[q.answer].classList.add('correct');
+    setTimeout(next,1500);
+  }
 }
 
 function next(){
-if(current<questions.length-1){
-loadQ(current+1);
-}else{
-endGame();
-}
+  if(current<questions.length-1){
+    loadQ(current+1);
+  }else{
+    endGame();
+  }
 }
 
 function endGame(){
-show('result');
-document.getElementById('finalScore').innerText=score+"/"+questions.length;
+  show('result');
+  document.getElementById('finalScore').innerText=score+"/"+questions.length;
+  
+  let feedback = "";
+  if(score === questions.length) feedback = "Brilliant execution! Absolute mastery of nouns.";
+  else if(score > questions.length * 0.7) feedback = "Excellent performance! Great grasp of context grammar.";
+  else feedback = "Good effort! Review noun properties and try again to max your score.";
+  
+  document.getElementById('feedbackText').innerText = feedback;
 }
-
 </script>
 </body>
 </html>
