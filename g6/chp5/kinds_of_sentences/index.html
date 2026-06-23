@@ -9,7 +9,6 @@
 :root {
   --primary: #1976d2;
   --primary-hover: #115293;
-  --bg-gradient: linear-gradient(135deg, #e3f2fd 0%, #fff3e0 50%, #e8f5e9 100%);
   --surface: #ffffff;
   --text-main: #2c3e50;
   --text-muted: #7f8c8d;
@@ -17,6 +16,13 @@
   --correct-bg: #e8f8f0;
   --wrong: #e74c3c;
   --wrong-bg: #fdedec;
+  
+  /* Adaptive Themes */
+  --bg-declarative: linear-gradient(135deg, #e3f2fd 0%, #eef2f3 100%);
+  --bg-interrogative: linear-gradient(135deg, #fff3e0 0%, #fef9e7 100%);
+  --bg-imperative: linear-gradient(135deg, #e8f5e9 0%, #f4f9f4 100%);
+  --bg-exclamatory: linear-gradient(135deg, #fce4ec 0%, #fdf2f4 100%);
+  --bg-default: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 * {
@@ -27,13 +33,14 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: var(--bg-gradient);
+  background: var(--bg-default);
   color: var(--text-main);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow-x: hidden;
+  transition: background 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .screen {
@@ -42,9 +49,10 @@ body {
   max-width: 650px;
   margin: 20px;
   padding: 40px 30px;
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
   border-radius: 24px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06), 0 5px 15px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0, 0, 0, 0.04);
   text-align: center;
   animation: fadeIn 0.4s ease-out;
 }
@@ -57,49 +65,50 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 #splash {
   background: transparent;
   box-shadow: none;
+  backdrop-filter: none;
 }
 
 .logo {
-  width: 180px;
+  width: 190px;
   margin-bottom: 20px;
-  animation: pulse 2s infinite ease-in-out;
+  animation: pulse 2.5s infinite ease-in-out;
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.04); opacity: 1; }
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.06); opacity: 1; }
 }
 
-h1 { font-size: 2rem; color: #1a252f; margin-bottom: 15px; font-weight: 800; }
-h2 { font-size: 1.2rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
-h3 { font-size: 1.35rem; color: #1a252f; margin-bottom: 20px; font-weight: 700; text-align: left; line-height: 1.5; width: 100%; white-space: pre-line; }
+h1 { font-size: 2.2rem; color: #1a252f; margin-bottom: 15px; font-weight: 800; }
+h2 { font-size: 1.1rem; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; font-weight: 700; }
+h3 { font-size: 1.35rem; color: #1a252f; margin-bottom: 25px; font-weight: 700; text-align: left; line-height: 1.6; width: 100%; white-space: pre-line; }
 p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-bottom: 24px; }
 
 .btn {
   display: inline-block;
-  padding: 14px 35px;
+  padding: 15px 38px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: 12px;
   border: none;
   background: var(--primary);
   color: white;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 10px rgba(25, 118, 210, 0.25);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
 }
 
 .btn:hover {
   background: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(25, 118, 210, 0.35);
+  box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
 }
 
 .utility-btn {
@@ -111,17 +120,19 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
   border-radius: 8px;
   border: 1px solid #e1e8ed;
   cursor: pointer;
+  transition: background 0.2s;
 }
 .utility-btn:hover { background: #eaeded; }
 
 .picture {
   width: 100%;
-  max-height: 240px;
+  max-height: 260px;
   object-fit: contain;
   margin-bottom: 20px;
-  border-radius: 14px;
+  border-radius: 16px;
   border: 1px solid #e1e8ed;
-  background: #fdfefe;
+  background: #ffffff;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.03);
 }
 
 .topbar {
@@ -131,7 +142,7 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
   font-size: 14px;
   font-weight: 700;
   color: var(--text-muted);
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   width: 100%;
 }
 
@@ -140,7 +151,7 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
   background: #eaeded;
   border-radius: 10px;
   overflow: hidden;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   width: 100%;
 }
 
@@ -148,7 +159,7 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
   height: 100%;
   background: #4caf50;
   width: 0%;
-  transition: width 0.3s ease;
+  transition: width 0.4s ease;
 }
 
 #options {
@@ -165,16 +176,17 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
   border-radius: 14px;
   cursor: pointer;
   text-align: left;
-  font-size: 0.98rem;
+  font-size: 1rem;
   line-height: 1.4;
   color: #34495e;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .option:hover {
-  background: #f4f6f7;
-  border-color: #bdc3c7;
-  transform: translateX(4px);
+  background: #ffffff;
+  border-color: var(--primary);
+  transform: translateX(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .option.correct {
@@ -182,6 +194,7 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
   border-color: var(--correct) !important;
   color: #196f3d;
   font-weight: 600;
+  transform: scale(1.01);
 }
 
 .option.wrong {
@@ -197,15 +210,15 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
 #msg {
   font-size: 1rem;
   font-weight: 600;
-  margin-top: 15px;
+  margin-top: 20px;
   min-height: 24px;
   width: 100%;
   text-align: left;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 #finalScore {
-  font-size: 3.5rem;
+  font-size: 4rem;
   color: var(--primary);
   margin: 20px 0;
   font-weight: 800;
@@ -229,18 +242,18 @@ input[type="range"] {
 <!-- SPLASH SCREEN -->
 <div id="splash" class="screen active">
   <img src="assets/innovine-logo.png" class="logo" alt="Logo">
-  <h2>Loading Chapter Content...</h2>
+  <h2 style="color: #546e7a;">Loading Chapter Content...</h2>
 </div>
 
 <!-- START SCREEN -->
 <div id="start" class="screen">
   <h2>Grade 6 ELA</h2>
   <h1>Kinds of Sentences</h1>
-  <p>Total Assessment Content: 15 Questions</p>
+  <p>Interactive Concept Assessment Challenge</p>
   <button class="btn" onclick="startGame()">Start Challenge</button>
 </div>
 
-<!-- IMAGE CONTEXT DISPLAY PANEL -->
+<!-- IMAGE CONTEXT PANEL -->
 <div id="imageScreen" class="screen">
   <h2>Reference Material</h2>
   <img id="caseImage" class="picture" alt="Context Reference Map">
@@ -251,7 +264,7 @@ input[type="range"] {
 <!-- MAIN QUIZ HUB -->
 <div id="quiz" class="screen">
   <div class="topbar">
-    <div>Score: <span id="score">0</span></div>
+    <div>Score: <span id="score" style="color: var(--primary);">0</span></div>
     <div>Question <span id="qno">1</span>/15</div>
     <div class="control-group">
       <button class="utility-btn" onclick="toggleMute()" id="muteBtn">🔊 Mute</button>
@@ -267,12 +280,12 @@ input[type="range"] {
   <p id="msg"></p>
 </div>
 
-<!-- COMPREHENSIVE PERFORMANCE SUMMARY -->
+<!-- PERFORMANCE SCOREBOARD -->
 <div id="result" class="screen">
   <h2>Performance Summary</h2>
   <h1>Result</h1>
   <div id="finalScore">0/15</div>
-  <p id="perf" style="font-weight:600; color:#1a252f; margin-bottom:20px;"></p>
+  <p id="perf" style="font-weight:600; color:#1a252f; margin-bottom:25px;"></p>
   <button class="btn" onclick="restart()">Play Again</button>
 </div>
 
@@ -285,6 +298,7 @@ const questions = [
     q: "You see a sticker on a water bottle that says:\n\"Drink more water every day.\"\n\nWhat kind of sentence is this?",
     options: ["Declarative", "Interrogative", "Imperative", "Exclamatory"],
     a: 2,
+    type: "imperative",
     h: "It gives an instruction or command.",
     ex: "Gives an instruction/command → Imperative"
   },
@@ -292,6 +306,7 @@ const questions = [
     q: "A friend texts you:\n\"Did you finish the science homework?\"\n\nThis sentence is:",
     options: ["Declarative", "Interrogative", "Imperative", "Exclamatory"],
     a: 1,
+    type: "interrogative",
     h: "It asks a question ending with a question mark.",
     ex: "Asks a question → Interrogative"
   },
@@ -304,6 +319,7 @@ const questions = [
       "The water felt freezing."
     ],
     a: 2,
+    type: "declarative",
     h: "Convert raw emotion into a plain, factual assertion statement.",
     ex: "Exclamatory converted to plain statement"
   },
@@ -316,6 +332,7 @@ const questions = [
       "He is not always on time."
     ],
     a: 1,
+    type: "declarative",
     h: "Find a phrase where 'never' combines with an opposite word to mean 'always'.",
     ex: "'Never late' = same positive meaning as 'always on time'"
   },
@@ -328,6 +345,7 @@ const questions = [
       "How great the victory was!"
     ],
     a: 0,
+    type: "interrogative",
     h: "Invert the position of the helping verb 'was' and the subject 'it'.",
     ex: "Correct auxiliary inversion to form a question"
   },
@@ -340,6 +358,7 @@ const questions = [
       "1=Exclamatory, 2=Imperative, 3=Declarative, 4=Interrogative"
     ],
     a: 1,
+    type: "declarative",
     h: "Note 1 states a fact, Note 2 gives a direct order, Note 3 shows excitement, Note 4 asks a question.",
     ex: "Note types matched correctly to all four",
     imageTrigger: 1
@@ -353,6 +372,7 @@ const questions = [
       "(!) / (!) / (?)"
     ],
     a: 0,
+    type: "imperative",
     h: "Sentence 1 is an urgent command, Sentence 2 asks something, and Sentence 3 states a simple favorite fact.",
     ex: "Commands take an exclamation mark, questions take a question mark, and statements end with a full stop.",
     imageTrigger: 2
@@ -366,6 +386,7 @@ const questions = [
       "What a shame that he lost!"
     ],
     a: 2,
+    type: "declarative",
     h: "Look for a clear, informative declaration statement that includes 'not'.",
     ex: "Statement with 'not' = negative declarative"
   },
@@ -378,6 +399,7 @@ const questions = [
       "Live forever, man."
     ],
     a: 1,
+    type: "declarative",
     h: "This rhetorical question is used to strongly imply that nobody can live forever.",
     ex: "The rhetorical question means that no person can live forever, so the equivalent declarative sentence is 'No man can live forever.'"
   },
@@ -390,6 +412,7 @@ const questions = [
       "Imperative: P, S — Exclamatory: Q, R"
     ],
     a: 2,
+    type: "exclamatory",
     h: "Look for direct actions or requests (Q, S) versus sentences starting with 'What a' or 'How' expressing strong emotions (P, R).",
     ex: "Q & S = Imperative; P & R = Exclamatory"
   },
@@ -402,6 +425,7 @@ const questions = [
       "Imperative: \"Close the door.\" and \"Birds fly south in winter.\" — Declarative: \"Wash your hands.\" and \"The sun rises in the east.\""
     ],
     a: 1,
+    type: "imperative",
     h: "Imperatives are command actions like washing or closing, while Declaratives state general world facts.",
     ex: "Wash/Close = Imperative; Sun/Birds = Declarative"
   },
@@ -414,6 +438,7 @@ const questions = [
       "Always tell the truth."
     ],
     a: 2,
+    type: "exclamatory",
     h: "Look for the sentence that uses an exclamation point to shout out an emotional experience.",
     ex: "Exclamatory — not Imperative"
   },
@@ -426,6 +451,7 @@ const questions = [
       "Serve the dish hot."
     ],
     a: 1,
+    type: "imperative",
     h: "Imperatives tell someone to do something directly using baseline verbs without adding helper structures like 'you are'.",
     ex: "Imperatives don't use 'you are + -ing' form"
   },
@@ -438,6 +464,7 @@ const questions = [
       "The sentence becomes grammatically incorrect."
     ],
     a: 1,
+    type: "declarative",
     h: "Think about what happens when you strip down an energetic shout into a regular description.",
     ex: "Changing exclamatory to declarative removes emotion"
   },
@@ -450,6 +477,7 @@ const questions = [
       "You will explain this math problem again."
     ],
     a: 2,
+    type: "imperative",
     h: "Look for the sentence option that includes standard, gentle request terms like 'Please'.",
     ex: "Polite request format with 'please'"
   }
@@ -458,14 +486,28 @@ const questions = [
 let current=0, score=0, attempt=0, volume=1, mute=false;
 let imageViewed = false;
 
-// Handle layout routing from splash panel
 setTimeout(() => {
   let splashScreen = document.getElementById("splash");
   if(splashScreen.classList.contains("active")){
     splashScreen.classList.remove("active");
     document.getElementById("start").classList.add("active");
   }
-}, 2500);
+}, 2200);
+
+function updateAdaptiveTheme(type) {
+  const body = document.body;
+  if (!type) {
+    body.style.background = "var(--bg-default)";
+    return;
+  }
+  switch(type.toLowerCase()) {
+    case 'declarative': body.style.background = "var(--bg-declarative)"; break;
+    case 'interrogative': body.style.background = "var(--bg-interrogative)"; break;
+    case 'imperative': body.style.background = "var(--bg-imperative)"; break;
+    case 'exclamatory': body.style.background = "var(--bg-exclamatory)"; break;
+    default: body.style.background = "var(--bg-default)";
+  }
+}
 
 function startGame(){
   document.getElementById("start").classList.remove("active");
@@ -479,6 +521,8 @@ function evaluateQuizTimelineStep() {
   }
   
   let q = questions[current];
+  updateAdaptiveTheme(q.type);
+
   if(q.imageTrigger && !imageViewed) {
     showContextImage(q.imageTrigger);
   } else {
@@ -576,6 +620,7 @@ function checkSelectionFeedback(chosenIndex, targetBtn) {
 
 function displayFinalScoreboard(){
   hideAllViewContainers();
+  updateAdaptiveTheme(null);
   document.getElementById("result").classList.add("active");
   
   let percent = Math.round((score / questions.length) * 100);
@@ -615,6 +660,7 @@ function restart(){
   imageViewed = false;
   document.getElementById("score").innerText = "0";
   hideAllViewContainers();
+  updateAdaptiveTheme(null);
   document.getElementById("start").classList.add("active");
 }
 </script>
