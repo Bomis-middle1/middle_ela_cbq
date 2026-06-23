@@ -1,1 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ Interactive - Subject & Predicate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#e3f2fd,#fce4ec);
+overflow-x:hidden;
+}
+
+.screen{
+display:none;
+padding:20px;
+text-align:center;
+}
+
+.active{display:block;}
+
+.logo{
+width:180px;
+margin-top:40px;
+}
+
+.center{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+flex-direction:column;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+max-width:800px;
+margin:auto;
+}
+
+button{
+padding:12px 18px;
+border:none;
+border-radius:10px;
+margin:10px;
+font-size:16px;
+cursor:pointer;
+}
+
+.option{
+background:#f1f1f1;
+width:100%;
+}
+
+.option:hover{background:#dfefff;}
+
+.correct{background:#c8e6c9 !important;}
+.wrong{background:#ffcdd2 !important;}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.progress{
+width:100%;
+height:10px;
+background:#ddd;
+border-radius:10px;
+margin-top:10px;
+}
+
+.progress-bar{
+height:10px;
+background:#4caf50;
+width:0%;
+border-radius:10px;
+}
+
+.picture{
+max-width:90%;
+border-radius:10px;
+margin:10px 0;
+}
+
+.shake{
+animation:shake 0.3s;
+}
+
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-5px);}
+50%{transform:translateX(5px);}
+75%{transform:translateX(-5px);}
+100%{transform:translateX(0);}
+}
+
+.confetti{
+position:fixed;
+width:10px;
+height:10px;
+background:gold;
+animation:fall 1s linear;
+top:0;
+}
+
+@keyframes fall{
+to{transform:translateY(100vh);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<div id="intro" class="screen active center">
+<img src="assets/innovine-logo.png" class="logo">
+<h2>Loading Chapter...</h2>
+</div>
+
+<!-- START -->
+<div id="start" class="screen center">
+<div class="card">
+<h1>Subject & Predicate</h1>
+<p><b>Grade:</b> 6</p>
+<p><b>Total Questions:</b> 15</p>
+<button onclick="startGame()">Start</button>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+<div class="card">
+
+<div class="topbar">
+<div>Score: <span id="score">0</span></div>
+<div>Q: <span id="qno">1</span>/15</div>
+<div>⏱ <span id="timer">60</span>s</div>
+<button onclick="toggleMute()">🔊</button>
+<button onclick="restart()">🔁</button>
+</div>
+
+<div class="progress"><div id="bar" class="progress-bar"></div></div>
+
+<div id="pictureArea"></div>
+
+<h3 id="question"></h3>
+<div id="options"></div>
+<div id="msg"></div>
+
+</div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen center">
+<div class="card">
+<h1>Result</h1>
+<p id="finalScore"></p>
+<p id="perf"></p>
+<button onclick="restart()">Play Again</button>
+</div>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<script>
+
+const questions = [
+{
+q:`Q1. (Scenario)
+A teacher writes this on the board: "The tall oak tree at the corner of our school fell during the storm."
+Which option correctly identifies the complete subject?`,
+options:[
+"fell during the storm",
+"The tall oak tree at the corner of our school",
+"the corner of our school",
+"The tall oak tree"
+],
+answer:1,
+hint:"Look for who/what the sentence is about.",
+explain:"Complete subject includes all modifiers."
+},
+{
+q:`Q2. (Scenario)
+Riya reads:"The small brown puppy with the torn ear barked at the postman."
+What is the simple subject?`,
+options:[
+"The small brown puppy",
+"barked at the postman",
+"puppy",
+"postman"
+],
+answer:2,
+hint:"Find the core noun.",
+explain:"Simple subject = main noun."
+},
+{
+q:`Q3. (Scenario)
+In the sentence:"Down the long winding road walked the tired soldier."
+What is the subject?`,
+options:[
+"Down the long winding road",
+"walked",
+"the tired soldier",
+"road"
+],
+answer:2,
+hint:"Ask who walked?",
+explain:"Inverted sentence subject is at end."
+},
+{
+q:`Q4. (Scenario)
+Students are asked:"Are the science textbooks on the shelf?"
+Where is the subject?`,
+options:[
+"Are",
+"the shelf",
+"on the shelf",
+"the science textbooks"
+],
+answer:3,
+hint:"In questions subject follows verb.",
+explain:"Subject is after auxiliary verb."
+},
+{
+q:`Q5. (Scenario)
+Zara writes:"There are twelve players on the football field."
+What is the real subject?`,
+options:["There","twelve","the football field","twelve players"],
+answer:3,
+hint:"Ignore 'There'.",
+explain:"Real subject is noun phrase."
+},
+{
+q:`Q6. (picture1)
+Which strip is the complete subject and which is the complete predicate?`,
+options:[
+"Strip A = subject; Strip B = predicate",
+"Strip B = subject; Strip A = predicate",
+"Both strips are subjects",
+"Both strips are predicates"
+],
+answer:1,
+hint:"Subject = who; Predicate = action.",
+explain:"Correct mapping shown in answer key."
+},
+{
+q:`Q7. (picture2)
+What does the underlined part represent?`,
+options:[
+"Simple predicate",
+"Complete predicate",
+"Complete subject",
+"Simple subject"
+],
+answer:2,
+hint:"It includes modifiers.",
+explain:"It is full subject phrase."
+},
+{
+q:`Q8. (Application)
+Identify the simple predicate in the sentence:
+"The sleepy students slowly walked into the crowded hall."`,
+options:[
+"slowly walked",
+"the sleepy students",
+"walked",
+"into the crowded hall"
+],
+answer:2,
+hint:"Only main verb.",
+explain:"Simple predicate = verb."
+},
+{
+q:`Q9. (Application)
+Which sentence can stand alone?`,
+options:[
+"Running through the fields.",
+"The children in the park.",
+"The birds sang sweetly at dawn.",
+"All the flowers in the garden."
+],
+answer:2,
+hint:"Needs subject + predicate.",
+explain:"Only option C is complete."
+},
+{
+q:`Q10. (Pair / Classification)
+"The little girl laughed."`,
+options:[
+"subject = predicate",
+"subject = predicate (correct)",
+"swapped roles",
+"no subject"
+],
+answer:1,
+hint:"Identify parts.",
+explain:"Correct classification."
+},
+{
+q:`Q11. (Pair / Classification)
+Which is complete predicate?
+"The hungry cat drank the warm milk."`,
+options:[
+"The hungry cat",
+"The hungry cat drank",
+"drank the warm milk",
+"the warm milk"
+],
+answer:2,
+hint:"Verb + rest",
+explain:"Predicate begins at verb."
+},
+{
+q:`Q12. (Odd One Out)
+Which is NOT a complete sentence?`,
+options:[
+"The moon rose over the mountains.",
+"After the long and tiring journey.",
+"She sang a beautiful song.",
+"Dogs make wonderful pets."
+],
+answer:1,
+hint:"Look for fragment.",
+explain:"Option B lacks subject."
+},
+{
+q:`Q13. (Error Detection)
+Find the error:
+Every morning, the students arrive on time.
+The new library books are exciting.
+Opened last Tuesday.`,
+options:[
+"missing predicate",
+"missing subject",
+"fragment sentence",
+"no error"
+],
+answer:2,
+hint:"Check last line",
+explain:"Sentence fragment."
+},
+{
+q:`Q14. (Cause–Effect)
+What happens if predicate is removed?`,
+options:[
+"question",
+"command",
+"fragment sentence",
+"compound sentence"
+],
+answer:2,
+hint:"Incomplete thought",
+explain:"Becomes fragment."
+},
+{
+q:`Q15. (Decision-Based)
+Is Riya correct that sentence needs both subject and predicate?`,
+options:[
+"No",
+"No",
+"Yes",
+"No"
+],
+answer:2,
+hint:"Grammar rule",
+explain:"Both required."
+}
+];
+
+let current=0,score=0,time=60,interval;
+let mute=false;
+
+function startGame(){
+document.getElementById("start").classList.remove("active");
+document.getElementById("quiz").classList.add("active");
+loadQ();
+}
+
+function loadQ(){
+
+clearInterval(interval);
+time=60;
+interval=setInterval(timer,1000);
+
+document.getElementById("pictureArea").innerHTML="";
+
+let q=questions[current];
+document.getElementById("question").innerText=q.q;
+document.getElementById("qno").innerText=current+1;
+
+document.getElementById("bar").style.width=((current)/questions.length)*100+"%";
+
+if(current==5){
+showPic("assets/picture1.png","Q6");
+return;
+}
+if(current==6){
+showPic("assets/picture2.png","Q7");
+return;
+}
+
+renderOptions();
+}
+
+function showPic(src,nextQ){
+document.getElementById("pictureArea").innerHTML=`
+<img src="${src}" class="picture">
+<p>🖼️ Observe the picture carefully before answering the question.</p>
+<button onclick="renderOptions()">Continue</button>
+`;
+}
+
+function renderOptions(){
+let q=questions[current];
+let html="";
+q.options.forEach((opt,i)=>{
+html+=`<button class='option' onclick='check(${i})'>${opt}</button><br>`;
+});
+document.getElementById("options").innerHTML=html;
+}
+
+let attempts=0;
+
+function check(i){
+let q=questions[current];
+
+if(i==q.answer){
+score++;
+play("correct");
+next();
+}else{
+attempts++;
+play("wrong");
+document.getElementById("quiz").classList.add("shake");
+
+if(attempts==1){
+document.getElementById("msg").innerHTML="Not quite. Try again!<br>"+q.hint;
+}else{
+document.getElementById("msg").innerHTML="Correct Answer: "+q.options[q.answer]+"<br>"+q.explain;
+setTimeout(next,2000);
+}
+}
+}
+
+function next(){
+attempts=0;
+current++;
+if(current>=questions.length) return end();
+loadQ();
+}
+
+function end(){
+document.getElementById("quiz").classList.remove("active");
+document.getElementById("result").classList.add("active");
+
+let percent=Math.round((score/questions.length)*100);
+
+document.getElementById("finalScore").innerText="Score: "+score+"/"+questions.length;
+document.getElementById("perf").innerText=
+percent>=75?"🎉 Good Job!":
+percent>=40?"📚 Review this chapter and try again.":
+"💡 Let's practise more.";
+}
+
+function timer(){
+time--;
+document.getElementById("timer").innerText=time;
+if(time<=0){
+attempts=2;
+check(-1);
+}
+}
+
+function play(type){
+if(mute) return;
+if(type=="correct") document.getElementById("correctSound").play();
+else document.getElementById("wrongSound").play();
+}
+
+function toggleMute(){mute=!mute;}
+
+function restart(){
+location.reload();
+}
+
+setTimeout(()=>{
+
+document.getElementById("intro").classList.remove("active");
+document.getElementById("start").classList.add("active");
+
+},5000);
+
+</script>
+
+</body>
+</html>
