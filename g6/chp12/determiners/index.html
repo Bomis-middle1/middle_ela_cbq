@@ -625,7 +625,12 @@ function processAnswerValidation(selectedDomNode, userSelectionText, absoluteAns
         });
 
         updateDisplayPanel();
-        setTimeout(() => { activeIdx++; presentQuestionCard(); }, 3200);
+        
+        // Timeout fix added here to advance past double mistakes
+        setTimeout(() => { 
+            activeIdx++; 
+            presentQuestionCard(); 
+        }, 3200);
     }
 }
 
