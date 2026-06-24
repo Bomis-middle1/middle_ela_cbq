@@ -193,7 +193,7 @@ p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-botto
 
 .disabled {
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.6;
 }
 
 #feedback-box {
@@ -258,7 +258,7 @@ img.qimg {
         <div>Question <span id="qnum">1</span>/13</div>
     </div>
 
-    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+    <div class="progress"><div id="bar" class="progress-bar"></div></div>
 
     <img id="qimg" class="qimg" style="display:none;" alt="Question Asset">
 
@@ -460,6 +460,7 @@ const questions = [
 ];
 
 let current = 0, score = 0, timer = null, timeLeft = 45, locked = false;
+let attempt = 0; // Tracks 2 attempts per question
 let intermissionCleared = false;
 
 // SPLASH SCREEN LOGIC
@@ -509,7 +510,7 @@ function evaluateQuizTrackTimeline() {
     if (q.intermission && !intermissionCleared) {
         renderIntermissionView(q.intermission);
     } else {
-        intermissionCleared = false; // Reset toggle
+        intermissionCleared = false;
         hideAllViewContainers();
         document.getElementById("quiz").classList.add("active");
         renderActiveQuestionCard();
@@ -535,6 +536,7 @@ function dismissIntermission() {
 function renderActiveQuestionCard(){
     locked = false;
     timeLeft = 45;
+    attempt = 0; // Reset tracking states for the new question card
     let q = questions[current];
     
     document.getElementById("qnum").innerText = current + 1;
@@ -542,7 +544,6 @@ function renderActiveQuestionCard(){
     document.getElementById("question").innerText = q.q;
     document.getElementById("feedback-box").innerText = "";
     
-    // Inject dynamic contextual resource picture if present directly in the item metadata
     let standaloneImg = document.getElementById("qimg");
     if (q.intermission) {
         standaloneImg.src = q.intermission.img;
@@ -581,39 +582,80 @@ function startTimer(){
 
 function checkSelectionFeedback(chosenIndex, targetBtn) {
     if (locked) return;
-    locked = true;
-    clearInterval(timer);
     
     let q = questions[current];
     let feedbackBox = document.getElementById("feedback-box");
     let options = document.querySelectorAll(".option");
     
-    options.forEach(el => el.classList.add("disabled"));
-    
+    // CASE A: EXCELLENT/CORRECT ANSWER ON EITHER ATTEMPT
     if (chosenIndex === q.answer) {
+        locked = true;
+        clearInterval(timer);
+        options.forEach(el => el.classList.add("disabled"));
+        targetBtn.classList.remove("wrong");
         targetBtn.classList.add("correct");
         playSound("correctSound");
+        
         feedbackBox.innerText = "✨ Outstanding! Correct Response.";
         feedbackBox.style.color = "var(--correct)";
         score++;
         document.getElementById("score").innerText = score;
         setTimeout(advanceToNextQuizStep, 1500);
-    } else {
-        playSound("wrongSound");
-        if (targetBtn) targetBtn.classList.add("wrong");
+        return;
+    }
+    
+    // CASE B: STRUCTURAL WRONG OPTION PROCESSING
+    attempt++;
+    playSound("wrongSound");
+    
+    if (chosenIndex === -1) {
+        // Handle direct time expiration as an absolute final lockout event
+        locked = true;
+        clearInterval(timer);
+        options.forEach(el => el.classList.add("disabled"));
+        feedbackBox.innerHTML = `⏱️ <b>Time Expired!</b><br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-main);"><b>Concept Rule:</b> ${q.explanation}</span>`;
+        feedbackBox.style.color = "var(--wrong)";
+        if (options[q.answer]) options[q.answer].classList.add("correct");
+        setTimeout(advanceToNextQuizStep, 4000);
+    } 
+    else if (attempt === 1) {
+        // FIRST WRONG ATTEMPT: Trigger single-use contextual retry event
+        targetBtn.classList.add("wrong");
+        feedbackBox.innerHTML = `✕ <b>Not quite. Try one more time!</b><br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-muted);"><b>Hint:</b> ${q.hint}</span>`;
+        feedbackBox.style.color = "var(--wrong)";
         
-        // Highlight the correct answer item explicitly to support continuous learning
-        if (options[q.answer]) {
-            options[q.answer].classList.add("correct");
-        }
+        // Remove disability class lock single state on unchosen options for the reload attempt choice
+        targetBtn.classList.add("disabled"); // Lock down ONLY the invalid button already chosen
+    } 
+    else {
+        // SECOND WRONG ATTEMPT: Final lock and detailed visual grammar breakdown
+        locked = true;
+        clearInterval(timer);
+        options.forEach(el => el.classList.add("disabled"));
+        targetBtn.classList.add("wrong");
         
-        feedbackBox.innerHTML = chosenIndex === -1 
-            ? `⏱️ <b>Time Expired!</b><br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-main);"><b>Concept Rule:</b> ${q.explanation}</span>`
-            : `✕ <b>Incorrect Choice.</b><br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-main);"><b>Concept Rule:</b> ${q.explanation}</span>`;
+        if (options[q.answer]) options[q.answer].classList.add("correct");
+        
+        feedbackBox.innerHTML = `✕ <b>Incorrect.</b><br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-main);"><b>Explanation:</b> ${q.explanation}</span>`;
         feedbackBox.style.color = "var(--wrong)";
         
         setTimeout(advanceToNextQuizStep, 4000);
     }
+}
+
+function transitionToTimeoutStep() {
+    let q = questions[current];
+    let feedbackBox = document.getElementById("feedback-box");
+    let options = document.querySelectorAll(".option");
+    
+    locked = true;
+    clearInterval(timer);
+    options.forEach(el => el.classList.add("disabled"));
+    
+    feedbackBox.innerHTML = `⏱️ <b>Time Expired!</b><br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-main);"><b>Concept Rule:</b> ${q.explanation}</span>`;
+    feedbackBox.style.color = "var(--wrong)";
+    if (options[q.answer]) options[q.answer].classList.add("correct");
+    setTimeout(advanceToNextQuizStep, 4000);
 }
 
 function advanceToNextQuizStep() {
@@ -640,7 +682,7 @@ function playSound(id) {
         let sound = document.getElementById(id);
         sound.currentTime = 0;
         sound.play();
-    } catch(e) { console.log("Audio playback not supported yet: " + e); }
+    } catch(e) { console.log("Audio resource initialized dynamically."); }
 }
 </script>
 </body>
