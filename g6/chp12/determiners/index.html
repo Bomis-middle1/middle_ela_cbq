@@ -1,1 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 6 English Grammar: Determiners Master</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-gradient: linear-gradient(135deg, #eef2f6 0%, #f1f5f9 50%, #e2e8f0 100%);
+    --surface: rgba(255, 255, 255, 0.96);
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --correct: #10b981;
+    --correct-bg: #ecfdf5;
+    --wrong: #ef4444;
+    --wrong-bg: #fef2f2;
+    --hint-color: #d97706;
+    --border-radius: 16px;
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 25px -5px rgba(79, 70, 229, 0.1), 0 8px 16px -6px rgba(79, 70, 229, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    overflow-x: hidden;
+}
+
+/* APP SCREENS LAYOUT SYSTEM */
+.screen-layout {
+    width: 100%;
+    max-width: 700px;
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 32px 24px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    display: none;
+    animation: screenReveal 0.4s ease forwards;
+}
+
+#splash {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#splash img {
+    width: 180px;
+    height: auto;
+    margin-bottom: 24px;
+    animation: smoothPop 2.5s ease-in-out infinite;
+}
+
+#splash h1 {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.3;
+    margin-bottom: 24px;
+}
+
+#splash b {
+    color: var(--primary);
+    font-size: 2.2rem;
+    display: block;
+    margin-top: 6px;
+}
+
+@keyframes smoothPop {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); }
+    50% { transform: scale(1.04); filter: drop-shadow(0 12px 20px rgba(79,70,229,0.15)); }
+}
+
+@keyframes screenReveal {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* TOP RUNTIME HEADER BAR */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 16px;
+    gap: 10px;
+}
+
+.badge {
+    background: #ffffff;
+    padding: 8px 16px;
+    border-radius: 30px;
+    box-shadow: var(--shadow-sm);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    border: 1px solid #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.volume-selector {
+    border: 1px solid #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    background: #ffffff;
+    cursor: pointer;
+    outline: none;
+}
+
+/* PROGRESS ELEMENT INDICATORS */
+.progress-container {
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 8px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #3b82f6);
+    width: 0%;
+    border-radius: 10px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.score-strip {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 22px;
+}
+
+.score-strip .badge {
+    flex: 1;
+    justify-content: center;
+}
+
+/* COMPONENT CONTENT HOOKS */
+.question {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #0f172a;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.feedback-box {
+    text-align: left;
+    margin-bottom: 16px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    min-height: 52px;
+    line-height: 1.4;
+}
+
+.image-box {
+    width: 100%;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.image-box img {
+    width: 100%;
+    max-height: 230px;
+    object-fit: contain;
+    border-radius: var(--border-radius);
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 6px;
+}
+
+/* OPTIONS SELECTION ELEMENTS GRID */
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.option {
+    padding: 14px 18px;
+    border-radius: var(--border-radius);
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #334155;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.option:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    background: #f5f3ff;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+}
+
+.option.correct {
+    background: var(--correct-bg) !important;
+    border-color: var(--correct) !important;
+    color: #065f46;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.option.wrong {
+    background: var(--wrong-bg) !important;
+    border-color: var(--wrong) !important;
+    color: #991b1b;
+    animation: dynamicShake 0.4s ease-in-out;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+@keyframes dynamicShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-2px); }
+}
+
+.disabled-node {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.lock-clicks {
+    pointer-events: none;
+}
+
+/* RESULTS PANEL COMPONENT */
+#resultScreen h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+#finalScore {
+    font-size: 3.8rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin: 12px 0;
+}
+
+.stars-container {
+    font-size: 2.5rem;
+    color: #f59e0b;
+    margin-bottom: 24px;
+    letter-spacing: 4px;
+}
+
+#remark {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 32px;
+}
+
+/* CALL TO ACTIONS BUTTONS */
+.btn-primary {
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+.footer {
+    margin-top: 32px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* CONFETTI REWARD CELEBRATION ELEMENTS */
+.confetti-particle {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    top: -10px;
+    border-radius: 2px;
+    z-index: 999;
+    pointer-events: none;
+    animation: fallingStream 3s linear forwards;
+}
+
+@keyframes fallingStream {
+    to {
+        transform: translateY(105vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@media(max-width:540px){
+    body { padding: 12px; }
+    .screen-layout { padding: 24px 16px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="splash" class="screen-layout" style="display: flex;">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
+    <h1>
+        Grade 6 English Grammar
+        <b>Determiners Master Quiz</b>
+    </h1>
+    <button class="btn-primary" onclick="initiateChallengeSession()">Start Challenge</button>
+</div>
+
+<div id="game" class="screen-layout">
+    <div class="top-bar">
+        <div class="badge" id="progressText">Question 1 of 12</div>
+        <div>
+            <span style="font-size: 13px; font-weight:700; color:var(--text-muted);">Audio: </span>
+            <select id="vol" class="volume-selector" onchange="syncVolumeSettings(this)">
+                <option value="0">Mute</option>
+                <option value="0.3">Low</option>
+                <option value="0.6" selected>Medium</option>
+                <option value="1">High</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress" id="progressBar"></div>
+    </div>
+
+    <div class="score-strip">
+        <div class="badge" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0;">⭐ Points: &nbsp;<span id="score">0</span></div>
+        <div class="badge" style="background:#fef2f2; color:#b91c1c; border-color:#fee2e2;">✕ Missed: &nbsp;<span id="wrong">0</span></div>
+    </div>
+
+    <div id="imageBox" class="image-box"></div>
+    <div class="question" id="question"></div>
+    <div id="feedbackBox" class="feedback-box"></div>
+    <div class="options" id="options"></div>
+</div>
+
+<div id="resultScreen" class="screen-layout">
+    <h1>Quiz Completed!</h1>
+    <div id="finalScore">0/12</div>
+    <div id="stars" class="stars-container"></div>
+    <p id="remark">Great effort!</p>
+    <button class="btn-primary" onclick="location.reload()">Play Again</button>
+    <div class="footer">Innovine Learning Portal</div>
+</div>
+
+<audio id="correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="click" src="assets/click.mp3" preload="auto"></audio>
+<audio id="clap" src="assets/clapping.mp3" preload="auto"></audio>
+<audio id="over" src="assets/gameover.mp3" preload="auto"></audio>
+
+<script>
+/* ---------------- MATRIX DATABASE ---------------- */
+const questions = [
+    {
+        q: "Rohan is ___ honest boy. He wants to join ___ university in Europe.",
+        options: ["a / a", "an / an", "an / a", "a / an"],
+        answer: "an / a",
+        hint: "'Honest' starts with a vowel sound (silent h), while 'university' starts with a consonant 'yoo' sound."
+    },
+    {
+        q: "You are holding two pens: \"I like ___ pens more than the ones on the table.\"",
+        options: ["that", "these", "those", "this"],
+        answer: "these",
+        hint: "Use 'these' for plural nouns that are close by or physically held in your hand."
+    },
+    {
+        q: "Why do we use the definite article 'the' in: \"Turn off the lights before you leave\"?",
+        options: [
+            "Because we are talking about lights in general",
+            "Because both speaker and listener know which specific lights are meant",
+            "Because 'lights' is a plural noun element",
+            "Because 'the' must be used always with household electronics"
+        ],
+        answer: "Because both speaker and listener know which specific lights are meant",
+        hint: "'The' specifies shared common knowledge or explicit items obvious in that current location."
+    },
+    {
+        q: "I have ___ friends to play with (meaning the count is very low, almost none).",
+        options: ["a few", "few", "a little", "many"],
+        answer: "few",
+        hint: "'Few' has a negative meaning meaning 'hardly any', whereas 'a few' means a small positive amount."
+    },
+    {
+        q: "Review the graphic context. Choose the sequence that fills in the empty slots correctly:",
+        options: [
+            "some / little / a few / many",
+            "any / little / a few / many",
+            "many / few / little / some",
+            "any / few / a little / much"
+        ],
+        answer: "any / little / a few / many",
+        image: "picture1.png",
+        hint: "Remember that 'any' fits questions/negatives, 'little' modifies uncountables, and 'many' goes with countables."
+    },
+    {
+        q: "Look carefully at the image prompt. Which two sentences present a negative amount statement?",
+        options: [
+            "Sentences 2 and 4",
+            "Sentences 1 and 3",
+            "Sentences 1 and 2",
+            "Sentences 3 and 4"
+        ],
+        answer: "Sentences 1 and 3",
+        image: "picture2.png",
+        hint: "Look for bare quantifiers like 'few' or 'little' without an 'a' prefix, which describe a lacking/negative state."
+    },
+    {
+        q: "Sort the following group of quantifiers based on noun patterns: few, much, many, little",
+        options: [
+            "Countable: P,Q – Uncountable: R,S",
+            "Countable: Q,S – Uncountable: P,R",
+            "Countable: P,R – Uncountable: Q,S",
+            "Countable: R,S – Uncountable: P,Q"
+        ],
+        answer: "Countable: P,R – Uncountable: Q,S",
+        hint: "'Few' and 'many' pair with countable objects. 'Much' and 'little' qualify uncountable concepts."
+    },
+    {
+        q: "Identify the types in matching order: A dog, These mangoes, Much work, The Taj Mahal",
+        options: [
+            "1=Demonstrative, 2=Article, 3=Quantifier, 4=Article",
+            "1=Article, 2=Demonstrative, 3=Quantifier, 4=Article",
+            "1=Quantifier, 2=Article, 3=Demonstrative, 4=Quantifier",
+            "1=Article, 2=Quantifier, 3=Article, 4=Demonstrative"
+        ],
+        answer: "1=Article, 2=Demonstrative, 3=Quantifier, 4=Article",
+        hint: "'A/The' are articles, 'These' points out objects directly, and 'Much' maps out quantity scale."
+    },
+    {
+        q: "Spot the odd one out. Which sentence is grammatically incorrect?",
+        options: [
+            "I have a few chocolates left",
+            "How much water do you drink?",
+            "There are many milk in fridge",
+            "She has a little knowledge"
+        ],
+        answer: "There are many milk in fridge",
+        hint: "'Milk' is an uncountable noun liquid, so it cannot be modified using the countable determiner 'many'."
+    },
+    {
+        q: "Find the structural grammar error: 'He has little knowledge but I have few time.'",
+        options: [
+            "'little' should be changed to few",
+            "'few' should be changed to little",
+            "Both components are currently correct",
+            "'little' should be a little and few should be a few"
+        ],
+        answer: "'few' should be changed to little",
+        hint: "'Time' is categorized as uncountable, which means it requires 'little' rather than the countable form 'few'."
+    },
+    {
+        q: "What exact semantic effect occurs when you change 'little' to 'a little' inside a sentence?",
+        options: [
+            "The statement becomes structurally incorrect",
+            "The meaning remains completely unchanged",
+            "It introduces a negative missing meaning",
+            "It turns into a positive meaning (some amount exists)"
+        ],
+        answer: "It turns into a positive meaning (some amount exists)",
+        hint: "Adding the article 'a' changes the meaning from 'not enough' to 'a small but useful amount'."
+    },
+    {
+        q: "Assertion: We pair 'few' with books, and 'little' with ink. Reason: 'Few' scales countable objects, while 'little' handles uncountables.",
+        options: [
+            "Both correct; reason explains assertion",
+            "Both correct; no explanation link",
+            "Assertion correct; reason wrong",
+            "Both statements are wrong"
+        ],
+        answer: "Both correct; reason explains assertion",
+        hint: "Determine if books are countable items and ink is an uncountable fluid, then evaluate the rule connection."
+    }
+];
+
+/* ---------------- APP RUNTIME STATE ---------------- */
+let activeIdx = 0;
+let validScore = 0;
+let invalidScore = 0;
+let currentAttempt = 1;
+let systemVolume = 0.6;
+let workingDataset = [];
+
+function initiateChallengeSession() {
+    document.getElementById("splash").style.display = "none";
+    document.getElementById("game").style.display = "block";
+    
+    // Scramble questions and internal option sets to maximize repeat value
+    workingDataset = shakeArray([...questions]).map(item => {
+        return {
+            ...item,
+            options: shakeArray([...item.options])
+        };
+    });
+
+    activeIdx = 0;
+    validScore = 0;
+    invalidScore = 0;
+    
+    updateDisplayPanel();
+    presentQuestionCard();
+}
+
+function presentQuestionCard() {
+    if (activeIdx >= workingDataset.length) {
+        terminateQuizGame();
+        return;
+    }
+
+    currentAttempt = 1;
+    let currentItem = workingDataset[activeIdx];
+
+    document.getElementById("progressText").innerText = `Question ${activeIdx + 1} of ${workingDataset.length}`;
+    document.getElementById("progressBar").style.width = (activeIdx / workingDataset.length) * 100 + "%";
+    document.getElementById("question").innerText = currentItem.q;
+    document.getElementById("feedbackBox").innerHTML = "";
+
+    // Parse illustrative support graphics
+    let graphicContainer = document.getElementById("imageBox");
+    if (currentItem.image) {
+        graphicContainer.innerHTML = `<img src="assets/${currentItem.image}" alt="Grammar Task Context Graphic">`;
+        graphicContainer.style.display = "block";
+    } else {
+        graphicContainer.style.display = "none";
+        graphicContainer.innerHTML = "";
+    }
+
+    // Build interactive node array elements
+    let inputContainer = document.getElementById("options");
+    inputContainer.innerHTML = "";
+
+    currentItem.options.forEach(optionText => {
+        let node = document.createElement("div");
+        node.className = "option";
+        node.innerText = optionText;
+        node.onclick = () => processAnswerValidation(node, optionText, currentItem.answer, currentItem.hint);
+        inputContainer.appendChild(node);
+    });
+}
+
+function processAnswerValidation(selectedDomNode, userSelectionText, absoluteAnswerString, hintString) {
+    triggerAudioPlayback("click");
+    let optionsNodeList = document.querySelectorAll(".option");
+    let feedbackArea = document.getElementById("feedbackBox");
+
+    // Correct hit logic path
+    if (userSelectionText === absoluteAnswerString) {
+        optionsNodeList.forEach(el => el.classList.add("lock-clicks"));
+        selectedDomNode.classList.add("correct");
+        validScore++;
+        triggerAudioPlayback("correct");
+        feedbackArea.innerHTML = "<span style='color:var(--correct);'>✨ Splendid answer! Keep it up.</span>";
+        
+        updateDisplayPanel();
+        setTimeout(() => { activeIdx++; presentQuestionCard(); }, 1800);
+        return;
+    }
+
+    // False hit path - Second chance engine branch
+    if (currentAttempt === 1) {
+        currentAttempt++;
+        selectedDomNode.classList.add("wrong");
+        selectedDomNode.classList.add("disabled-node");
+        triggerAudioPlayback("wrong");
+        feedbackArea.innerHTML = `<span style='color:var(--hint-color);'>⚠️ <b>Not quite right! Try again.</b><br><small style="color:var(--text-muted)"><b>Hint:</b> ${hintString}</small></span>`;
+    } else {
+        // Ultimate milestone mistake branch
+        optionsNodeList.forEach(el => el.classList.add("lock-clicks"));
+        selectedDomNode.classList.add("wrong");
+        invalidScore++;
+        triggerAudioPlayback("wrong");
+        feedbackArea.innerHTML = "<span style='color:var(--wrong);'>✕ Incorrect. Let's look at the correct solution.</span>";
+
+        optionsNodeList.forEach(el => {
+            if (el.innerText === absoluteAnswerString) {
+                el.classList.add("correct");
+            }
+        });
+
+        updateDisplayPanel();
+        setTimeout(() => { activeIdx++; presentQuestionCard(); }, 3200);
+    }
+}
+
+function updateDisplayPanel() {
+    document.getElementById("score").innerText = validScore;
+    document.getElementById("wrong").innerText = invalidScore;
+}
+
+function terminateQuizGame() {
+    document.getElementById("game").style.display = "none";
+    document.getElementById("resultScreen").style.display = "block";
+
+    let finalRatio = Math.round((validScore / workingDataset.length) * 100);
+    document.getElementById("finalScore").innerText = `${validScore}/${workingDataset.length} (${finalRatio}%)`;
+
+    // Process decorative review metrics
+    let awardStars = "★";
+    if (finalRatio >= 90) awardStars = "★★★★★";
+    else if (finalRatio >= 75) awardStars = "★★★★";
+    else if (finalRatio >= 60) awardStars = "★★★";
+    else if (finalRatio >= 40) awardStars = "★★";
+
+    document.getElementById("stars").innerText = awardStars;
+
+    let remarkMsg = "Keep studying! Review countable vs uncountable modifiers to sharpen your skills.";
+    if (finalRatio >= 80) {
+        remarkMsg = "Exceptional Determiner Mastery! Brilliant grammar skills! 🌟";
+        triggerAudioPlayback("clap");
+        deployParticleConfetti();
+    } else {
+        triggerAudioPlayback("over");
+    }
+
+    document.getElementById("remark").innerText = remarkMsg;
+}
+
+/* ---------------- HELPER TOOLS ---------------- */
+function syncVolumeSettings(selectElement) {
+    systemVolume = parseFloat(selectElement.value);
+}
+
+function triggerAudioPlayback(domId) {
+    let targetedAudio = document.getElementById(domId);
+    if (targetedAudio) {
+        targetedAudio.volume = systemVolume;
+        targetedAudio.currentTime = 0;
+        targetedAudio.play().catch(() => { /* Standard bypass block for browser policy */ });
+    }
+}
+
+function deployParticleConfetti() {
+    const colorSwatches = ["#4f46e5", "#3b82f6", "#10b981", "#f59e0b", "#ec4899"];
+    for (let i = 0; i < 65; i++) {
+        let p = document.createElement("div");
+        p.className = "confetti-particle";
+        p.style.left = Math.random() * 100 + "vw";
+        p.style.backgroundColor = colorSwatches[Math.floor(Math.random() * colorSwatches.length)];
+        p.style.animationDuration = (Math.random() * 1.4 + 1.6) + "s";
+        p.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 3000);
+    }
+}
+
+function shakeArray(arrayTarget) {
+    for (let currentMarker = arrayTarget.length - 1; currentMarker > 0; currentMarker--) {
+        let replacementIndex = Math.floor(Math.random() * (currentMarker + 1));
+        [arrayTarget[currentMarker], arrayTarget[replacementIndex]] = [arrayTarget[replacementIndex], arrayTarget[currentMarker]];
+    }
+    return arrayTarget;
+}
+</script>
+
+</body>
+</html>
