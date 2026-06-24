@@ -10,14 +10,14 @@
     --primary: #6366f1;
     --primary-hover: #4f46e5;
     --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #fbf8ff 50%, #f4f3ff 100%);
-    --surface: rgba(255, 255, 255, 0.95);
+    --surface: rgba(255, 255, 255, 0.98);
     --text-main: #1e293b;
     --text-muted: #64748b;
     --correct: #10b981;
     --correct-bg: #ecfdf5;
     --wrong: #ef4444;
     --wrong-bg: #fef2f2;
-    --hint-color: #f59e0b;
+    --hint-color: #d97706;
     --border-radius: 18px;
     --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     --shadow-md: 0 10px 25px -5px rgba(99, 102, 241, 0.1), 0 8px 16px -6px rgba(99, 102, 241, 0.05);
@@ -52,20 +52,17 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px);
     text-align: center;
+    display: none;
+    animation: screenReveal 0.4s ease forwards;
 }
 
 /* INTRO SPLASH LAYER */
 #intro {
-    position: fixed;
-    inset: 0;
-    background: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
-    opacity: 1;
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s ease;
+    text-align: center;
 }
 
 #intro img {
@@ -80,6 +77,7 @@ body {
     font-weight: 800;
     color: #0f172a;
     line-height: 1.4;
+    margin-bottom: 24px;
 }
 
 #intro b {
@@ -92,12 +90,6 @@ body {
 @keyframes smoothPop {
     0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); }
     50% { transform: scale(1.04); filter: drop-shadow(0 12px 20px rgba(99,102,241,0.15)); }
-}
-
-/* GAMEPLAY VIEWPLATE */
-#game {
-    display: none;
-    animation: screenReveal 0.4s ease forwards;
 }
 
 @keyframes screenReveal {
@@ -142,7 +134,7 @@ body {
 .score-strip {
     display: flex;
     gap: 8px;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
 }
 
 .score-strip .badge {
@@ -182,9 +174,10 @@ body {
 .feedback-box {
     text-align: left;
     margin-bottom: 16px;
-    font-size: 0.95rem;
+    font-size: 0.98rem;
     font-weight: 600;
-    min-height: 24px;
+    min-height: 54px;
+    line-height: 1.4;
 }
 
 /* MEDIA CONTENT */
@@ -261,7 +254,7 @@ body {
 
 .disabled-node {
     pointer-events: none;
-    opacity: 0.6;
+    opacity: 0.5;
 }
 
 .lock-clicks {
@@ -269,10 +262,6 @@ body {
 }
 
 /* PERFORMANCE RESULT COMPONENT */
-#scoreScreen {
-    display: none;
-}
-
 #scoreScreen h1 {
     font-size: 2.2rem;
     font-weight: 800;
@@ -372,20 +361,18 @@ body {
 
 <body>
 
-<!-- DYNAMIC ALERT CONTAINER -->
 <div id="customAlert" class="custom-alert"></div>
 
-<!-- SPLASH SCREEN COMPONENT -->
-<div id="intro">
+<div id="intro" class="screen-layout" style="display: flex;">
     <img src="assets/logo.png" alt="Innovine Learning Logo" onerror="this.style.display='none'">
     <h1>
         Grade 6 English Grammar<br>
         Chapter 10
         <b>Adverbs Master</b>
     </h1>
+    <button class="btn-primary" onclick="startAssessmentSession()">Start Game Challenge</button>
 </div>
 
-<!-- MAIN RUNTIME INTERFACE -->
 <div id="game" class="screen-layout">
     <div class="top-bar">
         <div class="badge" id="progressText">Question 1 of 10</div>
@@ -407,7 +394,6 @@ body {
     <div class="options" id="options"></div>
 </div>
 
-<!-- PERFORMANCE SCORE SUMMARY -->
 <div id="scoreScreen" class="screen-layout">
     <h1>🎉 Challenge Completed!</h1>
     <div id="finalScore">0/10</div>
@@ -418,7 +404,6 @@ body {
     <div class="footer">Innovine Learning Experience Portal</div>
 </div>
 
-<!-- AUDIO PIPELINES -->
 <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 <audio id="clapSound" src="assets/clapping.mp3" preload="auto"></audio>
@@ -497,23 +482,12 @@ let validScoreCount = 0;
 let invalidScoreCount = 0;
 let localizedQuestionMatrix = [];
 let isAudioMuted = false;
-let currentAttempt = 1; // Track attempts per question
+let currentAttempt = 1;
 
-// ---------------- PLATFORM RUNTIME INITIALIZATION ----------------
-window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(executeInteractiveBoot, 3800);
-});
-
-function executeInteractiveBoot(){
-    const splashScreen = document.getElementById("intro");
-    splashScreen.style.opacity = "0";
-    splashScreen.style.transform = "scale(0.98)";
-    
-    setTimeout(() => {
-        splashScreen.style.display = "none";
-        document.getElementById("game").style.display = "block";
-        initializeAssessmentSuite();
-    }, 600);
+function startAssessmentSession() {
+    document.getElementById("intro").style.display = "none";
+    document.getElementById("game").style.display = "block";
+    initializeAssessmentSuite();
 }
 
 function initializeAssessmentSuite(){
@@ -539,7 +513,7 @@ function renderCurrentQuestion(){
         return;
     }
 
-    currentAttempt = 1; // Reset attempt balance
+    currentAttempt = 1; 
     let item = localizedQuestionMatrix[activeIdx];
 
     document.getElementById("progressText").innerText = `Question ${activeIdx + 1} of ${localizedQuestionMatrix.length}`;
@@ -587,11 +561,11 @@ function evaluationEngine(domElement, rawSelectedText, absoluteCorrectString, hi
         return;
     }
 
-    // FIRST FAULTY RUN
+    // FIRST FAULTY RUN - 2nd Chance Trigger
     if(currentAttempt === 1) {
         currentAttempt++;
         domElement.classList.add("wrong");
-        domElement.classList.add("disabled-node"); // Disable only this wrong option card
+        domElement.classList.add("disabled-node"); 
         triggerAudioPlayback("wrongSound");
         
         feedbackBox.innerHTML = `<span style='color:var(--hint-color);'>⚠️ <b>Try again! Second Chance enabled.</b><br><small style="color:var(--text-muted)"><b>Hint:</b> ${hintText}</small></span>`;
@@ -604,7 +578,6 @@ function evaluationEngine(domElement, rawSelectedText, absoluteCorrectString, hi
         triggerAudioPlayback("wrongSound");
         feedbackBox.innerHTML = "<span style='color:var(--wrong);'>✕ Incorrect. Let's see the right answer.</span>";
 
-        // Expose correct layout answer path
         contextualChoices.forEach(element => {
             if(element.innerText === absoluteCorrectString){
                 element.classList.add("correct");
@@ -612,7 +585,7 @@ function evaluationEngine(domElement, rawSelectedText, absoluteCorrectString, hi
         });
 
         syncMetricDisplay();
-        setTimeout(() => { activeIdx++; renderCurrentQuestion(); }, 3000);
+        setTimeout(() => { activeIdx++; renderCurrentQuestion(); }, 3200);
     }
 }
 
