@@ -1,1 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 6 English: Adverbs Mastery Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+:root {
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #fbf8ff 50%, #f4f3ff 100%);
+    --surface: rgba(255, 255, 255, 0.95);
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --correct: #10b981;
+    --correct-bg: #ecfdf5;
+    --wrong: #ef4444;
+    --wrong-bg: #fef2f2;
+    --border-radius: 18px;
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 10px 25px -5px rgba(99, 102, 241, 0.1), 0 8px 16px -6px rgba(99, 102, 241, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    padding: 16px;
+}
+
+/* APP CONTAINERS & SCREENS */
+.screen-layout {
+    width: 100%;
+    max-width: 680px;
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 32px 24px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+/* INTRO SPLASH LAYER */
+#intro {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s ease;
+}
+
+#intro img {
+    width: 160px;
+    height: auto;
+    margin-bottom: 24px;
+    animation: smoothPop 2.5s ease-in-out infinite;
+}
+
+#intro h1 {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.4;
+}
+
+#intro b {
+    color: var(--primary);
+    font-size: 2.2rem;
+    display: block;
+    margin-top: 8px;
+}
+
+@keyframes smoothPop {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); }
+    50% { transform: scale(1.04); filter: drop-shadow(0 12px 20px rgba(99,102,241,0.15)); }
+}
+
+/* GAMEPLAY VIEWPLATE */
+#game {
+    display: none;
+    animation: screenReveal 0.4s ease forwards;
+}
+
+@keyframes screenReveal {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* TOP STATUS PANELS */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.badge {
+    background: #ffffff;
+    padding: 8px 16px;
+    border-radius: 30px;
+    box-shadow: var(--shadow-sm);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    border: 1px solid #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge.interactive {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.badge.interactive:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.score-strip {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.score-strip .badge {
+    flex: 1;
+    justify-content: center;
+}
+
+/* PROGRESS METRICS */
+.progress-container {
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 8px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #a855f7);
+    width: 0%;
+    border-radius: 10px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* QUESTION CARD */
+.question {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #0f172a;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+/* MEDIA CONTENT */
+.image-box {
+    width: 100%;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.image-box img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+    border-radius: var(--border-radius);
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 6px;
+}
+
+/* OPTIONS GRID SYSTEM */
+.options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+.option {
+    padding: 16px;
+    border-radius: var(--border-radius);
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #334155;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.option:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    background: #f5f3ff;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+}
+
+.option.correct {
+    background: var(--correct-bg) !important;
+    border-color: var(--correct) !important;
+    color: #065f46;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.option.wrong {
+    background: var(--wrong-bg) !important;
+    border-color: var(--wrong) !important;
+    color: #991b1b;
+    animation: structuralShake 0.4s ease-in-out;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+@keyframes structuralShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-3px); }
+}
+
+.lock-clicks {
+    pointer-events: none;
+}
+
+/* PERFORMANCE RESULT COMPONENT */
+#scoreScreen {
+    display: none;
+}
+
+#scoreScreen h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+#finalScore {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin: 16px 0;
+}
+
+#remark {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 32px;
+}
+
+/* BUTTON ACTION ELEMENT */
+.btn-primary {
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+/* CUSTOM MODAL SYSTEM */
+.custom-alert {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: #1e293b;
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.custom-alert.active {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.footer {
+    margin-top: 32px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* PERFORMANCE REWARD PARTICLES */
+.confetti {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    top: -10px;
+    border-radius: 2px;
+    z-index: 999;
+    pointer-events: none;
+    animation: fallingStream 3s linear forwards;
+}
+
+@keyframes fallingStream {
+    to {
+        transform: translateY(105vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@media(max-width:540px){
+    .options { grid-template-columns: 1fr; }
+    body { padding: 12px; }
+    .screen-layout { padding: 24px 16px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- DYNAMIC ALERT CONTAINER -->
+<div id="customAlert" class="custom-alert"></div>
+
+<!-- SPLASH SCREEN COMPONENT -->
+<div id="intro">
+    <img src="assets/logo.png" alt="Innovine Learning Logo" onerror="this.style.display='none'">
+    <h1>
+        Grade 6 English Grammar<br>
+        Chapter 10
+        <b>Adverbs Master</b>
+    </h1>
+</div>
+
+<!-- MAIN RUNTIME INTERFACE -->
+<div id="game" class="screen-layout">
+    <div class="top-bar">
+        <div class="badge" id="progressText">Question 1 of 10</div>
+        <div class="badge interactive" onclick="toggleSoundState()" id="audioStatusBadge">🔊 Audio On</div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress" id="progressBar"></div>
+    </div>
+
+    <div class="score-strip">
+        <div class="badge" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0;">⭐ Points: &nbsp;<span id="score">0</span></div>
+        <div class="badge" style="background:#fef2f2; color:#b91c1c; border-color:#fee2e2;">✕ Missed: &nbsp;<span id="wrong">0</span></div>
+    </div>
+
+    <div id="imageBox" class="image-box"></div>
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+</div>
+
+<!-- PERFORMANCE SCORE SUMMARY -->
+<div id="scoreScreen" class="screen-layout">
+    <h1>🎉 Challenge Completed!</h1>
+    <div id="finalScore">0/10</div>
+    <p id="remark">Keep Practicing!</p>
+
+    <button class="btn-primary" onclick="triggerSessionReset()">Play Again</button>
+
+    <div class="footer">Innovine Learning Experience Portal</div>
+</div>
+
+<!-- AUDIO PIPELINES -->
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clapping.mp3" preload="auto"></audio>
+<audio id="clickSound" src="assets/click.mp3" preload="auto"></audio>
+
+<script>
+// ---------------- DYNAMIC PEDAGOGICAL ASSESSMENT DATABASE ----------------
+const questions = [
+    {
+        question: "Identify the adverb in the sentence and its type: 'The firemen quickly put out the dangerous blaze.'",
+        options: ["quickly (Adverb of Manner)", "dangerous (Adverb of Degree)", "blaze (Adverb of Place)", "put (Adverb of Time)"],
+        answer: "quickly (Adverb of Manner)"
+    },
+    {
+        question: "Which of the following sentences uses an 'Adverb of Frequency'?",
+        options: ["She ran downstairs to open the gate.", "He seldom forgets to complete his grammar sheets.", "The teacher spoke extremely softly.", "We are going on a school trip tomorrow."],
+        answer: "He seldom forgets to complete his grammar sheets."
+    },
+    {
+        question: "Complete the sentence with the correct Adverb of Degree: 'The grade 6 quiz was ________ difficult, but Rohan got a perfect score.'",
+        options: ["everywhere", "yesterday", "quite", "loudly"],
+        answer: "quite"
+    },
+    {
+        question: "Look closely at the image context. Choose the sentence that correctly utilizes an Adverb of Place.",
+        options: ["The eager students sat inside to protect their project.", "The students safely built a volcano model.", "They built a massive volcano model yesterday.", "They always clean up their workspace carefully."],
+        answer: "The eager students sat inside to protect their project.",
+        image: "picture1.png"
+    },
+    {
+        question: "Based on the schedule shown, select the most accurate Adverb of Time to complete the student report: 'The team will present their research __________.'",
+        options: ["abroad", "soon", "gracefully", "frequently"],
+        answer: "soon",
+        image: "picture2.png"
+    },
+    {
+        question: "What is the function of the underlined adverb? 'The structural architecture was completely modern.'",
+        options: ["Modifying a noun entity", "Modifying an action verb", "Modifying an adjective descriptor", "Modifying another adverb element"],
+        answer: "Modifying an adjective descriptor"
+    },
+    {
+        question: "Choose the sentence that correctly sequences the adverbs in the order of Manner, Place, and Time.",
+        options: ["Yesterday she danced elegantly in the room.", "She danced elegantly in the room yesterday.", "In the room she danced yesterday elegantly.", "She elegantly yesterday danced in the room."],
+        answer: "She danced elegantly in the room yesterday."
+    },
+    {
+        question: "Identify the incorrect usage of an adverb: 'He drives more carefully than his brother does.'",
+        options: ["No error present", "Change 'more carefully' to 'more carefuller'", "Change 'carefully' to 'careful'", "Change 'carefully' to 'most carefully'"],
+        answer: "No error present"
+    },
+    {
+        question: "Which question does an Adverb of Manner answer about the action of a verb?",
+        options: ["When?", "How much?", "Where?", "How?"],
+        answer: "How?"
+    },
+    {
+        question: "In the sentence: 'The alarm rang early, so I walked outside to breathe the fresh air.' What types of adverbs are 'early' and 'outside'?",
+        options: ["Time and Place", "Manner and Frequency", "Degree and Place", "Time and Manner"],
+        answer: "Time and Place"
+    }
+];
+
+// ---------------- APP ENVIRONMENT STATE MACHINE ----------------
+let activeIdx = 0;
+let validScoreCount = 0;
+let invalidScoreCount = 0;
+let localizedQuestionMatrix = [];
+let isAudioMuted = false;
+
+// ---------------- PLATFORM RUNTIME INITIALIZATION ----------------
+window.addEventListener('DOMContentLoaded', () => {
+    // Graceful automatic transition from introduction splash window to live workspace
+    setTimeout(executeInteractiveBoot, 3800);
+});
+
+function executeInteractiveBoot(){
+    const splashScreen = document.getElementById("intro");
+    splashScreen.style.opacity = "0";
+    splashScreen.style.transform = "scale(0.98)";
+    
+    setTimeout(() => {
+        splashScreen.style.display = "none";
+        document.getElementById("game").style.display = "block";
+        initializeAssessmentSuite();
+    }, 600);
+}
+
+function initializeAssessmentSuite(){
+    // Shuffler to randomize both question order and local choice matrices
+    localizedQuestionMatrix = shuffleDataset([...questions]).map(item => {
+        return {
+            ...item,
+            options: shuffleDataset([...item.options])
+        };
+    });
+    
+    activeIdx = 0;
+    validScoreCount = 0;
+    invalidScoreCount = 0;
+    
+    syncMetricDisplay();
+    renderCurrentQuestion();
+}
+
+// ---------------- PRESENTATION LOGIC LAYER ----------------
+function renderCurrentQuestion(){
+    if(activeIdx >= localizedQuestionMatrix.length){
+        concludeAssessmentChallenge();
+        return;
+    }
+
+    let item = localizedQuestionMatrix[activeIdx];
+
+    // Counter updates
+    document.getElementById("progressText").innerText = `Question ${activeIdx + 1} of ${localizedQuestionMatrix.length}`;
+    document.getElementById("progressBar").style.width = ((activeIdx) / localizedQuestionMatrix.length) * 100 + "%";
+    document.getElementById("question").innerText = item.question;
+
+    // Handle context-specific media attachments cleanly
+    let mediaContainer = document.getElementById("imageBox");
+    if(item.image) {
+        mediaContainer.innerHTML = `<img src="assets/${item.image}" alt="Visual Context Reference">`;
+        mediaContainer.style.display = "block";
+    } else {
+        mediaContainer.innerHTML = "";
+        mediaContainer.style.display = "none";
+    }
+
+    // Build the options matrix cleanly
+    let interactionBox = document.getElementById("options");
+    interactionBox.innerHTML = "";
+
+    item.options.forEach(choiceText => {
+        let choiceNode = document.createElement("div");
+        choiceNode.className = "option";
+        choiceNode.innerText = choiceText;
+        choiceNode.onclick = () => evaluationEngine(choiceNode, choiceText, item.answer);
+        interactionBox.appendChild(choiceNode);
+    });
+}
+
+// ---------------- INTERACTION EVALUATION ENGINE ----------------
+function evaluationEngine(domElement, rawSelectedText, absoluteCorrectString){
+    triggerAudioPlayback("clickSound");
+
+    // Immediately isolate and lock out remaining nodes on the page
+    let contextualChoices = document.querySelectorAll(".option");
+    contextualChoices.forEach(element => element.classList.add("lock-clicks"));
+
+    if(rawSelectedText === absoluteCorrectString){
+        domElement.classList.add("correct");
+        validScoreCount++;
+        triggerAudioPlayback("correctSound");
+    } else {
+        domElement.classList.add("wrong");
+        invalidScoreCount++;
+        triggerAudioPlayback("wrongSound");
+
+        // Highlight the correct alternative
+        contextualChoices.forEach(element => {
+            if(element.innerText === absoluteCorrectString){
+                element.classList.add("correct");
+            }
+        });
+    }
+
+    syncMetricDisplay();
+
+    // Give users a 2-second visual window before moving on
+    setTimeout(() => {
+        activeIdx++;
+        renderCurrentQuestion();
+    }, 2000);
+}
+
+function syncMetricDisplay(){
+    document.getElementById("score").innerText = validScoreCount;
+    document.getElementById("wrong").innerText = invalidScoreCount;
+}
+
+// ---------------- APPLICATION CONCLUSION & SCOREBOARD ----------------
+function concludeAssessmentChallenge(){
+    document.getElementById("game").style.display = "none";
+    document.getElementById("scoreScreen").style.display = "block";
+
+    let rawScorePercentage = Math.round((validScoreCount / localizedQuestionMatrix.length) * 100);
+    let descriptiveRemarkText = "Keep Practicing! Review structural rules to build confidence.";
+
+    if(rawScorePercentage >= 85) {
+        descriptiveRemarkText = "Master Level Accomplished! Excellent mastery of adverbs! 🌟";
+    } else if(rawScorePercentage >= 60) {
+        descriptiveRemarkText = "Great Effort! Stable work on basic modifier principles! 👍";
+    }
+
+    document.getElementById("finalScore").innerText = `${validScoreCount}/${localizedQuestionMatrix.length} (${rawScorePercentage}%)`;
+    document.getElementById("remark").innerText = descriptiveRemarkText;
+
+    triggerAudioPlayback("clapSound");
+    deployParticleConfetti();
+}
+
+// ---------------- USER INTERACTIVE UTILITIES ----------------
+function deployParticleConfetti(){
+    const aestheticColorPalette = ["#6366f1", "#a855f7", "#10b981", "#ff007f", "#ffb300"];
+    for(let i = 0; i < 70; i++){
+        let fragment = document.createElement("div");
+        fragment.className = "confetti";
+        fragment.style.left = Math.random() * 100 + "vw";
+        fragment.style.backgroundColor = aestheticColorPalette[Math.floor(Math.random() * aestheticColorPalette.length)];
+        fragment.style.animationDuration = (Math.random() * 1.5 + 1.8) + "s";
+        fragment.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
+        document.body.appendChild(fragment);
+
+        setTimeout(() => fragment.remove(), 3200);
+    }
+}
+
+function triggerAudioPlayback(domIdString){
+    if(isAudioMuted) return;
+    const targetsNode = document.getElementById(domIdString);
+    if(targetsNode) {
+        targetsNode.currentTime = 0;
+        targetsNode.play().catch(() => {/* Handle browser audio auto-play blocks silently */});
+    }
+}
+
+function toggleSoundState(){
+    isAudioMuted = !isAudioMuted;
+    const indicatorBadge = document.getElementById("audioStatusBadge");
+    if(isAudioMuted){
+        indicatorBadge.innerText = "🔇 Audio Off";
+        displayToastAlert("Audio muted");
+    } else {
+        indicatorBadge.innerText = "🔊 Audio On";
+        displayToastAlert("Audio unmuted");
+    }
+}
+
+function displayToastAlert(message) {
+    const alertBox = document.getElementById("customAlert");
+    alertBox.innerText = message;
+    alertBox.classList.add("active");
+    setTimeout(() => {
+        alertBox.classList.remove("active");
+    }, 2000);
+}
+
+function triggerSessionReset(){
+    document.getElementById("scoreScreen").style.display = "none";
+    document.getElementById("game").style.display = "block";
+    initializeAssessmentSuite();
+}
+
+function shuffleDataset(targetArray){
+    for(let indexPointer = targetArray.length - 1; indexPointer > 0; indexPointer--){
+        let targetedRandomSwapIdx = Math.floor(Math.random() * (indexPointer + 1));
+        [targetArray[indexPointer], targetArray[targetedRandomSwapIdx]] = [targetArray[targetedRandomSwapIdx], targetArray[indexPointer]];
+    }
+    return targetArray;
+}
+</script>
+
+</body>
+</html>
