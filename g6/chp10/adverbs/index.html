@@ -17,6 +17,7 @@
     --correct-bg: #ecfdf5;
     --wrong: #ef4444;
     --wrong-bg: #fef2f2;
+    --hint-color: #f59e0b;
     --border-radius: 18px;
     --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     --shadow-md: 0 10px 25px -5px rgba(99, 102, 241, 0.1), 0 8px 16px -6px rgba(99, 102, 241, 0.05);
@@ -173,8 +174,17 @@ body {
     font-weight: 700;
     line-height: 1.5;
     color: #0f172a;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     text-align: left;
+}
+
+/* FEEDBACK TEXT HELPER */
+.feedback-box {
+    text-align: left;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    min-height: 24px;
 }
 
 /* MEDIA CONTENT */
@@ -247,6 +257,11 @@ body {
     25% { transform: translateX(-5px); }
     50% { transform: translateX(5px); }
     75% { transform: translateX(-3px); }
+}
+
+.disabled-node {
+    pointer-events: none;
+    opacity: 0.6;
 }
 
 .lock-clicks {
@@ -388,6 +403,7 @@ body {
 
     <div id="imageBox" class="image-box"></div>
     <div class="question" id="question"></div>
+    <div id="feedbackBox" class="feedback-box"></div>
     <div class="options" id="options"></div>
 </div>
 
@@ -414,54 +430,64 @@ const questions = [
     {
         question: "Identify the adverb in the sentence and its type: 'The firemen quickly put out the dangerous blaze.'",
         options: ["quickly (Adverb of Manner)", "dangerous (Adverb of Degree)", "blaze (Adverb of Place)", "put (Adverb of Time)"],
-        answer: "quickly (Adverb of Manner)"
+        answer: "quickly (Adverb of Manner)",
+        hint: "Look for the word ending in '-ly' that explains *how* the action was done."
     },
     {
         question: "Which of the following sentences uses an 'Adverb of Frequency'?",
         options: ["She ran downstairs to open the gate.", "He seldom forgets to complete his grammar sheets.", "The teacher spoke extremely softly.", "We are going on a school trip tomorrow."],
-        answer: "He seldom forgets to complete his grammar sheets."
+        answer: "He seldom forgets to complete his grammar sheets.",
+        hint: "Frequency answers 'how often' an action happens. Look for a word like 'rarely' or 'often'."
     },
     {
         question: "Complete the sentence with the correct Adverb of Degree: 'The grade 6 quiz was ________ difficult, but Rohan got a perfect score.'",
         options: ["everywhere", "yesterday", "quite", "loudly"],
-        answer: "quite"
+        answer: "quite",
+        hint: "An adverb of degree scales the adjective. Choose the word that modifies 'difficult' to mean 'somewhat' or 'very'."
     },
     {
         question: "Look closely at the image context. Choose the sentence that correctly utilizes an Adverb of Place.",
         options: ["The eager students sat inside to protect their project.", "The students safely built a volcano model.", "They built a massive volcano model yesterday.", "They always clean up their workspace carefully."],
         answer: "The eager students sat inside to protect their project.",
-        image: "picture1.png"
+        image: "picture1.png",
+        hint: "Adverbs of place state *where* the event happened. Look for words indicating location."
     },
     {
         question: "Based on the schedule shown, select the most accurate Adverb of Time to complete the student report: 'The team will present their research __________.'",
         options: ["abroad", "soon", "gracefully", "frequently"],
         answer: "soon",
-        image: "picture2.png"
+        image: "picture2.png",
+        hint: "Adverbs of time outline *when* something is bound to take place."
     },
     {
         question: "What is the function of the underlined adverb? 'The structural architecture was completely modern.'",
         options: ["Modifying a noun entity", "Modifying an action verb", "Modifying an adjective descriptor", "Modifying another adverb element"],
-        answer: "Modifying an adjective descriptor"
+        answer: "Modifying an adjective descriptor",
+        hint: "'Modern' describes the architecture (adjective). What does 'completely' do to 'modern'?"
     },
     {
         question: "Choose the sentence that correctly sequences the adverbs in the order of Manner, Place, and Time.",
         options: ["Yesterday she danced elegantly in the room.", "She danced elegantly in the room yesterday.", "In the room she danced yesterday elegantly.", "She elegantly yesterday danced in the room."],
-        answer: "She danced elegantly in the room yesterday."
+        answer: "She danced elegantly in the room yesterday.",
+        hint: "Follow the standard English layout sequence formula: How (Manner) -> Where (Place) -> When (Time)."
     },
     {
         question: "Identify the incorrect usage of an adverb: 'He drives more carefully than his brother does.'",
         options: ["No error present", "Change 'more carefully' to 'more carefuller'", "Change 'carefully' to 'careful'", "Change 'carefully' to 'most carefully'"],
-        answer: "No error present"
+        answer: "No error present",
+        hint: "Check whether 'more carefully' accurately and smoothly modifies the action verb 'drives'."
     },
     {
         question: "Which question does an Adverb of Manner answer about the action of a verb?",
         options: ["When?", "How much?", "Where?", "How?"],
-        answer: "How?"
+        answer: "How?",
+        hint: "Manner reveals the mode or execution style of an active event."
     },
     {
         question: "In the sentence: 'The alarm rang early, so I walked outside to breathe the fresh air.' What types of adverbs are 'early' and 'outside'?",
         options: ["Time and Place", "Manner and Frequency", "Degree and Place", "Time and Manner"],
-        answer: "Time and Place"
+        answer: "Time and Place",
+        hint: "'Early' tells us *when* the alarm rang, and 'outside' tells us *where* the speaker walked."
     }
 ];
 
@@ -471,10 +497,10 @@ let validScoreCount = 0;
 let invalidScoreCount = 0;
 let localizedQuestionMatrix = [];
 let isAudioMuted = false;
+let currentAttempt = 1; // Track attempts per question
 
 // ---------------- PLATFORM RUNTIME INITIALIZATION ----------------
 window.addEventListener('DOMContentLoaded', () => {
-    // Graceful automatic transition from introduction splash window to live workspace
     setTimeout(executeInteractiveBoot, 3800);
 });
 
@@ -491,7 +517,6 @@ function executeInteractiveBoot(){
 }
 
 function initializeAssessmentSuite(){
-    // Shuffler to randomize both question order and local choice matrices
     localizedQuestionMatrix = shuffleDataset([...questions]).map(item => {
         return {
             ...item,
@@ -514,14 +539,14 @@ function renderCurrentQuestion(){
         return;
     }
 
+    currentAttempt = 1; // Reset attempt balance
     let item = localizedQuestionMatrix[activeIdx];
 
-    // Counter updates
     document.getElementById("progressText").innerText = `Question ${activeIdx + 1} of ${localizedQuestionMatrix.length}`;
     document.getElementById("progressBar").style.width = ((activeIdx) / localizedQuestionMatrix.length) * 100 + "%";
     document.getElementById("question").innerText = item.question;
+    document.getElementById("feedbackBox").innerHTML = "";
 
-    // Handle context-specific media attachments cleanly
     let mediaContainer = document.getElementById("imageBox");
     if(item.image) {
         mediaContainer.innerHTML = `<img src="assets/${item.image}" alt="Visual Context Reference">`;
@@ -531,7 +556,6 @@ function renderCurrentQuestion(){
         mediaContainer.style.display = "none";
     }
 
-    // Build the options matrix cleanly
     let interactionBox = document.getElementById("options");
     interactionBox.innerHTML = "";
 
@@ -539,43 +563,57 @@ function renderCurrentQuestion(){
         let choiceNode = document.createElement("div");
         choiceNode.className = "option";
         choiceNode.innerText = choiceText;
-        choiceNode.onclick = () => evaluationEngine(choiceNode, choiceText, item.answer);
+        choiceNode.onclick = () => evaluationEngine(choiceNode, choiceText, item.answer, item.hint);
         interactionBox.appendChild(choiceNode);
     });
 }
 
 // ---------------- INTERACTION EVALUATION ENGINE ----------------
-function evaluationEngine(domElement, rawSelectedText, absoluteCorrectString){
+function evaluationEngine(domElement, rawSelectedText, absoluteCorrectString, hintText){
     triggerAudioPlayback("clickSound");
-
-    // Immediately isolate and lock out remaining nodes on the page
     let contextualChoices = document.querySelectorAll(".option");
-    contextualChoices.forEach(element => element.classList.add("lock-clicks"));
+    let feedbackBox = document.getElementById("feedbackBox");
 
+    // SUCCESS ROAD
     if(rawSelectedText === absoluteCorrectString){
+        contextualChoices.forEach(element => element.classList.add("lock-clicks"));
         domElement.classList.add("correct");
         validScoreCount++;
         triggerAudioPlayback("correctSound");
-    } else {
+        feedbackBox.innerHTML = "<span style='color:var(--correct);'>✨ Correct! Splendid logic.</span>";
+        
+        syncMetricDisplay();
+        setTimeout(() => { activeIdx++; renderCurrentQuestion(); }, 1800);
+        return;
+    }
+
+    // FIRST FAULTY RUN
+    if(currentAttempt === 1) {
+        currentAttempt++;
+        domElement.classList.add("wrong");
+        domElement.classList.add("disabled-node"); // Disable only this wrong option card
+        triggerAudioPlayback("wrongSound");
+        
+        feedbackBox.innerHTML = `<span style='color:var(--hint-color);'>⚠️ <b>Try again! Second Chance enabled.</b><br><small style="color:var(--text-muted)"><b>Hint:</b> ${hintText}</small></span>`;
+    } 
+    // SECOND AND FINAL FAULTY RUN
+    else {
+        contextualChoices.forEach(element => element.classList.add("lock-clicks"));
         domElement.classList.add("wrong");
         invalidScoreCount++;
         triggerAudioPlayback("wrongSound");
+        feedbackBox.innerHTML = "<span style='color:var(--wrong);'>✕ Incorrect. Let's see the right answer.</span>";
 
-        // Highlight the correct alternative
+        // Expose correct layout answer path
         contextualChoices.forEach(element => {
             if(element.innerText === absoluteCorrectString){
                 element.classList.add("correct");
             }
         });
+
+        syncMetricDisplay();
+        setTimeout(() => { activeIdx++; renderCurrentQuestion(); }, 3000);
     }
-
-    syncMetricDisplay();
-
-    // Give users a 2-second visual window before moving on
-    setTimeout(() => {
-        activeIdx++;
-        renderCurrentQuestion();
-    }, 2000);
 }
 
 function syncMetricDisplay(){
@@ -625,7 +663,7 @@ function triggerAudioPlayback(domIdString){
     const targetsNode = document.getElementById(domIdString);
     if(targetsNode) {
         targetsNode.currentTime = 0;
-        targetsNode.play().catch(() => {/* Handle browser audio auto-play blocks silently */});
+        targetsNode.play().catch(() => {});
     }
 }
 
