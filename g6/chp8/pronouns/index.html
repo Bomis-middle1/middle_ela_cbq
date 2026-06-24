@@ -1,1 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 8: Pronouns - Mastery Assessment</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+:root {
+    --primary: #4a90e2;
+    --primary-hover: #357abd;
+    --surface: #ffffff;
+    --text-main: #2c3e50;
+    --text-muted: #7f8c8d;
+    --correct: #2ecc71;
+    --correct-bg: #e8f8f0;
+    --wrong: #e74c3c;
+    --wrong-bg: #fdedec;
+    
+    /* Dynamic Theme Gradients based on Grammar Domain Category */
+    --bg-reflexive: linear-gradient(135deg, #e3f2fd 0%, #edf4fe 100%);
+    --bg-emphatic: linear-gradient(135deg, #fce4ec 0%, #fff0f5 100%);
+    --bg-relative: linear-gradient(135deg, #e8f5e9 0%, #f1faf2 100%);
+    --bg-default: linear-gradient(120deg, #e3f2fd, #fce4ec, #e8f5e9);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background: var(--bg-default);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    transition: background 0.5s ease;
+}
+
+/* Floating Ambient Particle Elements */
+.star {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatUp 8s infinite linear;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(105vh) translateX(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    to { transform: translateY(-10vh) translateX(50px); opacity: 0; }
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 720px;
+    margin: 20px;
+    padding: 35px 28px;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+    text-align: center;
+    z-index: 1;
+    animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#logoScreen.screen.active {
+    background: transparent;
+    box-shadow: none;
+}
+
+.logo {
+    width: 220px;
+    max-width: 100%;
+    height: auto;
+    cursor: pointer;
+    animation: pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+}
+
+h2 { font-size: 1.8rem; color: #1a252f; margin-bottom: 12px; font-weight: 800; }
+h3 { font-size: 1.25rem; color: #2c3e50; margin-bottom: 24px; font-weight: 700; text-align: left; line-height: 1.5; width: 100%; }
+p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-bottom: 20px; }
+
+.btn {
+    display: inline-block;
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 12px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(74, 144, 226, 0.3);
+    margin: 8px;
+}
+
+.btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    color: #4b5563;
+    box-shadow: none;
+}
+.btn-secondary:hover {
+    background: #e2e8f0;
+    color: #1f2937;
+    box-shadow: none;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+.timer-box {
+    font-weight: 800;
+    color: #e74c3c;
+    background: #fdf2f2;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #fde2e2;
+    font-variant-numeric: tabular-nums;
+}
+
+.progress {
+    height: 8px;
+    background: #eaeded;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 28px;
+    width: 100%;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #2ecc71;
+    width: 0%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#options {
+    width: 100%;
+}
+
+.option {
+    display: block;
+    width: 100%;
+    background: #f8fafc;
+    margin: 12px 0;
+    padding: 16px 20px;
+    border: 2px solid #e2ebf0;
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #34495e;
+    transition: all 0.2s ease;
+}
+
+.option:hover {
+    background: #f0f4f8;
+    border-color: var(--primary);
+    transform: translateX(4px);
+}
+
+.option.correct {
+    background: var(--correct-bg) !important;
+    border-color: var(--correct) !important;
+    color: #196f3d;
+    font-weight: 600;
+}
+
+.option.wrong {
+    background: var(--wrong-bg) !important;
+    border-color: var(--wrong) !important;
+    color: #943126;
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-4px); }
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+#feedback-box {
+    margin-top: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    min-height: 24px;
+    text-align: left;
+    line-height: 1.5;
+    width: 100%;
+}
+
+#finalScoreValue {
+    font-size: 4rem;
+    color: var(--primary);
+    margin: 20px 0;
+    font-weight: 800;
+}
+
+.instruction-tag {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    color: var(--primary);
+    background: #eef2f7;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+
+img.qimg {
+    width: 100%;
+    max-height: 230px;
+    object-fit: contain;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    border: 1px solid #e2ebf0;
+    background: #fafbfc;
+    padding: 12px;
+}
+
+.cross-mark {
+    font-size: 3.5rem;
+    color: var(--wrong);
+    margin-bottom: 10px;
+    animation: scalePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scalePop {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="logoScreen" class="screen active">
+    <img src="assets/innovine-logo.png" class="logo" onclick="skipSplash()" title="Click to skip layout animation">
+</div>
+
+<!-- WELCOME INTRO SCREEN -->
+<div id="intro" class="screen">
+    <h2>Chapter 8: Pronouns</h2>
+    <p style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; font-weight: bold; color: var(--primary);">Grade 6 Mastery Assessment</p>
+    <p>Challenge your contextual and logical application skills across Reflexive, Emphatic, and Relative pronoun structures.</p>
+    <div style="margin-top: 15px;">
+        <button class="btn btn-secondary" onclick="showInstructions()">Instructions</button>
+        <button class="btn" onclick="startGame()">Start Quiz</button>
+    </div>
+</div>
+
+<!-- INSTRUCTIONS MODULE -->
+<div id="instructions" class="screen">
+    <h2>Assessment Guide</h2>
+    <div style="text-align: left; margin: 20px 0; padding: 0 10px;">
+        <p>🎯 <b>Question Mix:</b> Comprehensive Competency-Based Evaluation Questions (CBQ).</p>
+        <p>⏱️ <b>Time Allotment:</b> 45 Seconds allocated per response card iteration.</p>
+        <p>🛡️ <b>Safety Allowance:</b> One fallback retry loop granted on structural failures.</p>
+        <p>💡 <b>Feedback Matrix:</b> Detailed grammar explanation rules loaded live upon terminal failure paths.</p>
+    </div>
+    <button class="btn" onclick="startGame()">Begin Session</button>
+</div>
+
+<!-- ACTIVE GAME SIMULATION UNIT -->
+<div id="game" class="screen">
+    <div class="topbar">
+        <div>Score: <span id="scoreDisplay">0</span></div>
+        <div class="timer-box">⏱️ <span id="timerValue">45</span>s</div>
+        <div id="qnumDisplay">Question 1/14</div>
+    </div>
+
+    <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+
+    <div id="imageBox" style="width: 100%;"></div>
+    <h3 id="questionText"></h3>
+    <div id="optionsContainer"></div>
+    <div id="feedback-box"></div>
+</div>
+
+<!-- RESULT SCOREBOARD OVERVIEW -->
+<div id="result" class="screen">
+    <h2>Performance Summary</h2>
+    <div id="finalScoreValue">0/14</div>
+    <p id="performanceMessage" style="font-weight: 700; font-size: 1.15rem; margin-bottom: 25px;"></p>
+    <button class="btn" onclick="location.reload()">Restart Challenge</button>
+</div>
+
+<!-- AUDIO EMBED PIPELINES -->
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clapping.mp3" preload="auto"></audio>
+
+<script>
+const questions = [
+    {
+        q: "Riya tells her teacher: \"I designed the entire layout myself because I wanted to do it without help.\" The word 'myself' adds force to her statement but is not essential to the sentence. What type of pronoun is it?",
+        options: ["Reflexive Pronoun", "Emphatic Pronoun", "Relative Pronoun", "Possessive Pronoun"],
+        a: 1,
+        cat: "emphatic",
+        hint: "Notice that the pronoun adds emphasis but its subtraction doesn't collapse the base framework mechanics.",
+        ex: "'Myself' functions to intensify emphasis here. Because it isn't structurally essential to build basic sentence meaning, it's an Emphatic Pronoun."
+    },
+    {
+        q: "During a first aid session, which sentence shows a person performing an action on themselves (Reflexive Pronoun)?",
+        options: [
+            "The Principal herself demonstrated how to apply the bandage.",
+            "I myself saw the student trip in the hallway.",
+            "The boy accidentally scratched himself with the sharp bandage clip.",
+            "We ourselves are responsible for keeping the kit ready."
+        ],
+        a: 2,
+        cat: "reflexive",
+        hint: "Locate the sentence where the target performer acts as the explicit recipient of their own physical activity.",
+        ex: "Action transfers right back onto the subject here. 'Scratched himself' is reflexive because the action recipient is identical to the performer."
+    },
+    {
+        q: "The librarian posted a rule: \"Books will not walk back to the shelves; students must return them ______.\" Which pronoun correctly completes this for a group?",
+        options: ["ourselves", "themselves", "itself", "himself"],
+        a: 1,
+        cat: "reflexive",
+        hint: "Match structural person counts. The core driving subject plural token is 'students'.",
+        ex: "'Students' requires a third-person plural reflective token match. Therefore, 'themselves' acts as the correct fit."
+    },
+    {
+        q: "A school newspaper headline reads: \"The scientist who discovered the cure was honored today.\" Why did the writer use 'who' instead of starting a new sentence?",
+        options: [
+            "To ask the reader a question about the scientist",
+            "To show that the scientist owns the cure",
+            "To bridge the noun 'scientist' with the description of their achievement",
+            "To show that the scientist worked completely alone"
+        ],
+        a: 2,
+        cat: "relative",
+        hint: "Examine how relative pronouns weld modifying action chains directly onto human reference entities.",
+        ex: "'Who' maps directly as a relative marker binding the antecedent noun ('scientist') to its trailing qualification clause."
+    },
+    {
+        q: "A witness says: \"The man whose car was stolen is waiting in the lobby.\" What does 'whose' tell us?",
+        options: [
+            "It tells us the man's name",
+            "It relates the man to the property he possesses",
+            "It emphasises that the man was by himself",
+            "It asks a question about the stolen car"
+        ],
+        a: 1,
+        cat: "relative",
+        hint: "Determine what possession link is being forged between the target person asset and the vehicle asset.",
+        ex: "'Whose' acts as a relative possessive operator bridging a human structural profile to an attached property possession."
+    },
+    {
+        img: "assets/picture1.png",
+        instruction: "Study the grammar worksheet carefully before answering the question below.",
+        q: "Which set of words correctly fills all four blanks in order?",
+        options: [
+            "which / who / whose / herself",
+            "who / which / whose / herself",
+            "who / whose / which / itself",
+            "whose / which / who / himself"
+        ],
+        a: 1,
+        cat: "relative",
+        hint: "Walk through sequential steps: choose human subjects first, move onto objects, establish ownership patterns, and finish with a singular feminine entity.",
+        ex: "Step processing: human subject = 'who', item profile = 'which', property linkage = 'whose', singular female reflexive = 'herself'."
+    },
+    {
+        img: "assets/picture2.png",
+        instruction: "Observe the two sentences carefully before answering the question below.",
+        q: "In which sentence can the highlighted pronoun be removed without breaking the grammar?",
+        options: [
+            "Sentence B — 'himself' can be removed as it only adds emphasis",
+            "Sentence A — 'himself' can be removed as it only adds emphasis",
+            "Both — both pronouns are just for emphasis",
+            "Neither — both pronouns are essential to the sentence meaning"
+        ],
+        a: 1,
+        cat: "emphatic",
+        hint: "Check whether taking out the pronoun changes the direct target object or simply drops the speaking volume intensity.",
+        ex: "In Sentence A, 'himself' acts as an optional intensive emphatic pronoun additions. Dropping it leaves the underlying syntax structurally sound."
+    },
+    {
+        q: "Which sentence correctly combines these two into one using a relative pronoun? \"I found the watch. I had lost the watch yesterday.\"",
+        options: [
+            "I found the watch who I lost yesterday.",
+            "I found the watch which I lost yesterday.",
+            "I found the watch whom I lost yesterday.",
+            "I found the watch and I lost it yesterday."
+        ],
+        a: 1,
+        cat: "relative",
+        hint: "The word 'watch' is an inanimate material asset object, not a living person.",
+        ex: "Inanimate targets require relative descriptors like 'which' or 'that', whereas human markers require identifiers like 'who'."
+    },
+    {
+        q: "Sort these pronouns into two groups — Reflexive and Emphatic — based on how they are used in each sentence:\nP: She will choose it herself.\nQ: He accidentally hurt himself.\nR: They found themselves locked out.\nS: We ourselves managed the setup.",
+        options: [
+            "Reflexive: P, S — Emphatic: Q, R",
+            "Reflexive: Q, R — Emphatic: P, S",
+            "Reflexive: P, Q — Emphatic: R, S",
+            "Reflexive: R, S — Emphatic: P, Q"
+        ],
+        a: 1,
+        cat: "reflexive",
+        hint: "If removing the pronoun leaves a transitive verb hanging without a clear direct object, then it is reflexive.",
+        ex: "Items Q and R cannot drop their pronoun assets without breaking syntax structure (reflexive). Items P and S drop them cleanly (emphatic)."
+    },
+    {
+        q: "Classify the relative pronoun in each sentence as used for a Person or a Thing:\n1. The singer who performed...\n2. The guitar which broke...\n3. The laptop that crashed...\n4. The author whose book...",
+        options: [
+            "Person: 1, 4 — Thing: 2, 3",
+            "Person: 1, 2 — Thing: 3, 4",
+            "Person: 1, 3 — Thing: 2, 4",
+            "Person: 2, 3 — Thing: 1, 4"
+        ],
+        a: 0,
+        cat: "relative",
+        hint: "Map human roles against inanimate material objects.",
+        ex: "'Who' and 'whose' denote human reference actors. 'Which' and 'that' handle inanimate objects and structural instruments."
+    },
+    {
+        q: "Three of the following sentences use pronouns correctly. One does NOT. Which is the odd one out?",
+        options: [
+            "The scientist herself conducted the experiment.",
+            "I found the pen which I had lost.",
+            "Me and my brother enjoyed ourself at the beach.",
+            "The man whose wallet was stolen filed a report."
+        ],
+        a: 2,
+        cat: "reflexive",
+        hint: "Watch out for incorrect non-standard words like 'ourself' when matching plural groups.",
+        ex: "\"Me and my brother enjoyed ourself\" breaks rules on two fronts: it misuses objective compound subjects and features the non-existent word 'ourself' instead of 'ourselves'."
+    },
+    {
+        q: "A student wrote in an email: \"Me and my brother enjoyed ourself at the beach.\" How should this be correctly rewritten?",
+        options: [
+            "My brother and I enjoyed ourselves at the beach.",
+            "Me and my brother enjoyed ourselves at the beach.",
+            "I and my brother enjoyed ourself at the beach.",
+            "My brother and me enjoyed ourselves at the beach."
+        ],
+        a: 0,
+        cat: "reflexive",
+        hint: "When structuring compound subject groups, list other people before yourself and use proper plural markers.",
+        ex: "Polite English syntax structure values others first ('My brother and I'). Plural first-person reflections also require the 'ourselves' suffix."
+    },
+    {
+        q: "A student changes \"He did the work\" to \"He did the work himself.\" What is the effect of adding 'himself'?",
+        options: [
+            "The sentence becomes reflexive",
+            "The sentence gains emphasis",
+            "The sentence becomes incorrect",
+            "The pronoun changes the subject"
+        ],
+        a: 1,
+        cat: "emphatic",
+        hint: "Determine if adding the pronoun creates a feedback action loop or simply highlights independent completion.",
+        ex: "Adding an standalone identical token directly at the trailing edge of a completed sentence emphasizes independent mastery."
+    },
+    {
+        q: "Is this rule correct: 'Use who for people and which for non-human things'?",
+        options: [
+            "No — they are interchangeable in formal prose",
+            "No — both target the same context conditions",
+            "Yes — this is the foundational person vs thing rule",
+            "Yes — selection is based on readability cost parameters"
+        ],
+        a: 2,
+        cat: "relative",
+        hint: "Reflect on core relative division configurations.",
+        ex: "This is a fundamental grammatical rule: 'who' refers to human beings, while 'which' handles non-human entities and objects."
+    }
+];
+
+let current = 0, score = 0, timer = null, timeLeft = 45, locked = false;
+let attempts = 0;
+
+// AMBIENT COSMIC BACKGROUND INFRASTRUCTURE
+function initStars() {
+    for (let i = 0; i < 15; i++) {
+        let star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.animationDelay = Math.random() * 6 + 's';
+        star.style.transform = `scale(${Math.random() * 0.8 + 0.3})`;
+        document.body.appendChild(star);
+    }
+}
+window.addEventListener('DOMContentLoaded', initStars);
+
+// INTRO SPLASH LAYER CONTROLLERS
+let splashTimeout = setTimeout(() => { transitionToWelcomeIntro(); }, 3500);
+function skipSplash() { clearTimeout(splashTimeout); transitionToWelcomeIntro(); }
+
+function transitionToWelcomeIntro() {
+    document.getElementById("logoScreen").classList.remove("active");
+    document.getElementById("intro").classList.add("active");
+    changeBackgroundTheme(null);
+}
+
+function showInstructions() {
+    document.getElementById("intro").classList.remove("active");
+    document.getElementById("instructions").classList.add("active");
+}
+
+function startGame() {
+    document.getElementById("intro").classList.remove("active");
+    document.getElementById("instructions").classList.remove("active");
+    document.getElementById("game").classList.add("active");
+    loadQuestionCard();
+}
+
+function changeBackgroundTheme(cat) {
+    const body = document.body;
+    if (!cat) { body.style.background = "var(--bg-default)"; return; }
+    switch(cat.toLowerCase()) {
+        case 'reflexive': body.style.background = "var(--bg-reflexive)"; break;
+        case 'emphatic': body.style.background = "var(--bg-emphatic)"; break;
+        case 'relative': body.style.background = "var(--bg-relative)"; break;
+        default: body.style.background = "var(--bg-default)";
+    }
+}
+
+function loadQuestionCard() {
+    if (current >= questions.length) { terminateQuizSession(); return; }
+    
+    locked = false;
+    timeLeft = 45;
+    attempts = 0;
+    
+    let q = questions[current];
+    changeBackgroundTheme(q.cat);
+    
+    document.getElementById("qnumDisplay").innerText = `Question ${current + 1}/${questions.length}`;
+    document.getElementById("scoreDisplay").innerText = score;
+    document.getElementById("progressBar").style.width = (current / questions.length) * 100 + "%";
+    document.getElementById("questionText").innerText = q.q;
+    document.getElementById("feedback-box").innerText = "";
+    
+    // Process illustrations
+    let imgBox = document.getElementById("imageBox");
+    if (q.img) {
+        imgBox.innerHTML = `<span class="instruction-tag">📋 Context</span><p style="font-weight:600; font-size:0.95rem; margin-bottom:12px;">${q.instruction}</p><img src="${q.img}" class="qimg" alt="Resource Asset Panel">`;
+    } else {
+        imgBox.innerHTML = "";
+    }
+    
+    // Option construction
+    let optionsContainer = document.getElementById("optionsContainer");
+    optionsContainer.innerHTML = "";
+    q.options.forEach((opt, idx) => {
+        let btn = document.createElement("button");
+        btn.className = "option";
+        btn.innerText = opt;
+        btn.onclick = () => verifySelectedAnswer(idx, btn);
+        optionsContainer.appendChild(btn);
+    });
+    
+    startCountdownTimer();
+}
+
+function startCountdownTimer() {
+    clearInterval(timer);
+    document.getElementById("timerValue").innerText = timeLeft;
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timerValue").innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            autoTimeoutFailure();
+        }
+    }, 1000);
+}
+
+function verifySelectedAnswer(chosenIdx, elementRef) {
+    if (locked) return;
+    
+    let q = questions[current];
+    let feedbackBox = document.getElementById("feedback-box");
+    let allOptionNodes = document.querySelectorAll(".option");
+    
+    // SUCCESS PATH
+    if (chosenIdx === q.a) {
+        locked = true;
+        clearInterval(timer);
+        allOptionNodes.forEach(el => el.classList.add("disabled"));
+        elementRef.classList.remove("wrong");
+        elementRef.classList.add("correct");
+        triggerAudioPlayback("correctSound");
+        
+        feedbackBox.innerHTML = "✨ <b>Excellent! That is absolutely correct.</b>";
+        feedbackBox.style.color = "var(--correct)";
+        score++;
+        document.getElementById("scoreDisplay").innerText = score;
+        setTimeout(routeNextIterationStep, 1500);
+        return;
+    }
+    
+    // CRITICAL FAILURE PATH
+    attempts++;
+    triggerAudioPlayback("wrongSound");
+    
+    if (attempts === 1) {
+        // First strike fallback prompt
+        elementRef.classList.add("wrong");
+        feedbackBox.innerHTML = `✕ <b>Incorrect attempt. You have one retry left!</b><br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-muted);"><b>Hint:</b> ${q.hint}</span>`;
+        feedbackBox.style.color = "var(--wrong)";
+        elementRef.classList.add("disabled"); // Prevent clicking this incorrect option again
+    } else {
+        // Second strike terminal fallback loop
+        locked = true;
+        clearInterval(timer);
+        allOptionNodes.forEach(el => el.classList.add("disabled"));
+        elementRef.classList.add("wrong");
+        
+        if (allOptionNodes[q.a]) allOptionNodes[q.a].classList.add("correct");
+        
+        feedbackBox.innerHTML = `✕ <b>Incorrect.</b><br><span style="font-weight:normal; font-size:0.92rem; color:var(--text-main); display:block; margin-top:5px;"><b>Rule Breakdown:</b> ${q.ex}</span>`;
+        feedbackBox.style.color = "var(--wrong)";
+        setTimeout(routeNextIterationStep, 5000);
+    }
+}
+
+function autoTimeoutFailure() {
+    if (locked) return;
+    locked = true;
+    
+    let q = questions[current];
+    let feedbackBox = document.getElementById("feedback-box");
+    let allOptionNodes = document.querySelectorAll(".option");
+    
+    allOptionNodes.forEach(el => el.classList.add("disabled"));
+    if (allOptionNodes[q.a]) allOptionNodes[q.a].classList.add("correct");
+    
+    feedbackBox.innerHTML = `<div class="cross-mark">✖</div><b>Time Expired!</b><br><span style="font-weight:normal; font-size:0.92rem; color:var(--text-main); display:block; margin-top:5px;"><b>Core Concept:</b> ${q.ex}</span>`;
+    feedbackBox.style.color = "var(--wrong)";
+    setTimeout(routeNextIterationStep, 5000);
+}
+
+function routeNextIterationStep() {
+    current++;
+    loadQuestionCard();
+}
+
+function terminateQuizSession() {
+    document.getElementById("game").classList.remove("active");
+    changeBackgroundTheme(null);
+    document.getElementById("result").classList.add("active");
+    
+    let percentage = Math.round((score / questions.length) * 100);
+    document.getElementById("finalScoreValue").innerText = `${score}/${questions.length}`;
+    
+    let summaryMsg = document.getElementById("performanceMessage");
+    if (percentage >= 80) {
+        summaryMsg.innerText = "🎉 Brilliant Mastery! You have an exceptional grasp of pronoun classifications.";
+        triggerAudioPlayback("clapSound");
+    } else if (percentage >= 50) {
+        summaryMsg.innerText = "📚 Stable Work! Review tricky contextual rules to reach perfect scores.";
+    } else {
+        summaryMsg.innerText = "💡 Keep practicing! Go through the logic explanations to improve.";
+    }
+}
+
+function triggerAudioPlayback(elementId) {
+    try {
+        let track = document.getElementById(elementId);
+        if (track) {
+            track.currentTime = 0;
+            track.play();
+        }
+    } catch(err) {
+        console.log("Audio asset context waiting for interaction rules activation: " + err);
+    }
+}
+</script>
+
+</body>
+</html>
