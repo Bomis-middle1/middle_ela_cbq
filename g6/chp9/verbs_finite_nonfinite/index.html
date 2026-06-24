@@ -1,1 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 6 English: Verbs Mastery Assessment</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --surface: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --correct: #10b981;
+    --correct-bg: #ecfdf5;
+    --wrong: #ef4444;
+    --wrong-bg: #fef2f2;
+    --hint-color: #f59e0b;
+    
+    /* Subject Domain Adaptive Theme Gradients */
+    --bg-finite: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+    --bg-nonfinite: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+    --bg-mixed: linear-gradient(135deg, #f3e8ff 0%, #faf5ff 100%);
+    --bg-default: linear-gradient(120deg, #e8f0ff, #fff7e6, #f3e8ff);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-default);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ambient Learning Particles */
+.glow-bubble {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: rgba(79, 70, 229, 0.15);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatingUp 10s infinite linear;
+}
+
+@keyframes floatingUp {
+    from { transform: translateY(105vh) translateX(0); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    to { transform: translateY(-10vh) translateX(60px); opacity: 0; }
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 740px;
+    margin: 16px;
+    padding: 32px 24px;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
+    backdrop-filter: blur(8px);
+    text-align: center;
+    z-index: 1;
+    animation: screenReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes screenReveal {
+    from { opacity: 0; transform: scale(0.97) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+#splash.screen.active {
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.brand-logo {
+    width: 220px;
+    max-width: 80%;
+    height: auto;
+    animation: gentlePulse 2.5s infinite ease-in-out;
+    cursor: pointer;
+}
+
+@keyframes gentlePulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(79,70,229,0)); }
+    50% { transform: scale(1.03); filter: drop-shadow(0 10px 15px rgba(79,70,229,0.1)); }
+}
+
+h1 { font-size: 2rem; color: #0f172a; margin-bottom: 8px; font-weight: 800; }
+h2 { font-size: 1.35rem; color: var(--primary); margin-bottom: 16px; font-weight: 700; }
+h3 { font-size: 1.2rem; color: #334155; margin-bottom: 24px; text-align: left; line-height: 1.5; width: 100%; font-weight: 600; }
+
+.btn {
+    display: inline-block;
+    padding: 14px 36px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 12px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+.header-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.timer-pill {
+    font-weight: 800;
+    color: #ef4444;
+    background: #fef2f2;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #fee2e2;
+    font-variant-numeric: tabular-nums;
+}
+
+.progress-container {
+    height: 8px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #10b981;
+    width: 0%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.inst-box {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #b45309;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+img.q-img {
+    width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 8px;
+    margin-bottom: 20px;
+}
+
+#opts-container {
+    width: 100%;
+}
+
+.opt-card {
+    display: block;
+    width: 100%;
+    background: #f8fafc;
+    margin: 12px 0;
+    padding: 16px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #334155;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.opt-card:hover {
+    background: #f1f5f9;
+    border-color: var(--primary);
+    transform: translateX(4px);
+}
+
+.opt-card.correct {
+    background: var(--correct-bg) !important;
+    border-color: var(--correct) !important;
+    color: #065f46;
+    font-weight: 600;
+}
+
+.opt-card.wrong {
+    background: var(--wrong-bg) !important;
+    border-color: var(--wrong) !important;
+    color: #991b1b;
+    animation: shakeEffect 0.4s ease-in-out;
+}
+
+@keyframes shakeEffect {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-4px); }
+}
+
+.disabled-state {
+    pointer-events: none;
+    opacity: 0.65;
+}
+
+#feedback-panel {
+    margin-top: 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    line-height: 1.5;
+    width: 100%;
+}
+
+#final-score {
+    font-size: 4.5rem;
+    color: var(--primary);
+    margin: 16px 0;
+    font-weight: 800;
+}
+</style>
+</head>
+
+<body>
+
+<div id="splash" class="screen active">
+    <img src="assets/innovine-logo.png" class="brand-logo" onclick="skipSplash()" title="Click to skip initialization">
+</div>
+
+<div id="intro" class="screen">
+    <h1>Grade 6 English</h1>
+    <h2>Chapter 9: Verbs (Finite &amp; Non-Finite)</h2>
+    <p style="color: var(--text-muted); margin-bottom: 24px;">Master structural grammar markers through interactive Competency-Based Questions (CBQ).</p>
+    <button class="btn" onclick="startQuizSession()">▶ Start Quiz Challenge</button>
+</div>
+
+<div id="quiz" class="screen">
+    <div class="header-panel">
+        <div>Score: <span id="ui-score">⭐ 0</span></div>
+        <div class="timer-pill">⏱️ <span id="ui-timer">45</span>s</div>
+        <div id="ui-qnum">Question 1/12</div>
+    </div>
+
+    <div class="progress-container"><div id="ui-bar" class="progress-fill"></div></div>
+
+    <div id="instBox" style="width: 100%;"></div>
+    <img id="img" class="q-img" style="display:none;" alt="Visual Reference Material">
+
+    <h3 id="question-text"></h3>
+    <div id="opts-container"></div>
+    <div id="feedback-panel"></div>
+</div>
+
+<div id="result" class="screen">
+    <h1>🎉 Challenge Complete!</h1>
+    <div id="final-score">0/12</div>
+    <p id="performance-msg" style="font-weight: 700; margin-bottom: 24px; color: var(--text-muted);"></p>
+    <button class="btn" onclick="location.reload()">Restart Quiz</button>
+</div>
+
+<script>
+const questions = [
+    {
+        q: "Rohan says: \"I like to play football.\" When we change 'I' to 'He', 'like' becomes 'likes' but 'to play' stays exactly the same. What does this tell us about 'to play'?",
+        opt: [
+            "It is a Finite verb",
+            "It is a Non-Finite verb because it does not change with the subject",
+            "It is the main verb of the sentence",
+            "It is a Finite verb because it shows an action"
+        ],
+        a: 1,
+        theme: "nonfinite",
+        hint: "Observe which verb is locked and immune to changes in the subject person or number.",
+        explain: "Verbs that do not shift profile when subjects or tenses alternate are classified as Non-Finite verbs (infinitives here)."
+    },
+    {
+        q: "You are describing a scene in a park. In which sentence is 'crying' used as a Participle (an adjective) to describe a noun?",
+        opt: [
+            "The baby is crying loudly in the pram.",
+            "Why are you crying after the game?",
+            "I saw a crying child looking for his mother.",
+            "She was crying all night because she was happy."
+        ],
+        a: 2,
+        theme: "nonfinite",
+        hint: "Locate where the '-ing' word directly precedes and qualifies a tangible entity noun.",
+        explain: "In option C, 'crying' directly qualifies the structural noun 'child', operating as a present participle adjective."
+    },
+    {
+        q: "A safety warning reads: \"The broken glass cut my foot.\" How is 'broken' functioning in this sentence?",
+        opt: [
+            "As a Finite verb showing a past action",
+            "As a Non-Finite verb (Participle) describing the noun 'glass'",
+            "As a Gerund acting as the subject",
+            "As an Infinitive showing purpose"
+        ],
+        a: 1,
+        theme: "nonfinite",
+        hint: "The token 'broken' describes the state of the material asset. It does not carry the active structural tense.",
+        explain: "'Broken' is functioning as a past participle modifier describing the physical state of the noun object 'glass'."
+    },
+    {
+        img: "picture1.png",
+        inst: "Study the Hobby Club Poster carefully before answering the next question.",
+        q: "Identify the Non-Finite verb type used in each sentence in order:\n1. Swimming is fun.\n2. I have a running track.\n3. I want to sing.",
+        opt: [
+            "Gerund / Participle / Infinitive",
+            "Participle / Gerund / Infinitive",
+            "Gerund / Infinitive / Gerund",
+            "Infinitive / Gerund / Participle"
+        ],
+        a: 0,
+        theme: "mixed",
+        hint: "Map the items: noun activity replacement first, noun qualifier second, root base with a 'to' token third.",
+        explain: "1. 'Swimming' is a noun activity (Gerund). 2. 'Running' qualifies track (Participle). 3. 'To sing' shows structural root (Infinitive)."
+    },
+    {
+        img: "picture2.png",
+        inst: "Read the student's diary entry carefully before answering the next question.",
+        q: "Which pair of Non-Finite forms correctly fills the blanks?\n\"While ____ the road, I managed ____ the runaway pet.\"",
+        opt: [
+            "crossed / stopping",
+            "crossing / to stop",
+            "crosses / stopped",
+            "cross / stop"
+        ],
+        a: 1,
+        theme: "mixed",
+        hint: "The first slot requires an ongoing contextual marker, while the second requires a root structural action destination.",
+        explain: "Continuous frame requires the participle participle phrase 'crossing', and structural transitive goals take the infinitive 'to stop'."
+    },
+    {
+        q: "In the sentence \"She loves singing,\" the sentence is changed to past tense. Which word changes and which stays the same?",
+        opt: [
+            "She loved sung. (both change)",
+            "She loved singing. ('loves' changes to 'loved'; 'singing' stays the same)",
+            "She loves sang. ('singing' changes)",
+            "She loving singed. (incorrect grammar)"
+        ],
+        a: 1,
+        theme: "finite",
+        hint: "The primary finite structural carrier changes to reflect the timeline, while the object complement remains unchanged.",
+        explain: "The finite anchor 'loves' becomes 'loved' to display the past tense, while the non-finite gerund object 'singing' remains constant."
+    },
+    {
+        q: "Sort these underlined verbs into two groups — Finite and Non-Finite:\nP: \"She runs five kilometres every day.\"\nQ: \"To read is a wonderful habit.\"\nR: \"They completed the project on time.\"\nS: \"He enjoys swimming in the pool.\"",
+        opt: [
+            "Finite: P, Q — Non-Finite: R, S",
+            "Finite: Q, S — Non-Finite: P, R",
+            "Finite: P, R — Non-Finite: Q, S",
+            "Finite: R, S — Non-Finite: P, Q"
+        ],
+        a: 2,
+        theme: "mixed",
+        hint: "Group words that shift forms when changing timeline frames (P, R) separately from words that do not change (Q, S).",
+        explain: "P ('runs') and R ('completed') are finite as they carry tense parameters. Q ('To read') and S ('swimming') are non-finite complements."
+    },
+    {
+        q: "Classify each Non-Finite verb as Infinitive, Gerund, or Participle:\n1. \"Cooking is her favourite hobby.\"\n2. \"The sleeping baby did not wake up.\"\n3. \"He decided to leave early.\"\n4. \"To err is human.\"",
+        opt: [
+            "1=Participle, 2=Gerund, 3=Infinitive, 4=Gerund",
+            "1=Gerund, 2=Participle, 3=Infinitive, 4=Infinitive",
+            "1=Infinitive, 2=Gerund, 3=Participle, 4=Gerund",
+            "1=Gerund, 2=Infinitive, 3=Participle, 4=Participle"
+        ],
+        a: 1,
+        theme: "mixed",
+        hint: "Isolate noun activities (1), descriptive adjectives (2), and markers that follow the word 'to' (3, 4).",
+        explain: "1 is a Gerund (noun role); 2 is a Participle (adjective role); 3 and 4 are Infinitives ('to' + root base form)."
+    },
+    {
+        q: "Three of the following sentences contain a Gerund. One does NOT. Which is the odd one out?",
+        opt: [
+            "Swimming is excellent exercise.",
+            "She enjoys painting in the evenings.",
+            "The laughing girl won the prize.",
+            "Reading helps us learn new things."
+        ],
+        a: 2,
+        theme: "nonfinite",
+        hint: "Locate the single sentence where the '-ing' word describes a person instead of acting as a standalone noun activity.",
+        explain: "'Laughing' describes the noun 'girl' (Participle adjective). All other selections use the '-ing' form as a noun concept (Gerund)."
+    },
+    {
+        q: "A student wrote in his diary: \"I want to visiting the museum tomorrow.\" What is the error and how should it be corrected?",
+        opt: [
+            "Use 'wants' because it is a future plan",
+            "After 'to', use the base verb 'visit', not 'visiting'.",
+            "'Museum' must always be written in capital letters",
+            "'Visiting' should be replaced with 'visited'"
+        ],
+        a: 1,
+        theme: "nonfinite",
+        hint: "The infinitive particle 'to' must always pair with a clean root base form word.",
+        explain: "Standard bare infinitives require the pure base form following 'to'. Thus, 'to visiting' must be corrected to 'to visit'."
+    },
+    {
+        q: "A student changes \"Swimming is good exercise\" to \"To swim is good exercise.\" What is the effect of this change?",
+        opt: [
+            "The sentence becomes grammatically incorrect",
+            "The meaning changes completely — swimming is no longer good exercise",
+            "The Non-Finite verb type changes from a Gerund to an Infinitive, but the core meaning stays the same",
+            "'To swim' becomes a Finite verb in the new sentence"
+        ],
+        a: 2,
+        theme: "nonfinite",
+        hint: "Determine if shifting the subject from a verbal noun to an infinitive phrase alters the statement's meaning.",
+        explain: "Gerunds and Infinitives can both function as sentence subjects. Swapping them shifts the structural form while keeping the underlying meaning intact."
+    },
+    {
+        q: "Assertion: Non-Finite verbs are 'time-independent.' \nReason: They do not change their form to show whether an action happened in the past, present, or future.",
+        opt: [
+            "Both are correct; the reason explains the assertion.",
+            "Both are correct; but the reason does not explain the assertion.",
+            "The assertion is correct; the reason is wrong.",
+            "Both are wrong."
+        ],
+        a: 0,
+        theme: "finite",
+        hint: "Evaluate if non-finite forms remain locked when shifting a sentence's timeframe.",
+        explain: "Because non-finite verbs are decoupled from tense structures, they are time-independent. The reason accurately explains this core concept."
+    }
+];
+
+let currentIdx = 0, currentScore = 0, attemptCounter = 1, timerInterval = null, timeLeft = 45, inputLocked = false;
+
+// INITIALIZE AMBIENT BACKGROUND PARTICLES
+function createGlowBubbles() {
+    for (let i = 0; i < 12; i++) {
+        let bubble = document.createElement('div');
+        bubble.className = 'glow-bubble';
+        bubble.style.left = Math.random() * 100 + 'vw';
+        bubble.style.animationDelay = Math.random() * 8 + 's';
+        bubble.style.transform = `scale(${Math.random() * 0.8 + 0.4})`;
+        document.body.appendChild(bubble);
+    }
+}
+window.addEventListener('DOMContentLoaded', createGlowBubbles);
+
+// INITIAL SPLASH SCREEN MANAGER
+let splashTimer = setTimeout(() => { clearAndShowIntro(); }, 3500);
+function skipSplash() { clearTimeout(splashTimer); clearAndShowIntro(); }
+
+function clearAndShowIntro() {
+    document.getElementById("splash").classList.remove("active");
+    document.getElementById("intro").classList.add("active");
+    updateThemeStyles(null);
+}
+
+function updateThemeStyles(theme) {
+    const body = document.body;
+    if (!theme) { body.style.background = "var(--bg-default)"; return; }
+    switch(theme.toLowerCase()) {
+        case 'finite': body.style.background = "var(--bg-finite)"; break;
+        case 'nonfinite': body.style.background = "var(--bg-nonfinite)"; break;
+        case 'mixed': body.style.background = "var(--bg-mixed)"; break;
+        default: body.style.background = "var(--bg-default)";
+    }
+}
+
+function startQuizSession() {
+    document.getElementById("intro").classList.remove("active");
+    document.getElementById("quiz").classList.add("active");
+    loadQuestionCard();
+}
+
+function loadQuestionCard() {
+    if (currentIdx >= questions.length) { showFinalScoreboard(); return; }
+    
+    inputLocked = false;
+    timeLeft = 45;
+    attemptCounter = 1;
+    
+    let q = questions[currentIdx];
+    updateThemeStyles(q.theme);
+    
+    // UI Label Elements Rendering
+    document.getElementById("ui-qnum").innerText = `Question ${currentIdx + 1}/${questions.length}`;
+    document.getElementById("ui-score").innerText = "⭐ " + currentScore;
+    document.getElementById("ui-bar").style.width = (currentIdx / questions.length) * 100 + "%";
+    document.getElementById("question-text").innerText = q.q;
+    document.getElementById("feedback-panel").innerText = "";
+    
+    // Conditional Context Display Handling
+    let imgContainer = document.getElementById("img");
+    let instContainer = document.getElementById("instBox");
+    
+    if (q.img) {
+        imgContainer.src = "assets/" + q.img;
+        imgContainer.style.display = "block";
+        instContainer.innerHTML = `<div class="inst-box">📋 ${q.inst}</div>`;
+    } else {
+        imgContainer.style.display = "none";
+        instContainer.innerHTML = "";
+    }
+    
+    // Choice Matrix Population
+    let optsBox = document.getElementById("opts-container");
+    optsBox.innerHTML = "";
+    
+    q.opt.forEach((optionText, idx) => {
+        let card = document.createElement("button");
+        card.className = "opt-card";
+        card.innerText = optionText;
+        card.onclick = () => processSelectedAnswer(idx, card);
+        optsBox.appendChild(card);
+    });
+    
+    startCountdown();
+}
+
+function startCountdown() {
+    clearInterval(timerInterval);
+    document.getElementById("ui-timer").innerText = timeLeft;
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("ui-timer").innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            handleTimeoutEvent();
+        }
+    }, 1000);
+}
+
+function processSelectedAnswer(selectedIdx, clickedElement) {
+    if (inputLocked) return;
+    
+    let q = questions[currentIdx];
+    let feedbackPanel = document.getElementById("feedback-panel");
+    let allOptions = document.querySelectorAll(".opt-card");
+    
+    // SUCCESS PATH
+    if (selectedIdx === q.a) {
+        inputLocked = true;
+        clearInterval(timerInterval);
+        allOptions.forEach(el => el.classList.add("disabled-state"));
+        clickedElement.classList.add("correct");
+        
+        feedbackPanel.innerHTML = "✨ <b>Correct! Excellent analytical choice.</b>";
+        feedbackPanel.style.color = "var(--correct)";
+        currentScore++;
+        document.getElementById("ui-score").innerText = "⭐ " + currentScore;
+        setTimeout(moveToNextQuestion, 1500);
+        return;
+    }
+    
+    // FAULTY PATH SYSTEM
+    if (attemptCounter === 1) {
+        // First Incorrect Attempt: Dynamic Safety Fallback Trigger
+        attemptCounter++;
+        clickedElement.classList.add("wrong");
+        feedbackPanel.innerHTML = `⚠️ <b>Not quite right. Try again!</b><br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-muted);"><b>Hint:</b> ${q.hint}</span>`;
+        feedbackPanel.style.color = "var(--hint-color)";
+        clickedElement.classList.add("disabled-state"); // Lock out this specific incorrect choice
+    } else {
+        // Second Incorrect Attempt: Show Correct Answer and Detailed Explanation
+        inputLocked = true;
+        clearInterval(timerInterval);
+        allOptions.forEach(el => el.classList.add("disabled-state"));
+        clickedElement.classList.add("wrong");
+        
+        if (allOptions[q.a]) allOptions[q.a].classList.add("correct");
+        
+        feedbackPanel.innerHTML = `✕ <b>Incorrect.</b><br><span style="font-weight:normal; font-size:0.92rem; color:var(--text-main); display:block; margin-top:6px;"><b>Concept Rule:</b> ${q.explain}</span>`;
+        feedbackPanel.style.color = "var(--wrong)";
+        setTimeout(moveToNextQuestion, 4500);
+    }
+}
+
+function handleTimeoutEvent() {
+    if (inputLocked) return;
+    inputLocked = true;
+    
+    let q = questions[currentIdx];
+    let feedbackPanel = document.getElementById("feedback-panel");
+    let allOptions = document.querySelectorAll(".opt-card");
+    
+    allOptions.forEach(el => el.classList.add("disabled-state"));
+    if (allOptions[q.a]) allOptions[q.a].classList.add("correct");
+    
+    feedbackPanel.innerHTML = `⏱️ <b>Time Expired!</b><br><span style="font-weight:normal; font-size:0.92rem; color:var(--text-main); display:block; margin-top:6px;"><b>Core Insight:</b> ${q.explain}</span>`;
+    feedbackPanel.style.color = "var(--wrong)";
+    setTimeout(moveToNextQuestion, 4500);
+}
+
+function moveToNextQuestion() {
+    currentIdx++;
+    loadQuestionCard();
+}
+
+function showFinalScoreboard() {
+    document.getElementById("quiz").classList.remove("active");
+    updateThemeStyles(null);
+    document.getElementById("result").classList.add("active");
+    
+    let percentage = Math.round((currentScore / questions.length) * 100);
+    document.getElementById("final-score").innerText = `${currentScore}/${questions.length}`;
+    
+    let messageWidget = document.getElementById("performance-msg");
+    if (percentage >= 80) {
+        messageWidget.innerText = "🏆 Brilliant Achievement! You have conceptual mastery over Finite & Non-Finite verbs.";
+    } else if (percentage >= 50) {
+        messageWidget.innerText = "👍 Stable Work! Spend a bit more time with verbal nouns and adjectives to perfect your score.";
+    } else {
+        messageWidget.innerText = "💡 Keep practicing! Review the detailed rule breakdowns to build stronger parsing confidence.";
+    }
+}
+</script>
+
+</body>
+</html>
