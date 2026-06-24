@@ -1,1 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CBQ - Comparison of Adjectives Mastery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+:root {
+    --primary: #3f51b5;
+    --primary-hover: #303f9f;
+    --surface: #ffffff;
+    --text-main: #2c3e50;
+    --text-muted: #7f8c8d;
+    --correct: #2ecc71;
+    --correct-bg: #e8f8f0;
+    --wrong: #e74c3c;
+    --wrong-bg: #fdedec;
+    
+    /* Adaptive Mood-Themes based on Degree of Comparison */
+    --bg-positive: linear-gradient(135deg, #e3f2fd 0%, #edf4fe 100%);
+    --bg-comparative: linear-gradient(135deg, #fce4ec 0%, #fff0f5 100%);
+    --bg-superlative: linear-gradient(135deg, #e8f5e9 0%, #f1faf2 100%);
+    --bg-default: linear-gradient(120deg, #e3f2fd, #fce4ec, #e8f5e9);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg-default);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    transition: background 0.5s ease;
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 700px;
+    margin: 20px;
+    padding: 30px 24px;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+    text-align: center;
+    animation: slideUp 0.4s ease-out;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#intro.screen.active {
+    background: transparent;
+    box-shadow: none;
+}
+
+.logo {
+    width: 200px;
+    max-width: 100%;
+    height: auto;
+    cursor: pointer;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+h2 { font-size: 1.6rem; color: #1a252f; margin-bottom: 10px; font-weight: 800; }
+h3 { font-size: 1.25rem; color: #2c3e50; margin-bottom: 22px; font-weight: 700; text-align: left; line-height: 1.5; width: 100%; }
+p { color: var(--text-muted); line-height: 1.6; font-size: 1.05rem; margin-bottom: 20px; }
+
+.btn {
+    display: inline-block;
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 12px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
+}
+
+.btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(63, 81, 181, 0.4);
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.timer {
+    font-weight: 800;
+    color: #e74c3c;
+    background: #fdf2f2;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #fde2e2;
+}
+
+.progress {
+    height: 8px;
+    background: #eaeded;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #4caf50;
+    width: 0%;
+    transition: width 0.4s ease;
+}
+
+#options {
+    width: 100%;
+}
+
+.option {
+    display: block;
+    width: 100%;
+    background: #f8fafc;
+    margin: 12px 0;
+    padding: 16px 20px;
+    border: 2px solid #e2ebf0;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #34495e;
+    transition: all 0.2s ease;
+}
+
+.option:hover {
+    background: #f0f4f8;
+    border-color: var(--primary);
+    transform: translateX(4px);
+}
+
+.option.correct {
+    background: var(--correct-bg) !important;
+    border-color: var(--correct) !important;
+    color: #196f3d;
+    font-weight: 600;
+}
+
+.option.wrong {
+    background: var(--wrong-bg) !important;
+    border-color: var(--wrong) !important;
+    color: #943126;
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-4px); }
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+#feedback-box {
+    margin-top: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    min-height: 24px;
+    text-align: left;
+    line-height: 1.5;
+    width: 100%;
+}
+
+#finalscore {
+    font-size: 3.5rem;
+    color: var(--primary);
+    margin: 15px 0;
+    font-weight: 800;
+}
+
+img.qimg {
+    width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2ebf0;
+    background: #fafbfc;
+    padding: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO SPLASH -->
+<div id="intro" class="screen active">
+    <img src="assets/innovine-logo.png" class="logo" onclick="skipSplash()" title="Click to skip animation">
+</div>
+
+<!-- START EXPLANATION SCREEN -->
+<div id="start" class="screen">
+    <h2>Comparison of Adjectives</h2>
+    <p style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; font-weight: bold; color: var(--primary);">Grade 6 | CBSE CBQ</p>
+    <p>Test your conceptual understanding of Positive, Comparative, and Superlative degrees of adjectives with realistic structural items.</p>
+    <p style="font-size: 0.95rem; background: #f4f6f7; padding: 8px; border-radius: 8px;">📋 Total Questions: 13 Questions | ⏱ Time Limit: 45s per item</p>
+    <button class="btn" onclick="beginQuizSession()">Start Challenge</button>
+</div>
+
+<!-- INTERMEDIATE CASE STUDY SCREENS -->
+<div id="panel-intermission" class="screen">
+    <h2 id="intermission-title">Reference Dashboard</h2>
+    <img id="intermission-img" class="qimg" alt="Intermission Context Resource">
+    <p id="intermission-text" style="font-weight: 600; color: #1a252f;"></p>
+    <button class="btn" onclick="dismissIntermission()">Continue to Question</button>
+</div>
+
+<!-- MAIN WORK AREA -->
+<div id="quiz" class="screen">
+    <div class="topbar">
+        <div>Score: <span id="score">0</span></div>
+        <div class="timer">⏱ <span id="time">45</span>s</div>
+        <div>Question <span id="qnum">1</span>/13</div>
+    </div>
+
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+
+    <img id="qimg" class="qimg" style="display:none;" alt="Question Asset">
+
+    <h3 id="question"></h3>
+    <div id="options"></div>
+    <div id="feedback-box"></div>
+</div>
+
+<!-- COMPLETION SUMMARY OVERVIEW -->
+<div id="result" class="screen">
+    <h2>Assessment Summary</h2>
+    <div id="finalscore">0/13</div>
+    <p id="message" style="font-weight: 700; font-size: 1.15rem; margin-bottom: 25px;"></p>
+    <button class="btn" onclick="location.reload()">Play Again</button>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<script>
+const questions = [
+    {
+        q: "A YouTuber reviews two phones:\n\"The new smartphone is thinner than the previous model.\"\n\nWhat is the reviewer doing by using the term 'thinner'?",
+        options: [
+            "Stating a simple baseline quality of one isolated phone",
+            "Comparing two specific models directly to point out a measurable difference",
+            "Claiming that this production phone is absolutely the thinnest in the world",
+            "Expressing an unsupportable negative qualitative opinion about the device"
+        ],
+        answer: 1,
+        degree: "comparative",
+        hint: "Determine if the speaker is evaluating one standalone item or an aligned pair.",
+        explanation: "'Thinner' represents a comparative adjective used explicitly to indicate variations between two entities."
+    },
+    {
+        q: "A commentator says:\n\"Virat is a great batsman, but today's innings was his best.\"\n\nHow does the functional meaning change between the words 'great' and 'best'?",
+        options: [
+            "'Great' evaluates him against other players; 'best' describes his performance alone",
+            "'Great' states a general positive trait; 'best' compares this item uniquely against all his other historical innings",
+            "Both terms carry an identical grammatical weight and rank",
+            "'Great' is a syntax structural error; the script should read 'more great'"
+        ],
+        answer: 1,
+        degree: "superlative",
+        hint: "Contrast a baseline descriptor against an absolute apex value statement.",
+        explanation: "'Great' is a positive degree expressing base trait, while 'best' is an irregular superlative highlighting the number-one rank across a collection."
+    },
+    {
+        q: "You want to tell a friend that Mumbai is larger than every other city in the state. Which sentence expresses this most cleanly and accurately?",
+        options: [
+            "Mumbai is a big city.",
+            "Mumbai is bigger than Pune.",
+            "Mumbai is the biggest city in the state.",
+            "Pune is not as big as Mumbai."
+        ],
+        answer: 2,
+        degree: "superlative",
+        hint: "You need a structure that claims dominance over all global options within that collection.",
+        explanation: "The superlative form 'the biggest' states that an object exceeds all components within its shared context group."
+    },
+    {
+        q: "A textbook states:\n\"Iron is heavier than wood.\"\n\nIf you want to frame an identical semantic statement starting with the noun 'Wood', which sentence is correct?",
+        options: [
+            "Wood is not as heavy as iron.",
+            "Iron is the heaviest.",
+            "Wood is heavy.",
+            "Iron is more heavy than wood."
+        ],
+        answer: 0,
+        degree: "comparative",
+        hint: "Look closely at inverse relational transformation modifiers like 'not as... as'.",
+        explanation: "The transformation 'not as heavy as' elegantly switches structural direction without flipping the underlying reality."
+    },
+    {
+        q: "In a story, a villain is described as 'bad', his boss is 'worse', and the monster is the 'worst'. Why are these classified as irregular comparisons?",
+        options: [
+            "Because they conform to conventional structural -er/-est suffix rules perfectly",
+            "Because the foundational spelling word changes completely rather than just attaching a standard suffix",
+            "Because they are descriptive expressions uniquely reserved for scary or negative narrative concepts",
+            "Because they lacks a true authentic structural positive baseline degree"
+        ],
+        answer: 1,
+        degree: "comparative",
+        hint: "Think about why you don't say phrases like 'badder' or 'baddest'.",
+        explanation: "Irregular comparisons (bad → worse → worst) abandon incremental suffix rules entirely, requiring unique core spelling changes."
+    },
+    {
+        q: "Analyze the student worksheet illustration panel and complete the missing slots:\n1. \"Mount Everest is the ___ peak in the world.\"\n2. \"This climb is ___ than most people imagine.\"\n3. \"The view from the top is ___.\"",
+        options: [
+            "high / difficult / wonderful",
+            "highest / more difficult / wonderful",
+            "highest / difficulter / most wonderful",
+            "higher / most difficult / more wonderful"
+        ],
+        answer: 1,
+        degree: "positive",
+        hint: "Apply rules sequentially: global supreme rank, dual element comparison, baseline description.",
+        explanation: "Slot 1 demands a superlative ('highest'), slot 2 a standard multi-syllable comparative ('more difficult'), and slot 3 a base description ('wonderful').",
+        intermission: {
+            img: "assets/picture1.png",
+            text: "🖼️ Study the textbook fill-in-the-blank worksheet carefully before looking at the core question choices."
+        }
+    },
+    {
+        q: "Review the target grammar chart on the wall:\nSentence 1: \"She is the most tallest girl.\"\nSentence 2: \"He runs more faster than me.\"\nSentence 3: \"This is the best cake.\"\nSentence 4: \"That box is heavier than this one.\"\n\nWhich TWO sentences are completely correct?",
+        options: [
+            "Sentences 1 and 2",
+            "Sentences 1 and 3",
+            "Sentences 3 and 4",
+            "Sentences 2 and 4"
+        ],
+        answer: 2,
+        degree: "comparative",
+        hint: "Scan specifically for instances of redundant double-comparatives or double-superlatives.",
+        explanation: "Sentences 1 and 2 suffer from structural double-modifications ('most tallest', 'more faster'). Sentences 3 and 4 execute clean modifier parameters.",
+        intermission: {
+            img: "assets/picture2.png",
+            text: "🖼️ Study the classroom error-correction wall chart carefully before answering the next question."
+        }
+    },
+    {
+        q: "You are comparing two biological brothers to a new neighbour. Which option is grammatically flawless when dealing with exactly two people?",
+        options: [
+            "Between the two brothers, Sam is the smartest.",
+            "Between the two brothers, Sam is the smarter.",
+            "Sam is the most smart brother.",
+            "Sam is more smarter than his brother."
+        ],
+        answer: 1,
+        degree: "comparative",
+        hint: "When checking an isolated set of exactly two elements, select the comparative form rather than the superlative.",
+        explanation: "Use the comparative degree ('smarter') when evaluating exactly two entities; reserving the superlative ('smartest') for three or more elements."
+    },
+    {
+        q: "Sort these statements into structural Comparative and Superlative columns:\nP: \"This is the longest river in Asia.\"\nQ: \"She is taller than her sister.\"\nR: \"He is the most hardworking student in class.\"\nS: \"This bag is lighter than that one.\"",
+        options: [
+            "Comparative: P, R — Superlative: Q, S",
+            "Comparative: P, S — Superlative: Q, R",
+            "Comparative: Q, S — Superlative: P, R",
+            "Comparative: Q, R — Superlative: P, S"
+        ],
+        answer: 2,
+        degree: "superlative",
+        hint: "Group forms that use -er/more separately from elements displaying -est/most structural setups.",
+        explanation: "Statements Q and S employ comparative tools ('taller', 'lighter'). Statements P and R utilize superlative indicators ('longest', 'most hardworking')."
+    },
+    {
+        q: "Three of the following expressions are structurally valid. One contains an active grammatical error. Pinpoint the odd one out:",
+        options: [
+            "My dog is lazier than yours.",
+            "This is the thinnest slide in the set.",
+            "He is the most tallest boy in class.",
+            "Gold is the most precious metal."
+        ],
+        answer: 2,
+        degree: "superlative",
+        hint: "Look for redundant markers overlapping on a single word asset.",
+        explanation: "'Most tallest' is an invalid double superlative error because 'tallest' already achieves the supreme absolute rank singlehandedly."
+    },
+    {
+        q: "Riya texts you:\n\"My exam went gooder than yours, but Aarav's result was the bestest.\"\n\nHow should you rewrite this message to comply with professional grammar rules?",
+        options: [
+            "\"My exam went better than yours, but Aarav's result was the best.\"",
+            "\"My exam went more good than yours, but Aarav's result was the most best.\"",
+            "\"My exam went best than yours, but Aarav's result was the better.\"",
+            "\"My exam went goodest than yours, but Aarav's result was the bestest.\""
+        ],
+        answer: 0,
+        degree: "comparative",
+        hint: "Fix irregular modifications of the baseline adjective adjective asset 'good'.",
+        explanation: "The word 'good' undergoes an irregular shift: better (comparative) and best (superlative). Avoid non-standard variants like 'gooder' or 'bestest'."
+    },
+    {
+        q: "A student writes:\n\"No other metal is as precious as gold.\"\n\nWhat is the direct stylistic consequence of restructuring this sentence into:\n\"Gold is the most precious metal\"?",
+        options: [
+            "The underlying context meaning shifts entirely",
+            "The overall syntax construction becomes invalid",
+            "The foundational meaning remains unchanged, but the delivery becomes more direct and authoritative",
+            "The declaration is converted from an objective fact into a speculative personal opinion"
+        ],
+        answer: 2,
+        degree: "superlative",
+        hint: "Check if changing degrees alters the underlying facts or merely shifts rhetorical emphasis.",
+        explanation: "Transitioning from a negative positive layout to a proactive superlative keeps structural meaning intact while sharpening clarity."
+    },
+    {
+        q: "Assertion: We must specify \"the fastest\" rather than just dropping into \"fastest.\"\nReason: The superlative degree identifies a unique top element in a group, so it requires the definite article 'the.'",
+        options: [
+            "Both components are correct; the reason explains the assertion perfectly.",
+            "Both components are correct; but the reason fails to logically validate the assertion.",
+            "The assertion statement is correct; the reason parameter is completely wrong.",
+            "Both foundational assertions are completely wrong."
+        ],
+        answer: 0,
+        degree: "superlative",
+        hint: "Determine if identifying a single top element warrants a specific definite marker.",
+        explanation: "Because a superlative picks out a single absolute champion within a set, it naturally requires the definite article 'the'."
+    }
+];
+
+let current = 0, score = 0, timer = null, timeLeft = 45, locked = false;
+let intermissionCleared = false;
+
+// SPLASH SCREEN LOGIC
+let splashTimeout = setTimeout(() => {
+    transitionToStartScreen();
+}, 4000);
+
+function skipSplash() {
+    clearTimeout(splashTimeout);
+    transitionToStartScreen();
+}
+
+function transitionToStartScreen() {
+    document.getElementById("intro").classList.remove("active");
+    document.getElementById("start").classList.add("active");
+    updateAdaptiveTheme(null);
+}
+
+function updateAdaptiveTheme(degree) {
+    const body = document.body;
+    if (!degree) {
+        body.style.background = "var(--bg-default)";
+        return;
+    }
+    switch(degree.toLowerCase()) {
+        case 'positive': body.style.background = "var(--bg-positive)"; break;
+        case 'comparative': body.style.background = "var(--bg-comparative)"; break;
+        case 'superlative': body.style.background = "var(--bg-superlative)"; break;
+        default: body.style.background = "var(--bg-default)";
+    }
+}
+
+function beginQuizSession(){
+    document.getElementById("start").classList.remove("active");
+    evaluateQuizTrackTimeline();
+}
+
+function evaluateQuizTrackTimeline() {
+    if (current >= questions.length) {
+        displayFinalScoreboard();
+        return;
+    }
+    
+    let q = questions[current];
+    updateAdaptiveTheme(q.degree);
+
+    if (q.intermission && !intermissionCleared) {
+        renderIntermissionView(q.intermission);
+    } else {
+        intermissionCleared = false; // Reset toggle
+        hideAllViewContainers();
+        document.getElementById("quiz").classList.add("active");
+        renderActiveQuestionCard();
+    }
+}
+
+function hideAllViewContainers() {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+}
+
+function renderIntermissionView(config) {
+    hideAllViewContainers();
+    document.getElementById("panel-intermission").classList.add("active");
+    document.getElementById("intermission-img").src = config.img;
+    document.getElementById("intermission-text").innerText = config.text;
+}
+
+function dismissIntermission() {
+    intermissionCleared = true;
+    evaluateQuizTrackTimeline();
+}
+
+function renderActiveQuestionCard(){
+    locked = false;
+    timeLeft = 45;
+    let q = questions[current];
+    
+    document.getElementById("qnum").innerText = current + 1;
+    document.getElementById("bar").style.width = (current / questions.length) * 100 + "%";
+    document.getElementById("question").innerText = q.q;
+    document.getElementById("feedback-box").innerText = "";
+    
+    // Inject dynamic contextual resource picture if present directly in the item metadata
+    let standaloneImg = document.getElementById("qimg");
+    if (q.intermission) {
+        standaloneImg.src = q.intermission.img;
+        standaloneImg.style.display = "block";
+    } else {
+        standaloneImg.style.display = "none";
+    }
+    
+    let optionsContainer = document.getElementById("options");
+    optionsContainer.innerHTML = "";
+    
+    q.options.forEach((opt, idx) => {
+        let optBtn = document.createElement("button");
+        optBtn.className = "option";
+        optBtn.innerText = opt;
+        optBtn.onclick = () => checkSelectionFeedback(idx, optBtn);
+        optionsContainer.appendChild(optBtn);
+    });
+    
+    startTimer();
+}
+
+function startTimer(){
+    clearInterval(timer);
+    document.getElementById("time").innerText = timeLeft;
+    
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("time").innerText = timeLeft;
+        if(timeLeft <= 0){
+            clearInterval(timer);
+            checkSelectionFeedback(-1, null);
+        }
+    }, 1000);
+}
+
+function checkSelectionFeedback(chosenIndex, targetBtn) {
+    if (locked) return;
+    locked = true;
+    clearInterval(timer);
+    
+    let q = questions[current];
+    let feedbackBox = document.getElementById("feedback-box");
+    let options = document.querySelectorAll(".option");
+    
+    options.forEach(el => el.classList.add("disabled"));
+    
+    if (chosenIndex === q.answer) {
+        targetBtn.classList.add("correct");
+        playSound("correctSound");
+        feedbackBox.innerText = "✨ Outstanding! Correct Response.";
+        feedbackBox.style.color = "var(--correct)";
+        score++;
+        document.getElementById("score").innerText = score;
+        setTimeout(advanceToNextQuizStep, 1500);
+    } else {
+        playSound("wrongSound");
+        if (targetBtn) targetBtn.classList.add("wrong");
+        
+        // Highlight the correct answer item explicitly to support continuous learning
+        if (options[q.answer]) {
+            options[q.answer].classList.add("correct");
+        }
+        
+        feedbackBox.innerHTML = chosenIndex === -1 
+            ? `⏱️ <b>Time Expired!</b><br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-main);"><b>Concept Rule:</b> ${q.explanation}</span>`
+            : `✕ <b>Incorrect Choice.</b><br><span style="font-weight:normal; font-size:0.9rem; color:var(--text-main);"><b>Concept Rule:</b> ${q.explanation}</span>`;
+        feedbackBox.style.color = "var(--wrong)";
+        
+        setTimeout(advanceToNextQuizStep, 4000);
+    }
+}
+
+function advanceToNextQuizStep() {
+    current++;
+    evaluateQuizTrackTimeline();
+}
+
+function displayFinalScoreboard(){
+    hideAllViewContainers();
+    updateAdaptiveTheme(null);
+    document.getElementById("result").classList.add("active");
+    
+    let percent = Math.round((score / questions.length) * 100);
+    document.getElementById("finalscore").innerText = `${score}/${questions.length}`;
+    
+    let msgEl = document.getElementById("message");
+    if(percent >= 75) msgEl.innerText = "🎉 Brilliant Work! You understand adjective comparisons perfectly.";
+    else if(percent >= 40) msgEl.innerText = "📚 Good effort! Review structural variants to build confidence.";
+    else msgEl.innerText = "💡 Practice makes perfect! Review these structural patterns again.";
+}
+
+function playSound(id) {
+    try {
+        let sound = document.getElementById(id);
+        sound.currentTime = 0;
+        sound.play();
+    } catch(e) { console.log("Audio playback not supported yet: " + e); }
+}
+</script>
+</body>
+</html>
