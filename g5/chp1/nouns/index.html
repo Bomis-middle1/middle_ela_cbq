@@ -1,1 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noun Nova Quest</title>
+  <style>
+    :root{
+      --bg1:#0f172a;
+      --bg2:#1e293b;
+      --card:#ffffffee;
+      --text:#10213a;
+      --accent:#6d5efc;
+      --accent2:#2dd4bf;
+      --wrong:#ef4444;
+      --good:#22c55e;
+      --shadow:0 18px 50px rgba(15,23,42,.25)
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      min-height:100vh;
+      color:var(--text);
+      overflow-x:hidden;
+      background:radial-gradient(circle at top,#e0f2fe 0,#c7d2fe 30%,#93c5fd 55%,#1e293b 100%)
+    }
+    body::before,body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-repeat:repeat;
+      opacity:.22;
+      mix-blend-mode:screen
+    }
+    body::before{
+      background-image:radial-gradient(circle at 20px 20px,rgba(255,255,255,.9) 0 2px,transparent 2px 100%);
+      background-size:120px 120px;
+      animation:drift 28s linear infinite
+    }
+    body::after{
+      background-image:linear-gradient(120deg,transparent 0 46%,rgba(255,255,255,.12) 48%,transparent 50%);
+      background-size:220px 220px;
+      animation:stream 18s linear infinite
+    }
+    @keyframes drift{from{transform:translateY(0)}to{transform:translateY(-120px)}}
+    @keyframes stream{from{transform:translateX(-20%)}to{transform:translateX(20%)}}
+    .wrap{max-width:980px;margin:0 auto;padding:18px}
+    .screen{display:none;min-height:100vh;align-items:center;justify-content:center}
+    .screen.active{display:flex}
+    .card{
+      width:100%;
+      background:var(--card);
+      backdrop-filter:blur(14px);
+      border:1px solid rgba(255,255,255,.4);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative
+    }
+    .hero{
+      padding:28px 20px 22px;
+      text-align:center;
+      background:linear-gradient(135deg,rgba(109,94,252,.16),rgba(45,212,191,.16))
+    }
+    .badge{
+      display:inline-block;
+      padding:8px 14px;
+      border-radius:999px;
+      background:#fff;
+      color:#475569;
+      font-weight:700;
+      font-size:13px;
+      box-shadow:0 8px 20px rgba(15,23,42,.08)
+    }
+    h1,h2{margin:.4em 0}
+    h1{font-size:clamp(2rem,5vw,3.6rem)}
+    h2{font-size:clamp(1.4rem,3vw,2.1rem)}
+    p{line-height:1.5}
+    .btn{
+      border:0;
+      border-radius:16px;
+      padding:14px 18px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s transform,.2s opacity,.2s box-shadow;
+      box-shadow:0 10px 22px rgba(15,23,42,.12)
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff}
+    .btn.secondary{background:#fff;color:var(--text)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;padding:18px}
+    .panel{background:#fff;border-radius:22px;padding:18px;box-shadow:0 10px 26px rgba(15,23,42,.08)}
+    .stats{display:flex;gap:12px;flex-wrap:wrap}
+    .stat{flex:1;min-width:120px;background:#f8fafc;padding:12px 14px;border-radius:16px}
+    .label{font-size:12px;color:#64748b}
+    .value{font-weight:800;font-size:20px}
+    .qtop{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}
+    .timer{font-weight:800;color:#0f172a}
+    .bar{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+    .fill{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444);transition:width .4s linear}
+    .question{font-size:1.15rem;font-weight:700;margin:14px 0 14px}
+    .options{display:grid;gap:10px}
+    .opt{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 14px;
+      border:2px solid #e2e8f0;
+      border-radius:18px;
+      background:#fff;
+      cursor:pointer;
+      text-align:left
+    }
+    .opt:hover{border-color:#c7d2fe;background:#f8fbff}
+    .opt.correct{border-color:var(--good);background:#ecfdf5}
+    .opt.wrong{border-color:var(--wrong);background:#fef2f2}
+    .opt .key{
+      width:32px;height:32px;border-radius:10px;
+      display:grid;place-items:center;font-weight:800;background:#eef2ff
+    }
+    .feedback{min-height:34px;font-weight:700;margin-top:10px}
+    .good{color:#15803d}
+    .bad{color:#b91c1c}
+    .footer{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:16px;flex-wrap:wrap}
+    .logoSplash{
+      position:fixed;inset:0;
+      background:linear-gradient(135deg,#0f172a,#312e81);
+      display:grid;place-items:center;z-index:50;transition:.5s opacity
+    }
+    .logoSplash.hide{opacity:0;pointer-events:none}
+    .logoBox{
+      background:#fff;border-radius:30px;padding:22px 26px;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+      text-align:center;max-width:86vw
+    }
+    .logoBox img{max-width:200px;max-height:120px;display:block;margin:0 auto 10px}
+    .logoBox .small{color:#64748b;font-weight:700}
+    .overlay{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
+    .confetti,.cross{
+      position:absolute;
+      font-size:24px;
+      animation:pop 900ms ease-out forwards
+    }
+    .cross{color:var(--wrong)}
+    .confetti{color:#f59e0b}
+    @keyframes pop{
+      0%{transform:translateY(0) scale(.4) rotate(0);opacity:1}
+      100%{transform:translateY(-110px) scale(1.3) rotate(180deg);opacity:0}
+    }
+    .finalBox{display:grid;gap:12px;text-align:center;padding:22px}
+    .finalChallenge{font-size:1.05rem;background:#f8fafc;padding:14px;border-radius:18px}
+    .result{padding:26px;text-align:center}
+    .resultScore{font-size:clamp(2.4rem,7vw,4.5rem);font-weight:900;color:#1d4ed8}
+    @media (max-width:800px){
+      .grid{grid-template-columns:1fr}
+      .card{border-radius:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="logoSplash" id="splash">
+    <div class="logoBox">
+      <img src="assets/logo.png" alt="Innovine logo">
+      <div class="small">Innovine presents</div>
+    </div>
+  </div>
 
+  <div class="overlay" id="overlay"></div>
+
+  <main class="wrap">
+    <section class="screen active" id="introScreen">
+      <div class="card">
+        <div class="hero">
+          <div class="badge">Grade 5 • English • Nouns</div>
+          <h1>Noun Nova Quest</h1>
+          <p>A bright, chapter-based MCQ game with rising challenge, instant feedback, retry help, and a final challenge round.</p>
+          <button class="btn primary" id="startBtn">Start Game</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="quizScreen">
+      <div class="card">
+        <div class="grid">
+          <div class="panel">
+            <div class="qtop">
+              <div><strong id="progressText">Question 1 of 12</strong></div>
+              <div class="timer" id="timerText">45s</div>
+            </div>
+            <div class="bar"><div class="fill" id="timerFill"></div></div>
+            <div class="question" id="questionText"></div>
+            <div class="options" id="options"></div>
+            <div class="feedback" id="feedback"></div>
+            <div class="footer">
+              <div class="stats">
+                <div class="stat">
+                  <div class="label">Score</div>
+                  <div class="value" id="scoreText">0</div>
+                </div>
+                <div class="stat">
+                  <div class="label">Retries left</div>
+                  <div class="value" id="retryText">1</div>
+                </div>
+              </div>
+              <button class="btn secondary" id="nextBtn" disabled>Next</button>
+            </div>
+          </div>
+          <div class="panel">
+            <h2>Game Rules</h2>
+            <p>Choose the best answer. You get one retry after a wrong answer. On the second wrong attempt, the correct answer and a short explanation appear.</p>
+            <p>The timer is 45 seconds per question for Grade 5. The quiz gradually gets harder and ends with a final challenge.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="finalScreen">
+      <div class="card">
+        <div class="finalBox">
+          <div class="badge">Final Challenge</div>
+          <h2>One last thinking round</h2>
+          <div class="finalChallenge" id="finalChallenge"></div>
+          <div class="options" id="finalOptions"></div>
+          <div class="feedback" id="finalFeedback"></div>
+          <button class="btn primary" id="finishBtn" disabled>See Result</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="resultScreen">
+      <div class="card">
+        <div class="result">
+          <div class="badge">Result</div>
+          <div class="resultScore" id="resultScore">0/0</div>
+          <h2 id="resultTitle"></h2>
+          <p id="resultMsg"></p>
+          <button class="btn primary" id="restartBtn">Play Again</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      {q:'Which word is a proper noun?',o:['school','teacher','Delhi','city'],a:2,e:'Delhi is a specific place, so it is a proper noun.'},
+      {q:'Which word best names a group of runners?',o:['athlete','runner','team','player'],a:2,e:'Team is a collective noun for a group.'},
+      {q:'Which abstract noun describes being truthful?',o:['wallet','honesty','student','classroom'],a:1,e:'Honesty is a quality you cannot touch or see.'},
+      {q:'Which word is a material noun?',o:['jewellery','silver','artist','exhibition'],a:1,e:'Silver names the material.'},
+      {q:'Which word is the proper noun?',o:['family','forts','Jaipur','museums'],a:2,e:'Jaipur is a specific place name.'},
+      {q:'What collective noun matches a group of elephants?',o:['herd','flock','bouquet','swarm'],a:0,e:'Herd is used for elephants.'},
+      {q:'Which abstract noun fits a kind class captain?',o:['kindness','captain','classroom','notebook'],a:0,e:'Kindness is a quality.'},
+      {q:'Which option is a material noun?',o:['bottle','bowl','iron','shirt'],a:2,e:'Iron is the material.'},
+      {q:'What type of noun are Mahatma Gandhi and Kalpana Chawla?',o:['Common nouns','Proper nouns','Material nouns','Collective nouns'],a:1,e:'They are names of specific people.'},
+      {q:'Which word belongs to a different category?',o:['wood','honesty','team','Mumbai'],a:3,e:'Mumbai is a proper noun; the others are not.'},
+      {q:'Which word completes: The ______ of dancers entered the stage?',o:['dancer','troupe','stage','applause'],a:1,e:'Troupe is a collective noun for performers.'},
+      {q:'Which word is an abstract noun?',o:['India','courage','gold','class'],a:1,e:'Courage names an idea or quality.'}
+    ];
+
+    const finalChallenge = {
+      q:'Final Challenge: Which sentence uses a proper noun correctly?',
+      o:['we visited the park in delhi.','we visited the park in Delhi.','we visited the park in city.','we visited the park in school.'],
+      a:1,
+      e:'Delhi is a specific place, so it must begin with a capital letter.'
+    };
+
+    const total = questions.length;
+    let index = 0, score = 0, retries = 1, locked = false, selected = null, timeLeft = 45, timer = null, finalDone = false;
+
+    const el = id => document.getElementById(id);
+    const screens = ['introScreen','quizScreen','finalScreen','resultScreen'];
+
+    function show(screen){
+      screens.forEach(s => el(s).classList.toggle('active', s === screen))
+    }
+
+    function sound(src){
+      const a = new Audio(src);
+      a.play().catch(()=>{});
+    }
+
+    function burst(type){
+      const overlay = el('overlay');
+      const n = type === 'good' ? 10 : 1;
+      for(let i=0;i<n;i++){
+        const s = document.createElement('div');
+        s.className = type === 'good' ? 'confetti' : 'cross';
+        s.textContent = type === 'good' ? '✦' : '✕';
+        s.style.left = Math.random()*100 + 'vw';
+        s.style.top = (60 + Math.random()*20) + 'vh';
+        s.style.fontSize = (18 + Math.random()*16) + 'px';
+        s.style.animationDelay = (Math.random()*80) + 'ms';
+        overlay.appendChild(s);
+        setTimeout(()=>s.remove(),1000);
+      }
+    }
+
+    function setTimer(){
+      clearInterval(timer);
+      timeLeft = 45;
+      el('timerText').textContent = timeLeft + 's';
+      el('timerFill').style.width = '0%';
+      timer = setInterval(()=>{
+        timeLeft--;
+        el('timerText').textContent = timeLeft + 's';
+        el('timerFill').style.width = ((45 - timeLeft) / 45 * 100) + '%';
+        if(timeLeft <= 0){
+          clearInterval(timer);
+          handleAnswer(null, true);
+        }
+      },1000);
+    }
+
+    function render(){
+      locked = false;
+      selected = null;
+      el('nextBtn').disabled = true;
+      el('feedback').textContent = '';
+      el('retryText').textContent = retries;
+      const q = questions[index];
+      el('progressText').textContent = `Question ${index + 1} of ${total}`;
+      el('questionText').textContent = q.q;
+      el('scoreText').textContent = score;
+      const box = el('options');
+      box.innerHTML = '';
+      q.o.forEach((t,i)=>{
+        const b = document.createElement('button');
+        b.className = 'opt';
+        b.innerHTML = `<span class="key">${String.fromCharCode(65+i)}</span><span>${t}</span>`;
+        b.onclick = ()=>handlePick(i,b);
+        box.appendChild(b);
+      });
+      setTimer();
+    }
+
+    function handlePick(i,btn){
+      if(locked) return;
+      selected = i;
+      locked = true;
+      clearInterval(timer);
+      handleAnswer(i,false,btn);
+    }
+
+    function handleAnswer(i,timeout,btn){
+      const q = questions[index];
+      const opts = [...el('options').children];
+      const correct = q.a;
+
+      if(i === correct){
+        score++;
+        el('scoreText').textContent = score;
+        el('feedback').innerHTML = `<span class="good">Correct!</span> ${q.e}`;
+        opts[correct].classList.add('correct');
+        burst('good');
+        sound('assets/correct.mp3');
+        el('nextBtn').disabled = false;
+        retries = 1;
+        el('retryText').textContent = retries;
+        return;
+      }
+
+      if(timeout){
+        el('feedback').innerHTML = `<span class="bad">Time's up.</span> ${q.e}`;
+        opts[correct].classList.add('correct');
+        burst('bad');
+        sound('assets/wrong.mp3');
+        el('nextBtn').disabled = false;
+        retries = 1;
+        el('retryText').textContent = retries;
+        return;
+      }
+
+      if(retries > 0){
+        retries--;
+        el('retryText').textContent = retries;
+        el('feedback').innerHTML = `<span class="bad">Try once more.</span>`;
+        if(btn) btn.classList.add('wrong');
+        sound('assets/wrong.mp3');
+        locked = false;
+        setTimeout(()=>{startRetryHighlight()},150);
+        setTimer();
+        return;
+      }
+
+      el('feedback').innerHTML = `<span class="bad">Correct answer: ${q.o[correct]}</span> ${q.e}`;
+      if(btn) btn.classList.add('wrong');
+      opts[correct].classList.add('correct');
+      burst('bad');
+      sound('assets/wrong.mp3');
+      el('nextBtn').disabled = false;
+      retries = 1;
+      el('retryText').textContent = retries;
+    }
+
+    function startRetryHighlight(){
+      const q = questions[index];
+      [...el('options').children].forEach((b,j)=>{
+        b.onclick = ()=>handlePick(j,b);
+      });
+    }
+
+    el('nextBtn').onclick = ()=>{
+      index++;
+      retries = 1;
+      if(index < total){
+        render();
+      } else {
+        show('finalScreen');
+        el('finalChallenge').textContent = finalChallenge.q;
+        renderFinal();
+      }
+    };
+
+    function renderFinal(){
+      finalDone = false;
+      el('finishBtn').disabled = true;
+      el('finalFeedback').textContent = '';
+      const box = el('finalOptions');
+      box.innerHTML = '';
+      finalChallenge.o.forEach((t,i)=>{
+        const b = document.createElement('button');
+        b.className = 'opt';
+        b.innerHTML = `<span class="key">${String.fromCharCode(65+i)}</span><span>${t}</span>`;
+        b.onclick = ()=>{
+          if(finalDone) return;
+          finalDone = true;
+          [...box.children].forEach(x=>x.classList.remove('wrong','correct'));
+          if(i === finalChallenge.a){
+            b.classList.add('correct');
+            el('finalFeedback').innerHTML = `<span class="good">Correct!</span> ${finalChallenge.e}`;
+            score++;
+            burst('good');
+            sound('assets/correct.mp3');
+          } else {
+            b.classList.add('wrong');
+            box.children[finalChallenge.a].classList.add('correct');
+            el('finalFeedback').innerHTML = `<span class="bad">Not quite.</span> ${finalChallenge.e}`;
+            burst('bad');
+            sound('assets/wrong.mp3');
+          }
+          el('finishBtn').disabled = false;
+        };
+        box.appendChild(b);
+      });
+    }
+
+    el('finishBtn').onclick = ()=>{
+      show('resultScreen');
+      el('resultScore').textContent = `${score}/${total + 1}`;
+      const pct = Math.round(score / (total + 1) * 100);
+      el('resultTitle').textContent = pct >= 90 ? 'Excellent work!' : pct >= 70 ? 'Great job!' : 'Keep practicing!';
+      el('resultMsg').textContent = 'Your performance shows strong noun understanding with room to grow.';
+    };
+
+    el('startBtn').onclick = ()=>{
+      show('quizScreen');
+      index = 0;
+      score = 0;
+      retries = 1;
+      render();
+    };
+
+    el('restartBtn').onclick = ()=>location.reload();
+
+    setTimeout(()=>el('splash').classList.add('hide'),5000);
+  </script>
+</body>
+</html>
