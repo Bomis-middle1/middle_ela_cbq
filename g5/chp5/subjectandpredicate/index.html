@@ -1,1 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject and Predicate: Royal Railway Express</title>
+    <style>
+        :root {
+            --royal-sapphire: #0d2040;
+            --luxury-blue: #1e3a67;
+            --brushed-gold: #e5ba53;
+            --emerald-green: #0fa475;
+            --crimson-velvet: #d62246;
+            --cream-white: #fcfbfa;
+            --text-dark: #111e30;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', 'Segoe UI', serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #071324 0%, #152946 50%, #0b1a30 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            padding: 15px;
+            position: relative;
+        }
+
+        /* Ambient floating premium steam/sparkle layer */
+        .railway-env {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .steam-puff {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            filter: blur(10px);
+            animation: driftUp 10s linear infinite;
+        }
+
+        @keyframes driftUp {
+            0% { transform: translateY(110vh) translateX(0) scale(1); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) translateX(50px) scale(2.5); opacity: 0; }
+        }
+
+        /* Branding Overlay */
+        #brand-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--royal-sapphire);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        #brand-overlay img {
+            max-width: 250px;
+            max-height: 150px;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        #brand-overlay h2 {
+            color: var(--brushed-gold);
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+        }
+
+        /* Luxury Cards Layout */
+        .card {
+            background: var(--cream-white);
+            border: 4px solid var(--brushed-gold);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 680px;
+            padding: 35px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            display: none;
+            transform: scale(0.96);
+            transition: transform 0.3s ease;
+        }
+
+        .card.active {
+            display: block;
+            transform: scale(1);
+        }
+
+        h1 {
+            color: var(--royal-sapphire);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            border-bottom: 2px dashed var(--brushed-gold);
+            padding-bottom: 10px;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: var(--luxury-blue);
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+
+        /* Royal Buttons */
+        .btn {
+            background: linear-gradient(135deg, #f3d078 0%, var(--brushed-gold) 100%);
+            border: 2px solid var(--royal-sapphire);
+            border-radius: 8px;
+            color: var(--royal-sapphire);
+            padding: 14px 40px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(229, 186, 83, 0.3);
+            transition: all 0.2s ease;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0
