@@ -3,353 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Cinematic Review - Master Tenses</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>The Cinematic Review - Timeline Scrub Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2d3436;
-            --cinematic-purple: #322640;
-            --accent-neon: #00d2d3;
-            --glass: rgba(30, 24, 38, 0.95);
+            --bg-dark: #0f0c1b;
+            --panel-bg: rgba(25, 20, 38, 0.95);
+            --neon-cyan: #00d2d3;
+            --neon-magenta: #ff9ff3;
             --text-light: #f5f6fa;
-            --text-muted: #b2bec3;
+            --text-muted: #a4b0be;
             --success: #1dd1a1;
             --error: #ff6b6b;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background: linear-gradient(135deg, #1e1826 0%, #2c1f3d 50%, #120b1c 100%);
+            background: linear-gradient(135deg, #0a0714 0%, #170f26 100%);
             color: var(--text-light);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow-x: hidden;
+            overflow: hidden;
             position: relative;
         }
 
-        /* --- Ambient Film Strip Animations --- */
-        .ambient-bg {
+        /* --- Ambient Film Reel Effects --- */
+        .film-lines {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.02) 50%, rgba(0,0,0,0.1) 50%);
+            background-size: 100% 4px;
+            z-index: 2;
             pointer-events: none;
         }
 
-        .floating-icon {
-            position: absolute;
-            opacity: 0.04;
-            color: #ffffff;
-            font-size: 2.5rem;
-            animation: floatRoll 22s infinite linear;
-        }
-
-        @keyframes floatRoll {
-            0% { transform: translateY(110vh) rotate(0deg); }
-            100% { transform: translateY(-10vh) rotate(360deg); }
-        }
-
-        /* --- Mandatory Branding Intro Screen --- */
+        /* --- Mandatory Branding Intro --- */
         #brand-layer {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff;
             z-index: 10000;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             transition: opacity 0.5s ease;
         }
+        #brand-layer img { max-width: 220px; height: auto; }
 
-        #brand-layer img {
-            max-width: 220px;
-            height: auto;
-            animation: pulseFade 2.5s infinite ease-in-out;
-        }
-
-        @keyframes pulseFade {
-            0%, 100% { transform: scale(0.95); opacity: 0.9; }
-            50% { transform: scale(1.05); opacity: 1; }
-        }
-
-        /* --- Main Layout Container --- */
+        /* --- Main Box --- */
         .quiz-container {
-            width: 90%;
-            max-width: 750px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 92%;
+            max-width: 720px;
+            background: var(--panel-bg);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 28px;
             padding: 35px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.7);
             z-index: 10;
-            position: relative;
             display: none;
+            position: relative;
         }
 
-        .active-app {
-            display: block;
-            animation: overlaySlideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        }
+        .active-app { display: block; animation: cameraFocus 0.5s ease-out; }
+        @keyframes cameraFocus { from { filter: blur(10px); transform: scale(0.95); opacity: 0; } to { filter: blur(0); transform: scale(1); opacity: 1; } }
 
-        @keyframes overlaySlideIn {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        /* --- HUD --- */
+        .meta-header { display: flex; justify-content: space-between; margin-bottom: 25px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--neon-magenta); }
+        
+        .timer-wrapper { width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-bottom: 30px; }
+        .timer-bar { height: 100%; width: 100%; background: var(--neon-cyan); transition: width 1s linear; }
 
-        h1, h2 {
-            font-family: 'Playfair Display', serif;
-            color: #ffffff;
-            font-weight: 700;
-            margin-bottom: 15px;
-        }
-
-        /* --- Performance Header --- */
-        .meta-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 15px;
-        }
-
-        .status-badge {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--accent-neon);
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* --- Runtime Tracker Timeline --- */
-        .timer-wrapper {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin-bottom: 30px;
+        /* --- Video Monitor Panel --- */
+        .video-monitor {
+            background: #000000;
+            border: 3px solid #1f192e;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 35px;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,210,211,0.2);
             overflow: hidden;
         }
+        .video-monitor::before {
+            content: 'REC •';
+            position: absolute;
+            top: 12px; left: 15px;
+            color: var(--error);
+            font-size: 0.75rem;
+            font-weight: bold;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
 
-        .timer-bar {
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, var(--accent-neon) 0%, #00eaec 100%);
-            transition: width 1s linear, background-color 0.3s ease;
+        .scenario-box { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; line-height: 1.5; }
+        .question-text { font-size: 1.15rem; color: #fff; line-height: 1.5; }
+
+        /* --- THE TIMELINE SCRUBBER MECHANIC --- */
+        .timeline-area {
+            margin: 40px 0 20px 0;
+            position: relative;
+            padding: 0 10px;
         }
 
-        /* --- Scenario Content Panels --- */
-        .scenario-box {
-            background: rgba(255, 255, 255, 0.04);
-            border-left: 4px solid var(--accent-neon);
-            padding: 15px 20px;
-            border-radius: 6px;
-            font-style: italic;
+        .timeline-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
             color: var(--text-muted);
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-            line-height: 1.5;
         }
 
-        .question-text {
-            font-size: 1.2rem;
-            font-weight: 400;
-            line-height: 1.5;
-            margin-bottom: 25px;
-            color: #ffffff;
-        }
+        .timeline-labels span { transition: color 0.3s; }
+        .timeline-labels .active-zone { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
 
-        /* --- Option Buttons (Playback Control Layout) --- */
-        .options-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 14px;
-        }
-
-        .option-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 16px 22px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 400;
-            color: var(--text-light);
+        .scrubber-track-container {
+            position: relative;
+            height: 12px;
+            background: #191426;
+            border-radius: 6px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            transition: all 0.2s ease;
         }
 
-        .option-card:hover {
-            border-color: var(--accent-neon);
-            background: rgba(0, 210, 211, 0.1);
-            transform: translateX(4px);
-        }
-
-        .option-card.correct {
-            background: rgba(29, 209, 161, 0.2) !important;
-            border-color: var(--success) !important;
-            color: #ffffff;
-            font-weight: 600;
-        }
-
-        .option-card.wrong {
-            background: rgba(255, 107, 107, 0.2) !important;
-            border-color: var(--error) !important;
-            color: #ffffff;
-        }
-
-        .cross-indicator {
-            color: var(--error);
-            font-weight: bold;
-            font-size: 1.2rem;
-            display: none;
-        }
-
-        .option-card.wrong .cross-indicator {
-            display: inline;
-        }
-
-        /* --- Interactive Screen Pop Indicator --- */
-        .feedback-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.5);
-            font-size: 7rem;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 100;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .feedback-overlay.show {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        /* --- Retakes & Explanations Panel --- */
-        .explanation-panel {
-            margin-top: 25px;
-            background: rgba(0, 210, 211, 0.08);
-            border: 1px dashed var(--accent-neon);
-            padding: 20px;
-            border-radius: 12px;
-            display: none;
-            font-size: 0.95rem;
-            animation: overlaySlideIn 0.4s ease;
-        }
-
-        .action-btn {
-            background: linear-gradient(135deg, var(--accent-neon) 0%, #00a8ff 100%);
-            color: #1e1826;
-            border: none;
-            padding: 14px 40px;
-            border-radius: 50px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0, 210, 211, 0.3);
-            transition: all 0.3s ease;
-            display: inline-block;
-            margin-top: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(0, 210, 211, 0.5);
-        }
-
-        /* --- Particle System Canvas --- */
-        #confetti-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .scrubber-input {
+            -webkit-appearance: none;
             width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 999;
+            background: transparent;
+            position: absolute;
+            z-index: 20;
+            cursor: pointer;
+            outline: none;
         }
 
-        @media(max-width: 600px) {
-            .quiz-container { padding: 20px; width: 95%; }
-            h1 { font-size: 1.8rem; }
-            .question-text { font-size: 1.05rem; }
+        /* The Dial Handle */
+        .scrubber-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--neon-cyan);
+            border: 4px solid #fff;
+            box-shadow: 0 0 15px var(--neon-cyan);
+            transition: transform 0.1s;
         }
+        .scrubber-input::-webkit-slider-thumb:active { transform: scale(1.2); }
+
+        .track-ticks {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 4px;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .tick { width: 4px; height: 12px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+        .tick.center { height: 18px; background: var(--neon-magenta); transform: translateY(-3px); }
+
+        /* --- Submit / Lock Frame Cut Button --- */
+        .lock-container { text-align: center; margin-top: 25px; }
+        .action-btn {
+            background: linear-gradient(135deg, var(--neon-cyan) 0%, #00a8ff 100%);
+            color: #120b1c; border: none; padding: 14px 45px; border-radius: 50px;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 1px; box-shadow: 0 8px 25px rgba(0, 210, 211, 0.3);
+            transition: all 0.2s;
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0, 210, 211, 0.5); }
+
+        /* --- Production Note Screen Dropdown --- */
+        .explanation-panel {
+            margin-top: 25px; background: rgba(0, 210, 211, 0.05);
+            border-left: 4px solid var(--neon-cyan); padding: 20px; border-radius: 8px;
+            display: none; font-size: 0.95rem; line-height: 1.6;
+        }
+
+        /* --- Pop Visual Notifications --- */
+        .feedback-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
+            font-size: 8rem; opacity: 0; pointer-events: none; z-index: 100; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .feedback-overlay.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+        #confetti-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
     </style>
 </head>
 <body>
 
-    <div class="ambient-bg" id="ambient-bg"></div>
+    <div class="film-lines"></div>
     <canvas id="confetti-layer"></canvas>
     <div class="feedback-overlay" id="global-indicator"></div>
 
     <div id="brand-layer">
-        <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('alt-brand-text').style.display='block';">
-        <h2 id="alt-brand-text" style="display:none; font-family:'Playfair Display'; color:#1e1826">Innovine</h2>
+        <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'; document.getElementById('alt-brand-text').style.display='block';">
+        <h2 id="alt-brand-text" style="display:none; font-family:'Playfair Display'; color:#0f0c1b">Innovine</h2>
     </div>
 
     <div class="quiz-container active-app" id="screen-intro">
-        <h1 style="text-align: center; letter-spacing: 1px;">The Cinematic Review</h1>
-        <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px; font-size: 1.1rem; line-height: 1.6;">
-            Analyze timelines, correct editing frames, and master Past, Present, and Future tenses like an expert movie director.
+        <h1 style="text-align: center; margin-bottom: 10px;">The Cinematic Review</h1>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 35px; font-size: 1rem; line-height: 1.6;">
+            The timeline handles are broken! Drag the video timeline scrubber left or right to sync each sentence frame back into its correct tense zone.
         </p>
         <div style="text-align: center;">
-            <button class="action-btn" onclick="app.startQuiz()">Start Playback</button>
+            <button class="action-btn" onclick="app.startQuiz()">Initialize Scrubber</button>
         </div>
     </div>
 
     <div class="quiz-container" id="screen-gameplay">
         <div class="meta-header">
-            <span class="status-badge" id="hud-progress">Frame 1/12</span>
-            <span class="status-badge" id="hud-score" style="color:var(--success); background:rgba(29, 209, 161, 0.1);">Score: 0</span>
+            <span id="hud-progress">Reel Frame: 1/12</span>
+            <span id="hud-score">Score: 0</span>
         </div>
         
         <div class="timer-wrapper">
             <div class="timer-bar" id="runtime-timer"></div>
         </div>
 
-        <div class="scenario-box" id="field-context">Scenario Script</div>
-        <div class="question-text" id="field-question">Question String</div>
+        <div class="video-monitor" id="monitor-screen">
+            <div class="scenario-box" id="field-context">Script Scene</div>
+            <div class="question-text" id="field-question">Question Statement</div>
+        </div>
 
-        <div class="options-layout" id="box-options">
+        <div class="timeline-area">
+            <div class="timeline-labels">
+                <span id="zone-0">⏪ REWIND (PAST)</span>
+                <span id="zone-1" class="active-zone">▶️ PLAY (PRESENT)</span>
+                <span id="zone-2">⏩ FAST-FORWARD (FUTURE)</span>
             </div>
+            <div class="scrubber-track-container">
+                <div class="track-ticks">
+                    <div class="tick"></div>
+                    <div class="tick center"></div>
+                    <div class="tick"></div>
+                </div>
+                <input type="range" min="0" max="2" value="1" class="scrubber-input" id="timeline-scrubber" oninput="app.updateZoneLabel(this.value)">
+            </div>
+        </div>
+
+        <div class="lock-container" id="btn-lock-wrap">
+            <button class="action-btn" onclick="app.lockFrame()">Lock Frame Choice</button>
+        </div>
 
         <div class="explanation-panel" id="box-explanation">
-            <strong style="color:var(--accent-neon);">Director's Production Note:</strong> <span id="text-explanation" style="color:var(--text-light);"></span>
+            <strong style="color:var(--neon-cyan); display:block; margin-bottom: 5px;">Director's Operational Note:</strong>
+            <span id="text-explanation"></span>
             <br>
-            <button class="action-btn" style="padding: 8px 20px; font-size: 0.85rem; margin-top: 15px;" onclick="app.stepNext()">Next Scene</button>
+            <button class="action-btn" style="padding: 8px 25px; font-size: 0.8rem; margin-top: 15px;" onclick="app.stepNext()">Next Sequence</button>
         </div>
     </div>
 
     <div class="quiz-container" id="screen-results" style="text-align: center;">
-        <h1>Production Complete</h1>
-        <p id="result-status" style="font-size: 1.3rem; margin: 20px 0; font-weight: 500; color: var(--accent-neon);"></p>
-        <p id="final-score" style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px;"></p>
-        <button class="action-btn" onclick="app.resetQuiz()">Restart Reel</button>
+        <h1>Cut! Final Version Balanced</h1>
+        <p id="result-status" style="font-size: 1.2rem; margin: 25px 0; color: var(--neon-cyan); font-weight: 500;"></p>
+        <p id="final-score" style="font-size: 1rem; color: var(--text-muted); margin-bottom: 35px;"></p>
+        <button class="action-btn" onclick="app.resetQuiz()">Edit New Reel</button>
     </div>
 
     <audio id="sfx-correct" src="assets/correct.mp3" preload="auto"></audio>
@@ -357,100 +269,89 @@
     <audio id="sfx-claps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
     <script>
+        // Mapping answer choices directly into timeline positions: 0 = Past, 1 = Present, 2 = Future
         const matrixData = [
             {
-                context: "The Sports Teacher prepares a notice:\n\"The school celebrate Annual Sports Day next Monday.\"",
-                question: "The editor notices a tense error. The sentence talks about a future event, but the verb form is incorrect. Which correction should be made?",
-                options: ["The school celebrated Annual Sports Day next Monday.", "The school will celebrates Annual Sports Day next Monday.", "The school will celebrate Annual Sports Day next Monday.", "The school is celebrating Annual Sports Day next Monday."],
-                correct: 2,
-                explain: "For a planned future action tracking a single specific timeframe, we cleanly deploy 'will' combined with the base root verb ('will celebrate')."
+                context: "Notice Error: \"The school celebrate Annual Sports Day next Monday.\"",
+                question: "The editor notices a tense error. What target timeline zone must the underlying sentence be scrubbed into to fit 'next Monday' perfectly?",
+                targetZone: 2, // Future
+                explain: "The operational timeline marker 'next Monday' points forward, requiring a future structure ('will celebrate')."
             },
             {
-                context: "A student says during class:\n\"I write my project now.\"",
-                question: "Another student suggests it is correct because writing is an action. What is the best correction to express ongoing timeline state?",
-                options: ["I wrote my project now.", "I am writing my project now.", "I write my project yesterday.", "I will write my project now."],
-                correct: 1,
-                explain: "Actions systematically transpiring at the absolute current prompt instant demand the present continuous architecture ('am writing')."
+                context: "Conversation Error: \"I write my project now.\"",
+                question: "An action is happening right at this explicit second. Scrub the timeline handle to the correct active zone.",
+                targetZone: 1, // Present
+                explain: "Actions transpiring right at the current moment demand the Present Continuous format ('am writing')."
             },
             {
-                context: "Riya writes in her diary:\n\"Yesterday, I was go to the market with my mother.\"",
-                question: "The teacher asks her to fix the tense error properly. Which alternative sentence is correct?",
-                options: ["Yesterday, I go to the market with my mother.", "Yesterday, I gone to the market with my mother.", "Yesterday, I went to the market with my mother.", "Yesterday, I am going to the market with my mother."],
-                correct: 2,
-                explain: "Completed tracking markers from yesterday require the absolute Simple Past tense verb layout ('went')."
+                context: "Diary Error: \"Yesterday, I was go to the market with my mother.\"",
+                question: "The prompt contains a log from 'Yesterday'. Dial the timeline back to its proper historical zone.",
+                targetZone: 0, // Past
+                explain: "Completed time references track directly back to the Simple Past category ('went')."
             },
             {
-                context: "A school news report says:\n\"The players were practicing when the rain started suddenly.\"",
-                question: "Which systemic description option best matches the structural timeline of this sentence?",
-                options: ["Two completed actions", "One ongoing past action and one sudden past action", "Two future actions", "A habitual action"],
-                correct: 1,
-                explain: "The past continuous phrase ('were practicing') traces an ongoing backdrop task broken up instantly by a sudden past simple event ('started')."
+                context: "Report Analysis: \"The players were practicing when the rain started suddenly.\"",
+                question: "Identify the primary zone of this compound action sequence: 'were practicing' and 'started'.",
+                targetZone: 0, // Past
+                explain: "Both operations track things that were already playing or happening within historical past time limits."
             },
             {
-                context: "The teacher says:\n\"Tomorrow, the class ______ visit the science park.\"",
-                question: "Which option completes the planned structural sequence sentence correctly?",
-                options: ["visits", "visited", "will visit", "is visiting"],
-                correct: 2,
-                explain: "The operational timeline marker 'Tomorrow' points forward, signaling a clear Simple Future modal tracking requirement ('will visit')."
+                context: "Sentence Completion: \"Tomorrow, the class ______ visit the science park.\"",
+                question: "The target event is slated cleanly for 'Tomorrow'. Scrub to the correct timeline destination.",
+                targetZone: 2, // Future
+                explain: "Forward-facing indicators map cleanly into the Future tense family ('will visit')."
             },
             {
-                context: "A student writes:\n\"She go to school every day by bus.\"",
-                question: "The teacher asks the class to correct the sentence using subject–verb agreement in simple present tense. Which is correct?",
-                options: ["She goes to school every day by bus.", "She going to school every day by bus.", "She went to school every day by bus.", "She will goes to school every day by bus."],
-                correct: 0,
-                explain: "Third-person singular subjects ('She') require the singular verb agreement modification suffix ('goes') for regular daily behaviors."
+                context: "Error Spotting: \"She go to school every day by bus.\"",
+                question: "This sentence records a habitual routine happening repeatedly. Lock it into its structural zone.",
+                targetZone: 1, // Present
+                explain: "Regular daily habits and routines are categorized within the Simple Present framework ('goes')."
             },
             {
-                context: "A student says:\n\"We were play football when the bell rang.\"",
-                question: "The teacher explains that one part is past continuous, but the verb form is incorrect. What is the correct sentence?",
-                options: ["We were played football when the bell rang.", "We are playing football when the bell rang.", "We were playing football when the bell rang.", "We play football when the bell rang."],
-                correct: 2,
-                explain: "Past continuous structures absolutely require auxiliary helpers ('were') linked straight to present participle modifiers ('playing')."
+                context: "Dialogue Correction: \"We were play football when the bell rang.\"",
+                question: "The timeline elements speak of a background past continuous action. Where does this clip belong?",
+                targetZone: 0, // Past
+                explain: "Actions in progress previously require standard Past continuous architectures ('were playing')."
             },
             {
-                context: "A science observation report says:\n\"The plant grows fast in sunlight.\"",
-                question: "The teacher asks students why simple present architecture is specifically used here. What is the true cause?",
-                options: ["It shows future plan", "It shows past action", "It shows a general truth", "It shows ongoing action"],
-                correct: 3,
-                explain: "Universal operational laws, scientific observations, and unchanging general absolute truths always take Simple Present formats."
+                context: "Observation Report: \"The plant grows fast in sunlight.\"",
+                question: "Universal facts or scientific rules belong to which standard operational timeline zone?",
+                targetZone: 1, // Present
+                explain: "Unchanging general laws and nature properties are always expressed inside the Simple Present."
             },
             {
-                context: "The class timetable says:\n\"At 10 a.m. tomorrow, the students ______ writing their test.\"",
-                question: "Which future progress indicator option completes this timeline requirement seamlessly?",
-                options: ["write", "wrote", "will be writing", "are wrote"],
-                correct: 2,
-                explain: "An action planned to be actively ongoing during a specific exact spot in future moments needs Future Continuous ('will be writing')."
+                context: "Timetable Layout: \"At 10 a.m. tomorrow, the students ______ writing their test.\"",
+                question: "An action will actively be unfolding at a specific upcoming point tomorrow. Scrub to its zone.",
+                targetZone: 2, // Future
+                explain: "Ongoing future tasks take Future Continuous layout tracking patterns ('will be writing')."
             },
             {
-                context: "A student writes:\n\"He is play cricket in the ground.\"",
-                question: "Which correction is best to lock in standard syntax for ongoing actions?",
-                options: ["He is played cricket in the ground.", "He plays cricket in the ground.", "He is playing cricket in the ground.", "He will playing cricket in the ground."],
-                correct: 2,
-                explain: "The active auxiliary marker 'is' must be paired cleanly with a continuous syntax descriptor form ('playing')."
+                context: "Sentence Improvement: \"He is play cricket in the ground.\"",
+                question: "The presence of 'is' marks an active ongoing situation. Where should this frame settle?",
+                targetZone: 1, // Present
+                explain: "Active present actions use present continuous structural configurations ('is playing')."
             },
             {
-                context: "\"The dancers were rehearsing when the principal entered the hall.\"",
-                question: "Which structural analytical explanation of this performance timeline is correct?",
-                options: ["Both actions are in future tense", "One action was ongoing in past and another interrupted it", "Both actions are habitual", "Both actions are completed at the same time"],
-                correct: 1,
-                explain: "The past progress event ('were rehearsing') was mid-way through its journey when a single past cross-cut ('entered') took place."
+                context: "Event Mechanics: \"The dancers were rehearsing when the principal entered the hall.\"",
+                question: "Analyze the foundational backbone zone of this entire interlocking scene block.",
+                targetZone: 0, // Past
+                explain: "An historical background task ('were rehearsing') was cut off by another past incident ('entered')."
             },
             {
-                context: "\"The children will be playing in the park at this time tomorrow.\"",
-                question: "This is your final editing challenge! Why is this exact tense structure utilized here?",
-                options: ["It shows completed action", "It shows a habit", "It shows an action continuing in future at a specific time", "It shows past action"],
-                correct: 2,
-                explain: "Future Continuous architecture traces progress tracking mapped directly against a localized point in future coordinates."
+                context: "Final Challenge: \"The children will be playing in the park at this time tomorrow.\"",
+                question: "Where on the timeline does an ongoing activity set precisely for 'this time tomorrow' land?",
+                targetZone: 2, // Future
+                explain: "Continuous actions taking place later down the sequence map onto Future Continuous coordinates."
             }
         ];
 
-        class CinematicQuizEngine {
+        class ScrubQuizEngine {
             constructor(data) {
                 this.matrix = data;
                 this.cursor = 0;
                 this.score = 0;
                 this.timerId = null;
-                this.secondsLeft = 45; // Grade 5 rule constraint
+                this.secondsLeft = 45;
                 this.attempts = 0;
                 this.interactiveLocked = false;
             }
@@ -461,23 +362,6 @@
                     layer.style.opacity = '0';
                     setTimeout(() => layer.style.display = 'none', 500);
                 }, 5000);
-
-                this.generateAmbientElements();
-            }
-
-            generateAmbientElements() {
-                const bg = document.getElementById('ambient-bg');
-                const icons = ['🎬', '🎥', '⏳', '▶️', '⏪', '⏩'];
-                for (let i = 0; i < 10; i++) {
-                    const item = document.createElement('div');
-                    item.className = 'floating-icon';
-                    item.innerText = icons[i % icons.length];
-                    item.style.left = `${Math.random() * 100}%`;
-                    item.style.bottom = `-${Math.random() * 20 + 10}%`;
-                    item.style.animationDelay = `${Math.random() * 10}s`;
-                    item.style.animationDuration = `${Math.random() * 12 + 12}s`;
-                    bg.appendChild(item);
-                }
             }
 
             switchView(targetId) {
@@ -496,25 +380,37 @@
                 this.interactiveLocked = false;
                 this.attempts = 0;
                 document.getElementById('box-explanation').style.display = 'none';
+                document.getElementById('btn-lock-wrap').style.display = 'block';
                 
+                // Reset screen style bounds
+                const monitor = document.getElementById('monitor-screen');
+                monitor.style.borderColor = "#1f192e";
+                monitor.style.boxShadow = "inset 0 0 20px rgba(0,210,211,0.2)";
+
                 const q = this.matrix[this.cursor];
-                document.getElementById('hud-progress').innerText = `Frame ${this.cursor + 1}/${this.matrix.length}`;
+                document.getElementById('hud-progress').innerText = `Reel Frame: ${this.cursor + 1}/${this.matrix.length}`;
                 document.getElementById('hud-score').innerText = `Score: ${this.score}`;
                 document.getElementById('field-context').innerText = q.context;
                 document.getElementById('field-question').innerText = q.question;
 
-                const optionsBox = document.getElementById('box-options');
-                optionsBox.innerHTML = '';
-
-                q.options.forEach((opt, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'option-card';
-                    card.innerHTML = `<span>${opt}</span><span class="cross-indicator">✘</span>`;
-                    card.onclick = () => this.evaluateAnswer(index, card);
-                    optionsBox.appendChild(card);
-                });
+                // Reset scrubber to neutral center zone (Present)
+                const input = document.getElementById('timeline-scrubber');
+                input.value = 1;
+                input.disabled = false;
+                this.updateZoneLabel(1);
 
                 this.resetAndLaunchTimer();
+            }
+
+            updateZoneLabel(val) {
+                const zoneVal = parseInt(val);
+                document.querySelectorAll('.timeline-labels span').forEach((el, index) => {
+                    if(index === zoneVal) {
+                        el.className = 'active-zone';
+                    } else {
+                        el.className = '';
+                    }
+                });
             }
 
             resetAndLaunchTimer() {
@@ -522,17 +418,14 @@
                 this.secondsLeft = 45;
                 const bar = document.getElementById('runtime-timer');
                 bar.style.width = '100%';
-                bar.style.backgroundColor = 'var(--accent-neon)';
+                bar.style.backgroundColor = 'var(--neon-cyan)';
 
                 this.timerId = setInterval(() => {
                     this.secondsLeft--;
                     const pct = (this.secondsLeft / 45) * 100;
                     bar.style.width = `${pct}%`;
 
-                    if(this.secondsLeft <= 10) {
-                        bar.style.backgroundColor = 'var(--error)';
-                    }
-
+                    if(this.secondsLeft <= 10) bar.style.backgroundColor = 'var(--error)';
                     if(this.secondsLeft <= 0) {
                         clearInterval(this.timerId);
                         this.handleTimeout();
@@ -540,54 +433,66 @@
                 }, 1000);
             }
 
-            evaluateAnswer(selectedIndex, element) {
-                if(this.interactiveLocked || element.classList.contains('wrong')) return;
+            lockFrame() {
+                if(this.interactiveLocked) return;
 
+                const currentValue = parseInt(document.getElementById('timeline-scrubber').value);
                 const currentQ = this.matrix[this.cursor];
+                const monitor = document.getElementById('monitor-screen');
 
-                if(selectedIndex === currentQ.correct) {
+                if(currentValue === currentQ.targetZone) {
+                    // Correct Choice
                     clearInterval(this.timerId);
                     this.interactiveLocked = true;
-                    element.classList.add('correct');
+                    document.getElementById('timeline-scrubber').disabled = true;
+                    
+                    monitor.style.borderColor = "var(--success)";
+                    monitor.style.boxShadow = "0 0 30px rgba(29, 209, 161, 0.4)";
+                    
                     this.score += 10;
                     document.getElementById('hud-score').innerText = `Score: ${this.score}`;
-                    
                     this.triggerIndicator('✔', 'var(--success)');
                     this.playAudio('sfx-correct');
                     triggerStarConfetti();
 
-                    setTimeout(() => this.stepNext(), 1200);
+                    setTimeout(() => this.stepNext(), 1500);
                 } else {
+                    // Incorrect Choice
                     this.attempts++;
-                    element.classList.add('wrong');
                     this.playAudio('sfx-wrong');
                     this.triggerIndicator('✘', 'var(--error)');
+                    
+                    // Camera shutter shake simulation
+                    monitor.style.animation = "shake 0.3s ease-in-out";
+                    setTimeout(() => monitor.style.animation = "", 300);
 
                     if(this.attempts >= 2) {
                         clearInterval(this.timerId);
                         this.interactiveLocked = true;
-                        this.exposeCorrectAnswers();
+                        document.getElementById('timeline-scrubber').disabled = true;
+                        this.exposeCorrectTimeline();
                     }
                 }
             }
 
             handleTimeout() {
                 this.interactiveLocked = true;
+                document.getElementById('timeline-scrubber').disabled = true;
                 this.triggerIndicator('✘', 'var(--error)');
                 this.playAudio('sfx-wrong');
-                this.exposeCorrectAnswers();
+                this.exposeCorrectTimeline();
             }
 
-            exposeCorrectAnswers() {
+            exposeCorrectTimeline() {
                 const currentQ = this.matrix[this.cursor];
-                const cards = document.querySelectorAll('.option-card');
-                
-                cards.forEach((card, index) => {
-                    if(index === currentQ.correct) {
-                        card.classList.add('correct');
-                    }
-                });
+                const input = document.getElementById('timeline-scrubber');
+                input.value = currentQ.targetZone;
+                this.updateZoneLabel(currentQ.targetZone);
 
+                const monitor = document.getElementById('monitor-screen');
+                monitor.style.borderColor = "var(--error)";
+
+                document.getElementById('btn-lock-wrap').style.display = 'none';
                 document.getElementById('text-explanation').innerText = currentQ.explain;
                 document.getElementById('box-explanation').style.display = 'block';
             }
@@ -614,22 +519,20 @@
                 this.switchView('screen-results');
                 
                 const maxScore = this.matrix.length * 10;
-                document.getElementById('final-score').innerText = `Production Track: ${this.score} out of ${maxScore} points achieved.`;
+                document.getElementById('final-score').innerText = `Scrub Record: Finished with ${this.score} out of ${maxScore} points.`;
                 
                 const status = document.getElementById('result-status');
                 if(this.score >= maxScore * 0.8) {
-                    status.innerText = "🎬 Elite Director! Cinematic timelines synchronized flawlessly!";
+                    status.innerText = "🎬 MASTER DIRECTOR: All film frames perfectly aligned!";
                     this.playAudio('sfx-claps');
                 } else if(this.score >= maxScore * 0.5) {
-                    status.innerText = "🎥 Creative Film Editor! Good structural continuity.";
+                    status.innerText = "🎥 LEAD EDITOR: Great timeline sequencing stability.";
                 } else {
-                    status.innerText = "🎞️ Production Errors Detected. Let's restart the reel and review.";
+                    status.innerText = "🎞️ RE-TAKE REQUIRED: The clips are unaligned. Let's fix the timeline!";
                 }
             }
 
-            resetQuiz() {
-                this.startQuiz();
-            }
+            resetQuiz() { this.startQuiz(); }
 
             playAudio(id) {
                 const el = document.getElementById(id);
@@ -640,81 +543,51 @@
             }
         }
 
-        // --- Optimized Canvas Star Burst System ---
+        // --- Performance-Safe Canvas Engine ---
         const canvas = document.getElementById('confetti-layer');
         const ctx = canvas.getContext('2d');
         let pieces = [];
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
         function spawnStar(x, y) {
             return {
-                x, y,
-                size: Math.random() * 6 + 5,
-                speedX: (Math.random() - 0.5) * 10,
-                speedY: (Math.random() - 0.7) * 12 - 3,
-                color: '#00d2d3', // Glowing cyan thematic stars
-                rotation: Math.random() * Math.PI,
-                rotSpeed: (Math.random() - 0.5) * 0.25
+                x, y, size: Math.random() * 6 + 5,
+                speedX: (Math.random() - 0.5) * 12,
+                speedY: (Math.random() - 0.7) * 14 - 4,
+                color: '#00d2d3', rotation: Math.random() * Math.PI,
+                rotSpeed: (Math.random() - 0.5) * 0.2
             };
         }
 
         function drawStar(cx, cy, spikes, outerRadius, innerRadius, color) {
-            let rot = Math.PI / 2 * 3;
-            let x = cx;
-            let y = cy;
-            let step = Math.PI / spikes;
-
-            ctx.beginPath();
-            ctx.moveTo(cx, cy - outerRadius);
+            let rot = Math.PI / 2 * 3, x = cx, y = cy, step = Math.PI / spikes;
+            ctx.beginPath(); ctx.moveTo(cx, cy - outerRadius);
             for (let i = 0; i < spikes; i++) {
-                x = cx + Math.cos(rot) * outerRadius;
-                y = cy + Math.sin(rot) * outerRadius;
-                ctx.lineTo(x, y);
-                rot += step;
-
-                x = cx + Math.cos(rot) * innerRadius;
-                y = cy + Math.sin(rot) * innerRadius;
-                ctx.lineTo(x, y);
-                rot += step;
+                x = cx + Math.cos(rot) * outerRadius; y = cy + Math.sin(rot) * outerRadius; ctx.lineTo(x, y); rot += step;
+                x = cx + Math.cos(rot) * innerRadius; y = cy + Math.sin(rot) * innerRadius; ctx.lineTo(x, y); rot += step;
             }
-            ctx.lineTo(cx, cy - outerRadius);
-            ctx.closePath();
-            ctx.fillStyle = color;
-            ctx.fill();
+            ctx.lineTo(cx, cy - outerRadius); ctx.closePath(); ctx.fillStyle = color; ctx.fill();
         }
 
         function triggerStarConfetti() {
-            for(let i=0; i<35; i++) {
-                pieces.push(spawnStar(window.innerWidth/2, window.innerHeight/2 + 60));
-            }
+            for(let i=0; i<35; i++) pieces.push(spawnStar(window.innerWidth/2, window.innerHeight/2 + 60));
         }
 
         function runEngineLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             for(let i = pieces.length - 1; i >= 0; i--) {
-                let p = pieces[i];
-                p.x += p.speedX;
-                p.y += p.speedY;
-                p.speedY += 0.28; 
-                p.rotation += p.rotSpeed;
-
-                ctx.save();
-                drawStar(p.x, p.y, 5, p.size, p.size/2, p.color);
-                ctx.restore();
-
+                let p = pieces[i]; p.x += p.speedX; p.y += p.speedY; p.speedY += 0.3; p.rotation += p.rotSpeed;
+                ctx.save(); drawStar(p.x, p.y, 5, p.size, p.size/2, p.color); ctx.restore();
                 if(p.y > canvas.height) pieces.splice(i, 1);
             }
             requestAnimationFrame(runEngineLoop);
         }
         runEngineLoop();
 
-        const app = new CinematicQuizEngine(matrixData);
+        const app = new ScrubQuizEngine(matrixData);
         window.onload = () => app.init();
     </script>
 </body>
