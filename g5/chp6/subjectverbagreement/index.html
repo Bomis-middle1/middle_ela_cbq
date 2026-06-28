@@ -3,73 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Symphony Orchestra - Subject-Verb Agreement Interactive</title>
+    <title>The Symphony Mixer - Subject-Verb Agreement</title>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #fbfbf8 0%, #f3efe0 50%, #e6dfc8 100%);
-            --gold: #b38f43;
-            --gold-glow: #dfbc6d;
-            --accent-blue: #4a7a96;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --text-main: #2c2a20;
-            --text-muted: #5c584a;
-            --success: #2e7d32;
-            --error: #c62828;
+            --cream-bg: #fdfbf7;
+            --sheet-paper: #f7f4eb;
+            --gold-metallic: #c5a059;
+            --gold-bright: #e5c17d;
+            --charcoal: #2A2925;
+            --sage-success: #4A7C59;
+            --crimson-error: #B84A39;
+            --shadow-sm: 0 4px 10px rgba(197, 160, 89, 0.1);
+            --shadow-md: 0 10px 30px rgba(42, 41, 37, 0.08);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Georgia', serif;
         }
 
         body {
-            background: var(--bg-gradient);
-            color: var(--text-main);
+            background-color: var(--cream-bg);
+            color: var(--charcoal);
             min-height: 100vh;
-            overflow-x: hidden;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow-x: hidden;
             position: relative;
         }
 
-        /* Elegant Light Background Musical Layer */
-        .ambient-layer {
+        /* Delicate Floating Floating Particles */
+        .notation-canvas {
             position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
-            z-index: 1;
+            top: 0;
+            left: 0;
             pointer-events: none;
+            z-index: 1;
+            opacity: 0.25;
         }
 
-        .note {
-            position: absolute;
-            color: var(--gold);
-            font-size: 20px;
-            opacity: 0.15;
-            animation: floatNotes 6s infinite ease-in-out;
-        }
-
-        @keyframes floatNotes {
-            0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
-            50% { opacity: 0.25; }
-            100% { transform: translateY(-10vh) translateX(50px) rotate(360deg); opacity: 0; }
-        }
-
-        /* Mandatory Branding Overlay Screen */
+        /* Mandatory Branding Screen Overlay */
         #brand-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #fbfbf8;
+            background: var(--cream-bg);
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -79,297 +64,329 @@
         }
 
         #brand-overlay img {
-            max-width: 250px;
+            max-width: 220px;
             height: auto;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
-        #brand-overlay .loader-bar {
-            width: 200px;
-            height: 4px;
-            background: rgba(0,0,0,0.05);
-            border-radius: 2px;
+        #brand-overlay .meter {
+            width: 180px;
+            height: 2px;
+            background: rgba(197, 160, 89, 0.2);
+            position: relative;
             overflow: hidden;
         }
 
-        #brand-overlay .loader-progress {
+        #brand-overlay .fill {
             width: 100%;
             height: 100%;
-            background: var(--gold);
+            background: var(--gold-metallic);
             transform: translateX(-100%);
-            animation: loadProgress 5s linear forwards;
+            animation: load 5s linear forwards;
         }
 
-        @keyframes loadProgress {
-            to { transform: translateX(0); }
-        }
+        @keyframes load { to { transform: translateX(0); } }
 
-        /* Container Frames */
-        .game-container {
-            width: 90%;
-            max-width: 750px;
-            background: var(--card-bg);
-            border: 1px solid rgba(179, 143, 67, 0.3);
-            border-radius: 24px;
-            padding: 35px;
-            box-shadow: 0 15px 35px rgba(179, 143, 67, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(12px);
+        /* The Orchestral Interface Card Setup */
+        .mixer-board {
+            width: 92%;
+            max-width: 800px;
+            background: var(--sheet-paper);
+            border: 2px solid var(--gold-metallic);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: var(--shadow-md);
             z-index: 10;
             position: relative;
             display: none;
         }
 
-        .game-container.active-view {
-            display: block !important;
-        }
+        .active-panel { display: block !important; }
 
-        h1, h2, h3 {
-            color: var(--gold);
+        h1 {
+            font-size: 2.2rem;
+            color: var(--charcoal);
             text-align: center;
-            margin-bottom: 20px;
-            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
         }
 
-        p {
-            line-height: 1.6;
-            margin-bottom: 15px;
+        .subtitle {
+            font-style: italic;
+            text-align: center;
+            color: var(--gold-metallic);
+            margin-bottom: 30px;
+            font-size: 1.05rem;
         }
 
-        .btn {
-            display: block;
+        /* Interactive Live Music Score Progress Board */
+        .live-score-sheet {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            position: relative;
+        }
+
+        .staff-line {
+            height: 1px;
+            background: rgba(197, 160, 89, 0.3);
             width: 100%;
-            background: linear-gradient(135deg, #b38f43 0%, #89692a 100%);
-            color: #ffffff;
-            border: none;
-            padding: 15px 25px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(179, 143, 67, 0.3);
-            text-align: center;
+            position: relative;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px var(--gold-glow);
+        .notation-track {
+            position: absolute;
+            top: -12px;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            display: flex;
+            gap: 22px;
+            padding-left: 20px;
         }
 
-        /* Dashboard Items */
-        .dashboard {
+        .placed-note {
+            font-size: 24px;
+            color: var(--gold-metallic);
+            animation: dropNote 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        @keyframes dropNote {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Console Meter Modules */
+        .console-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 12px 20px;
-            border-radius: 14px;
-            border: 1px solid rgba(179, 143, 67, 0.2);
+            border-bottom: 1px dashed rgba(197, 160, 89, 0.4);
+            padding-bottom: 15px;
         }
 
-        .score-box, .timer-box {
-            font-size: 1rem;
+        .hud-pill {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            color: var(--charcoal);
         }
 
-        .timer-box {
-            color: var(--accent-blue);
+        .time-ticker {
+            color: var(--gold-metallic);
+            font-variant-numeric: tabular-nums;
         }
 
-        .timer-warn {
-            color: var(--error) !important;
-            animation: pulse 1s infinite alternate;
+        .ticker-urgent {
+            color: var(--crimson-error);
+            animation: flash 0.5s infinite alternate;
         }
 
-        @keyframes pulse {
-            to { opacity: 0.5; }
+        @keyframes flash { to { opacity: 0.4; } }
+
+        /* Scenarios and Slider Slated Cards */
+        .composition-prompt {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 25px;
+            border-top: 3px solid var(--gold-metallic);
         }
 
-        /* Music Score Sheet Progress Visualizer */
-        .sheet-music-track {
-            width: 100%;
-            height: 40px;
-            background: repeating-linear-gradient(rgba(179, 143, 67, 0.1) 0px, rgba(179, 143, 67, 0.1) 2px, transparent 2px, transparent 8px);
-            margin: 20px 0;
-            position: relative;
-            border-bottom: 2px solid var(--gold);
-        }
-
-        .baton-progress {
-            position: absolute;
-            bottom: -5px;
-            left: 0%;
-            font-size: 28px;
-            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Scenarios & Answer Cards */
-        .scenario-box {
-            background: rgba(74, 122, 150, 0.06);
-            border-left: 4px solid var(--accent-blue);
-            padding: 15px;
-            border-radius: 0 12px 12px 0;
-            margin-bottom: 20px;
+        .context-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 12px;
             font-style: italic;
-            color: var(--text-muted);
         }
 
-        .options-grid {
+        .core-phrase {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: var(--charcoal);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .mixer-knobs {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
+            gap: 14px;
         }
 
-        .option-card {
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid rgba(179, 143, 67, 0.15);
-            border-radius: 12px;
+        .knob-row {
+            background: #ffffff;
+            border: 1px solid rgba(197, 160, 89, 0.25);
+            border-radius: 8px;
             padding: 16px 20px;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1rem;
         }
 
-        .option-card:hover {
-            background: #ffffff;
-            border-color: var(--accent-blue);
+        .knob-row:hover {
+            border-color: var(--gold-metallic);
+            background: rgba(197, 160, 89, 0.03);
+            transform: translateX(4px);
         }
 
-        .option-card.correct-reveal {
-            border-color: var(--success);
-            background: rgba(46, 125, 50, 0.1);
-            color: var(--success);
-            font-weight: 600;
-        }
-
-        .option-card.wrong-reveal {
-            border-color: var(--error);
-            background: rgba(198, 40, 40, 0.1);
-            color: var(--error);
-        }
-
-        .feedback-panel {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 12px;
-            background: #ffffff;
-            border: 1px solid rgba(179, 143, 67, 0.3);
-            display: none;
-        }
-
-        /* Indicators & Particle Aesthetics */
-        .star-particle {
-            position: absolute;
-            color: #d4af37;
-            font-size: 22px;
-            pointer-events: none;
-            animation: fly 0.8s ease-out forwards;
-        }
-
-        @keyframes fly {
-            0% { transform: translate(0,0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
-        }
-
-        .red-cross {
-            color: var(--error);
-            font-size: 24px;
+        .knob-row.tuning-correct {
+            border-color: var(--sage-success);
+            background: rgba(74, 124, 89, 0.08);
+            color: var(--sage-success);
             font-weight: bold;
         }
 
-        .final-badge {
-            font-size: 4rem;
+        .knob-row.tuning-clash {
+            border-color: var(--crimson-error);
+            background: rgba(184, 74, 57, 0.08);
+            color: var(--crimson-error);
+        }
+
+        /* Master Controls Review Panel */
+        .master-blueprint-panel {
+            margin-top: 25px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid var(--gold-metallic);
+            box-shadow: var(--shadow-sm);
+            display: none;
+            animation: revealUp 0.3s ease;
+        }
+
+        @keyframes revealUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+        .master-btn {
+            display: inline-block;
+            width: 100%;
+            background: var(--charcoal);
+            color: var(--sheet-paper);
+            border: none;
+            padding: 16px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
             text-align: center;
-            margin: 20px 0;
-            animation: floatUp 2s infinite alternate ease-in-out;
+            margin-top: 15px;
         }
 
-        @keyframes floatUp {
-            to { transform: translateY(-8px); }
+        .master-btn:hover {
+            background: #46443e;
+            transform: translateY(-1px);
         }
 
-        @media (max-width: 600px) {
-            .game-container { padding: 20px; width: 95%; }
-            .dashboard { flex-direction: column; gap: 10px; text-align: center;}
-            h1 { font-size: 1.5rem; }
+        .particle-spark {
+            position: absolute;
+            pointer-events: none;
+            color: var(--gold-bright);
+            font-size: 16px;
+            animation: erupt 0.7s ease-out forwards;
+        }
+
+        @keyframes erupt {
+            0% { transform: translate(0,0) scale(1); opacity:1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0); opacity:0; }
+        }
+
+        .badge-center {
+            font-size: 3.5rem;
+            text-align: center;
+            margin: 25px 0;
         }
     </style>
 </head>
 <body>
 
-    <div class="ambient-layer" id="ambient-layer"></div>
+    <div class="notation-canvas" id="canvas-mix"></div>
 
     <div id="brand-overlay">
         <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
-        <div class="loader-bar">
-            <div class="loader-progress"></div>
+        <div class="meter"><div class="fill"></div></div>
+    </div>
+
+    <div class="mixer-board" id="intro-screen">
+        <h1>The Symphony Mixer</h1>
+        <div class="subtitle">Subject-Verb Harmony Console</div>
+        <p style="text-align: center; margin-bottom: 25px; max-width:600px; margin-left:auto; margin-right:auto; font-size:1.05rem; line-height:1.7;">
+            Welcome, Lead Sound Engineer. The orchestra is ready to record, but the tracks are experiencing structural phase issues. Route the grammatical <strong>Subjects</strong> to their absolute matching <strong>Verbs</strong> to weave a flawless masterpiece.
+        </p>
+        <div class="composition-prompt" style="background: rgba(197,160,89,0.05); text-align:left;">
+            <strong>🎛️ Soundboard Rules Layout:</strong><br>
+            • Channels remain open for precisely <strong>45 seconds</strong> per composition.<br>
+            • If an alignment clash occurs, you have <strong>one extra mix retry</strong> to adjust the channel.<br>
+            • Consecutive alignment failures engage the system master layout overlay automatically.
+        </div>
+        <button class="master-btn" onclick="initializeMixer()">Engage Console Channels</button>
+    </div>
+
+    <div class="mixer-board" id="game-screen">
+        <div class="console-header">
+            <div class="hud-pill">Track: <span id="track-number" style="color:var(--gold-metallic);">1/12</span></div>
+            <div class="hud-pill" id="console-attempt" style="color: var(--gold-metallic);">Channel Try: 1/2</div>
+            <div class="hud-pill time-ticker">Console Window: <span id="time-display">45</span>s</div>
+        </div>
+
+        <div class="live-score-sheet">
+            <div class="staff-line"></div>
+            <div class="staff-line"></div>
+            <div class="staff-line"></div>
+            <div class="staff-line"></div>
+            <div class="live-score-sheet-overlay notation-track" id="score-notation-line"></div>
+        </div>
+
+        <div class="composition-prompt">
+            <div class="context-text" id="track-context">Loading structural setup framework context...</div>
+            <div class="core-phrase" id="track-phrase">Loading main prompt item string...</div>
+        </div>
+
+        <div class="mixer-knobs" id="knob-container"></div>
+
+        <div class="master-blueprint-panel" id="blueprint-panel">
+            <h3 id="blueprint-status" style="text-align: left; margin-bottom: 8px;"></h3>
+            <p id="blueprint-text" style="font-size: 0.95rem; color: #666; line-height: 1.6; margin-bottom: 10px;"></p>
+            <button class="master-btn" id="blueprint-action-btn" onclick="advanceConsoleChannel()">Cycle Master Track</button>
         </div>
     </div>
 
-    <div class="game-container" id="intro-screen">
-        <h1>🎼 The Symphony Orchestra</h1>
-        <h3>Subject-Verb Agreement Concert</h3>
-        <p style="text-align: center; margin-bottom: 25px;">Welcome, Maestro! Step up to the conductor's podium. Lead the Symphony Orchestra to musical perfection by ensuring that the musical <strong>Subjects</strong> match in perfect harmony with their <strong>Verbs</strong> across 12 compositions.</p>
-        
-        <div class="scenario-box" style="border-left-color: var(--gold)">
-            <strong>📋 Concert Rules:</strong><br>
-            • Every composition has a strict performance window of <strong>45 seconds</strong>.<br>
-            • An out-of-tune answer breaks the harmony. You get exactly <strong>one retry</strong> to tune the phrase.<br>
-            • A second error brings in the sheet music blueprints to reveal the correct harmony and lesson.
-        </div>
-        <button class="btn" onclick="startGame()">Raise Conductor's Baton</button>
+    <div class="mixer-board" id="challenge-screen">
+        <div class="badge-center">🎚️</div>
+        <h1>The High-Output Sector</h1>
+        <div class="subtitle">Peak Amplitude Calibration</div>
+        <p style="text-align: center; font-size: 1.1rem; line-height:1.7; max-width:620px; margin:0 auto 20px auto;">
+            Exceptional balancing loops, Operator. Your tracks are aligning nicely. You are now shifting processing power directly to the Final Calibration Segment. Master the mixing desk completely!
+        </p>
+        <button class="master-btn" onclick="resumeMixingStretch()">Open High-Output Track</button>
     </div>
 
-    <div class="game-container" id="game-screen">
-        <div class="dashboard">
-            <div class="score-box">🎼 Harmony Score: <span id="current-score">0</span>/12</div>
-            <div id="attempt-badge" style="color: var(--gold); font-weight: bold;">Attempt 1/2</div>
-            <div class="timer-box">⏱️ Beat Timer: <span id="time-display">45</span>s</div>
-        </div>
-
-        <div class="sheet-music-track">
-            <div class="baton-progress" id="baton-pointer">🪄</div>
-        </div>
-
-        <h3 id="question-header" style="text-align: left; color: var(--accent-blue);">Composition 1</h3>
-        <div class="scenario-box" id="scenario-text">Scenario environment prompt details...</div>
-        <p id="question-main" style="font-size: 1.1rem; font-weight: 600;"></p>
-
-        <div class="options-grid" id="options-box"></div>
-
-        <div class="feedback-panel" id="feedback-panel">
-            <h4 id="feedback-title" style="margin-bottom: 8px;"></h4>
-            <p id="feedback-text" style="margin-bottom: 15px; font-size: 0.95rem; color: var(--text-muted);"></p>
-            <button class="btn" id="next-action-btn" onclick="handleNextAction()">Next Composition</button>
-        </div>
-    </div>
-
-    <div class="game-container" id="challenge-screen">
-        <div class="final-badge">🎻</div>
-        <h2>The Grand Finale Movement</h2>
-        <p style="text-align: center; font-size: 1.15rem;">Brilliant performance, Maestro! You are approaching the absolute peak of the concert performance. Maintain focus to lead the final movement flawlessly!</p>
-        <button class="btn" onclick="enterFinalStretch()">Conducted Final Movement</button>
-    </div>
-
-    <div class="game-container" id="result-screen">
-        <h2>Concert Standing Review</h2>
-        <div class="final-badge" id="result-emoji">⭐</div>
-        <h3 style="color: var(--text-main)" id="final-score-text">Score: 0 / 12</h3>
-        <p style="text-align: center;" id="performance-msg"></p>
-        <button class="btn" onclick="restartGame()">Concert Da Capo (Restart)</button>
+    <div class="mixer-board" id="result-screen">
+        <h1>Console Calibration Summary</h1>
+        <div class="subtitle" id="summary-grade">Final Phase Balance</div>
+        <div class="badge-center" id="summary-badge">👑</div>
+        <h2 style="color: var(--charcoal); margin-bottom:15px;" id="summary-score-text">Aligned Channels: 0 / 12</h2>
+        <p style="text-align: center; max-width:550px; margin:0 auto 25px auto; line-height:1.6;" id="summary-desc"></p>
+        <button class="master-btn" onclick="reloadMixerDesk()">Reload Console Deck</button>
     </div>
 
     <script>
         const questions = [
             {
-                id: 1,
                 scenario: "The editor of the school magazine is checking articles submitted by Class 5 students before they are printed. One student has written the sentence:\n\"Everyone enjoy the storytelling competition because it is interesting.\"",
                 question: "The editor remembers that words such as everyone, somebody, anybody, and each are indefinite pronouns. Although they refer to many people, they are always treated as singular and must be followed by a singular verb in the present tense. Which sentence should the editor publish?",
                 options: [
@@ -382,7 +399,6 @@
                 explanation: "Words like 'everyone' function as singular indefinite pronouns and natively require singular verb forms matching them with 'enjoys'."
             },
             {
-                id: 2,
                 scenario: "The Principal is preparing an announcement for the morning assembly. She wants to appreciate the school choir after winning an inter-school singing competition. One teacher writes:\n\"The choir sing beautifully during every performance.\"",
                 question: "Another teacher points out that choir is a collective noun and is treated as a single unit in this sentence. Therefore, it should take a singular verb. Which sentence should the Principal choose?",
                 options: [
@@ -395,7 +411,6 @@
                 explanation: "When acting contextually as a singular shared corporate identity block, collective nouns require singular verb configurations ('sings')."
             },
             {
-                id: 3,
                 scenario: "The student reporter is writing about the Science Exhibition. She wants her report to be grammatically correct before it is displayed on the notice board. One sentence reads:\n\"The students presents their working models confidently.\"",
                 question: "While reviewing the report, the teacher reminds the class that a plural subject must always take a plural verb in the simple present tense. Which revision should the reporter make?",
                 options: [
@@ -408,7 +423,6 @@
                 explanation: "Plural subjects ('The students') align harmoniously together with simple base configuration plural verb items ('present')."
             },
             {
-                id: 4,
                 scenario: "During an English lesson, the teacher asks students to write sentences about their daily routine. Rahul writes:\n\"She walk to school every morning with her brother.\"",
                 question: "His partner notices that the sentence does not follow the rule for third-person singular subjects in the present tense. The teacher asks the class to choose the correct revision. Which option should they select?",
                 options: [
@@ -421,7 +435,6 @@
                 explanation: "Third-person singular pronouns ('she', 'he', 'it') must agree cleanly with standard singular verbs ending with '-s' ('walks')."
             },
             {
-                id: 5,
                 scenario: "The English Club is editing dialogues for a short play. One character says:\n\"We plays fair during every match.\"",
                 question: "The students remember that the pronouns I, you, we, and they always take the base form of the verb in the present tense. Which correction should the club make?",
                 options: [
@@ -434,7 +447,6 @@
                 explanation: "Plural pronouns such as 'we' align directly alongside basic present tense infinitive forms without adding extra character endings ('play')."
             },
             {
-                id: 6,
                 scenario: "Two students are checking each other's homework before submitting it to the teacher. One sentence reads:\n\"Each of the players practise regularly after school.\"",
                 question: "The teacher reminds the class that 'each' is an indefinite pronoun and should always be treated as singular, even if it refers to many people. Which sentence deserves full marks?",
                 options: [
@@ -447,7 +459,6 @@
                 explanation: "The true head element is 'each', which isolates individuals singularly, requiring the singular verb form 'practises'."
             },
             {
-                id: 7,
                 scenario: "The Sports Captain is preparing a notice for all participants. One sentence says:\n\"The captain lead the march past during the Annual Sports Day.\"",
                 question: "The teacher explains that the subject is singular and therefore needs the correct present tense verb. Which sentence should appear on the notice board?",
                 options: [
@@ -460,7 +471,6 @@
                 explanation: "A distinct singular actor unit ('The captain') takes a singular, matching structural verb profile variant ('leads')."
             },
             {
-                id: 8,
                 scenario: "During a grammar quiz, the teacher asks students to identify the sentence that correctly follows the rule of subject–verb agreement. She reminds them that collective nouns are treated as singular in the chapter they have learned.",
                 question: "Which group should receive full marks?",
                 options: [
@@ -473,7 +483,6 @@
                 explanation: "Treating 'the team' as a combined institutional core singular module coordinates correctly with the corresponding verb variant 'plays'."
             },
             {
-                id: 9,
                 scenario: "The librarian is preparing a poster reminding students to follow library rules. One sentence reads:\n\"Every child return the book on time.\"",
                 question: "Before printing the poster, she checks whether the sentence follows the rule for indefinite words such as every. Which sentence should she print?",
                 options: [
@@ -486,7 +495,6 @@
                 explanation: "Distributive modifiers ('every') logically force singular context interpretations onto nouns, leading safely to 'returns'."
             },
             {
-                id: 10,
                 scenario: "While checking notebooks, the English teacher notices the sentence:\n\"The birds flies across the lake every evening.\"",
                 question: "She asks the student to think about whether the subject is singular or plural before correcting the sentence. Which correction is the most appropriate?",
                 options: [
@@ -499,7 +507,6 @@
                 explanation: "The dynamic subject 'birds' is explicit plural, meaning it must pair directly with the base verb phrase pattern 'fly'."
             },
             {
-                id: 11,
                 scenario: "A group of students is presenting a chart about healthy eating. One sentence on the chart says:\n\"My friend eat fresh fruits every day.\"",
                 question: "Before displaying the chart, the teacher reminds the group that a singular subject in the present tense requires a singular verb. Which revision should they make?",
                 options: [
@@ -512,7 +519,6 @@
                 explanation: "The structural target unit 'My friend' is singular, so it requires an active singular presentation form ('eats')."
             },
             {
-                id: 12,
                 scenario: "The editor of the school newsletter reads four sentences written by different students. She wants to publish only the sentence that correctly follows the rules of subject–verb agreement taught in Class 5.",
                 question: "She carefully checks whether the subject is singular or plural before selecting the final sentence. Which sentence should the editor publish?",
                 options: [
@@ -526,233 +532,228 @@
             }
         ];
 
-        let currentQuestionIdx = 0;
-        let score = 0;
-        let timer = null;
-        let timeLeft = 45;
-        let currentAttempts = 1;
-        let optionSelectedThisRound = false;
+        let trackingIdx = 0;
+        let scoreCounter = 0;
+        let deskTimer = null;
+        let channelSeconds = 45;
+        let consoleAttempts = 1;
+        let panelLock = false;
 
         const correctSound = new Audio('assets/correct.mp3');
         const wrongSound = new Audio('assets/wrong.mp3');
-        const finalSound = new Audio('assets/freesound_community-claps-44774.mp3');
-
-        function createBackgroundAesthetics() {
-            const ambient = document.getElementById('ambient-layer');
-            const notesList = ['♩', '♪', '♫', '♬', '𝄢', '𝄞'];
-            for(let i=0; i<20; i++) {
-                let note = document.createElement('div');
-                note.className = 'note';
-                note.textContent = notesList[Math.floor(Math.random() * notesList.length)];
-                note.style.top = Math.random() * 100 + 'vh';
-                note.style.left = Math.random() * 100 + 'vw';
-                note.style.animationDelay = Math.random() * 6 + 's';
-                note.style.fontSize = (Math.random() * 16 + 16) + 'px';
-                ambient.appendChild(note);
-            }
-        }
+        const clapsSound = new Audio('assets/freesound_community-claps-44774.mp3');
 
         window.addEventListener('DOMContentLoaded', () => {
-            createBackgroundAesthetics();
             setTimeout(() => {
                 const overlay = document.getElementById('brand-overlay');
                 overlay.style.opacity = '0';
                 setTimeout(() => {
                     overlay.style.display = 'none';
-                    switchView('intro-screen');
+                    showPanel('intro-screen');
                 }, 500);
             }, 5000);
         });
 
-        function switchView(viewId) {
-            document.querySelectorAll('.game-container').forEach(el => el.classList.remove('active-view'));
-            const targetView = document.getElementById(viewId);
-            if(targetView) targetView.classList.add('active-view');
+        function showPanel(panelId) {
+            document.querySelectorAll('.mixer-board').forEach(p => p.classList.remove('active-panel'));
+            const frame = document.getElementById(panelId);
+            if(frame) frame.classList.add('active-panel');
         }
 
-        function startGame() {
-            currentQuestionIdx = 0;
-            score = 0;
-            switchView('game-screen');
-            loadQuestion();
+        function initializeMixer() {
+            trackingIdx = 0;
+            scoreCounter = 0;
+            showPanel('game-screen');
+            rebuildMelodyTrack();
+            loadConsoleChannel();
         }
 
-        function loadQuestion() {
-            clearInterval(timer);
-            timeLeft = 45;
-            currentAttempts = 1;
-            optionSelectedThisRound = false;
-            
-            document.getElementById('time-display').textContent = timeLeft;
-            document.getElementById('time-display').classList.remove('timer-warn');
-            document.getElementById('current-score').textContent = score;
-            document.getElementById('attempt-badge').textContent = `Attempt ${currentAttempts}/2`;
-            document.getElementById('feedback-panel').style.display = 'none';
+        function rebuildMelodyTrack() {
+            const track = document.getElementById('score-notation-line');
+            track.innerHTML = '';
+            const symbols = ['♩', '♪', '♫', '♬'];
+            for(let i = 0; i < scoreCounter; i++) {
+                const item = document.createElement('div');
+                item.className = 'placed-note';
+                item.textContent = symbols[i % symbols.length];
+                track.appendChild(item);
+            }
+        }
 
-            const baton = document.getElementById('baton-pointer');
-            let percentage = (currentQuestionIdx / questions.length) * 92; 
-            baton.style.left = percentage + '%';
+        function loadConsoleChannel() {
+            clearInterval(deskTimer);
+            channelSeconds = 45;
+            consoleAttempts = 1;
+            panelLock = false;
 
-            const currentQ = questions[currentQuestionIdx];
-            document.getElementById('question-header').textContent = `Composition ${currentQuestionIdx + 1} of 12`;
-            document.getElementById('scenario-text').textContent = currentQ.scenario;
-            document.getElementById('question-main').textContent = currentQ.question;
+            document.getElementById('time-display').textContent = channelSeconds;
+            document.getElementById('time-display').classList.remove('ticker-urgent');
+            document.getElementById('track-number').textContent = `${trackingIdx + 1}/12`;
+            document.getElementById('console-attempt').textContent = `Channel Try: ${consoleAttempts}/2`;
+            document.getElementById('blueprint-panel').style.display = 'none';
 
-            const optionsBox = document.getElementById('options-box');
-            optionsBox.innerHTML = '';
+            const activeQ = questions[trackingIdx];
+            document.getElementById('track-context').textContent = activeQ.scenario;
+            document.getElementById('track-phrase').textContent = activeQ.question;
 
-            currentQ.options.forEach((opt, idx) => {
-                const card = document.createElement('div');
-                card.className = 'option-card';
-                card.innerHTML = `<span><strong>${String.fromCharCode(65 + idx)}.</strong> ${opt}</span><span class="indicator"></span>`;
-                card.onclick = () => selectOption(idx, card);
-                optionsBox.appendChild(card);
+            const box = document.getElementById('knob-container');
+            box.innerHTML = '';
+
+            activeQ.options.forEach((opt, idx) => {
+                const row = document.createElement('div');
+                row.className = 'knob-row';
+                row.innerHTML = `<span><strong>${String.fromCharCode(65 + idx)}.</strong> ${opt}</span><span class="status-marker"></span>`;
+                row.onclick = () => tuneChannel(idx, row);
+                box.appendChild(row);
             });
 
-            startTimer();
+            startChannelTimer();
         }
 
-        function startTimer() {
-            timer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('time-display').textContent = timeLeft;
-                if(timeLeft <= 10) {
-                    document.getElementById('time-display').classList.add('timer-warn');
+        function startChannelTimer() {
+            deskTimer = setInterval(() => {
+                channelSeconds--;
+                document.getElementById('time-display').textContent = channelSeconds;
+                if(channelSeconds <= 10) {
+                    document.getElementById('time-display').classList.add('ticker-urgent');
                 }
-                if(timeLeft <= 0) {
-                    clearInterval(timer);
-                    forceTimeout();
+                if(channelSeconds <= 0) {
+                    clearInterval(deskTimer);
+                    triggerSystemTimeout();
                 }
             }, 1000);
         }
 
-        function selectOption(selectedIdx, cardElement) {
-            if(optionSelectedThisRound) return;
+        function tuneChannel(chosenIdx, element) {
+            if(panelLock) return;
 
-            const currentQ = questions[currentQuestionIdx];
-            
-            if(selectedIdx === currentQ.answer) {
-                clearInterval(timer);
-                optionSelectedThisRound = true;
-                score++;
-                document.getElementById('current-score').textContent = score;
-                cardElement.classList.add('correct-reveal');
-                triggerStarConfetti(cardElement);
+            const activeQ = questions[trackingIdx];
+
+            if(chosenIdx === activeQ.answer) {
+                clearInterval(deskTimer);
+                panelLock = true;
+                scoreCounter++;
+                element.classList.add('tuning-correct');
+                rebuildMelodyTrack();
+                triggerSparks(element);
                 try { correctSound.play(); } catch(e){}
-                
-                showFeedback(true, "Perfect Harmony! Match verified.", currentQ.explanation);
+
+                displayBlueprint(true, "Perfect Mix Profile Accrued", activeQ.explanation);
             } else {
-                if(currentAttempts === 1) {
-                    currentAttempts = 2;
-                    document.getElementById('attempt-badge').textContent = `Attempt ${currentAttempts}/2`;
-                    cardElement.classList.add('wrong-reveal');
-                    cardElement.querySelector('.indicator').innerHTML = '<span class="red-cross">✕</span>';
+                if(consoleAttempts === 1) {
+                    consoleAttempts = 2;
+                    document.getElementById('console-attempt').textContent = `Channel Try: ${consoleAttempts}/2`;
+                    element.classList.add('tuning-clash');
+                    element.querySelector('.status-marker').innerHTML = '<span class="red-cross">⎌</span>';
                     try { wrongSound.play(); } catch(e){}
-                    alert("A discordance was detected! The instruments are out of sync. Review the subject and try tuning again.");
                 } else {
-                    clearInterval(timer);
-                    optionSelectedThisRound = true;
-                    cardElement.classList.add('wrong-reveal');
-                    cardElement.querySelector('.indicator').innerHTML = '<span class="red-cross">✕</span>';
+                    clearInterval(deskTimer);
+                    panelLock = true;
+                    element.classList.add('tuning-clash');
+                    element.querySelector('.status-marker').innerHTML = '<span class="red-cross">✕</span>';
                     try { wrongSound.play(); } catch(e){}
-                    
-                    const optionsBox = document.getElementById('options-box');
-                    optionsBox.children[currentQ.answer].classList.add('correct-reveal');
-                    
-                    showFeedback(false, "Unresolved Discordance. Orchestra Correction Enabled.", currentQ.explanation);
+
+                    const container = document.getElementById('knob-container');
+                    container.children[activeQ.answer].classList.add('tuning-correct');
+
+                    displayBlueprint(false, "Phase Inversion Engaged", activeQ.explanation);
                 }
             }
         }
 
-        function forceTimeout() {
-            optionSelectedThisRound = true;
-            const currentQ = questions[currentQuestionIdx];
-            const optionsBox = document.getElementById('options-box');
-            optionsBox.children[currentQ.answer].classList.add('correct-reveal');
-            showFeedback(false, "Tempo Exceeded! Performance time expired.", currentQ.explanation);
+        function triggerSystemTimeout() {
+            panelLock = true;
+            const activeQ = questions[trackingIdx];
+            const container = document.getElementById('knob-container');
+            container.children[activeQ.answer].classList.add('tuning-correct');
+            displayBlueprint(false, "Channel Bandwidth Expired", activeQ.explanation);
         }
 
-        function showFeedback(isCorrect, title, message) {
-            const panel = document.getElementById('feedback-panel');
-            const fTitle = document.getElementById('feedback-title');
-            const fText = document.getElementById('feedback-text');
-            const nextBtn = document.getElementById('next-action-btn');
+        function displayBlueprint(isCorrect, heading, explanation) {
+            const panel = document.getElementById('blueprint-panel');
+            const pTitle = document.getElementById('blueprint-status');
+            const pText = document.getElementById('blueprint-text');
+            const actionBtn = document.getElementById('blueprint-action-btn');
 
-            fTitle.textContent = title;
-            fTitle.style.color = isCorrect ? 'var(--success)' : 'var(--error)';
-            fText.textContent = message;
-            
-            if(currentQuestionIdx === 9 && isCorrect) { 
-                nextBtn.textContent = "Proceed to the Grand Finale Movement";
-            } else if(currentQuestionIdx === questions.length - 1) {
-                nextBtn.textContent = "View Performance Standing";
+            pTitle.textContent = heading;
+            pTitle.style.color = isCorrect ? 'var(--sage-success)' : 'var(--crimson-error)';
+            pText.textContent = explanation;
+
+            if(trackingIdx === 9 && isCorrect) {
+                actionBtn.textContent = "Route to High-Output Sector";
+            } else if(trackingIdx === questions.length - 1) {
+                actionBtn.textContent = "Compute Phase Report";
             } else {
-                nextBtn.textContent = "Next Composition";
+                actionBtn.textContent = "Cycle Next Channel";
             }
 
             panel.style.display = 'block';
         }
 
-        function handleNextAction() {
-            if(currentQuestionIdx === 9) { 
-                currentQuestionIdx++;
-                switchView('challenge-screen');
-            } else if(currentQuestionIdx >= questions.length - 1) {
-                endGame();
+        function advanceConsoleChannel() {
+            if(trackingIdx === 9) {
+                trackingIdx++;
+                showPanel('challenge-screen');
+            } else if(trackingIdx >= questions.length - 1) {
+                concludeMixPerformance();
             } else {
-                currentQuestionIdx++;
-                loadQuestion();
+                trackingIdx++;
+                loadConsoleChannel();
             }
         }
 
-        function enterFinalStretch() {
-            switchView('game-screen');
-            loadQuestion();
+        function resumeMixingStretch() {
+            showPanel('game-screen');
+            loadConsoleChannel();
         }
 
-        function triggerStarConfetti(target) {
-            const rect = target.getBoundingClientRect();
-            for(let i=0; i<15; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'star-particle';
-                particle.innerHTML = '★';
-                particle.style.left = (rect.left + rect.width/2) + 'px';
-                particle.style.top = (rect.top + rect.height/2) + 'px';
-                
-                const xDist = (Math.random() - 0.5) * 180;
-                const yDist = (Math.random() - 0.5) * 180;
-                particle.style.setProperty('--x', `${xDist}px`);
-                particle.style.setProperty('--y', `${yDist}px`);
-                
-                document.body.appendChild(particle);
-                setTimeout(() => particle.remove(), 800);
+        function triggerSparks(element) {
+            const bounds = element.getBoundingClientRect();
+            for(let i=0; i<12; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'particle-spark';
+                spark.innerHTML = '✦';
+                spark.style.left = (bounds.left + bounds.width/2) + 'px';
+                spark.style.top = (bounds.top + bounds.height/2) + 'px';
+
+                const distanceX = (Math.random() - 0.5) * 160;
+                const distanceY = (Math.random() - 0.5) * 160;
+                spark.style.setProperty('--x', `${distanceX}px`);
+                spark.style.setProperty('--y', `${distanceY}px`);
+
+                document.body.appendChild(spark);
+                setTimeout(() => spark.remove(), 700);
             }
         }
 
-        function endGame() {
-            clearInterval(timer);
-            switchView('result-screen');
-            document.getElementById('final-score-text').textContent = `Score: ${score} / 12`;
-            
-            const msgEl = document.getElementById('performance-msg');
-            const emojiEl = document.getElementById('result-emoji');
-            
-            if(score === 12) {
-                emojiEl.textContent = '👑';
-                msgEl.textContent = "Virtuoso Conductor! You led the entire orchestration without a single out-of-tune note.";
-                try { finalSound.play(); } catch(e){}
-            } else if(score >= 8) {
-                emojiEl.textContent = '🎻';
-                msgEl.textContent = "Symphony Maestro! Excellent coordination and alignment of complex subjects and verbs.";
-                try { finalSound.play(); } catch(e){}
+        function concludeMixPerformance() {
+            clearInterval(deskTimer);
+            showPanel('result-screen');
+            document.getElementById('summary-score-text').textContent = `Aligned Channels: ${scoreCounter} / 12`;
+
+            const heading = document.getElementById('summary-grade');
+            const emoji = document.getElementById('summary-badge');
+            const desc = document.getElementById('summary-desc');
+
+            if(scoreCounter === 12) {
+                heading.textContent = "Perfect Phase Convergence";
+                emoji.textContent = '👑';
+                desc.textContent = "Master Audio Director Status! Your absolute calibration of complex subjects and structural verb arrays produces flawless audio tracking architecture.";
+                try { clapsSound.play(); } catch(e){}
+            } else if(scoreCounter >= 8) {
+                heading.textContent = "Harmonic Wave Profile Stabilized";
+                emoji.textContent = '🎚️';
+                desc.textContent = "Senior Sound Architect. Your overall frequency outputs track perfectly through the master board array matrix panels.";
+                try { clapsSound.play(); } catch(e){}
             } else {
-                emojiEl.textContent = '🪕';
-                msgEl.textContent = "Apprentice Section Leader. Several passages slipped out of agreement. Re-read your music score and practice your cues.";
+                heading.textContent = "High Phase Distortion Checked";
+                emoji.textContent = '📻';
+                desc.textContent = "Apprentice Console Hand. Multiple channels suffered subject-verb impedance mismatching. Return to the calibration handbook instructions.";
             }
         }
 
-        function restartGame() {
-            switchView('intro-screen');
+        function reloadMixerDesk() {
+            showPanel('intro-screen');
         }
     </script>
 </body>
