@@ -6,20 +6,19 @@
 <title>Candy Quest – Nouns</title>
 <style>
   :root{
-    --bg1:#ff7eb6;
-    --bg2:#7c3aed;
-    --bg3:#22c55e;
-    --panel:rgba(255,255,255,.16);
+    --pink:#ff4d8d;
+    --purple:#8b5cf6;
+    --blue:#2563eb;
+    --cyan:#06b6d4;
+    --orange:#f59e0b;
+    --panel:rgba(255,255,255,.14);
     --panel2:rgba(255,255,255,.22);
-    --panel3:rgba(255,255,255,.92);
+    --card:#fffefb;
     --text:#14213d;
-    --muted:#5b6478;
+    --muted:#536173;
     --good:#16a34a;
     --bad:#dc2626;
-    --accent:#7c3aed;
-    --accent2:#f97316;
-    --shadow:0 22px 60px rgba(24, 15, 70, .22);
-    --radius:28px;
+    --shadow:0 24px 70px rgba(24,15,70,.24);
   }
   *{box-sizing:border-box}
   html,body{height:100%}
@@ -29,14 +28,13 @@
     color:var(--text);
     overflow-x:hidden;
     background:
-      radial-gradient(circle at 10% 10%, rgba(255,255,255,.45) 0 7%, transparent 7% 100%),
-      radial-gradient(circle at 85% 20%, rgba(255,255,255,.30) 0 8%, transparent 8% 100%),
-      radial-gradient(circle at 20% 80%, rgba(255,255,255,.18) 0 7%, transparent 7% 100%),
-      linear-gradient(135deg, #ff5fa2 0%, #8b5cf6 35%, #06b6d4 65%, #f59e0b 100%);
+      radial-gradient(circle at 12% 14%, rgba(255,255,255,.45) 0 7%, transparent 7% 100%),
+      radial-gradient(circle at 84% 18%, rgba(255,255,255,.28) 0 8%, transparent 8% 100%),
+      radial-gradient(circle at 25% 82%, rgba(255,255,255,.16) 0 7%, transparent 7% 100%),
+      linear-gradient(135deg, #ff5fa2 0%, #8b5cf6 33%, #06b6d4 66%, #f59e0b 100%);
     background-attachment:fixed;
   }
-
-  body::before, body::after{
+  body::before,body::after{
     content:"";
     position:fixed;
     inset:0;
@@ -45,23 +43,22 @@
   }
   body::before{
     background:
-      radial-gradient(circle at 15px 15px, rgba(255,255,255,.20) 0 2px, transparent 2px 100%),
-      radial-gradient(circle at 45px 45px, rgba(255,255,255,.12) 0 1px, transparent 1px 100%);
+      radial-gradient(circle at 15px 15px, rgba(255,255,255,.2) 0 2px, transparent 2px 100%),
+      radial-gradient(circle at 55px 45px, rgba(255,255,255,.12) 0 1px, transparent 1px 100%);
     background-size:120px 120px;
-    opacity:.7;
-    animation: drift 28s linear infinite;
+    opacity:.72;
+    animation:drift 26s linear infinite;
   }
   body::after{
     background:
-      linear-gradient(120deg, transparent 0 46%, rgba(255,255,255,.08) 47%, transparent 48%),
-      linear-gradient(225deg, transparent 0 43%, rgba(255,255,255,.08) 44%, transparent 45%);
+      linear-gradient(115deg, transparent 0 46%, rgba(255,255,255,.08) 47%, transparent 48%),
+      linear-gradient(225deg, transparent 0 42%, rgba(255,255,255,.08) 43%, transparent 44%);
     background-size:260px 260px;
     opacity:.55;
-    animation: stream 18s linear infinite;
+    animation:stream 18s linear infinite;
   }
   @keyframes drift{from{transform:translateY(0)}to{transform:translateY(-120px)}}
   @keyframes stream{from{transform:translateX(-8%)}to{transform:translateX(8%)}}
-
   .bg-shape{
     position:fixed;
     z-index:0;
@@ -78,7 +75,6 @@
     0%,100%{transform:translateY(0) scale(1)}
     50%{transform:translateY(-18px) scale(1.05)}
   }
-
   .wrap{
     position:relative;
     z-index:1;
@@ -90,7 +86,6 @@
   }
   .screen{display:none;width:100%}
   .screen.active{display:block}
-
   .card{
     width:min(1080px,100%);
     margin:0 auto;
@@ -102,7 +97,6 @@
     border:1px solid rgba(255,255,255,.25);
     position:relative;
   }
-
   .hero{
     padding:22px 18px 18px;
     text-align:center;
@@ -111,7 +105,6 @@
       linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.10));
     border-bottom:1px solid rgba(255,255,255,.15);
   }
-
   .badge{
     display:inline-block;
     padding:8px 14px;
@@ -138,7 +131,6 @@
     font-size:1.01rem;
     line-height:1.55;
   }
-
   .hero-actions{
     margin-top:16px;
     display:flex;
@@ -166,7 +158,6 @@
     background:#fff;
   }
   .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
-
   .layout{
     display:grid;
     grid-template-columns:1.1fr .9fr;
@@ -176,7 +167,7 @@
   .panel{
     border-radius:24px;
     padding:16px;
-    background:var(--panel3);
+    background:#fffefc;
     border:2px solid rgba(255,255,255,.58);
     box-shadow:0 10px 26px rgba(0,0,0,.08);
   }
@@ -190,7 +181,6 @@
     line-height:1.6;
     margin-bottom:10px;
   }
-
   .stats{
     display:grid;
     grid-template-columns:repeat(3,1fr);
@@ -217,7 +207,6 @@
     margin-top:4px;
     color:#111827;
   }
-
   .toprow{
     display:flex;
     align-items:center;
@@ -248,7 +237,6 @@
     background:linear-gradient(135deg,#22c55e,#facc15);
     box-shadow:0 0 0 6px rgba(34,197,94,.12);
   }
-
   .bar{
     width:100%;
     height:12px;
@@ -264,12 +252,11 @@
     background:linear-gradient(90deg,#22c55e,#facc15,#f97316,#ef4444);
     transition:width .3s linear;
   }
-
   .question{
     margin:16px 0 14px;
     padding:16px;
     border-radius:22px;
-    background:rgba(255,255,255,.95);
+    background:rgba(255,255,255,.96);
     border:2px solid rgba(255,255,255,.85);
     font-size:1.06rem;
     line-height:1.55;
@@ -330,7 +317,6 @@
   }
   .good{color:#d9ffe5}
   .bad{color:#ffe3e3}
-
   .bottom{
     margin-top:16px;
     display:flex;
@@ -353,7 +339,6 @@
     background:linear-gradient(90deg,#ffe66d,#f59e0b,#f97316,#ec4899);
     border-radius:inherit;
   }
-
   .overlay{
     position:fixed;
     inset:0;
@@ -373,7 +358,6 @@
     0%{transform:translateY(0) scale(.4) rotate(0);opacity:1}
     100%{transform:translateY(-120px) scale(1.3) rotate(180deg);opacity:0}
   }
-
   .splash{
     position:fixed;
     inset:0;
@@ -407,7 +391,6 @@
     font-weight:900;
     font-size:14px;
   }
-
   .finalbox{display:grid;gap:12px}
   .finalchallenge{
     background:#fff;
@@ -442,7 +425,6 @@
     margin:0 auto 16px;
     line-height:1.55;
   }
-
   @media (max-width:900px){
     .layout{grid-template-columns:1fr}
     .stats{grid-template-columns:repeat(2,1fr)}
@@ -578,29 +560,25 @@ Which word should Riya identify?
 A. school
 B. teacher
 C. delhi
-D. city
-✔ Correct Answer: C. Delhi`, o:['school','teacher','delhi','city'], a:2, e:'Delhi is a specific place name, so it is a proper noun.'},
+D. city`, o:['school','teacher','delhi','city'], a:2, e:'Delhi is a specific place name, so it is a proper noun.'},
       {q:`The sports teacher is preparing the annual athletics report. She wants to describe twenty runners participating together in the relay race using a single word instead of repeatedly writing "many runners." She asks the students to choose the most suitable noun that represents the entire group.
 Which word should they choose?
 A. athlete
 B. runner
 C. team
-D. player
-✔ Correct Answer: C. Team`, o:['athlete','runner','team','player'], a:2, e:'Team is the collective noun for a group.'},
+D. player`, o:['athlete','runner','team','player'], a:2, e:'Team is the collective noun for a group.'},
       {q:`During the morning assembly, Aarav returned a lost wallet containing money to the school office without taking anything from it. The principal appreciated him and explained that some qualities cannot be seen or touched, but they make a person trustworthy and respected by others.
 Which abstract noun best describes Aarav's quality?
 A. wallet
 B. honesty
 C. student
-D. classroom
-✔ Correct Answer: B. Honesty`, o:['wallet','honesty','student','classroom'], a:1, e:'Honesty is an abstract noun because it names a quality.'},
+D. classroom`, o:['wallet','honesty','student','classroom'], a:1, e:'Honesty is an abstract noun because it names a quality.'},
       {q:`The Art Club is preparing an exhibition using different materials. One group is making clay pots, another is carving wooden toys, and a third group is designing beautiful silver jewellery. The teacher asks students to identify the word that names the material from which the jewellery is made.
 Which word is the material noun?
 A. jewellery
 B. silver
 C. artist
-D. exhibition
-✔ Correct Answer: B. Silver`, o:['jewellery','silver','artist','exhibition'], a:1, e:'Silver is the material used to make the jewellery.'},
+D. exhibition`, o:['jewellery','silver','artist','exhibition'], a:1, e:'Silver is the material used to make the jewellery.'},
       {q:`Ritika is writing about her holiday. She writes,
 "Last summer, my family visited Jaipur. We explored beautiful forts and museums before returning home."
 While editing her paragraph, her teacher asks her to identify the word that names a specific place rather than a general one.
@@ -608,8 +586,7 @@ Which word is the proper noun?
 A. family
 B. forts
 C. Jaipur
-D. museums
-✔ Correct Answer: C. Jaipur`, o:['family','forts','Jaipur','museums'], a:2, e:'Jaipur is a special name, so it is a proper noun.'},
+D. museums`, o:['family','forts','Jaipur','museums'], a:2, e:'Jaipur is a special name, so it is a proper noun.'},
       {q:`During a wildlife documentary, the narrator says,
 "A group of elephants slowly walked towards the river to drink water before sunset."
 The teacher pauses the video and asks the class to replace the words "group of elephants" with a single collective noun.
@@ -617,29 +594,25 @@ Which option should they choose?
 A. herd
 B. flock
 C. bouquet
-D. swarm
-✔ Correct Answer: A. Herd`, o:['herd','flock','bouquet','swarm'], a:0, e:'Herd is used for elephants.'},
+D. swarm`, o:['herd','flock','bouquet','swarm'], a:0, e:'Herd is used for elephants.'},
       {q:`The class captain always speaks politely, helps classmates solve problems, and thanks everyone who supports her. The teacher says that these actions show an important quality that cannot be seen but can be felt through a person's behaviour.
 Which abstract noun best completes the teacher's statement?
 A. kindness
 B. captain
 C. classroom
-D. notebook
-✔ Correct Answer: A. Kindness`, o:['kindness','captain','classroom','notebook'], a:0, e:'Kindness names a quality, so it is an abstract noun.'},
+D. notebook`, o:['kindness','captain','classroom','notebook'], a:0, e:'Kindness names a quality, so it is an abstract noun.'},
       {q:`A science teacher places four objects on the table—a cotton shirt, a plastic bottle, an iron nail, and a glass bowl. She asks the students to identify the word that names the material used to make one of these objects.
 Which option is a material noun?
 A. bottle
 B. bowl
 C. iron
-D. shirt
-✔ Correct Answer: C. Iron`, o:['bottle','bowl','iron','shirt'], a:2, e:'Iron names the material.'},
+D. shirt`, o:['bottle','bowl','iron','shirt'], a:2, e:'Iron names the material.'},
       {q:`The librarian is preparing labels for different sections of the library. One shelf contains books about famous people like Mahatma Gandhi, Kalpana Chawla, and A.P.J. Abdul Kalam. She tells the students that these names belong to one special type of noun because they refer to particular individuals.
 Which type of noun are these names?
 A. Common nouns
 B. Proper nouns
 C. Material nouns
-D. Collective nouns
-✔ Correct Answer: B. Proper nouns`, o:['Common nouns','Proper nouns','Material nouns','Collective nouns'], a:1, e:'Names of specific people are proper nouns.'},
+D. Collective nouns`, o:['Common nouns','Proper nouns','Material nouns','Collective nouns'], a:1, e:'Names of specific people are proper nouns.'},
       {q:`The teacher writes four words on the board:
 wood, honesty, team, Mumbai
 She asks the class to identify the word that belongs to a different category from the other three because it names a specific person, place, or thing.
@@ -647,8 +620,7 @@ Which word should the students choose?
 A. wood
 B. honesty
 C. team
-D. Mumbai
-✔ Correct Answer: D. Mumbai`, o:['wood','honesty','team','Mumbai'], a:3, e:'Mumbai is a proper noun while the others are not.'},
+D. Mumbai`, o:['wood','honesty','team','Mumbai'], a:3, e:'Mumbai is a proper noun while the others are not.'},
       {q:`The Drama Club is writing a script for the Annual Day programme. One dialogue says,
 "The ______ of dancers entered the stage together and received loud applause."
 The teacher asks the students to choose a noun that correctly represents the entire group.
@@ -656,8 +628,7 @@ Which word best completes the sentence?
 A. dancer
 B. troupe
 C. stage
-D. applause
-✔ Correct Answer: B. Troupe`, o:['dancer','troupe','stage','applause'], a:1, e:'Troupe is a collective noun for performers.'},
+D. applause`, o:['dancer','troupe','stage','applause'], a:1, e:'Troupe is a collective noun for performers.'},
       {q:`While revising for the grammar test, Rohan underlines these words from a newspaper article:
 India, courage, gold, class
 His teacher asks him to identify the word that is an abstract noun, as it names an idea or quality rather than a person, place, object, or material.
@@ -665,8 +636,7 @@ Which word should Rohan choose?
 A. India
 B. courage
 C. gold
-D. class
-✔ Correct Answer: B. Courage`, o:['India','courage','gold','class'], a:1, e:'Courage is an abstract noun because it names a quality.'}
+D. class`, o:['India','courage','gold','class'], a:1, e:'Courage is an abstract noun because it names a quality.'}
     ];
 
     const finalChallenge = {
@@ -736,7 +706,6 @@ D. Mumbai`,
       $('retryText').textContent = retries;
       $('scoreText').textContent = score;
       $('progressText').textContent = `Question ${index + 1} of ${total}`;
-
       const q = questions[index];
       $('questionText').textContent = q.q;
       const box = $('options');
@@ -748,7 +717,6 @@ D. Mumbai`,
         btn.onclick = () => pickAnswer(i, btn);
         box.appendChild(btn);
       });
-
       setTimer();
     }
 
@@ -878,7 +846,6 @@ D. Mumbai`,
     };
 
     $('restartBtn').onclick = () => location.reload();
-
     setTimeout(() => $('splash').classList.add('hide'), 5000);
   </script>
 </body>
