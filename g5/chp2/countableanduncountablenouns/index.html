@@ -8,14 +8,14 @@
     :root {
       --primary: #00796b;
       --primary-light: #e0f2f1;
-      --bg-gradient: linear-gradient(135deg, #e8f5e9 0%, #e0f2f1 100%);
+      --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #e0f2f1 100%);
       --surface: #ffffff;
-      --text: #263238;
-      --text-muted: #546e7a;
-      --accent: #ffd54f;
-      --correct: #2e7d32;
-      --wrong: #c62828;
-      --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --accent: #f59e0b;
+      --correct: #16a34a;
+      --wrong: #dc2626;
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
 
     * {
@@ -36,7 +36,7 @@
       position: relative;
     }
 
-    /* Ambient Supermarket Safari Animation Layer */
+    /* Ambient Supermarket Floating Layer */
     .ambient-bg {
       position: absolute;
       top: 0;
@@ -51,38 +51,39 @@
     .ambient-icon {
       position: absolute;
       bottom: -50px;
-      opacity: 0.08;
-      font-size: 2rem;
-      animation: floatUp 12s linear infinite;
+      opacity: 0.12;
+      font-size: 1.8rem;
+      animation: floatUp 14s linear infinite;
     }
 
     @keyframes floatUp {
       0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-      10% { opacity: 0.08; }
-      90% { opacity: 0.08; }
+      10% { opacity: 0.12; }
+      90% { opacity: 0.12; }
       100% { transform: translateY(-105vh) rotate(360deg); opacity: 0; }
     }
 
-    /* Container System */
+    /* Main Modern UI Card */
     .app-container {
-      width: 90%;
-      max-width: 550px;
+      width: 92%;
+      max-width: 580px;
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0, 121, 107, 0.15);
-      padding: 24px;
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 77, 64, 0.08);
+      padding: 32px;
       z-index: 10;
       position: relative;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.7);
     }
 
     .final-challenge-border {
       border: 3px solid var(--accent);
-      box-shadow: 0 8px 32px rgba(255, 213, 79, 0.3);
+      box-shadow: 0 20px 40px rgba(245, 158, 11, 0.15);
     }
 
-    /* Splash Screen */
+    /* Splash Screen Layer */
     #splash-screen {
       position: fixed;
       top: 0;
@@ -99,44 +100,68 @@
     }
 
     #splash-screen img {
-      max-width: 200px;
+      max-width: 180px;
       height: auto;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
-    /* Typography & Utilities */
-    h1 { color: var(--primary); font-size: 1.6rem; text-align: center; margin-bottom: 12px; }
-    h2 { font-size: 1.2rem; margin-bottom: 16px; line-height: 1.5; color: var(--text); }
-    p { margin-bottom: 16px; color: var(--text-muted); line-height: 1.5; }
+    /* Typography styling */
+    h1 { color: var(--primary); font-size: 1.8rem; text-align: center; margin-bottom: 12px; font-weight: 700; }
+    h2 { font-size: 1.25rem; margin-bottom: 20px; line-height: 1.6; color: var(--text); font-weight: 600; }
+    p { margin-bottom: 16px; color: var(--text-muted); line-height: 1.6; }
     
     .meta-tag {
       display: inline-block;
       background: var(--primary-light);
       color: var(--primary);
-      padding: 4px 12px;
-      border-radius: 20px;
+      padding: 6px 14px;
+      border-radius: 30px;
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    /* Top Indicators Layout */
+    /* Custom Non-Intrusive Banner Notification */
+    .toast-banner {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #b45309;
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      animation: fadeInDown 0.3s ease;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Top Stats Interface */
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      font-size: 0.9rem;
-      font-weight: 600;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
     }
 
-    /* Timer Bar Component */
+    /* Modern Timer Progress Component */
     .timer-container {
       width: 100%;
-      height: 6px;
-      background: #e0e0e0;
-      border-radius: 3px;
-      margin-bottom: 20px;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      margin-bottom: 24px;
       overflow: hidden;
     }
 
@@ -144,55 +169,57 @@
       height: 100%;
       width: 100%;
       background: var(--primary);
-      transition: width 1s linear;
+      transition: width 1s linear, background-color 0.3s ease;
     }
 
-    /* Option Interaction Buttons */
+    /* App Selection Buttons */
     .options-grid {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .option-btn {
-      background: #f5f5f5;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      padding: 14px 18px;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 16px 20px;
       text-align: left;
       font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
       transition: all 0.2s ease;
+      color: var(--text);
     }
 
     .option-btn:hover:not(:disabled) {
-      background: var(--accent);
-      border-color: #fbc02d;
+      background: #fffbeb;
+      border-color: var(--accent);
+      transform: translateY(-1px);
     }
 
     .option-btn:disabled { cursor: not-allowed; }
 
-    /* Answer States Feedback */
+    /* Interactive Status States */
     .option-btn.correct-state {
-      background: #e8f5e9 !important;
+      background: #f0fdf4 !important;
       border-color: var(--correct) !important;
       color: var(--correct) !important;
       font-weight: 600;
     }
 
     .option-btn.wrong-state {
-      background: #ffebee !important;
+      background: #fef2f2 !important;
       border-color: var(--wrong) !important;
       color: var(--wrong) !important;
     }
 
     .cross-indicator { color: var(--wrong); font-weight: bold; font-size: 1.2rem; }
     
-    /* Shake animation for wrong selection */
     .shake { animation: shakeEffect 0.4s ease; }
     @keyframes shakeEffect {
       0%, 100% { transform: translateX(0); }
@@ -200,50 +227,52 @@
       75% { transform: translateX(6px); }
     }
 
-    /* Insights Box */
+    /* Explanation Highlight Layout */
     .insight-box {
-      background: #fff9c4;
-      border-left: 4px solid #fbc02d;
-      padding: 12px;
-      border-radius: 4px;
-      margin-bottom: 20px;
+      background: #fffbeb;
+      border-left: 4px solid var(--accent);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
       font-size: 0.95rem;
+      line-height: 1.5;
       display: none;
     }
 
-    /* General Action Buttons */
+    /* Primary Action Elements */
     .action-btn {
       width: 100%;
       background: var(--primary);
       color: #fff;
       border: none;
-      padding: 14px;
-      border-radius: 10px;
+      padding: 16px;
+      border-radius: 14px;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: background 0.2s ease, transform 0.1s ease;
+      box-shadow: 0 4px 12px rgba(0, 121, 107, 0.2);
     }
 
     .action-btn:hover { background: #004d40; }
+    .action-btn:active { transform: scale(0.98); }
 
-    /* Confetti Canvas Component */
+    /* Performance-friendly Confetti Layer */
     #confetti-canvas {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none; z-index: 15;
     }
 
-    /* Screen Management Layouts */
     .screen { display: none; }
     .screen.active { display: block; }
 
     .result-score {
-      font-size: 3rem;
+      font-size: 3.5rem;
       color: var(--primary);
       text-align: center;
-      margin: 20px 0;
-      font-weight: bold;
+      margin: 24px 0;
+      font-weight: 800;
     }
   </style>
 </head>
@@ -251,7 +280,7 @@
 
   <div id="splash-screen">
     <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
-    <h2 style="color: var(--primary);">Innovine Learning System</h2>
+    <h2 style="color: var(--primary); font-weight: 700;">Innovine Learning System</h2>
   </div>
 
   <div class="ambient-bg" id="ambient-layer"></div>
@@ -260,17 +289,11 @@
     <canvas id="confetti-canvas"></canvas>
 
     <div id="intro-screen" class="screen active">
-      <div class="meta-tag">Grade 5 • English Grammar</div>
+      <div style="text-align: center;"><div class="meta-tag">Grade 5 • English</div></div>
       <h1>Countable & Uncountable Nouns</h1>
-      <p style="text-align: center; margin-top: 10px;">
-        Welcome to the Supermarket Safari! Test your skills on sorting countable and uncountable items across real-world situations. 
+      <p style="text-align: center; margin: 16px 0 24px 0;">
+        Welcome to the Supermarket Safari Challenge! Test your skills on sorting countable and uncountable nouns across real-world situations.
       </p>
-      <p style="text-align: center; font-weight: 600;">⚠️ Rules:</p>
-      <ul style="margin: 0 auto 20px auto; max-width: 400px; line-height: 1.6; color: var(--text-muted);">
-        <li>45 seconds per question</li>
-        <li>One retry permitted per question if you miss</li>
-        <li>Final 2 questions are the Master Challenges!</li>
-      </ul>
       <button class="action-btn" onclick="startGame()">Start Challenge</button>
     </div>
 
@@ -284,24 +307,27 @@
         <div id="timer" class="timer-bar"></div>
       </div>
 
-      <div id="challenge-badge" class="meta-tag" style="background:#fff9c4; color:#f57f17; display:none; margin-bottom:10px;">🌟 FINAL MASTER CHALLENGE</div>
-      
-      <h2 id="question-text">Question Prompt text goes here?</h2>
+      <div class="toast-banner" id="toast-banner">
+        <span>⚠️</span> <span id="toast-text">Incorrect. You've got 1 attempt remaining!</span>
+      </div>
 
-      <div class="options-grid" id="options-container">
-        </div>
+      <div id="challenge-badge" class="meta-tag" style="background:#fffbeb; color:#d97706; display:none; margin-bottom:12px;">🌟 MASTER CHALLENGE</div>
+      
+      <h2 id="question-text">Question Loading...</h2>
+
+      <div class="options-grid" id="options-container"></div>
 
       <div class="insight-box" id="insight-box">
-        <strong>Grammar Insight:</strong> <span id="insight-text">Explanation...</span>
+        <strong>Grammar Insight:</strong> <span id="insight-text">Explanation Content</span>
       </div>
 
       <button class="action-btn" id="next-btn" onclick="nextQuestion()" style="display: none;">Continue</button>
     </div>
 
     <div id="result-screen" class="screen">
-      <h1>Challenge Completed!</h1>
+      <h1>Challenge Complete!</h1>
       <div class="result-score" id="final-score-display">0/10</div>
-      <p id="result-feedback" style="text-align: center; font-weight: 600; margin-bottom: 24px;"></p>
+      <p id="result-feedback" style="text-align: center; font-weight: 600; margin-bottom: 24px; color: var(--text);"></p>
       <button class="action-btn" onclick="restartGame()">Try Challenge Again</button>
     </div>
   </div>
@@ -311,7 +337,6 @@
   <audio id="snd-cheer" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
   <script>
-    // Embedded Data Structure (Progressive Difficulty Layer)
     const questions = [
       {
         q: "Riya's mother is preparing a shopping list for the week. She has written rice, milk, apples, bread, and eggs. While helping her, Riya notices that some items can be counted one by one, while others are measured in quantities. Her mother asks her to circle the item that belongs to the countable noun group. Which item should Riya choose?",
@@ -323,55 +348,55 @@
         q: "Class 5 students are packing food for a picnic. The teacher reminds them that some food items can be counted separately, while others are measured because they cannot be counted individually. She asks everyone to place the uncountable noun in a separate basket. Which item should the students place there?",
         options: ["Juice", "Sandwich", "Biscuit", "Orange"],
         correct: 0,
-        explanation: "Juice is a liquid and cannot be counted as separate individual objects. It is an uncountable noun."
+        explanation: "Juice is a liquid fluid substance and cannot be counted as separate standalone objects. It is an uncountable noun."
       },
       {
         q: "During a cooking workshop, the chef says, 'Add two cups of flour, one cup of sugar, three eggs and some butter.' One student asks why the recipe says two cups of flour instead of two flours. What is the best explanation?",
         options: ["Flour is always used only for baking.", "Flour is a proper noun.", "Flour is an uncountable noun and must be measured.", "Flour has only one spelling."],
         correct: 2,
-        explanation: "Flour consists of fine particles that cannot be counted individually, so it requires a measuring unit like 'cups'."
+        explanation: "Flour consists of bulk fine particles that cannot be counted individually, so it requires a descriptive measuring unit like 'cups'."
       },
       {
         q: "A science teacher places four materials on the table—water, pebbles, leaves, and shells. She asks the class to identify the material that cannot be counted one by one unless it is measured or stored in a container. Which item should the students identify?",
         options: ["Pebbles", "Leaves", "Shells", "Water"],
         correct: 3,
-        explanation: "Water is a fluid that adapts to its container's shape and cannot be naturally individualised or counted one by one."
+        explanation: "Water is a continuous liquid mass that assumes the shape of its holding vessel and cannot be isolated into counting units naturally."
       },
       {
         q: "Read the conversation. Teacher: 'Please bring ______ paper for tomorrow's craft activity.' Student: 'Can I bring one paper?' The teacher explains that the sentence needs a word showing measurement because paper is usually treated as an uncountable noun. Which option correctly completes the sentence?",
         options: ["a sheet of", "many papers", "three papers", "a paper"],
         correct: 0,
-        explanation: "'Paper' is viewed as a mass material. To quantify it correctly, we use standard measurement phrases like 'a sheet of'."
+        explanation: "'Paper' is globally handled as a generic mass item material. To quantify it appropriately, counter phrases like 'a sheet of' are used."
       },
       {
         q: "At a grocery store, a customer wants to buy sugar. The shopkeeper asks how much is needed because sugar cannot be counted individually. The customer wants to ask for the correct quantity. Which option should the customer use?",
         options: ["five sugars", "a kilogram of sugar", "many sugars", "three sugars"],
         correct: 1,
-        explanation: "Since sugar is an uncountable substance, standard units of mass measurement like 'a kilogram of' must be applied."
+        explanation: "Because granular sugar is a distinct mass commodity, standard units of mass scale measurement like 'a kilogram of' are required."
       },
       {
         q: "Before leaving for a holiday, Aryan packs three shirts, two books, toothpaste, a towel, and a cap. His younger sister is learning about nouns and asks him to point out the item that is uncountable. Which item should Aryan choose?",
         options: ["Shirts", "Books", "Toothpaste", "Cap"],
         correct: 2,
-        explanation: "Toothpaste is a paste substance that is non-countable directly without its tube container or measurement."
+        explanation: "Toothpaste is classified as a fluid/paste compound that cannot be individually numbered without its holding tube package."
       },
       {
         q: "Neha writes the following sentence in her English notebook: 'My father bought three breads and two milks from the supermarket.' Her teacher explains that some nouns should not be made plural and must be expressed using suitable measuring words instead. Which sentence correctly improves Neha's work?",
         options: ["My father bought many breads and much milks.", "My father bought three breads and two bottles.", "My father bought three bread and two milk.", "My father bought three loaves of bread and two cartons of milk."],
         correct: 3,
-        explanation: "Bread and milk are uncountable. They require standard counter phrases: 'loaves of bread' and 'cartons of milk'."
+        explanation: "Bread and milk are substance masses. They require proper unit expressions: 'loaves of bread' and 'cartons of milk'."
       },
       {
         q: "While ordering food at a café, one customer asks for two coffees. Another customer says the correct way is two cups of coffee. The waiter explains that although people often use the shorter form while speaking, the noun coffee is originally uncountable. How has the uncountable noun become countable in this situation?",
         options: ["By referring to individual servings or cups", "By changing its spelling", "By making it a proper noun", "By changing it into a collective noun"],
         correct: 0,
-        explanation: "In casual speech, naming uncountable beverages in countable plural forms safely implies individual cup servings."
+        explanation: "In natural daily speech, changing an uncountable drink to a plural structure implies requesting discrete individual cup containers or servings."
       },
       {
         q: "The school canteen is putting up a notice for Sports Day. Students are advised to carry drinking water to stay hydrated throughout the day. Since water is an uncountable noun, the teacher asks the class to rewrite it using a countable expression before printing the notice. Which option should they choose?",
         options: ["two waters", "many waters", "a bottle of water", "four water"],
         correct: 2,
-        explanation: "To give water a defined countable shape for formal notices, it is paired with a unit container object like 'a bottle of'."
+        explanation: "To frame water into a visible unit context on formal announcements, it must sit behind a bounding item like 'a bottle of'."
       }
     ];
 
@@ -381,7 +406,6 @@
     let timerInterval = null;
     let timeLeft = 45;
 
-    // Splash Screen Control
     window.addEventListener('DOMContentLoaded', () => {
       buildAmbientBackground();
       setTimeout(() => {
@@ -391,22 +415,20 @@
       }, 5000);
     });
 
-    // Theme Background Generator
     function buildAmbientBackground() {
       const icons = ['🍏', '🥛', '🛒', '🍞', '🍊', '⭐'];
       const layer = document.getElementById('ambient-layer');
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 18; i++) {
         const span = document.createElement('span');
         span.className = 'ambient-icon';
         span.innerText = icons[Math.floor(Math.random() * icons.length)];
         span.style.left = Math.random() * 100 + 'vw';
-        span.style.animationDelay = Math.random() * 8 + 's';
-        span.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+        span.style.animationDelay = Math.random() * 6 + 's';
+        span.style.fontSize = (Math.random() * 1.2 + 1.2) + 'rem';
         layer.appendChild(span);
       }
     }
 
-    // Interactive Loop Management
     function startGame() {
       document.getElementById('intro-screen').classList.remove('active');
       document.getElementById('game-screen').classList.add('active');
@@ -420,12 +442,12 @@
       timeLeft = 45;
       document.getElementById('next-btn').style.display = 'none';
       document.getElementById('insight-box').style.display = 'none';
+      document.getElementById('toast-banner').style.display = 'none';
       
       const qData = questions[currentQ];
-      
-      // Target Check for Master Level Formatting (Questions 9 & 10)
       const mainCard = document.getElementById('main-card');
       const badge = document.getElementById('challenge-badge');
+      
       if (currentQ >= 8) {
         mainCard.classList.add('final-challenge-border');
         badge.style.display = 'inline-block';
@@ -452,15 +474,19 @@
       startTimer();
     }
 
-    // Timer Implementation
     function startTimer() {
       clearInterval(timerInterval);
       const bar = document.getElementById('timer');
       bar.style.width = '100%';
+      bar.style.backgroundColor = 'var(--primary)';
       
       timerInterval = setInterval(() => {
         timeLeft--;
         bar.style.width = (timeLeft / 45) * 100 + '%';
+        
+        if (timeLeft <= 15) {
+          bar.style.backgroundColor = 'var(--wrong)';
+        }
         
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
@@ -477,37 +503,37 @@
       }
     }
 
-    // Response evaluation
     function handleAnswer(selectedIdx, btnElement) {
       const qData = questions[currentQ];
       
       if (selectedIdx === qData.correct) {
-        // Success execution
         clearInterval(timerInterval);
         btnElement.classList.add('correct-state');
         score++;
         document.getElementById('score-tracker').innerText = `Score: ${score}`;
+        document.getElementById('toast-banner').style.display = 'none';
         playAudio('snd-correct');
         triggerConfetti();
         lockOptions();
         document.getElementById('next-btn').style.display = 'block';
       } else {
-        // Failure branches
         attempts++;
         btnElement.classList.add('wrong-state');
-        btnElement.insertAdjacentHTML('beforeend', '<span class="cross-indicator">✕</span>');
+        if (!btnElement.querySelector('.cross-indicator')) {
+          btnElement.insertAdjacentHTML('beforeend', '<span class="cross-indicator">✕</span>');
+        }
         btnElement.classList.add('shake');
         setTimeout(() => btnElement.classList.remove('shake'), 400);
         playAudio('snd-wrong');
 
         if (attempts === 1) {
-          // Retry Logic Branch
-          alert("Incorrect answer. Try again! You have one final attempt left for this question.");
+          // Display the custom interactive toast notification banner instead of window alert
+          document.getElementById('toast-banner').style.display = 'flex';
           btnElement.disabled = true;
           timeLeft = 45; // Reset step counter
         } else {
-          // Absolute Failure Branch
           clearInterval(timerInterval);
+          document.getElementById('toast-banner').style.display = 'none';
           lockOptions();
           highlightCorrect();
           showInsight(qData.explanation);
@@ -517,9 +543,10 @@
     }
 
     function handleTimeout() {
+      document.getElementById('toast-banner').style.display = 'none';
       lockOptions();
       highlightCorrect();
-      showInsight("Time out! " + questions[currentQ].explanation);
+      showInsight("Time's up! " + questions[currentQ].explanation);
       document.getElementById('next-btn').style.display = 'block';
     }
 
@@ -531,7 +558,9 @@
     function highlightCorrect() {
       const correctIdx = questions[currentQ].correct;
       const buttons = document.querySelectorAll('.option-btn');
-      buttons[correctIdx].classList.add('correct-state');
+      if (buttons[correctIdx]) {
+        buttons[correctIdx].classList.add('correct-state');
+      }
     }
 
     function showInsight(text) {
@@ -558,13 +587,13 @@
       
       const feedback = document.getElementById('result-feedback');
       if (score === questions.length) {
-        feedback.innerText = "Supermarket Master! Outstanding understanding of grammar!";
+        feedback.innerText = "Supermarket Master! Perfect score and an outstanding understanding of grammar!";
         playAudio('snd-cheer');
       } else if (score >= 7) {
         feedback.innerText = "Great Job! You have a solid grasp of countable and uncountable nouns.";
         playAudio('snd-cheer');
       } else {
-        feedback.innerText = "Good try! Review the insights and test your skills again.";
+        feedback.innerText = "Keep practicing! Review the explanations and try again to improve your score.";
       }
     }
 
@@ -573,7 +602,6 @@
       startGame();
     }
 
-    // Star-Shaped Particles Confetti Engine
     function triggerConfetti() {
       const canvas = document.getElementById('confetti-canvas');
       const ctx = canvas.getContext('2d');
@@ -584,7 +612,7 @@
       for (let i = 0; i < 35; i++) {
         particles.push({
           x: canvas.width / 2,
-          y: canvas.height / 2,
+          y: canvas.height / 3,
           sx: (Math.random() - 0.5) * 8,
           sy: (Math.random() - 0.5) * 8 - 3,
           color: `hsl(${Math.random() * 360}, 90%, 60%)`,
@@ -623,7 +651,7 @@
           if (!p.alive) return;
           p.x += p.sx;
           p.y += p.sy;
-          p.sy += 0.2; // Gravity
+          p.sy += 0.2;
           p.rot += 0.05;
           if (p.y > canvas.height || p.x < 0 || p.x > canvas.width) {
             p.alive = false;
