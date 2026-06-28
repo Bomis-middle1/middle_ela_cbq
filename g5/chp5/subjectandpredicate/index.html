@@ -3,147 +3,754 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subject and Predicate: Royal Railway Express</title>
+    <title>The Sentence Express - Subject & Predicate Interactive</title>
     <style>
         :root {
-            --royal-sapphire: #0d2040;
-            --luxury-blue: #1e3a67;
-            --brushed-gold: #e5ba53;
-            --emerald-green: #0fa475;
-            --crimson-velvet: #d62246;
-            --cream-white: #fcfbfa;
-            --text-dark: #111e30;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            --gold: #f59e0b;
+            --gold-glow: #fbbf24;
+            --accent-blue: #38bdf8;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --success: #10b981;
+            --error: #ef4444;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Georgia', 'Segoe UI', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #071324 0%, #152946 50%, #0b1a30 100%);
+            background: var(--bg-gradient);
+            color: var(--text-main);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-dark);
             overflow-x: hidden;
-            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             position: relative;
         }
 
-        /* Ambient floating premium steam/sparkle layer */
-        .railway-env {
+        /* Ambient Extravagant Background Animations */
+        .ambient-layer {
             position: absolute;
-            width: 100%;
-            height: 100%;
             top: 0;
             left: 0;
-            pointer-events: none;
-            z-index: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
         }
 
-        .steam-puff {
+        .star {
             position: absolute;
-            background: rgba(255, 255, 255, 0.08);
+            background: white;
             border-radius: 50%;
-            filter: blur(10px);
-            animation: driftUp 10s linear infinite;
+            animation: twinkle 3s infinite ease-in-out;
+            opacity: 0.3;
         }
 
-        @keyframes driftUp {
-            0% { transform: translateY(110vh) translateX(0) scale(1); opacity: 0; }
-            10% { opacity: 0.7; }
-            90% { opacity: 0.4; }
-            100% { transform: translateY(-10vh) translateX(50px) scale(2.5); opacity: 0; }
+        @keyframes twinkle {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.5); opacity: 0.8; }
         }
 
-        /* Branding Overlay */
+        .streamer {
+            position: absolute;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(245,158,11,0.6), transparent);
+            animation: shoot 8s infinite linear;
+            opacity: 0.5;
+        }
+
+        @keyframes shoot {
+            0% { transform: translateY(-100px) translateX(0) rotate(15deg); }
+            100% { transform: translateY(110vh) translateX(300px) rotate(15deg); }
+        }
+
+        /* Mandatory Branding Screen */
         #brand-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--royal-sapphire);
+            background: #0f172a;
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease-out;
         }
 
         #brand-overlay img {
             max-width: 250px;
-            max-height: 150px;
-            object-fit: contain;
+            height: auto;
             margin-bottom: 20px;
         }
 
-        #brand-overlay h2 {
-            color: var(--brushed-gold);
-            font-size: 1.8rem;
-            letter-spacing: 2px;
+        #brand-overlay .loader-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
         }
 
-        /* Luxury Cards Layout */
-        .card {
-            background: var(--cream-white);
-            border: 4px solid var(--brushed-gold);
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        #brand-overlay .loader-progress {
             width: 100%;
-            max-width: 680px;
-            padding: 35px;
-            text-align: center;
-            position: relative;
+            height: 100%;
+            background: var(--gold);
+            transform: translateX(-100%);
+            animation: loadProgress 5s linear forwards;
+        }
+
+        @keyframes loadProgress {
+            to { transform: translateX(0); }
+        }
+
+        /* Container & Grid Setup */
+        .game-container {
+            width: 90%;
+            max-width: 750px;
+            background: var(--card-bg);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(245, 158, 11, 0.1);
+            backdrop-filter: blur(12px);
             z-index: 10;
+            position: relative;
             display: none;
-            transform: scale(0.96);
-            transition: transform 0.3s ease;
         }
 
-        .card.active {
+        .active-view {
             display: block;
-            transform: scale(1);
         }
 
-        h1 {
-            color: var(--royal-sapphire);
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            border-bottom: 2px dashed var(--brushed-gold);
-            padding-bottom: 10px;
+        /* Typography & Components */
+        h1, h2, h3 {
+            color: var(--gold);
+            text-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        p.subtitle {
-            font-size: 1.1rem;
-            color: var(--luxury-blue);
-            font-style: italic;
-            margin-bottom: 25px;
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
         }
 
-        /* Royal Buttons */
         .btn {
-            background: linear-gradient(135deg, #f3d078 0%, var(--brushed-gold) 100%);
-            border: 2px solid var(--royal-sapphire);
-            border-radius: 8px;
-            color: var(--royal-sapphire);
-            padding: 14px 40px;
-            font-size: 1.15rem;
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #0f172a;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.1rem;
             font-weight: bold;
+            border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(229, 186, 83, 0.3);
-            transition: all 0.2s ease;
-            display: inline-block;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            text-align: center;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0
+            box-shadow: 0 6px 20px var(--gold-glow);
+        }
+
+        /* Score Tracker & Header Dashboard */
+        .dashboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 12px 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .score-box, .timer-box {
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-box {
+            color: var(--accent-blue);
+        }
+
+        .timer-warn {
+            color: var(--error) !important;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            to { opacity: 0.5; }
+        }
+
+        /* Train Express Visual Track Progress */
+        .train-track-container {
+            width: 100%;
+            height: 40px;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 4px dashed rgba(245, 158, 11, 0.4);
+            margin: 20px 0;
+            position: relative;
+            border-radius: 4px;
+        }
+
+        .train-progress-engine {
+            position: absolute;
+            bottom: 2px;
+            left: 0%;
+            font-size: 24px;
+            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scaleX(-1); /* Facing forward right */
+        }
+
+        /* Scenarios & Question Layouts */
+        .scenario-box {
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid var(--accent-blue);
+            padding: 15px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #cbd5e1;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .option-card {
+            background: rgba(255,255,255,0.07);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-card:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--accent-blue);
+        }
+
+        .option-card.selected {
+            border-color: var(--gold);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .option-card.correct-reveal {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .option-card.wrong-reveal {
+            border-color: var(--error);
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        /* Explanations & Alerts */
+        .feedback-panel {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: none;
+        }
+
+        /* Visual indicator configurations */
+        .star-particle {
+            position: absolute;
+            color: var(--gold);
+            font-size: 20px;
+            pointer-events: none;
+            animation: particleFly 0.8s ease-out forwards;
+        }
+
+        @keyframes particleFly {
+            0% { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+        }
+
+        .red-cross {
+            color: var(--error);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Final challenge badge elements */
+        .final-badge {
+            font-size: 4rem;
+            text-align: center;
+            margin: 20px 0;
+            animation: bounce 2s infinite alternate;
+        }
+
+        @keyframes bounce {
+            to { transform: translateY(-10px); }
+        }
+
+        /* Mobile Friendliness Adaptive Rule */
+        @media (max-width: 600px) {
+            .game-container { padding: 20px; width: 95%; }
+            .dashboard { flex-direction: column; gap: 10px; text-align: center;}
+            h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-layer" id="ambient-layer"></div>
+
+    <div id="brand-overlay">
+        <img src="assets/logo.png" alt="Innovine Logo">
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <div class="game-container active-view" id="intro-screen">
+        <h1>🚂 The Sentence Express</h1>
+        <h3>Subject & Predicate Challenge</h3>
+        <p style="text-align: center; margin-bottom: 25px;">Welcome Engineer! Climb aboard the Sentence Express. Complete your journey by identifying the locomotive <strong>Subjects</strong> and action-carrying <strong>Predicates</strong> across 12 challenge zones.</p>
+        
+        <div class="scenario-box" style="border-left-color: var(--gold)">
+            <strong>⚠️ Game Rules:</strong><br>
+            • Each question has a strict <strong>45-second</strong> operational window.<br>
+            • If you make a mistake, the train breaks down, giving you exactly <strong>one retry</strong>.<br>
+            • A second consecutive mistake reveals the master blueprints and answer mechanics.
+        </div>
+        <button class="btn" onclick="startGame()">All Aboard! Start Game</button>
+    </div>
+
+    <div class="game-container" id="game-screen">
+        <div class="dashboard">
+            <div class="score-box">🥇 Score: <span id="current-score">0</span>/12</div>
+            <div id="attempt-badge" style="color: var(--gold); font-weight: bold;">Attempt 1/2</div>
+            <div class="timer-box">⏱️ Time Left: <span id="time-display">45</span>s</div>
+        </div>
+
+        <div class="train-track-container">
+            <div class="train-progress-engine" id="train-engine">🚂</div>
+        </div>
+
+        <h3 id="question-header" style="text-align: left; color: var(--accent-blue);">Question 1</h3>
+        <div class="scenario-box" id="scenario-text">Scenario setup text goes here.</div>
+        <p id="question-main" style="font-size: 1.1rem; font-weight: 600;"></p>
+
+        <div class="options-grid" id="options-box">
+            </div>
+
+        <div class="feedback-panel" id="feedback-panel">
+            <h4 id="feedback-title" style="margin-bottom: 8px;"></h4>
+            <p id="feedback-text" style="margin-bottom: 15px; font-size: 0.95rem; color: #cbd5e1;"></p>
+            <button class="btn" id="next-action-btn" onclick="handleNextAction()">Continue Journey</button>
+        </div>
+    </div>
+
+    <div class="game-container" id="challenge-screen">
+        <div class="final-badge">🏆</div>
+        <h2>The Final Challenge Zone</h2>
+        <p style="text-align: center; font-size: 1.15rem;">Exceptional progress! You are entering the final high-speed challenge. The terminal station is in sight. Maximize your score now!</p>
+        <button class="btn" onclick="enterFinalStretch()">Enter Terminal Station</button>
+    </div>
+
+    <div class="game-container" id="result-screen">
+        <h2>Journey Terminus Reached</h2>
+        <div class="final-badge" id="result-emoji">⭐</div>
+        <h3 style="color: var(--text-main)" id="final-score-text">You Scored: 0 / 12</h3>
+        <p style="text-align: center;" id="performance-msg"></p>
+        <button class="btn" onclick="restartGame()">Drive Sentence Express Again</button>
+    </div>
+
+    <script>
+        // Production Questions Matrix Setup
+        const questions = [
+            {
+                id: 1,
+                scenario: "The editor of the school magazine is checking articles submitted by Class 5 students. In one article, she reads the sentence:\n\"Won the inter-school football championship after months of practice.\"",
+                question: "Although the action is clearly mentioned, the editor realizes that readers will not know who performed the action. Before publishing the article, she asks the student writer to complete the sentence by adding the most suitable beginning. Which option should the editor choose?",
+                options: ["The school football team", "Won", "After months", "Championship"],
+                answer: 0,
+                explanation: "The sentence lacked a subject ('who' did the action). 'The school football team' correctly supplies the complete subject necessary to complete the meaning."
+            },
+            {
+                id: 2,
+                scenario: "The English teacher writes the sentence:\n\"The little rabbit hid behind the bushes.\"",
+                question: "Aman says that only the word 'hid' is the predicate because it is the action word. Meera disagrees and says the predicate includes more than just the verb. Whose understanding is correct?",
+                options: [
+                    "Aman, because only the action word is always the predicate.",
+                    "Meera, because the predicate tells what the subject does and includes the complete action.",
+                    "Both Aman and Meera.",
+                    "Neither Aman nor Meera."
+                ],
+                answer: 1,
+                explanation: "Meera is correct. The complete predicate includes the main action verb along with all accompanying descriptive structural modifiers ('hid behind the bushes')."
+            },
+            {
+                id: 3,
+                scenario: "The Sports Captain is preparing a notice for students participating in the Annual Sports Meet. One sentence reads:\n\"All participants must report to the basketball court by 7:30 a.m.\"",
+                question: "The Principal asks the captain to underline the predicate, as it tells what the participants are expected to do. Which part should be underlined?",
+                options: ["All participants", "Basketball court", "Must report to the basketball court by 7:30 a.m.", "By 7:30 a.m."],
+                answer: 2,
+                explanation: "The complete predicate begins at the verb phrase 'must report' and details what the subject is commanded or expected to do."
+            },
+            {
+                id: 4,
+                scenario: "During a creative writing activity, students are asked to complete the sentence:\n\"______ discovered a hidden cave during the trek.\"",
+                question: "The teacher reminds them that every complete sentence begins with a subject that tells who performed the action. Which option best completes the sentence?",
+                options: ["During the trek", "Discovered", "Hidden cave", "The adventurous children"],
+                answer: 3,
+                explanation: "'The adventurous children' introduces a clear plural noun phrase acting as a complete structural subject."
+            },
+            {
+                id: 5,
+                scenario: "The English teacher writes four incomplete sentences on the board.",
+                question: "She asks the class to identify the one that is incomplete because it has a subject but no predicate. Which sentence should the students choose?",
+                options: ["The colourful balloons floated into the sky.", "Our new classroom.", "The birds built nests on the tree.", "My grandparents visited us yesterday."],
+                answer: 1,
+                explanation: "'Our new classroom.' functions entirely as a standalone subject segment. It contains zero predicates or active verb context structures."
+            },
+            {
+                id: 6,
+                scenario: "Aryan writes in his travel diary:\n\"The snow-covered mountains looked magnificent at sunrise.\"",
+                question: "His younger brother says that the predicate begins with the word 'looked' because everything after the subject tells something about it. How should Aryan respond?",
+                options: [
+                    "His brother is wrong because the predicate always has only one word.",
+                    "His brother is correct because the predicate tells what is said about the subject.",
+                    "His brother is wrong because 'mountains' is the predicate.",
+                    "His brother is correct because predicates never contain verbs."
+                ],
+                answer: 1,
+                explanation: "The predicate tells us everything about the state or action of the subject, tracking cleanly from the verb 'looked' straight onwards."
+            },
+            {
+                id: 7,
+                scenario: "While practicing her speech, Riya accidentally writes:\n\"Our teachers during the morning assembly.\"",
+                question: "The English teacher explains that the sentence cannot be spoken because it lacks an important part. What should Riya add?",
+                options: ["Another subject", "A full stop", "A predicate that tells what the teachers did.", "A capital letter."],
+                answer: 2,
+                explanation: "This snippet has a subject framework and structural context time descriptions but lacks a critical action-based predicate."
+            },
+            {
+                id: 8,
+                scenario: "Two students are checking each other's homework. Rahul says,\n\"Every sentence must have a subject and a predicate to express a complete thought.\"",
+                question: "His friend is unsure whether this rule is always true. What should the teacher tell the class?",
+                options: [
+                    "Rahul is incorrect because some sentences need only a subject.",
+                    "Rahul is incorrect because only long sentences have predicates.",
+                    "Rahul is correct only in story writing.",
+                    "Rahul is correct because a complete sentence needs both a subject and a predicate."
+                ],
+                answer: 3,
+                explanation: "A structural thought unit requires an actor structural dynamic (Subject) combined directly with an action framework state (Predicate)."
+            },
+            {
+                id: 9,
+                scenario: "The teacher divides sentence strips into two sets. One set contains subjects, while the other contains predicates. Students must pair them correctly to make meaningful sentences.",
+                question: "Which pair should receive full marks?",
+                options: ["The tiny squirrel — collected nuts for winter.", "Collected nuts — the tiny squirrel.", "Winter — collected the tiny squirrel.", "Nuts for winter — the squirrel."],
+                answer: 0,
+                explanation: "This layout perfectly pairs an actor subject ('The tiny squirrel') straight into an active predicate phrase sequence."
+            },
+            {
+                id: 10,
+                scenario: "The school reporter writes:\n\"The students from Class 5.\"",
+                question: "The editor explains that this cannot be included in the school magazine because readers will not know what happened. Which revision best completes the report?",
+                options: ["The students from Class 5.", "The students from Class 5 presented a wonderful cultural programme.", "From Class 5.", "Presented a wonderful cultural programme."],
+                answer: 1,
+                explanation: "Option B seamlessly completes the story layout loop by providing a full functional predicate statement directly describing the activity."
+            },
+            {
+                id: 11,
+                scenario: "The quiz master displays the sentence:\n\"The bright yellow kite flew high above the trees.\"",
+                question: "One team identifies 'The bright yellow kite' as the complete subject. Another team says the subject is only 'kite'. Which team's answer is more accurate?",
+                options: [
+                    "The second team, because only one word can be the subject.",
+                    "Both teams are equally correct.",
+                    "The first team, because the complete subject includes the noun and all the words describing it.",
+                    "Neither team is correct."
+                ],
+                answer: 2,
+                explanation: "The complete subject includes the core noun along with all adjacent descriptive elements that describe it."
+            },
+            {
+                id: 12,
+                scenario: "The Principal wants to display one sentence on the school notice board.",
+                question: "She asks the English teacher to choose the sentence that has a clear subject and a complete predicate, making the message easy for everyone to understand. Which sentence should the teacher select?",
+                options: ["During the lunch break.", "The students in the library.", "Reading quietly every day.", "The students are reading quietly in the library."],
+                answer: 3,
+                explanation: "This contains a complete subject expression ('The students') along with a complete predicate assertion ('are reading quietly in the library')."
+            }
+        ];
+
+        // System Configuration Controls
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let timer = null;
+        let timeLeft = 45;
+        let currentAttempts = 1;
+        let optionSelectedThisRound = false;
+
+        // Sound Architecture Instantiation Engine
+        const correctSound = new Audio('assets/correct.mp3');
+        const wrongSound = new Audio('assets/wrong.mp3');
+        const finalSound = new Audio('assets/freesound_community-claps-44774.mp3');
+
+        // Initializing Ambient Elements
+        function createBackgroundAesthetics() {
+            const ambient = document.getElementById('ambient-layer');
+            for(let i=0; i<30; i++) {
+                let star = document.createElement('div');
+                star.className = 'star';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.width = star.style.height = (Math.random() * 3 + 1) + 'px';
+                star.style.animationDelay = Math.random() * 5 + 's';
+                ambient.appendChild(star);
+            }
+            for(let i=0; i<4; i++) {
+                let streamer = document.createElement('div');
+                streamer.className = 'streamer';
+                streamer.style.top = Math.random() * -50 + 'px';
+                streamer.style.left = Math.random() * 80 + 'vw';
+                streamer.style.animationDelay = (i * 2) + 's';
+                ambient.appendChild(streamer);
+            }
+        }
+
+        // Branding Visual Timeout Implementation Loop
+        window.addEventListener('DOMContentLoaded', () => {
+            createBackgroundAesthetics();
+            setTimeout(() => {
+                const overlay = document.getElementById('brand-overlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 500);
+            }, 5000);
+        });
+
+        // Main Execution Engine
+        function switchView(viewId) {
+            document.querySelectorAll('.game-container').forEach(el => el.classList.remove('active-view'));
+            document.getElementById(viewId).classList.add('active-view');
+        }
+
+        function startGame() {
+            currentQuestionIdx = 0;
+            score = 0;
+            switchView('game-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            clearInterval(timer);
+            timeLeft = 45;
+            currentAttempts = 1;
+            optionSelectedThisRound = false;
+            
+            document.getElementById('time-display').textContent = timeLeft;
+            document.getElementById('time-display').classList.remove('timer-warn');
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('attempt-badge').textContent = `Attempt ${currentAttempts}/2`;
+            document.getElementById('feedback-panel').style.display = 'none';
+
+            // Handle Train Motion Progress Calculations
+            const engine = document.getElementById('train-engine');
+            let percentage = (currentQuestionIdx / questions.length) * 85; 
+            engine.style.left = percentage + '%';
+
+            const currentQ = questions[currentQuestionIdx];
+            document.getElementById('question-header').textContent = `Question ${currentQuestionIdx + 1} of 12`;
+            document.getElementById('scenario-text').textContent = currentQ.scenario;
+            document.getElementById('question-main').textContent = currentQ.question;
+
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.innerHTML = '';
+
+            currentQ.options.forEach((opt, idx) => {
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                card.innerHTML = `<span><strong>${String.fromCharCode(65 + idx)}.</strong> ${opt}</span><span class="indicator"></span>`;
+                card.onclick = () => selectOption(idx, card);
+                optionsBox.appendChild(card);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('time-display').textContent = timeLeft;
+                if(timeLeft <= 10) {
+                    document.getElementById('time-display').classList.add('timer-warn');
+                }
+                if(timeLeft <= 0) {
+                    clearInterval(timer);
+                    forceTimeout();
+                }
+            }, 1000);
+        }
+
+        function selectOption(selectedIdx, cardElement) {
+            if(optionSelectedThisRound) return;
+
+            const currentQ = questions[currentQuestionIdx];
+            
+            if(selectedIdx === currentQ.answer) {
+                // Correct Answer Path Sequence Handling
+                clearInterval(timer);
+                optionSelectedThisRound = true;
+                score++;
+                document.getElementById('current-score').textContent = score;
+                cardElement.classList.add('correct-reveal');
+                triggerStarConfetti(cardElement);
+                try { correctSound.play(); } catch(e){}
+                
+                showFeedback(true, "Green Signal! Correct Engine Fit.", currentQ.explanation);
+            } else {
+                // Erroneous Selection Processing Core Logic
+                if(currentAttempts === 1) {
+                    currentAttempts = 2;
+                    document.getElementById('attempt-badge').textContent = `Attempt ${currentAttempts}/2`;
+                    cardElement.classList.add('wrong-reveal');
+                    cardElement.querySelector('.indicator').innerHTML = '<span class="red-cross">✕</span>';
+                    try { wrongSound.play(); } catch(e){}
+                    alert("The Sentence Express derailed! Check your subject or predicate configuration and try again.");
+                } else {
+                    // Second Attempt Derailed Completely
+                    clearInterval(timer);
+                    optionSelectedThisRound = true;
+                    cardElement.classList.add('wrong-reveal');
+                    cardElement.querySelector('.indicator').innerHTML = '<span class="red-cross">✕</span>';
+                    try { wrongSound.play(); } catch(e){}
+                    
+                    // Reveal exact correct structural setup coordinates
+                    const optionsBox = document.getElementById('options-box');
+                    optionsBox.children[currentQ.answer].classList.add('correct-reveal');
+                    
+                    showFeedback(false, "System Breakdown. Manual Override Engaged.", currentQ.explanation);
+                }
+            }
+        }
+
+        function forceTimeout() {
+            optionSelectedThisRound = true;
+            const currentQ = questions[currentQuestionIdx];
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.children[currentQ.answer].classList.add('correct-reveal');
+            showFeedback(false, "Station Overrun! Time Expired.", currentQ.explanation);
+        }
+
+        function showFeedback(isCorrect, title, message) {
+            const panel = document.getElementById('feedback-panel');
+            const fTitle = document.getElementById('feedback-title');
+            const fText = document.getElementById('feedback-text');
+            const nextBtn = document.getElementById('next-action-btn');
+
+            fTitle.textContent = title;
+            fTitle.style.color = isCorrect ? 'var(--success)' : 'var(--error)';
+            fText.textContent = message;
+            
+            if(currentQuestionIdx === 9 && isCorrect) { // Trigger at Q10 boundary for final screen routing
+                nextBtn.textContent = "Proceed to Final Challenge Zone";
+            } else if(currentQuestionIdx === questions.length - 1) {
+                nextBtn.textContent = "View Final Trip Assessment";
+            } else {
+                nextBtn.textContent = "Next Station";
+            }
+
+            panel.style.display = 'block';
+        }
+
+        function handleNextAction() {
+            if(currentQuestionIdx === 9) { // Routing gate intercept step 
+                currentQuestionIdx++;
+                switchView('challenge-screen');
+            } else if(currentQuestionIdx >= questions.length - 1) {
+                endGame();
+            } else {
+                currentQuestionIdx++;
+                loadQuestion();
+            }
+        }
+
+        function enterFinalStretch() {
+            switchView('game-screen');
+            loadQuestion();
+        }
+
+        // Particle Generation Effect Engine
+        function triggerStarConfetti(target) {
+            const rect = target.getBoundingClientRect();
+            for(let i=0; i<15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'star-particle';
+                particle.innerHTML = '★';
+                particle.style.left = (rect.left + rect.width/2) + 'px';
+                particle.style.top = (rect.top + rect.height/2) + 'px';
+                
+                const xDist = (Math.random() - 0.5) * 200;
+                const yDist = (Math.random() - 0.5) * 200;
+                particle.style.setProperty('--x', `${xDist}px`);
+                particle.style.setProperty('--y', `${yDist}px`);
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 800);
+            }
+        }
+
+        function endGame() {
+            clearInterval(timer);
+            switchView('result-screen');
+            document.getElementById('final-score-text').textContent = `You Scored: ${score} / 12`;
+            
+            const msgEl = document.getElementById('performance-msg');
+            const emojiEl = document.getElementById('result-emoji');
+            
+            if(score === 12) {
+                emojiEl.textContent = '👑';
+                msgEl.textContent = "Master Engineer Status! Absolute mastery over the tracking structural lines of Subjects and Predicates.";
+                try { finalSound.play(); } catch(e){}
+            } else if(score >= 8) {
+                emojiEl.textContent = '🚂';
+                msgEl.textContent = "Senior Conductor! Excellent work navigating the express lines safely into the terminal station.";
+                try { finalSound.play(); } catch(e){}
+            } else {
+                emojiEl.textContent = '🔧';
+                msgEl.textContent = "Line Mechanic. Some segments derailed on this run. Return to the depot workshop to practice tracking configurations.";
+            }
+        }
+
+        function restartGame() {
+            switchView('intro-screen');
+        }
+    </script>
+</body>
+</html>
