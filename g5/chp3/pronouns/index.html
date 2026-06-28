@@ -1,1 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Royal Pronoun Quest</title>
+<style>
+  :root{
+    --bg1:#050816;
+    --bg2:#111827;
+    --bg3:#1f1147;
+    --gold:#d4af37;
+    --gold2:#f7d774;
+    --ivory:#f8f5ee;
+    --panel:rgba(255,255,255,.08);
+    --panel2:rgba(255,255,255,.12);
+    --card:rgba(12,16,32,.74);
+    --card2:rgba(255,255,255,.94);
+    --text:#eef2ff;
+    --muted:#b8c0d9;
+    --good:#4ade80;
+    --bad:#fb7185;
+    --shadow:0 30px 90px rgba(0,0,0,.45);
+    --radius:28px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    color:var(--text);
+    overflow-x:hidden;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(212,175,55,.12) 0 8%, transparent 8% 100%),
+      radial-gradient(circle at 80% 15%, rgba(167,139,250,.14) 0 7%, transparent 7% 100%),
+      radial-gradient(circle at 50% 80%, rgba(56,189,248,.12) 0 9%, transparent 9% 100%),
+      linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 42%, var(--bg3) 100%);
+    background-attachment:fixed;
+  }
+  body::before,body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+  }
+  body::before{
+    background:
+      linear-gradient(120deg, transparent 0 46%, rgba(255,255,255,.05) 47%, transparent 48%),
+      linear-gradient(225deg, transparent 0 42%, rgba(255,255,255,.05) 43%, transparent 44%);
+    background-size:240px 240px;
+    opacity:.6;
+    animation: drift 22s linear infinite;
+  }
+  body::after{
+    background:
+      radial-gradient(circle at 10px 10px, rgba(212,175,55,.14) 0 2px, transparent 2px 100%),
+      radial-gradient(circle at 40px 30px, rgba(255,255,255,.08) 0 1px, transparent 1px 100%);
+    background-size:120px 120px;
+    opacity:.7;
+    animation: floaty 18s linear infinite;
+  }
+  @keyframes drift{from{transform:translateX(-8%)}to{transform:translateX(8%)}}
+  @keyframes floaty{from{transform:translateY(0)}to{transform:translateY(-120px)}}
+  .halo{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(2px);
+    opacity:.22;
+    z-index:0;
+    animation: pulse 10s ease-in-out infinite;
+  }
+  .h1{width:180px;height:180px;background:var(--gold);top:8%;left:-40px}
+  .h2{width:140px;height:140px;background:#8b5cf6;top:70%;right:-35px;animation-duration:12s}
+  .h3{width:110px;height:110px;background:#38bdf8;top:48%;left:84%;animation-duration:9s}
+  @keyframes pulse{
+    0%,100%{transform:scale(1) translateY(0)}
+    50%{transform:scale(1.08) translateY(-16px)}
+  }
+  .wrap{
+    position:relative;
+    z-index:1;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+  }
+  .screen{display:none;width:100%}
+  .screen.active{display:block}
+  .card{
+    width:min(1100px,100%);
+    margin:0 auto;
+    border-radius:34px;
+    background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.08));
+    backdrop-filter:blur(18px);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.18);
+  }
+  .hero{
+    padding:24px 18px 20px;
+    text-align:center;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(212,175,55,.18) 0 12%, transparent 12% 100%),
+      linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    border-bottom:1px solid rgba(255,255,255,.10);
+  }
+  .badge{
+    display:inline-block;
+    padding:8px 14px;
+    border-radius:999px;
+    background:rgba(255,255,255,.92);
+    color:#1f2937;
+    font-weight:900;
+    font-size:13px;
+    letter-spacing:.02em;
+    box-shadow:0 10px 20px rgba(0,0,0,.18);
+  }
+  h1,h2,p{margin:0}
+  h1{
+    font-size:clamp(2rem,5vw,3.7rem);
+    line-height:1.02;
+    margin-top:12px;
+    letter-spacing:-.04em;
+    color:#fff;
+    text-shadow:0 4px 16px rgba(0,0,0,.25);
+  }
+  .sub{
+    max-width:820px;
+    margin:12px auto 0;
+    color:rgba(255,255,255,.9);
+    line-height:1.55;
+    font-size:1.01rem;
+  }
+  .hero-actions{
+    margin-top:18px;
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .btn{
+    border:0;
+    border-radius:18px;
+    padding:14px 18px;
+    font-weight:900;
+    font-size:1rem;
+    cursor:pointer;
+    transition:transform .16s ease, box-shadow .16s ease, opacity .16s ease;
+    box-shadow:0 14px 24px rgba(0,0,0,.22);
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn.primary{
+    color:#111827;
+    background:linear-gradient(135deg,#f8f1c6,#d4af37 45%,#f7d774);
+  }
+  .btn.secondary{
+    color:#111827;
+    background:#fff;
+  }
+  .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+  .layout{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:16px;
+    padding:16px;
+  }
+  .panel{
+    border-radius:24px;
+    padding:16px;
+    background:var(--card);
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 12px 28px rgba(0,0,0,.18);
+  }
+  .panel.light{
+    background:var(--card2);
+    color:#111827;
+  }
+  .panel h2{
+    font-size:1.25rem;
+    margin-bottom:10px;
+  }
+  .panel p{
+    color:inherit;
+    line-height:1.6;
+    margin-bottom:10px;
+    opacity:.95;
+  }
+  .panel.light p{color:#374151}
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .stat{
+    background:rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:12px;
+    border:1px solid rgba(255,255,255,.12);
+  }
+  .label{
+    font-size:12px;
+    color:#cbd5e1;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+  .value{
+    font-size:1.25rem;
+    font-weight:1000;
+    margin-top:4px;
+    color:#fff;
+  }
+  .toprow{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
+  .qcount{
+    font-weight:1000;
+    color:#fff;
+    text-shadow:0 3px 10px rgba(0,0,0,.22);
+  }
+  .timer{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:1000;
+    color:#111827;
+    background:linear-gradient(135deg,#fff,#f6f0db);
+    padding:10px 14px;
+    border-radius:999px;
+    border:1px solid rgba(212,175,55,.35);
+  }
+  .timer-dot{
+    width:12px;height:12px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#22c55e,#facc15);
+    box-shadow:0 0 0 6px rgba(212,175,55,.14);
+  }
+  .bar{
+    width:100%;
+    height:12px;
+    background:rgba(255,255,255,.18);
+    border-radius:999px;
+    overflow:hidden;
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.2);
+  }
+  .fill{
+    width:0%;
+    height:100%;
+    border-radius:inherit;
+    background:linear-gradient(90deg,#f8f1c6,#d4af37,#a78bfa,#38bdf8);
+    transition:width .3s linear;
+  }
+  .question{
+    margin:16px 0 14px;
+    padding:16px;
+    border-radius:22px;
+    background:rgba(255,255,255,.96);
+    border:1px solid rgba(212,175,55,.18);
+    font-size:1.06rem;
+    line-height:1.55;
+    font-weight:700;
+    color:#12213f;
+    white-space:pre-wrap;
+    box-shadow:0 10px 20px rgba(0,0,0,.12);
+  }
+  .options{display:grid;gap:12px}
+  .opt{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    width:100%;
+    padding:15px 16px;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.96);
+    cursor:pointer;
+    text-align:left;
+    transition:transform .15s ease,border-color .15s ease,background .15s ease,box-shadow .15s ease;
+    box-shadow:0 10px 20px rgba(0,0,0,.10);
+  }
+  .opt:hover{
+    transform:translateY(-1px);
+    border-color:rgba(212,175,55,.48);
+    background:#fffdf3;
+  }
+  .opt.correct{
+    border-color:var(--good);
+    background:linear-gradient(135deg,#ecfdf5,#f0fdf4);
+    box-shadow:0 0 0 4px rgba(74,222,128,.14);
+  }
+  .opt.wrong{
+    border-color:var(--bad);
+    background:linear-gradient(135deg,#fff1f2,#ffe4e6);
+    box-shadow:0 0 0 4px rgba(251,113,133,.14);
+  }
+  .key{
+    min-width:34px;height:34px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    font-weight:1000;
+    color:#111827;
+    background:linear-gradient(135deg,#f8f1c6,#f7d774);
+    flex:none;
+  }
+  .opt span.text{line-height:1.45;color:#111827}
+  .feedback{
+    min-height:34px;
+    margin-top:12px;
+    font-weight:900;
+    line-height:1.45;
+    color:#fff;
+    white-space:pre-wrap;
+    text-shadow:0 3px 10px rgba(0,0,0,.2);
+  }
+  .good{color:#d9ffe5}
+  .bad{color:#ffe3e3}
+  .bottom{
+    margin-top:16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .progressbar{
+    height:10px;
+    background:rgba(255,255,255,.18);
+    border-radius:999px;
+    overflow:hidden;
+    flex:1;
+    min-width:180px;
+  }
+  .progressbar .inner{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#f8f1c6,#d4af37,#a78bfa);
+    border-radius:inherit;
+  }
+  .overlay{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:5;
+  }
+  .confetti,.cross{
+    position:absolute;
+    font-size:22px;
+    animation:pop 900ms ease-out forwards;
+    text-shadow:0 4px 16px rgba(0,0,0,.18);
+  }
+  .confetti{color:#f8f1c6}
+  .cross{color:#fb7185}
+  @keyframes pop{
+    0%{transform:translateY(0) scale(.4) rotate(0);opacity:1}
+    100%{transform:translateY(-120px) scale(1.3) rotate(180deg);opacity:0}
+  }
+  .splash{
+    position:fixed;
+    inset:0;
+    z-index:20;
+    display:grid;
+    place-items:center;
+    background:
+      radial-gradient(circle at 50% 20%, rgba(212,175,55,.20) 0 12%, transparent 12% 100%),
+      linear-gradient(135deg,#04060f 0%,#111827 45%,#24124f 100%);
+    transition:opacity .45s ease, visibility .45s ease;
+  }
+  .splash.hide{opacity:0;visibility:hidden}
+  .splash-card{
+    width:min(86vw,360px);
+    background:rgba(255,255,255,.96);
+    border-radius:30px;
+    padding:22px 20px 18px;
+    text-align:center;
+    box-shadow:0 26px 70px rgba(0,0,0,.4);
+    border:1px solid rgba(255,255,255,.5);
+  }
+  .splash-card img{
+    max-width:200px;
+    max-height:120px;
+    display:block;
+    margin:0 auto 12px;
+    object-fit:contain;
+  }
+  .splash-card .small{
+    color:#64748b;
+    font-weight:900;
+    font-size:14px;
+  }
+  .finalbox{display:grid;gap:12px}
+  .finalchallenge{
+    background:rgba(255,255,255,.96);
+    color:#111827;
+    border-radius:22px;
+    padding:16px;
+    border:1px solid rgba(212,175,55,.18);
+    font-weight:700;
+    line-height:1.55;
+    white-space:pre-wrap;
+  }
+  .result{
+    text-align:center;
+    padding:26px 18px 28px;
+  }
+  .resultscore{
+    font-size:clamp(2.4rem,8vw,4.8rem);
+    font-weight:1000;
+    color:#fff;
+    margin:8px 0 12px;
+    letter-spacing:-.04em;
+    text-shadow:0 4px 16px rgba(0,0,0,.2);
+  }
+  .resulttitle{
+    font-size:clamp(1.4rem,3vw,2rem);
+    color:#fff;
+    margin-bottom:8px;
+    text-shadow:0 4px 12px rgba(0,0,0,.18);
+  }
+  .resultmsg{
+    color:rgba(255,255,255,.92);
+    max-width:700px;
+    margin:0 auto 16px;
+    line-height:1.55;
+  }
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .stats{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:540px){
+    .wrap{padding:10px}
+    .card{border-radius:24px}
+    .layout{padding:12px}
+    .panel{padding:14px;border-radius:20px}
+    .question{padding:14px}
+    .opt{padding:13px}
+    .stats{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+  <div class="halo h1"></div>
+  <div class="halo h2"></div>
+  <div class="halo h3"></div>
+  <div class="overlay" id="overlay"></div>
 
+  <div class="splash" id="splash">
+    <div class="splash-card">
+      <img src="assets/logo.png" alt="Logo">
+      <div class="small">Royal Pronoun Quest</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="screen active" id="introScreen">
+      <div class="card">
+        <div class="hero">
+          <span class="badge">Grade 5 • English Grammar • Pronouns</span>
+          <h1>Royal Pronoun Quest</h1>
+          <p class="sub">An extravagant, polished learning adventure with your exact questions, elegant visuals, one retry per question, and a final challenge.</p>
+          <div class="hero-actions">
+            <button class="btn primary" id="startBtn">Start Game</button>
+          </div>
+        </div>
+        <div class="layout">
+          <div class="panel">
+            <h2>How it works</h2>
+            <p>Choose the best answer, watch your score update, and use your one retry if you need it. After the second wrong attempt, the correct answer and explanation appear.</p>
+            <p>The theme is designed to feel luxurious, dramatic, and game-like with gold accents, deep colors, and soft glow.</p>
+          </div>
+          <div class="panel light">
+            <h2>Game features</h2>
+            <p>• 10 questions</p>
+            <p>• 45 seconds per question</p>
+            <p>• Score tracker</p>
+            <p>• Final challenge round</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="quizScreen">
+      <div class="card">
+        <div class="layout">
+          <div class="panel">
+            <div class="toprow">
+              <div class="qcount" id="progressText">Question 1 of 10</div>
+              <div class="timer"><span class="timer-dot"></span><span id="timerText">45s</span></div>
+            </div>
+            <div class="bar"><div class="fill" id="timerFill"></div></div>
+            <div class="question" id="questionText"></div>
+            <div class="options" id="options"></div>
+            <div class="feedback" id="feedback"></div>
+            <div class="bottom">
+              <div class="stats">
+                <div class="stat">
+                  <div class="label">Score</div>
+                  <div class="value" id="scoreText">0</div>
+                </div>
+                <div class="stat">
+                  <div class="label">Retries left</div>
+                  <div class="value" id="retryText">1</div>
+                </div>
+              </div>
+              <button class="btn secondary" id="nextBtn" disabled>Next</button>
+            </div>
+          </div>
+          <div class="panel light">
+            <h2>Refined tip</h2>
+            <p>Read carefully and look for the pronoun type being tested. The wrong choices are designed to look close, so focus on sentence meaning and grammar role.</p>
+            <p>The interface stays elegant and premium while keeping the reading space clear and comfortable.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="finalScreen">
+      <div class="card">
+        <div class="hero">
+          <span class="badge">Final Challenge</span>
+          <h1>One last elegant test</h1>
+          <p class="sub">A final check before the royal finish.</p>
+        </div>
+        <div class="layout">
+          <div class="panel finalbox">
+            <div class="finalchallenge" id="finalChallenge"></div>
+            <div class="options" id="finalOptions"></div>
+            <div class="feedback" id="finalFeedback"></div>
+            <button class="btn primary" id="finishBtn" disabled>See Result</button>
+          </div>
+          <div class="panel light">
+            <h2>Challenge tip</h2>
+            <p>This last question checks if you can apply what you learned, not just remember a rule.</p>
+            <p>Take a moment and choose the option that fits best.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="resultScreen">
+      <div class="card">
+        <div class="hero">
+          <span class="badge">Result</span>
+          <div class="resultscore" id="resultScore">0/0</div>
+          <div class="resulttitle" id="resultTitle"></div>
+          <p class="resultmsg" id="resultMsg"></p>
+          <button class="btn primary" id="restartBtn">Play Again</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+const questions = [
+{q:`During the morning assembly, the Principal announces the names of students who have won prizes in different competitions. While writing the report for the school magazine, Riya notices that one student's name appears repeatedly in the same paragraph. Her teacher advises her to replace the repeated name with a suitable personal pronoun so that the paragraph sounds smoother and easier to read.
+Which sentence correctly replaces the repeated noun?
+A. Aarav won the science quiz. He received a certificate during the assembly.
+B. Aarav won the science quiz. His received a certificate during the assembly.
+C. Aarav won the science quiz. Him received a certificate during the assembly.
+D. Aarav won the science quiz. They received a certificate during the assembly.`, o:['Aarav won the science quiz. He received a certificate during the assembly.','Aarav won the science quiz. His received a certificate during the assembly.','Aarav won the science quiz. Him received a certificate during the assembly.','Aarav won the science quiz. They received a certificate during the assembly.'], a:0, e:'He is the correct personal pronoun.'},
+{q:`The teacher places one globe on her table and four maps on a shelf across the classroom. She then points towards the globe and says,
+"______ is a globe that helps us understand the shape of the Earth."
+One student says This is a demonstrative adjective, while another says it is a demonstrative pronoun.
+Who is correct?
+A. The first student, because this describes a noun.
+B. The second student, because this replaces the noun.
+C. Both students are correct.
+D. Neither student is correct.`, o:['The first student, because this describes a noun.','The second student, because this replaces the noun.','Both students are correct.','Neither student is correct.'], a:1, e:'This replaces the noun, so it is a demonstrative pronoun here.'},
+{q:`During a visit to a history museum, the guide points to an ancient sword kept inside a glass case and says,
+"Look at this sword. It belonged to a famous ruler many centuries ago."
+How is the word this used in the sentence?
+A. Demonstrative Pronoun
+B. Personal Pronoun
+C. Demonstrative Adjective
+D. Possessive Pronoun`, o:['Demonstrative Pronoun','Personal Pronoun','Demonstrative Adjective','Possessive Pronoun'], a:2, e:'This is used before a noun, so it is a demonstrative adjective.'},
+{q:`The school magazine reporter is interviewing the winners of an art competition. She wants to know who painted a beautiful landscape displayed in the exhibition.
+Which question correctly uses an interrogative pronoun?
+A. Which painting won first prize?
+B. Whose painting is displayed here?
+C. What colour did you use?
+D. Who painted this beautiful landscape?`, o:['Which painting won first prize?','Whose painting is displayed here?','What colour did you use?','Who painted this beautiful landscape?'], a:3, e:'Who is an interrogative pronoun used for people.'},
+{q:`A librarian notices several books lying on a table after reading time. She wants to know which book belongs to Class 5 before returning it to the correct shelf.
+Which sentence correctly uses an interrogative adjective?
+A. Which is yours?
+B. Who borrowed this book?
+C. Which book belongs to Class 5?
+D. What happened?`, o:['Which is yours?','Who borrowed this book?','Which book belongs to Class 5?','What happened?'], a:2, e:'Which book uses which before a noun, so it is an interrogative adjective.'},
+{q:`Two identical school bags are kept in the Lost and Found room. Aarav points to one and says,
+"The blue bag is mine."
+His friend says that mine is a possessive adjective.
+Who is correct?
+A. Aarav's friend is correct because mine comes before a noun.
+B. Aarav is correct because mine replaces the noun.
+C. Both are correct.
+D. Neither is correct.`, o:["Aarav's friend is correct because mine comes before a noun.","Aarav is correct because mine replaces the noun.","Both are correct.","Neither is correct."], a:1, e:'Mine replaces the noun, so Aarav is correct.'},
+{q:`During Sports Day, the coach reminds everyone to collect their own water bottles after each event. Pointing towards Riya's bottle, he says,
+"Is this your bottle?"
+How is the word your used in the sentence?
+A. Possessive Pronoun
+B. Demonstrative Pronoun
+C. Personal Pronoun
+D. Possessive Adjective`, o:['Possessive Pronoun','Demonstrative Pronoun','Personal Pronoun','Possessive Adjective'], a:3, e:'Your comes before a noun, so it is a possessive adjective.'},
+{q:`While editing the class newsletter, the English teacher finds the following sentence:
+"This is my. That blue notebook is mine notebook."
+She asks the students to identify the sentence that correctly uses both a possessive adjective and a possessive pronoun.
+A. This is mine. That blue notebook is my.
+B. This is my notebook. That blue notebook is mine.
+C. This is mine notebook. That blue notebook is my.
+D. This is my. That blue notebook is mine notebook.`, o:['This is mine. That blue notebook is my.','This is my notebook. That blue notebook is mine.','This is mine notebook. That blue notebook is my.','This is my. That blue notebook is mine notebook.'], a:1, e:'My is a possessive adjective, and mine is a possessive pronoun.'},
+{q:`During an exhibition, a visitor points to a model kept on the nearest table and says,
+"This model is excellent."
+Later, the visitor points to another model placed across the hall and says,
+"That model is equally impressive."
+What is the correct explanation?
+A. Both this and that are demonstrative adjectives because they describe the noun model.
+B. Both are demonstrative pronouns.
+C. The first is a personal pronoun and the second is an adjective.
+D. Both are possessive adjectives.`, o:['Both this and that are demonstrative adjectives because they describe the noun model.','Both are demonstrative pronouns.','The first is a personal pronoun and the second is an adjective.','Both are possessive adjectives.'], a:0, e:'This and that before nouns are demonstrative adjectives.'},
+{q:`During grammar revision, the teacher writes four sentences on the board.
+This is my pencil.
+This pencil is mine.
+Which bag is yours?
+Which colour do you like best?
+The teacher asks, "Which sentence contains an interrogative adjective?"
+A. Sentence 1
+B. Sentence 2
+C. Sentence 3
+D. Sentence 4`, o:['Sentence 1','Sentence 2','Sentence 3','Sentence 4'], a:3, e:'Which colour uses which before a noun, so it is an interrogative adjective.'}
+];
+
+const finalChallenge = {
+q:`During grammar revision, the teacher writes four sentences on the board.
+This is my pencil.
+This pencil is mine.
+Which bag is yours?
+Which colour do you like best?
+The teacher asks, "Which sentence contains an interrogative adjective?"
+A. Sentence 1
+B. Sentence 2
+C. Sentence 3
+D. Sentence 4`,
+o:['Sentence 1','Sentence 2','Sentence 3','Sentence 4'],
+a:3,
+e:'Which colour uses which before a noun, so it is an interrogative adjective.'
+};
+
+const total = questions.length;
+let index = 0, score = 0, retries = 1, locked = false, timer = null, timeLeft = 45, finalDone = false;
+const $ = id => document.getElementById(id);
+const screens = ['introScreen','quizScreen','finalScreen','resultScreen'];
+
+function show(id){ screens.forEach(s => $(s).classList.toggle('active', s === id)); window.scrollTo({top:0,behavior:'smooth'}); }
+function play(src){ const a = new Audio(src); a.play().catch(()=>{}); }
+function burst(type){
+  const overlay = $('overlay');
+  const count = type === 'good' ? 10 : 1;
+  for(let i=0;i<count;i++){
+    const d = document.createElement('div');
+    d.className = type === 'good' ? 'confetti' : 'cross';
+    d.textContent = type === 'good' ? '✦' : '✕';
+    d.style.left = (10 + Math.random()*80) + 'vw';
+    d.style.top = (62 + Math.random()*20) + 'vh';
+    d.style.fontSize = (18 + Math.random()*16) + 'px';
+    overlay.appendChild(d);
+    setTimeout(() => d.remove(), 1000);
+  }
+}
+function setTimer(){
+  clearInterval(timer);
+  timeLeft = 45;
+  $('timerText').textContent = timeLeft + 's';
+  $('timerFill').style.width = '0%';
+  timer = setInterval(() => {
+    timeLeft--;
+    $('timerText').textContent = timeLeft + 's';
+    $('timerFill').style.width = ((45 - timeLeft) / 45 * 100) + '%';
+    if(timeLeft <= 0){ clearInterval(timer); handleAnswer(null, true); }
+  }, 1000);
+}
+function renderQuestion(){
+  locked = false;
+  $('nextBtn').disabled = true;
+  $('feedback').textContent = '';
+  $('retryText').textContent = retries;
+  $('scoreText').textContent = score;
+  $('progressText').textContent = `Question ${index + 1} of ${total}`;
+  const q = questions[index];
+  $('questionText').textContent = q.q;
+  const box = $('options');
+  box.innerHTML = '';
+  q.o.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="key">${String.fromCharCode(65 + i)}</span><span class="text">${t}</span>`;
+    btn.onclick = () => pickAnswer(i, btn);
+    box.appendChild(btn);
+  });
+  setTimer();
+}
+function pickAnswer(i, btn){
+  if(locked) return;
+  locked = true;
+  clearInterval(timer);
+  handleAnswer(i, false, btn);
+}
+function handleAnswer(i, timeout, btn){
+  const q = questions[index];
+  const opts = [...$('options').children];
+  const correct = q.a;
+  if(i === correct){
+    score++;
+    $('scoreText').textContent = score;
+    $('feedback').innerHTML = `<span class="good">Correct!</span> ${q.e}`;
+    opts[correct].classList.add('correct');
+    burst('good');
+    play('assets/correct.mp3');
+    $('nextBtn').disabled = false;
+    retries = 1;
+    $('retryText').textContent = retries;
+    return;
+  }
+  if(timeout){
+    $('feedback').innerHTML = `<span class="bad">Time's up.</span> ${q.e}`;
+    opts[correct].classList.add('correct');
+    burst('bad');
+    play('assets/wrong.mp3');
+    $('nextBtn').disabled = false;
+    retries = 1;
+    $('retryText').textContent = retries;
+    return;
+  }
+  if(retries > 0){
+    retries--;
+    $('retryText').textContent = retries;
+    $('feedback').innerHTML = `<span class="bad">Try once more.</span>`;
+    if(btn) btn.classList.add('wrong');
+    play('assets/wrong.mp3');
+    locked = false;
+    setTimeout(() => [...$('options').children].forEach((b, j) => b.onclick = () => pickAnswer(j, b)), 80);
+    setTimer();
+    return;
+  }
+  $('feedback').innerHTML = `<span class="bad">Correct answer: ${q.o[correct]}</span> ${q.e}`;
+  if(btn) btn.classList.add('wrong');
+  opts[correct].classList.add('correct');
+  burst('bad');
+  play('assets/wrong.mp3');
+  $('nextBtn').disabled = false;
+  retries = 1;
+  $('retryText').textContent = retries;
+}
+$('nextBtn').onclick = () => {
+  index++;
+  retries = 1;
+  if(index < total) renderQuestion();
+  else { show('finalScreen'); $('finalChallenge').textContent = finalChallenge.q; renderFinal(); }
+};
+function renderFinal(){
+  finalDone = false;
+  $('finishBtn').disabled = true;
+  $('finalFeedback').textContent = '';
+  const box = $('finalOptions');
+  box.innerHTML = '';
+  finalChallenge.o.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="key">${String.fromCharCode(65 + i)}</span><span class="text">${t}</span>`;
+    btn.onclick = () => {
+      if(finalDone) return;
+      finalDone = true;
+      [...box.children].forEach(x => x.classList.remove('wrong','correct'));
+      if(i === finalChallenge.a){
+        btn.classList.add('correct');
+        $('finalFeedback').innerHTML = `<span class="good">Correct!</span> ${finalChallenge.e}`;
+        score++;
+        burst('good');
+        play('assets/correct.mp3');
+      }else{
+        btn.classList.add('wrong');
+        box.children[finalChallenge.a].classList.add('correct');
+        $('finalFeedback').innerHTML = `<span class="bad">Not quite.</span> ${finalChallenge.e}`;
+        burst('bad');
+        play('assets/wrong.mp3');
+      }
+      $('finishBtn').disabled = false;
+    };
+    box.appendChild(btn);
+  });
+}
+$('finishBtn').onclick = () => {
+  show('resultScreen');
+  const finalScore = score;
+  const outOf = total + 1;
+  $('resultScore').textContent = `${finalScore}/${outOf}`;
+  const pct = Math.round(finalScore / outOf * 100);
+  $('resultTitle').textContent = pct >= 90 ? 'Excellent work!' : pct >= 70 ? 'Great job!' : 'Keep practicing!';
+  $('resultMsg').textContent = 'You completed the royal quest. Your score shows how well you understood pronouns and where to practice more.';
+};
+$('startBtn').onclick = () => { index = 0; score = 0; retries = 1; show('quizScreen'); renderQuestion(); };
+$('restartBtn').onclick = () => location.reload();
+setTimeout(() => $('splash').classList.add('hide'), 5000);
+</script>
+</body>
+</html>
