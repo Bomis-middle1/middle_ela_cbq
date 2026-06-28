@@ -1,1 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Symphony Orchestra - Subject-Verb Agreement Interactive</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #fbfbf8 0%, #f3efe0 50%, #e6dfc8 100%);
+            --gold: #b38f43;
+            --gold-glow: #dfbc6d;
+            --accent-blue: #4a7a96;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #2c2a20;
+            --text-muted: #5c584a;
+            --success: #2e7d32;
+            --error: #c62828;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Elegant Light Background Musical Layer */
+        .ambient-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .note {
+            position: absolute;
+            color: var(--gold);
+            font-size: 20px;
+            opacity: 0.15;
+            animation: floatNotes 6s infinite ease-in-out;
+        }
+
+        @keyframes floatNotes {
+            0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.25; }
+            100% { transform: translateY(-10vh) translateX(50px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Mandatory Branding Overlay Screen */
+        #brand-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fbfbf8;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #brand-overlay img {
+            max-width: 250px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        #brand-overlay .loader-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        #brand-overlay .loader-progress {
+            width: 100%;
+            height: 100%;
+            background: var(--gold);
+            transform: translateX(-100%);
+            animation: loadProgress 5s linear forwards;
+        }
+
+        @keyframes loadProgress {
+            to { transform: translateX(0); }
+        }
+
+        /* Container Frames */
+        .game-container {
+            width: 90%;
+            max-width: 750px;
+            background: var(--card-bg);
+            border: 1px solid rgba(179, 143, 67, 0.3);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(179, 143, 67, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            z-index: 10;
+            position: relative;
+            display: none;
+        }
+
+        .game-container.active-view {
+            display: block !important;
+        }
+
+        h1, h2, h3 {
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #b38f43 0%, #89692a 100%);
+            color: #ffffff;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(179, 143, 67, 0.3);
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--gold-glow);
+        }
+
+        /* Dashboard Items */
+        .dashboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 12px 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(179, 143, 67, 0.2);
+        }
+
+        .score-box, .timer-box {
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-box {
+            color: var(--accent-blue);
+        }
+
+        .timer-warn {
+            color: var(--error) !important;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            to { opacity: 0.5; }
+        }
+
+        /* Music Score Sheet Progress Visualizer */
+        .sheet-music-track {
+            width: 100%;
+            height: 40px;
+            background: repeating-linear-gradient(rgba(179, 143, 67, 0.1) 0px, rgba(179, 143, 67, 0.1) 2px, transparent 2px, transparent 8px);
+            margin: 20px 0;
+            position: relative;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .baton-progress {
+            position: absolute;
+            bottom: -5px;
+            left: 0%;
+            font-size: 28px;
+            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Scenarios & Answer Cards */
+        .scenario-box {
+            background: rgba(74, 122, 150, 0.06);
+            border-left: 4px solid var(--accent-blue);
+            padding: 15px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(179, 143, 67, 0.15);
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-card:hover {
+            background: #ffffff;
+            border-color: var(--accent-blue);
+        }
+
+        .option-card.correct-reveal {
+            border-color: var(--success);
+            background: rgba(46, 125, 50, 0.1);
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .option-card.wrong-reveal {
+            border-color: var(--error);
+            background: rgba(198, 40, 40, 0.1);
+            color: var(--error);
+        }
+
+        .feedback-panel {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid rgba(179, 143, 67, 0.3);
+            display: none;
+        }
+
+        /* Indicators & Particle Aesthetics */
+        .star-particle {
+            position: absolute;
+            color: #d4af37;
+            font-size: 22px;
+            pointer-events: none;
+            animation: fly 0.8s ease-out forwards;
+        }
+
+        @keyframes fly {
+            0% { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+        }
+
+        .red-cross {
+            color: var(--error);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .final-badge {
+            font-size: 4rem;
+            text-align: center;
+            margin: 20px 0;
+            animation: floatUp 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes floatUp {
+            to { transform: translateY(-8px); }
+        }
+
+        @media (max-width: 600px) {
+            .game-container { padding: 20px; width: 95%; }
+            .dashboard { flex-direction: column; gap: 10px; text-align: center;}
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-layer" id="ambient-layer"></div>
+
+    <div id="brand-overlay">
+        <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <div class="game-container" id="intro-screen">
+        <h1>🎼 The Symphony Orchestra</h1>
+        <h3>Subject-Verb Agreement Concert</h3>
+        <p style="text-align: center; margin-bottom: 25px;">Welcome, Maestro! Step up to the conductor's podium. Lead the Symphony Orchestra to musical perfection by ensuring that the musical <strong>Subjects</strong> match in perfect harmony with their <strong>Verbs</strong> across 12 compositions.</p>
+        
+        <div class="scenario-box" style="border-left-color: var(--gold)">
+            <strong>📋 Concert Rules:</strong><br>
+            • Every composition has a strict performance window of <strong>45 seconds</strong>.<br>
+            • An out-of-tune answer breaks the harmony. You get exactly <strong>one retry</strong> to tune the phrase.<br>
+            • A second error brings in the sheet music blueprints to reveal the correct harmony and lesson.
+        </div>
+        <button class="btn" onclick="startGame()">Raise Conductor's Baton</button>
+    </div>
+
+    <div class="game-container" id="game-screen">
+        <div class="dashboard">
+            <div class="score-box">🎼 Harmony Score: <span id="current-score">0</span>/12</div>
+            <div id="attempt-badge" style="color: var(--gold); font-weight: bold;">Attempt 1/2</div>
+            <div class="timer-box">⏱️ Beat Timer: <span id="time-display">45</span>s</div>
+        </div>
+
+        <div class="sheet-music-track">
+            <div class="baton-progress" id="baton-pointer">🪄</div>
+        </div>
+
+        <h3 id="question-header" style="text-align: left; color: var(--accent-blue);">Composition 1</h3>
+        <div class="scenario-box" id="scenario-text">Scenario environment prompt details...</div>
+        <p id="question-main" style="font-size: 1.1rem; font-weight: 600;"></p>
+
+        <div class="options-grid" id="options-box"></div>
+
+        <div class="feedback-panel" id="feedback-panel">
+            <h4 id="feedback-title" style="margin-bottom: 8px;"></h4>
+            <p id="feedback-text" style="margin-bottom: 15px; font-size: 0.95rem; color: var(--text-muted);"></p>
+            <button class="btn" id="next-action-btn" onclick="handleNextAction()">Next Composition</button>
+        </div>
+    </div>
+
+    <div class="game-container" id="challenge-screen">
+        <div class="final-badge">🎻</div>
+        <h2>The Grand Finale Movement</h2>
+        <p style="text-align: center; font-size: 1.15rem;">Brilliant performance, Maestro! You are approaching the absolute peak of the concert performance. Maintain focus to lead the final movement flawlessly!</p>
+        <button class="btn" onclick="enterFinalStretch()">Conducted Final Movement</button>
+    </div>
+
+    <div class="game-container" id="result-screen">
+        <h2>Concert Standing Review</h2>
+        <div class="final-badge" id="result-emoji">⭐</div>
+        <h3 style="color: var(--text-main)" id="final-score-text">Score: 0 / 12</h3>
+        <p style="text-align: center;" id="performance-msg"></p>
+        <button class="btn" onclick="restartGame()">Concert Da Capo (Restart)</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                scenario: "The editor of the school magazine is checking articles submitted by Class 5 students before they are printed. One student has written the sentence:\n\"Everyone enjoy the storytelling competition because it is interesting.\"",
+                question: "The editor remembers that words such as everyone, somebody, anybody, and each are indefinite pronouns. Although they refer to many people, they are always treated as singular and must be followed by a singular verb in the present tense. Which sentence should the editor publish?",
+                options: [
+                    "Everyone enjoys the storytelling competition because it is interesting.",
+                    "Everyone enjoy the storytelling competition because it is interesting.",
+                    "Everyone enjoying the storytelling competition because it is interesting.",
+                    "Everyone have enjoyed the storytelling competition because it is interesting."
+                ],
+                answer: 0,
+                explanation: "Words like 'everyone' function as singular indefinite pronouns and natively require singular verb forms matching them with 'enjoys'."
+            },
+            {
+                id: 2,
+                scenario: "The Principal is preparing an announcement for the morning assembly. She wants to appreciate the school choir after winning an inter-school singing competition. One teacher writes:\n\"The choir sing beautifully during every performance.\"",
+                question: "Another teacher points out that choir is a collective noun and is treated as a single unit in this sentence. Therefore, it should take a singular verb. Which sentence should the Principal choose?",
+                options: [
+                    "The choir sing beautifully during every performance.",
+                    "The choir sings beautifully during every performance.",
+                    "The choir singing beautifully during every performance.",
+                    "The choir have sing beautifully during every performance."
+                ],
+                answer: 1,
+                explanation: "When acting contextually as a singular shared corporate identity block, collective nouns require singular verb configurations ('sings')."
+            },
+            {
+                id: 3,
+                scenario: "The student reporter is writing about the Science Exhibition. She wants her report to be grammatically correct before it is displayed on the notice board. One sentence reads:\n\"The students presents their working models confidently.\"",
+                question: "While reviewing the report, the teacher reminds the class that a plural subject must always take a plural verb in the simple present tense. Which revision should the reporter make?",
+                options: [
+                    "The students presenting their working models confidently.",
+                    "The students presents their working models confidently.",
+                    "The students present their working models confidently.",
+                    "The students has presented their working models confidently."
+                ],
+                answer: 2,
+                explanation: "Plural subjects ('The students') align harmoniously together with simple base configuration plural verb items ('present')."
+            },
+            {
+                id: 4,
+                scenario: "During an English lesson, the teacher asks students to write sentences about their daily routine. Rahul writes:\n\"She walk to school every morning with her brother.\"",
+                question: "His partner notices that the sentence does not follow the rule for third-person singular subjects in the present tense. The teacher asks the class to choose the correct revision. Which option should they select?",
+                options: [
+                    "She walk to school every morning with her brother.",
+                    "She walking to school every morning with her brother.",
+                    "She have walked to school every morning with her brother.",
+                    "She walks to school every morning with her brother."
+                ],
+                answer: 3,
+                explanation: "Third-person singular pronouns ('she', 'he', 'it') must agree cleanly with standard singular verbs ending with '-s' ('walks')."
+            },
+            {
+                id: 5,
+                scenario: "The English Club is editing dialogues for a short play. One character says:\n\"We plays fair during every match.\"",
+                question: "The students remember that the pronouns I, you, we, and they always take the base form of the verb in the present tense. Which correction should the club make?",
+                options: [
+                    "We play fair during every match.",
+                    "We plays fair during every match.",
+                    "We is playing fair during every match.",
+                    "We has played fair during every match."
+                ],
+                answer: 0,
+                explanation: "Plural pronouns such as 'we' align directly alongside basic present tense infinitive forms without adding extra character endings ('play')."
+            },
+            {
+                id: 6,
+                scenario: "Two students are checking each other's homework before submitting it to the teacher. One sentence reads:\n\"Each of the players practise regularly after school.\"",
+                question: "The teacher reminds the class that 'each' is an indefinite pronoun and should always be treated as singular, even if it refers to many people. Which sentence deserves full marks?",
+                options: [
+                    "Each of the players practise regularly after school.",
+                    "Each of the players practises regularly after school.",
+                    "Each of the players are practising regularly after school.",
+                    "Each of the players have practised regularly after school."
+                ],
+                answer: 1,
+                explanation: "The true head element is 'each', which isolates individuals singularly, requiring the singular verb form 'practises'."
+            },
+            {
+                id: 7,
+                scenario: "The Sports Captain is preparing a notice for all participants. One sentence says:\n\"The captain lead the march past during the Annual Sports Day.\"",
+                question: "The teacher explains that the subject is singular and therefore needs the correct present tense verb. Which sentence should appear on the notice board?",
+                options: [
+                    "The captain leading the march past during the Annual Sports Day.",
+                    "The captain lead the march past during the Annual Sports Day.",
+                    "The captain leads the march past during the Annual Sports Day.",
+                    "The captain have led the march past during the Annual Sports Day."
+                ],
+                answer: 2,
+                explanation: "A distinct singular actor unit ('The captain') takes a singular, matching structural verb profile variant ('leads')."
+            },
+            {
+                id: 8,
+                scenario: "During a grammar quiz, the teacher asks students to identify the sentence that correctly follows the rule of subject–verb agreement. She reminds them that collective nouns are treated as singular in the chapter they have learned.",
+                question: "Which group should receive full marks?",
+                options: [
+                    "The team play well together.",
+                    "The team have play well together.",
+                    "The team playing well together.",
+                    "The team plays well together."
+                ],
+                answer: 3,
+                explanation: "Treating 'the team' as a combined institutional core singular module coordinates correctly with the corresponding verb variant 'plays'."
+            },
+            {
+                id: 9,
+                scenario: "The librarian is preparing a poster reminding students to follow library rules. One sentence reads:\n\"Every child return the book on time.\"",
+                question: "Before printing the poster, she checks whether the sentence follows the rule for indefinite words such as every. Which sentence should she print?",
+                options: [
+                    "Every child returns the book on time.",
+                    "Every child return the book on time.",
+                    "Every child returning the book on time.",
+                    "Every child have returned the book on time."
+                ],
+                answer: 0,
+                explanation: "Distributive modifiers ('every') logically force singular context interpretations onto nouns, leading safely to 'returns'."
+            },
+            {
+                id: 10,
+                scenario: "While checking notebooks, the English teacher notices the sentence:\n\"The birds flies across the lake every evening.\"",
+                question: "She asks the student to think about whether the subject is singular or plural before correcting the sentence. Which correction is the most appropriate?",
+                options: [
+                    "The birds flies across the lake every evening.",
+                    "The birds fly across the lake every evening.",
+                    "The birds optical flying across the lake every evening.",
+                    "The birds has flown across the lake every evening."
+                ],
+                answer: 1,
+                explanation: "The dynamic subject 'birds' is explicit plural, meaning it must pair directly with the base verb phrase pattern 'fly'."
+            },
+            {
+                id: 11,
+                scenario: "A group of students is presenting a chart about healthy eating. One sentence on the chart says:\n\"My friend eat fresh fruits every day.\"",
+                question: "Before displaying the chart, the teacher reminds the group that a singular subject in the present tense requires a singular verb. Which revision should they make?",
+                options: [
+                    "My friend eat fresh fruits every day.",
+                    "My friend eating fresh fruits every day.",
+                    "My friend eats fresh fruits every day.",
+                    "My friend have eaten fresh fruits every day."
+                ],
+                answer: 2,
+                explanation: "The structural target unit 'My friend' is singular, so it requires an active singular presentation form ('eats')."
+            },
+            {
+                id: 12,
+                scenario: "The editor of the school newsletter reads four sentences written by different students. She wants to publish only the sentence that correctly follows the rules of subject–verb agreement taught in Class 5.",
+                question: "She carefully checks whether the subject is singular or plural before selecting the final sentence. Which sentence should the editor publish?",
+                options: [
+                    "Everybody like reading storybooks.",
+                    "Everybody liking storybooks.",
+                    "Everybody have liked storybooks.",
+                    "Everybody likes reading storybooks."
+                ],
+                answer: 3,
+                explanation: "'Everybody' operates natively as an indefinite singular pronoun element framework, which perfectly pairs with 'likes'."
+            }
+        ];
+
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let timer = null;
+        let timeLeft = 45;
+        let currentAttempts = 1;
+        let optionSelectedThisRound = false;
+
+        const correctSound = new Audio('assets/correct.mp3');
+        const wrongSound = new Audio('assets/wrong.mp3');
+        const finalSound = new Audio('assets/freesound_community-claps-44774.mp3');
+
+        function createBackgroundAesthetics() {
+            const ambient = document.getElementById('ambient-layer');
+            const notesList = ['♩', '♪', '♫', '♬', '𝄢', '𝄞'];
+            for(let i=0; i<20; i++) {
+                let note = document.createElement('div');
+                note.className = 'note';
+                note.textContent = notesList[Math.floor(Math.random() * notesList.length)];
+                note.style.top = Math.random() * 100 + 'vh';
+                note.style.left = Math.random() * 100 + 'vw';
+                note.style.animationDelay = Math.random() * 6 + 's';
+                note.style.fontSize = (Math.random() * 16 + 16) + 'px';
+                ambient.appendChild(note);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            createBackgroundAesthetics();
+            setTimeout(() => {
+                const overlay = document.getElementById('brand-overlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    switchView('intro-screen');
+                }, 500);
+            }, 5000);
+        });
+
+        function switchView(viewId) {
+            document.querySelectorAll('.game-container').forEach(el => el.classList.remove('active-view'));
+            const targetView = document.getElementById(viewId);
+            if(targetView) targetView.classList.add('active-view');
+        }
+
+        function startGame() {
+            currentQuestionIdx = 0;
+            score = 0;
+            switchView('game-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            clearInterval(timer);
+            timeLeft = 45;
+            currentAttempts = 1;
+            optionSelectedThisRound = false;
+            
+            document.getElementById('time-display').textContent = timeLeft;
+            document.getElementById('time-display').classList.remove('timer-warn');
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('attempt-badge').textContent = `Attempt ${currentAttempts}/2`;
+            document.getElementById('feedback-panel').style.display = 'none';
+
+            const baton = document.getElementById('baton-pointer');
+            let percentage = (currentQuestionIdx / questions.length) * 92; 
+            baton.style.left = percentage + '%';
+
+            const currentQ = questions[currentQuestionIdx];
+            document.getElementById('question-header').textContent = `Composition ${currentQuestionIdx + 1} of 12`;
+            document.getElementById('scenario-text').textContent = currentQ.scenario;
+            document.getElementById('question-main').textContent = currentQ.question;
+
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.innerHTML = '';
+
+            currentQ.options.forEach((opt, idx) => {
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                card.innerHTML = `<span><strong>${String.fromCharCode(65 + idx)}.</strong> ${opt}</span><span class="indicator"></span>`;
+                card.onclick = () => selectOption(idx, card);
+                optionsBox.appendChild(card);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('time-display').textContent = timeLeft;
+                if(timeLeft <= 10) {
+                    document.getElementById('time-display').classList.add('timer-warn');
+                }
+                if(timeLeft <= 0) {
+                    clearInterval(timer);
+                    forceTimeout();
+                }
+            }, 1000);
+        }
+
+        function selectOption(selectedIdx, cardElement) {
+            if(optionSelectedThisRound) return;
+
+            const currentQ = questions[currentQuestionIdx];
+            
+            if(selectedIdx === currentQ.answer) {
+                clearInterval(timer);
+                optionSelectedThisRound = true;
+                score++;
+                document.getElementById('current-score').textContent = score;
+                cardElement.classList.add('correct-reveal');
+                triggerStarConfetti(cardElement);
+                try { correctSound.play(); } catch(e){}
+                
+                showFeedback(true, "Perfect Harmony! Match verified.", currentQ.explanation);
+            } else {
+                if(currentAttempts === 1) {
+                    currentAttempts = 2;
+                    document.getElementById('attempt-badge').textContent = `Attempt ${currentAttempts}/2`;
+                    cardElement.classList.add('wrong-reveal');
+                    cardElement.querySelector('.indicator').innerHTML = '<span class="red-cross">✕</span>';
+                    try { wrongSound.play(); } catch(e){}
+                    alert("A discordance was detected! The instruments are out of sync. Review the subject and try tuning again.");
+                } else {
+                    clearInterval(timer);
+                    optionSelectedThisRound = true;
+                    cardElement.classList.add('wrong-reveal');
+                    cardElement.querySelector('.indicator').innerHTML = '<span class="red-cross">✕</span>';
+                    try { wrongSound.play(); } catch(e){}
+                    
+                    const optionsBox = document.getElementById('options-box');
+                    optionsBox.children[currentQ.answer].classList.add('correct-reveal');
+                    
+                    showFeedback(false, "Unresolved Discordance. Orchestra Correction Enabled.", currentQ.explanation);
+                }
+            }
+        }
+
+        function forceTimeout() {
+            optionSelectedThisRound = true;
+            const currentQ = questions[currentQuestionIdx];
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.children[currentQ.answer].classList.add('correct-reveal');
+            showFeedback(false, "Tempo Exceeded! Performance time expired.", currentQ.explanation);
+        }
+
+        function showFeedback(isCorrect, title, message) {
+            const panel = document.getElementById('feedback-panel');
+            const fTitle = document.getElementById('feedback-title');
+            const fText = document.getElementById('feedback-text');
+            const nextBtn = document.getElementById('next-action-btn');
+
+            fTitle.textContent = title;
+            fTitle.style.color = isCorrect ? 'var(--success)' : 'var(--error)';
+            fText.textContent = message;
+            
+            if(currentQuestionIdx === 9 && isCorrect) { 
+                nextBtn.textContent = "Proceed to the Grand Finale Movement";
+            } else if(currentQuestionIdx === questions.length - 1) {
+                nextBtn.textContent = "View Performance Standing";
+            } else {
+                nextBtn.textContent = "Next Composition";
+            }
+
+            panel.style.display = 'block';
+        }
+
+        function handleNextAction() {
+            if(currentQuestionIdx === 9) { 
+                currentQuestionIdx++;
+                switchView('challenge-screen');
+            } else if(currentQuestionIdx >= questions.length - 1) {
+                endGame();
+            } else {
+                currentQuestionIdx++;
+                loadQuestion();
+            }
+        }
+
+        function enterFinalStretch() {
+            switchView('game-screen');
+            loadQuestion();
+        }
+
+        function triggerStarConfetti(target) {
+            const rect = target.getBoundingClientRect();
+            for(let i=0; i<15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'star-particle';
+                particle.innerHTML = '★';
+                particle.style.left = (rect.left + rect.width/2) + 'px';
+                particle.style.top = (rect.top + rect.height/2) + 'px';
+                
+                const xDist = (Math.random() - 0.5) * 180;
+                const yDist = (Math.random() - 0.5) * 180;
+                particle.style.setProperty('--x', `${xDist}px`);
+                particle.style.setProperty('--y', `${yDist}px`);
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 800);
+            }
+        }
+
+        function endGame() {
+            clearInterval(timer);
+            switchView('result-screen');
+            document.getElementById('final-score-text').textContent = `Score: ${score} / 12`;
+            
+            const msgEl = document.getElementById('performance-msg');
+            const emojiEl = document.getElementById('result-emoji');
+            
+            if(score === 12) {
+                emojiEl.textContent = '👑';
+                msgEl.textContent = "Virtuoso Conductor! You led the entire orchestration without a single out-of-tune note.";
+                try { finalSound.play(); } catch(e){}
+            } else if(score >= 8) {
+                emojiEl.textContent = '🎻';
+                msgEl.textContent = "Symphony Maestro! Excellent coordination and alignment of complex subjects and verbs.";
+                try { finalSound.play(); } catch(e){}
+            } else {
+                emojiEl.textContent = '🪕';
+                msgEl.textContent = "Apprentice Section Leader. Several passages slipped out of agreement. Re-read your music score and practice your cues.";
+            }
+        }
+
+        function restartGame() {
+            switchView('intro-screen');
+        }
+    </script>
+</body>
+</html>
