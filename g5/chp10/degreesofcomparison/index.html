@@ -22,7 +22,7 @@
   }
   *{box-sizing:border-box}
   html,body{
-    height:100%;
+    min-height:100%;
     margin:0;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     background:
@@ -30,7 +30,6 @@
       radial-gradient(circle at top right,#1d4ed8 0%,transparent 24%),
       linear-gradient(160deg,var(--bg1),var(--bg2));
     color:#fff;
-    overflow:hidden;
   }
   body::before{
     content:"";
@@ -42,6 +41,7 @@
       radial-gradient(circle at 20% 20%, rgba(255,255,255,.16) 0 2px, transparent 3px) 0 0/120px 120px,
       radial-gradient(circle at 80% 30%, rgba(255,255,255,.12) 0 2px, transparent 3px) 0 0/170px 170px;
     animation: drift 26s linear infinite;
+    z-index: 0;
   }
   @keyframes drift{
     from{transform:translate3d(0,0,0)}
@@ -50,15 +50,14 @@
   .wrap{
     position:relative;
     z-index:1;
-    height:100%;
+    min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:8px;
+    padding:16px 8px;
   }
   .screen{
     width:min(980px,100%);
-    height:min(780px,100%);
     border-radius:28px;
     overflow:hidden;
     position:relative;
@@ -66,6 +65,8 @@
     background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.05));
     backdrop-filter:blur(10px);
     border:1px solid rgba(255,255,255,.12);
+    display: flex;
+    flex-direction: column;
   }
   .bg-layer{
     position:absolute;inset:0;pointer-events:none;opacity:.38;
@@ -85,21 +86,17 @@
     align-items:center;
     justify-content:space-between;
     gap:8px;
-    padding:10px 12px;
+    padding:14px 16px;
     background:linear-gradient(90deg,rgba(15,23,42,.92),rgba(30,41,59,.75));
     border-bottom:1px solid rgba(255,255,255,.08);
-    flex-wrap:wrap;
   }
   .badge{
     display:inline-flex;
     align-items:center;
     gap:8px;
-    padding:8px 11px;
-    border-radius:999px;
-    background:rgba(255,255,255,.10);
     color:#fff;
     font-weight:800;
-    font-size:12px;
+    font-size:14px;
     white-space:nowrap;
   }
   .badge span{
@@ -110,12 +107,11 @@
   }
   .scoreboard{
     display:flex;
-    gap:6px;
-    flex-wrap:wrap;
+    gap:8px;
     justify-content:flex-end;
   }
   .pill{
-    padding:8px 11px;
+    padding:8px 12px;
     border-radius:999px;
     background:rgba(255,255,255,.10);
     font-weight:800;
@@ -123,35 +119,31 @@
   }
   .pill strong{color:#fff}
   .panel{
-    position:absolute;
-    inset:58px 0 0;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:8px;
+    padding:16px;
+    flex: 1;
   }
   .card{
-    width:min(900px,100%);
-    height:100%;
+    width:100%;
     border-radius:24px;
     background:rgba(255,255,255,.96);
     color:var(--text);
     box-shadow:var(--shadow);
     overflow:hidden;
-    position:relative;
     display:flex;
     flex-direction:column;
   }
   .hero{
-    padding:16px 14px 12px;
+    padding:24px 16px;
     text-align:center;
     background:radial-gradient(circle at top, rgba(109,40,217,.14), transparent 40%),linear-gradient(180deg,#fff,#f8fafc);
     border-bottom:1px solid #e5e7eb;
-    flex:0 0 auto;
   }
   .logo-wrap{
     width:78px;height:78px;
-    margin:0 auto 8px;
+    margin:0 auto 12px;
     border-radius:20px;
     display:grid;
     place-items:center;
@@ -165,24 +157,22 @@
   }
   h1{
     margin:0;
-    font-size:clamp(18px,2.8vw,30px);
+    font-size:clamp(20px,2.8vw,30px);
     line-height:1.12;
     color:#111827;
   }
   .subtitle{
-    margin:7px auto 0;
+    margin:8px auto 0;
     max-width:680px;
     color:var(--muted);
-    font-size:13px;
+    font-size:14px;
     line-height:1.4;
   }
   .content{
-    flex:1 1 auto;
-    display:grid;
-    place-items:center;
-    padding:12px;
-    overflow:auto;
-    min-height:0;
+    padding:24px 16px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
   }
   .centerbox{
     width:min(680px,100%);
@@ -192,35 +182,35 @@
     display:inline-flex;
     align-items:center;
     gap:8px;
-    padding:8px 12px;
+    padding:8px 14px;
     border-radius:999px;
     background:var(--soft);
     color:#4338ca;
     font-weight:900;
-    font-size:12px;
-    margin-bottom:12px;
+    font-size:13px;
+    margin-bottom:16px;
   }
   .chapter-tag i{
     width:8px;height:8px;background:#4338ca;border-radius:50%;display:inline-block;
   }
   .big{
-    font-size:clamp(17px,2.5vw,24px);
+    font-size:clamp(16px,2.5vw,22px);
     font-weight:900;
     color:#111827;
-    line-height:1.25;
-    margin:0 0 12px;
+    line-height:1.35;
+    margin:0 0 16px;
   }
   .info{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:8px;
-    margin:12px 0 16px;
+    gap:12px;
+    margin:16px 0 24px;
   }
   .info div{
     background:#f8fafc;
     border:1px solid #e5e7eb;
     border-radius:16px;
-    padding:10px 10px;
+    padding:12px;
   }
   .info small{
     display:block;
@@ -228,14 +218,16 @@
     font-weight:800;
     margin-bottom:4px;
     font-size:11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   .info strong{
-    font-size:14px;
+    font-size:15px;
     color:#0f172a;
   }
   .btnrow{
     display:flex;
-    gap:10px;
+    gap:12px;
     justify-content:center;
     flex-wrap:wrap;
   }
@@ -246,7 +238,7 @@
     font:inherit;
     font-weight:900;
     border-radius:14px;
-    padding:12px 16px;
+    padding:14px 22px;
     transition:transform .15s ease,box-shadow .15s ease,opacity .15s ease;
   }
   button:hover{transform:translateY(-1px)}
@@ -261,29 +253,24 @@
     color:#0f172a;
   }
   .ghost{
-    background:#fff;
-    border:1px solid #dbe4f0;
-    color:#0f172a;
+    background:linear-gradient(135deg, var(--good), #059669);
+    color:#fff;
   }
   .qwrap{
     display:none;
-    flex:1 1 auto;
-    min-height:0;
     flex-direction:column;
-    padding:10px;
+    padding:20px;
   }
   .qhead{
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:8px;
-    flex-wrap:wrap;
-    margin-bottom:8px;
+    margin-bottom:12px;
   }
   .qmeta{
     display:flex;
-    gap:6px;
-    flex-wrap:wrap;
+    gap:8px;
   }
   .progress{
     height:10px;
@@ -291,7 +278,7 @@
     border-radius:999px;
     overflow:hidden;
     border:1px solid #dbe4f0;
-    margin-bottom:10px;
+    margin-bottom:16px;
   }
   .bar{
     height:100%;
@@ -301,77 +288,75 @@
     transition:width .35s ease;
   }
   .question-area{
-    flex:1 1 auto;
-    min-height:0;
-    display:grid;
-    grid-template-rows:auto auto auto;
-    gap:10px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
   }
   .question-card{
     background:linear-gradient(180deg,#ffffff,#f8fafc);
     border:1px solid #e5e7eb;
     border-radius:20px;
-    padding:14px;
+    padding:20px;
     box-shadow:0 10px 20px rgba(15,23,42,.05);
   }
   .qtext{
-    font-size:clamp(14px,1.9vw,19px);
+    font-size:clamp(15px,2vw,20px);
     font-weight:900;
     color:#111827;
-    line-height:1.35;
-    margin:0 0 8px;
+    line-height:1.4;
+    margin:0 0 10px;
     white-space:pre-line;
   }
   .qsub{
     color:var(--muted);
     font-weight:700;
-    margin:0 0 10px;
-    font-size:12px;
+    margin:0 0 16px;
+    font-size:13px;
   }
   .options{
     display:grid;
     grid-template-columns:1fr;
-    gap:8px;
+    gap:10px;
   }
   .opt{
     text-align:left;
-    padding:12px 12px;
+    padding:14px 16px;
     border-radius:14px;
     background:#fff;
     border:2px solid #e5e7eb;
     color:#111827;
-    min-height:52px;
+    min-height:56px;
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:12px;
     font-weight:800;
-    line-height:1.25;
+    line-height:1.3;
     box-shadow:0 6px 14px rgba(15,23,42,.04);
-    font-size:13px;
+    font-size:14px;
     width:100%;
   }
   .opt .letter{
-    flex:0 0 28px;
-    height:28px;
+    flex:0 0 30px;
+    height:30px;
     border-radius:50%;
     display:grid;
     place-items:center;
     background:#eef2ff;
     color:#4338ca;
-    font-size:13px;
+    font-size:14px;
   }
   .opt.correct{border-color:#16a34a;background:#ecfdf5}
   .opt.wrong{border-color:#dc2626;background:#fef2f2}
   .feedback{
-    min-height:46px;
+    min-height:50px;
     border-radius:16px;
-    padding:10px 12px;
+    padding:12px 16px;
     font-weight:800;
     display:flex;
     align-items:center;
     gap:10px;
     line-height:1.4;
-    font-size:12px;
+    font-size:13px;
   }
   .feedback.ok{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}
   .feedback.bad{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
@@ -380,12 +365,11 @@
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
+    gap:12px;
     padding-top:4px;
   }
   .tiny{
-    font-size:12px;
+    font-size:13px;
     color:var(--muted);
     font-weight:700;
   }
@@ -393,7 +377,7 @@
     display:inline-flex;
     align-items:center;
     gap:8px;
-    padding:8px 11px;
+    padding:8px 12px;
     border-radius:999px;
     background:#fff;
     border:1px solid #dbe4f0;
@@ -409,41 +393,44 @@
   .shake{animation:shake .35s ease}
   @keyframes shake{
     0%,100%{transform:translateX(0)}
-    20%{transform:translateX(-4px)}
-    40%{transform:translateX(4px)}
-    60%{transform:translateX(-3px)}
-    80%{transform:translateX(3px)}
+    20%{transform:translateX(-6px)}
+    40%{transform:translateX(6px)}
+    60%{transform:translateX(-4px)}
+    80%{transform:translateX(4px)}
   }
   .cross{
-    position:absolute;
-    inset:auto 18px 14px auto;
-    width:48px;height:48px;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:80px;height:80px;
     opacity:0;
     pointer-events:none;
+    z-index: 100;
   }
   .cross.show{animation:pop .55s ease;opacity:1}
   .cross::before,.cross::after{
     content:"";
     position:absolute;
     left:50%;top:50%;
-    width:38px;height:5px;
+    width:60px;height:8px;
     background:var(--bad);
     border-radius:999px;
-    transform-origin:center;
   }
   .cross::before{transform:translate(-50%,-50%) rotate(45deg)}
   .cross::after{transform:translate(-50%,-50%) rotate(-45deg)}
   @keyframes pop{
-    0%{transform:scale(.3);opacity:0}
-    45%{transform:scale(1.08);opacity:1}
-    100%{transform:scale(1);opacity:0}
+    0%{transform:translate(-50%,-50%) scale(.3);opacity:0}
+    45%{transform:translate(-50%,-50%) scale(1.1);opacity:1}
+    100%{transform:translate(-50%,-50%) scale(1);opacity:0}
   }
   .confetti-layer,.streamer-layer{
     position:absolute;inset:0;pointer-events:none;overflow:hidden;
+    z-index: 20;
   }
   .star{
     position:absolute;
-    width:10px;height:10px;
+    width:12px;height:12px;
     background:#facc15;
     clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 72%,21% 91%,32% 57%,2% 35%,39% 35%);
     opacity:.95;
@@ -465,47 +452,48 @@
     to{transform:translateY(120vh) rotate(320deg);opacity:0}
   }
   .final-box{
-    width:min(680px,100%);
+    width:100%;
     background:linear-gradient(180deg,#fff,#f8fafc);
     border:1px solid #e5e7eb;
     border-radius:22px;
-    padding:18px;
+    padding:24px;
     text-align:center;
     box-shadow:0 14px 28px rgba(15,23,42,.08);
   }
   .scorebig{
-    font-size:clamp(34px,7vw,60px);
+    font-size:clamp(40px,8vw,64px);
     font-weight:1000;
     color:#111827;
     line-height:1;
-    margin:6px 0 10px;
+    margin:12px 0;
   }
   .result-line{
     color:var(--muted);
     font-weight:800;
-    font-size:14px;
+    font-size:15px;
     line-height:1.5;
   }
   .explain{
-    margin-top:12px;
+    margin-top:16px;
     text-align:left;
     background:#fff7ed;
     border:1px solid #fed7aa;
     color:#9a3412;
     border-radius:16px;
-    padding:12px;
-    font-size:13px;
-    line-height:1.45;
+    padding:14px;
+    font-size:14px;
+    line-height:1.5;
   }
   .hide{display:none !important}
   .show{display:flex !important}
   .splash{
-    position:absolute;
+    position:fixed;
     inset:0;
     display:grid;
     place-items:center;
     background:linear-gradient(135deg,#0f172a,#1e3a8a);
-    z-index:5;
+    z-index:999;
+    transition: opacity 0.5s ease;
   }
   .splash-card{
     width:min(420px,92%);
@@ -513,7 +501,7 @@
     border:1px solid rgba(255,255,255,.14);
     backdrop-filter:blur(10px);
     border-radius:24px;
-    padding:22px;
+    padding:32px;
     text-align:center;
     box-shadow:0 18px 40px rgba(0,0,0,.24);
   }
@@ -522,31 +510,31 @@
     height:100px;
     object-fit:contain;
     filter:drop-shadow(0 10px 26px rgba(0,0,0,.20));
+    margin-bottom: 12px;
   }
   .splash-card h2{
-    margin:12px 0 6px;
-    font-size:22px;
+    margin:0 0 8px;
+    font-size:24px;
   }
   .splash-card p{
     margin:0;
     color:rgba(255,255,255,.82);
     font-weight:700;
     line-height:1.45;
-    font-size:14px;
+    font-size:15px;
   }
   @media (min-width: 768px){
     .options{grid-template-columns:1fr 1fr}
     .opt{font-size:14px}
   }
   @media (max-width: 480px){
-    .screen{height:100%;border-radius:0}
-    .panel{inset:56px 0 0;padding:6px}
-    .hero{padding:14px 12px 10px}
-    .content,.qwrap{padding:10px}
-    .info{grid-template-columns:1fr}
-    .badge,.pill{font-size:11px;padding:7px 10px}
-    .qtext{font-size:14px}
-    .opt{min-height:50px}
+    .screen{border-radius:0; border:none;}
+    .panel{padding:8px}
+    .info{grid-template-columns:1fr; gap:8px;}
+    .badge,.pill{font-size:11px;padding:6px 10px}
+    .qtext{font-size:15px}
+    .opt{min-height:50px; font-size:13px;}
+    .wrap{padding:0;}
   }
 </style>
 </head>
@@ -575,7 +563,7 @@
     </div>
 
     <div class="panel">
-      <div class="card">
+      <div class="card" id="introContent">
         <div class="hero">
           <div class="logo-wrap">
             <img src="assets/logo.png" alt="Innovine logo" onerror="this.style.display='none'">
@@ -583,8 +571,7 @@
           <h1 id="gameTitle">Adjectives: Degrees of Comparison</h1>
           <p class="subtitle">Play through a grammar quest with timer, score tracker, one retry, and a final challenge.</p>
         </div>
-
-        <div class="content" id="introContent">
+        <div class="content">
           <div class="centerbox">
             <div class="chapter-tag"><i></i> Chapter-based MCQ Game</div>
             <p class="big">Test your understanding with a clean, fast, game-style quiz.</p>
@@ -600,8 +587,10 @@
             <p class="tiny" id="rulesText" style="margin-top:14px;"></p>
           </div>
         </div>
+      </div>
 
-        <div class="qwrap" id="quizScreen">
+      <div class="card hide" id="quizScreen">
+        <div class="qwrap" id="qwrapDynamic" style="display: flex;">
           <div class="qhead">
             <div class="qmeta">
               <div class="pill">Lives: <strong id="lives">2</strong></div>
@@ -623,24 +612,24 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="qwrap" id="resultScreen">
-          <div class="content" style="padding:18px;">
-            <div class="final-box">
-              <div class="chapter-tag"><i></i> Final Challenge Complete</div>
-              <div class="scorebig" id="finalScore">0/10</div>
-              <div class="result-line" id="resultLine"></div>
-              <div class="explain" id="finalExplain"></div>
-              <div class="btnrow" style="margin-top:16px">
-                <button class="primary" id="restartBtn">Play Again</button>
-              </div>
+      <div class="card hide" id="resultScreen">
+        <div class="content" style="width: 100%;">
+          <div class="final-box">
+            <div class="chapter-tag"><i></i> Final Challenge Complete</div>
+            <div class="scorebig" id="finalScore">0/10</div>
+            <div class="result-line" id="resultLine"></div>
+            <div class="explain" id="finalExplain"></div>
+            <div class="btnrow" style="margin-top:16px">
+              <button class="primary" id="restartBtn">Play Again</button>
             </div>
           </div>
         </div>
-
       </div>
-      <div class="cross" id="cross"></div>
+
     </div>
+    <div class="cross" id="cross"></div>
   </div>
 </div>
 
@@ -702,16 +691,17 @@ const el = id => document.getElementById(id);
 const total = questions.length;
 let idx = 0, score = 0, attempts = 0, canRetry = true, timer = 45, t = null, locked = false;
 
-function show(section){
+function show(sectionId){
   ['introContent','quizScreen','resultScreen'].forEach(id=>el(id).classList.add('hide'));
-  section.classList.remove('hide');
-  section.classList.add('show');
+  el(sectionId).classList.remove('hide');
 }
+
 function playSound(id){
   const a = el(id);
   if(!a) return;
   try{ a.currentTime = 0; a.play(); }catch(e){}
 }
+
 function burst(type){
   const layer = type === 'star' ? el('confettiLayer') : el('streamerLayer');
   const count = type === 'star' ? 14 : 10;
@@ -733,6 +723,7 @@ function burst(type){
     setTimeout(()=>n.remove(),1800);
   }
 }
+
 function flashCross(){
   const c = el('cross');
   c.classList.remove('show');
@@ -740,6 +731,7 @@ function flashCross(){
   c.classList.add('show');
   setTimeout(()=>c.classList.remove('show'),700);
 }
+
 function resetTimer(){
   clearInterval(t);
   timer = 45;
@@ -756,6 +748,7 @@ function resetTimer(){
     }
   },1000);
 }
+
 function renderQuestion(){
   locked = false;
   attempts = 0;
@@ -782,10 +775,11 @@ function renderQuestion(){
   el('helperText').textContent = 'One retry after the first wrong attempt.';
   resetTimer();
 }
+
 function handleWrong(fromTimer=false){
   if(locked) return;
   attempts++;
-  el('attempt').textContent = attempts+1;
+  el('attempt').textContent = Math.min(attempts + 1, 2);
   flashCross();
   el('questionCard').classList.add('shake');
   setTimeout(()=>el('questionCard').classList.remove('shake'),400);
@@ -797,10 +791,11 @@ function handleWrong(fromTimer=false){
     el('feedback').className = 'feedback bad';
     el('feedback').textContent = 'Wrong answer. Try one more time.';
     el('helperText').textContent = 'You have 1 retry left.';
-    resetTimer();
     return;
   }
   locked = true;
+  clearInterval(t);
+  el('lives').textContent = '0';
   el('feedback').className = 'feedback bad';
   el('feedback').innerHTML = `Correct answer: <strong>${questions[idx].o[questions[idx].a]}</strong><br>${questions[idx].e}`;
   el('helperText').textContent = 'Explanation shown after the second wrong attempt or timeout.';
@@ -809,13 +804,14 @@ function handleWrong(fromTimer=false){
     b.disabled = true;
   });
   el('nextBtn').classList.remove('hide');
-  el('nextBtn').textContent = idx === total-1 ? 'See Final Challenge' : 'Next Question';
+  el('nextBtn').textContent = idx === total-1 ? 'See Results' : 'Next Question';
 }
+
 function choose(i, btn){
   if(locked) return;
-  clearInterval(t);
   const btns = [...el('options').querySelectorAll('button')];
   if(i === questions[idx].a){
+    clearInterval(t);
     locked = true;
     score++;
     el('score').textContent = score;
@@ -826,12 +822,13 @@ function choose(i, btn){
     playSound('correctSound');
     btns.forEach(b=>b.disabled = true);
     el('nextBtn').classList.remove('hide');
-    el('nextBtn').textContent = idx === total-1 ? 'See Final Challenge' : 'Next Question';
+    el('nextBtn').textContent = idx === total-1 ? 'See Results' : 'Next Question';
   }else{
     btn.classList.add('wrong');
     handleWrong(false);
   }
 }
+
 function nextQuestion(){
   if(idx < total-1){
     idx++;
@@ -840,8 +837,9 @@ function nextQuestion(){
     showResult();
   }
 }
+
 function showResult(){
-  show(el('resultScreen'));
+  show('resultScreen');
   el('finalScore').textContent = `${score}/${total}`;
   const pct = Math.round((score/total)*100);
   el('resultLine').textContent =
@@ -853,7 +851,8 @@ function showResult(){
   playSound('clapSound');
   clearInterval(t);
 }
-el('startBtn').onclick = ()=>{ show(el('quizScreen')); idx = 0; score = 0; renderQuestion(); };
+
+el('startBtn').onclick = ()=>{ show('quizScreen'); idx = 0; score = 0; renderQuestion(); };
 el('previewBtn').onclick = ()=>{ el('rulesText').textContent = 'Use the timer wisely. Choose the best grammar answer, retry once if needed, and finish the final challenge.'; };
 el('nextBtn').onclick = nextQuestion;
 el('restartBtn').onclick = ()=>{
@@ -864,10 +863,15 @@ el('restartBtn').onclick = ()=>{
   el('feedback').className = 'feedback neutral';
   el('feedback').textContent = 'Choose the best answer to continue.';
   el('helperText').textContent = 'One retry after the first wrong attempt.';
-  show(el('introContent'));
+  show('introContent');
 };
-setTimeout(()=>{ el('splash').style.display = 'none'; }, 5000);
-show(el('introContent'));
+
+// 5 Second Brand Loading Screen Fade
+setTimeout(()=>{ 
+  const splash = el('splash');
+  splash.style.opacity = '0';
+  setTimeout(() => splash.style.display = 'none', 500);
+}, 5000);
 </script>
 </body>
 </html>
