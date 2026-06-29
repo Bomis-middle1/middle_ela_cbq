@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Adjectives: Degrees of Comparison</title>
 <style>
   :root{
@@ -26,33 +26,28 @@
     margin:0;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     background:
-      radial-gradient(circle at top left,#334155 0%,transparent 28%),
-      radial-gradient(circle at top right,#1d4ed8 0%,transparent 22%),
+      radial-gradient(circle at top left,#334155 0%,transparent 30%),
+      radial-gradient(circle at top right,#1d4ed8 0%,transparent 24%),
       linear-gradient(160deg,var(--bg1),var(--bg2));
     color:#fff;
     overflow:hidden;
   }
-  body::before, body::after{
+  body::before{
     content:"";
     position:fixed;
-    inset:-20% -10%;
+    inset:0;
     pointer-events:none;
-    opacity:.30;
-    z-index:0;
+    opacity:.26;
     background:
       radial-gradient(circle at 20% 20%, rgba(255,255,255,.16) 0 2px, transparent 3px) 0 0/120px 120px,
       radial-gradient(circle at 80% 30%, rgba(255,255,255,.12) 0 2px, transparent 3px) 0 0/170px 170px;
-    animation: drift 28s linear infinite;
-  }
-  body::after{
-    opacity:.18;
-    animation-duration:42s;
-    transform:scale(1.12);
+    animation: drift 26s linear infinite;
   }
   @keyframes drift{
     from{transform:translate3d(0,0,0)}
-    to{transform:translate3d(-40px,30px,0)}
+    to{transform:translate3d(-30px,24px,0)}
   }
+
   .wrap{
     position:relative;
     z-index:1;
@@ -60,11 +55,11 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:10px;
+    padding:8px;
   }
   .screen{
-    width:min(920px,100%);
-    height:min(720px,100%);
+    width:min(940px,100%);
+    height:min(760px,100%);
     border-radius:28px;
     overflow:hidden;
     position:relative;
@@ -74,7 +69,7 @@
     border:1px solid rgba(255,255,255,.12);
   }
   .bg-layer{
-    position:absolute;inset:0;pointer-events:none;opacity:.45;
+    position:absolute;inset:0;pointer-events:none;opacity:.40;
     background:
       radial-gradient(circle at 15% 20%, rgba(255,255,255,.16) 0 3px, transparent 4px),
       radial-gradient(circle at 75% 18%, rgba(255,255,255,.12) 0 2px, transparent 4px),
@@ -91,112 +86,111 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:10px;
-    padding:12px 14px;
+    gap:8px;
+    padding:10px 12px;
     background:linear-gradient(90deg,rgba(15,23,42,.92),rgba(30,41,59,.75));
     border-bottom:1px solid rgba(255,255,255,.08);
+    flex-wrap:wrap;
   }
   .badge{
     display:inline-flex;
     align-items:center;
     gap:8px;
-    padding:9px 12px;
+    padding:8px 11px;
     border-radius:999px;
     background:rgba(255,255,255,.10);
     color:#fff;
     font-weight:800;
-    font-size:13px;
+    font-size:12px;
     white-space:nowrap;
   }
   .badge span{
     display:inline-block;
     width:9px;height:9px;border-radius:50%;
     background:var(--warn);
-    box-shadow:0 0 0 4px rgba(245,158,11,.16);
+    box-shadow:0 0 0 4px rgba(245,158,11,.15);
   }
   .scoreboard{
     display:flex;
-    gap:8px;
+    gap:6px;
     flex-wrap:wrap;
     justify-content:flex-end;
   }
   .pill{
-    padding:9px 12px;
+    padding:8px 11px;
     border-radius:999px;
     background:rgba(255,255,255,.10);
     font-weight:800;
-    font-size:13px;
+    font-size:12px;
   }
   .pill strong{color:#fff}
 
   .panel{
     position:absolute;
-    inset:60px 0 0;
+    inset:58px 0 0;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:10px;
+    padding:8px;
   }
   .card{
-    width:min(820px,100%);
+    width:min(860px,100%);
     height:100%;
-    border-radius:var(--radius);
+    border-radius:24px;
     background:rgba(255,255,255,.96);
     color:var(--text);
     box-shadow:var(--shadow);
     overflow:hidden;
     position:relative;
-  }
-  .card-inner{
-    height:100%;
     display:flex;
     flex-direction:column;
   }
 
   .hero{
-    padding:22px 18px 16px;
+    padding:16px 14px 12px;
     text-align:center;
     background:radial-gradient(circle at top, rgba(109,40,217,.14), transparent 40%),linear-gradient(180deg,#fff,#f8fafc);
     border-bottom:1px solid #e5e7eb;
+    flex:0 0 auto;
   }
   .logo-wrap{
-    width:96px;
-    height:96px;
-    margin:0 auto 10px;
-    border-radius:24px;
+    width:78px;height:78px;
+    margin:0 auto 8px;
+    border-radius:20px;
     display:grid;
     place-items:center;
     background:linear-gradient(135deg,#ede9fe,#dbeafe);
-    box-shadow:0 10px 24px rgba(99,102,241,.14);
+    box-shadow:0 10px 22px rgba(99,102,241,.14);
   }
   .logo-wrap img{
-    max-width:70px;
-    max-height:70px;
+    max-width:56px;
+    max-height:56px;
     object-fit:contain;
   }
   h1{
     margin:0;
-    font-size:clamp(22px,3vw,34px);
+    font-size:clamp(18px,2.8vw,30px);
     line-height:1.12;
     color:#111827;
   }
   .subtitle{
-    margin:8px auto 0;
-    max-width:620px;
+    margin:7px auto 0;
+    max-width:680px;
     color:var(--muted);
-    font-size:14px;
-    line-height:1.45;
+    font-size:13px;
+    line-height:1.4;
   }
 
   .content{
-    flex:1;
+    flex:1 1 auto;
     display:grid;
     place-items:center;
-    padding:16px;
+    padding:12px;
     overflow:auto;
+    min-height:0;
   }
   .centerbox{
-    width:min(640px,100%);
+    width:min(660px,100%);
     text-align:center;
   }
   .chapter-tag{
@@ -207,41 +201,41 @@
     border-radius:999px;
     background:var(--soft);
     color:#4338ca;
-    font-weight:800;
-    font-size:13px;
-    margin-bottom:14px;
+    font-weight:900;
+    font-size:12px;
+    margin-bottom:12px;
   }
   .chapter-tag i{
     width:8px;height:8px;background:#4338ca;border-radius:50%;display:inline-block;
   }
   .big{
-    font-size:clamp(18px,2.4vw,28px);
+    font-size:clamp(17px,2.5vw,24px);
     font-weight:900;
     color:#111827;
-    line-height:1.18;
+    line-height:1.25;
     margin:0 0 12px;
   }
   .info{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    margin:14px 0 18px;
+    gap:8px;
+    margin:12px 0 16px;
   }
   .info div{
     background:#f8fafc;
     border:1px solid #e5e7eb;
     border-radius:16px;
-    padding:12px 10px;
+    padding:10px 10px;
   }
   .info small{
     display:block;
     color:var(--muted);
     font-weight:800;
     margin-bottom:4px;
-    font-size:12px;
+    font-size:11px;
   }
   .info strong{
-    font-size:15px;
+    font-size:14px;
     color:#0f172a;
   }
   .btnrow{
@@ -255,7 +249,7 @@
     border:none;
     cursor:pointer;
     font:inherit;
-    font-weight:800;
+    font-weight:900;
     border-radius:14px;
     padding:12px 16px;
     transition:transform .15s ease,box-shadow .15s ease,opacity .15s ease;
@@ -265,7 +259,7 @@
   .primary{
     background:linear-gradient(135deg,var(--accent),var(--accent2));
     color:#fff;
-    box-shadow:0 10px 20px rgba(37,99,235,.18);
+    box-shadow:0 10px 18px rgba(37,99,235,.16);
   }
   .secondary{
     background:#e2e8f0;
@@ -279,29 +273,31 @@
 
   .qwrap{
     display:none;
-    height:100%;
+    flex:1 1 auto;
+    min-height:0;
     flex-direction:column;
+    padding:10px;
   }
   .qhead{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:10px;
-    padding:14px 14px 0;
+    gap:8px;
     flex-wrap:wrap;
+    margin-bottom:8px;
   }
   .qmeta{
     display:flex;
-    gap:8px;
+    gap:6px;
     flex-wrap:wrap;
   }
   .progress{
-    margin:10px 14px 0;
-    height:12px;
+    height:10px;
     background:#e2e8f0;
     border-radius:999px;
     overflow:hidden;
     border:1px solid #dbe4f0;
+    margin-bottom:10px;
   }
   .bar{
     height:100%;
@@ -311,22 +307,21 @@
     transition:width .35s ease;
   }
   .question-area{
-    flex:1;
-    display:grid;
-    grid-template-rows:auto 1fr auto;
-    gap:12px;
-    padding:14px;
+    flex:1 1 auto;
     min-height:0;
+    display:grid;
+    grid-template-rows:auto auto auto;
+    gap:10px;
   }
   .question-card{
     background:linear-gradient(180deg,#ffffff,#f8fafc);
     border:1px solid #e5e7eb;
     border-radius:20px;
-    padding:16px;
+    padding:14px;
     box-shadow:0 10px 20px rgba(15,23,42,.05);
   }
   .qtext{
-    font-size:clamp(15px,2vw,20px);
+    font-size:clamp(14px,1.9vw,19px);
     font-weight:900;
     color:#111827;
     line-height:1.35;
@@ -336,29 +331,30 @@
   .qsub{
     color:var(--muted);
     font-weight:700;
-    margin:0 0 12px;
-    font-size:13px;
+    margin:0 0 10px;
+    font-size:12px;
   }
   .options{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+    grid-template-columns:1fr;
+    gap:8px;
   }
   .opt{
     text-align:left;
-    padding:13px 12px;
-    border-radius:16px;
+    padding:12px 12px;
+    border-radius:14px;
     background:#fff;
     border:2px solid #e5e7eb;
     color:#111827;
-    min-height:56px;
+    min-height:54px;
     display:flex;
     align-items:center;
     gap:10px;
     font-weight:800;
-    line-height:1.28;
+    line-height:1.25;
     box-shadow:0 6px 14px rgba(15,23,42,.04);
-    font-size:14px;
+    font-size:13px;
+    width:100%;
   }
   .opt .letter{
     flex:0 0 28px;
@@ -373,7 +369,7 @@
   .opt.correct{border-color:#16a34a;background:#ecfdf5}
   .opt.wrong{border-color:#dc2626;background:#fef2f2}
   .feedback{
-    min-height:48px;
+    min-height:46px;
     border-radius:16px;
     padding:10px 12px;
     font-weight:800;
@@ -381,7 +377,7 @@
     align-items:center;
     gap:10px;
     line-height:1.4;
-    font-size:13px;
+    font-size:12px;
   }
   .feedback.ok{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}
   .feedback.bad{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
@@ -389,9 +385,10 @@
   .footer-actions{
     display:flex;
     justify-content:space-between;
+    align-items:center;
     gap:10px;
     flex-wrap:wrap;
-    padding:0 14px 14px;
+    padding-top:4px;
   }
   .tiny{
     font-size:12px;
@@ -402,13 +399,13 @@
     display:inline-flex;
     align-items:center;
     gap:8px;
-    padding:9px 12px;
+    padding:8px 11px;
     border-radius:999px;
     background:#fff;
     border:1px solid #dbe4f0;
     font-weight:900;
     color:#0f172a;
-    font-size:13px;
+    font-size:12px;
   }
   .timer i{
     width:9px;height:9px;border-radius:50%;
@@ -429,7 +426,6 @@
     width:48px;height:48px;
     opacity:0;
     pointer-events:none;
-    filter:drop-shadow(0 8px 16px rgba(220,38,38,.18));
   }
   .cross.show{animation:pop .55s ease;opacity:1}
   .cross::before,.cross::after{
@@ -448,9 +444,7 @@
     45%{transform:scale(1.08);opacity:1}
     100%{transform:scale(1);opacity:0}
   }
-  .confetti-layer,.streamer-layer{
-    position:absolute;inset:0;pointer-events:none;overflow:hidden;
-  }
+  .confetti-layer,.streamer-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden}
   .star{
     position:absolute;
     width:10px;height:10px;
@@ -478,13 +472,13 @@
     width:min(680px,100%);
     background:linear-gradient(180deg,#fff,#f8fafc);
     border:1px solid #e5e7eb;
-    border-radius:24px;
-    padding:20px;
+    border-radius:22px;
+    padding:18px;
     text-align:center;
     box-shadow:0 14px 28px rgba(15,23,42,.08);
   }
   .scorebig{
-    font-size:clamp(36px,7vw,64px);
+    font-size:clamp(34px,7vw,60px);
     font-weight:1000;
     color:#111827;
     line-height:1;
@@ -518,24 +512,24 @@
     z-index:5;
   }
   .splash-card{
-    width:min(440px,92%);
+    width:min(420px,92%);
     background:rgba(255,255,255,.08);
     border:1px solid rgba(255,255,255,.14);
     backdrop-filter:blur(10px);
-    border-radius:26px;
-    padding:24px;
+    border-radius:24px;
+    padding:22px;
     text-align:center;
     box-shadow:0 18px 40px rgba(0,0,0,.24);
   }
   .splash-card img{
-    width:108px;
-    height:108px;
+    width:100px;
+    height:100px;
     object-fit:contain;
     filter:drop-shadow(0 10px 26px rgba(0,0,0,.20));
   }
   .splash-card h2{
-    margin:14px 0 6px;
-    font-size:24px;
+    margin:12px 0 6px;
+    font-size:22px;
   }
   .splash-card p{
     margin:0;
@@ -544,18 +538,22 @@
     line-height:1.45;
     font-size:14px;
   }
-  @media (max-width:760px){
+
+  @media (min-width: 768px){
+    .panel{padding:12px}
+    .qwrap{padding:14px}
+    .options{grid-template-columns:1fr 1fr}
+    .opt{font-size:14px}
+  }
+  @media (max-width: 480px){
     .screen{height:100%;border-radius:0}
-    .panel{inset:56px 0 0;padding:8px}
-    .card{border-radius:20px}
-    .options{grid-template-columns:1fr}
+    .panel{inset:56px 0 0;padding:6px}
+    .hero{padding:14px 12px 10px}
+    .content,.qwrap{padding:10px}
     .info{grid-template-columns:1fr}
-    .topbar{padding:10px}
-    .qhead,.progress,.question-area,.footer-actions{padding-left:12px;padding-right:12px}
-    .hero{padding:18px 14px 14px}
-    .content{padding:12px}
-    .qtext{font-size:16px}
-    .opt{font-size:13px}
+    .badge,.pill{font-size:11px;padding:7px 10px}
+    .qtext{font-size:14px}
+    .opt{min-height:50px}
   }
 </style>
 </head>
@@ -585,72 +583,69 @@
 
     <div class="panel">
       <div class="card">
-        <div class="card-inner">
-          <div class="hero">
-            <div class="logo-wrap">
-              <img src="assets/logo.png" alt="Innovine logo" onerror="this.style.display='none'">
-            </div>
-            <h1 id="gameTitle">Adjectives: Degrees of Comparison</h1>
-            <p class="subtitle">Play through a graded grammar quest with a timer, score tracker, one retry, and a final challenge.</p>
+        <div class="hero">
+          <div class="logo-wrap">
+            <img src="assets/logo.png" alt="Innovine logo" onerror="this.style.display='none'">
           </div>
+          <h1 id="gameTitle">Adjectives: Degrees of Comparison</h1>
+          <p class="subtitle">Play through a grammar quest with timer, score tracker, one retry, and a final challenge.</p>
+        </div>
 
-          <div class="content" id="introContent">
-            <div class="centerbox">
-              <div class="chapter-tag"><i></i> Chapter-based MCQ Game</div>
-              <p class="big">Test your understanding with a clean, fast, game-style quiz.</p>
-              <div class="info">
-                <div><small>Grade</small><strong id="gradeText">Grade 5</strong></div>
-                <div><small>Questions</small><strong>10</strong></div>
-                <div><small>Timer</small><strong id="timerText">45 sec/question</strong></div>
-              </div>
-              <div class="btnrow">
-                <button class="primary" id="startBtn">Play Game</button>
-                <button class="secondary" id="previewBtn">See Rules</button>
-              </div>
-              <p class="tiny" id="rulesText" style="margin-top:14px;"></p>
+        <div class="content" id="introContent">
+          <div class="centerbox">
+            <div class="chapter-tag"><i></i> Chapter-based MCQ Game</div>
+            <p class="big">Test your understanding with a clean, fast, game-style quiz.</p>
+            <div class="info">
+              <div><small>Grade</small><strong id="gradeText">Grade 5</strong></div>
+              <div><small>Questions</small><strong>10</strong></div>
+              <div><small>Timer</small><strong id="timerText">45 sec/question</strong></div>
             </div>
+            <div class="btnrow">
+              <button class="primary" id="startBtn">Play Game</button>
+              <button class="secondary" id="previewBtn">See Rules</button>
+            </div>
+            <p class="tiny" id="rulesText" style="margin-top:14px;"></p>
           </div>
+        </div>
 
-          <div class="qwrap" id="quizScreen">
-            <div class="qhead">
-              <div class="qmeta">
-                <div class="pill">Lives: <strong id="lives">2</strong></div>
-                <div class="pill">Attempt: <strong id="attempt">1</strong>/2</div>
-              </div>
-              <div class="pill">Level: <strong id="level">1</strong></div>
+        <div class="qwrap" id="quizScreen">
+          <div class="qhead">
+            <div class="qmeta">
+              <div class="pill">Lives: <strong id="lives">2</strong></div>
+              <div class="pill">Attempt: <strong id="attempt">1</strong>/2</div>
             </div>
-            <div class="progress"><div class="bar" id="bar"></div></div>
+            <div class="pill">Level: <strong id="level">1</strong></div>
+          </div>
+          <div class="progress"><div class="bar" id="bar"></div></div>
 
-            <div class="question-area">
-              <div class="question-card" id="questionCard">
-                <p class="qtext" id="questionText"></p>
-                <p class="qsub" id="questionNote"></p>
-                <div class="options" id="options"></div>
-              </div>
-              <div class="feedback neutral" id="feedback">Choose the best answer to continue.</div>
+          <div class="question-area">
+            <div class="question-card" id="questionCard">
+              <p class="qtext" id="questionText"></p>
+              <p class="qsub" id="questionNote"></p>
+              <div class="options" id="options"></div>
             </div>
-
+            <div class="feedback neutral" id="feedback">Choose the best answer to continue.</div>
             <div class="footer-actions">
               <div class="tiny" id="helperText">One retry after the first wrong attempt.</div>
               <button class="ghost hide" id="nextBtn">Next Question</button>
             </div>
           </div>
+        </div>
 
-          <div class="qwrap" id="resultScreen">
-            <div class="content" style="padding:18px;">
-              <div class="final-box">
-                <div class="chapter-tag"><i></i> Final Challenge Complete</div>
-                <div class="scorebig" id="finalScore">0/10</div>
-                <div class="result-line" id="resultLine"></div>
-                <div class="explain" id="finalExplain"></div>
-                <div class="btnrow" style="margin-top:16px">
-                  <button class="primary" id="restartBtn">Play Again</button>
-                </div>
+        <div class="qwrap" id="resultScreen">
+          <div class="content" style="padding:18px;">
+            <div class="final-box">
+              <div class="chapter-tag"><i></i> Final Challenge Complete</div>
+              <div class="scorebig" id="finalScore">0/10</div>
+              <div class="result-line" id="resultLine"></div>
+              <div class="explain" id="finalExplain"></div>
+              <div class="btnrow" style="margin-top:16px">
+                <button class="primary" id="restartBtn">Play Again</button>
               </div>
             </div>
           </div>
-
         </div>
+
       </div>
       <div class="cross" id="cross"></div>
     </div>
@@ -715,60 +710,37 @@ const el = id => document.getElementById(id);
 const total = questions.length;
 let idx = 0, score = 0, attempts = 0, canRetry = true, timer = 45, t = null, locked = false;
 
-const splash = el('splash');
-const introContent = el('introContent');
-const quizScreen = el('quizScreen');
-const resultScreen = el('resultScreen');
-const questionText = el('questionText');
-const questionNote = el('questionNote');
-const options = el('options');
-const feedback = el('feedback');
-const scoreEl = el('score');
-const qcount = el('qcount');
-const timerEl = el('timer');
-const attemptEl = el('attempt');
-const livesEl = el('lives');
-const levelEl = el('level');
-const bar = el('bar');
-const nextBtn = el('nextBtn');
-const helperText = el('helperText');
-
-function show(elm){
-  introContent.classList.add('hide');
-  quizScreen.classList.add('hide');
-  resultScreen.classList.add('hide');
-  elm.classList.remove('hide');
-  elm.classList.add('show');
+function show(section){
+  ['introContent','quizScreen','resultScreen'].forEach(id=>el(id).classList.add('hide'));
+  section.classList.remove('hide');
+  section.classList.add('show');
 }
-
 function playSound(id){
   const a = el(id);
   if(!a) return;
-  try{ a.currentTime = 0; a.play(); }catch(e){}
+  try{a.currentTime=0;a.play()}catch(e){}
 }
-
 function burst(type){
-  const layer = type === 'star' ? el('confettiLayer') : el('streamerLayer');
-  const count = type === 'star' ? 14 : 10;
+  const layer = type==='star' ? el('confettiLayer') : el('streamerLayer');
+  const count = type==='star' ? 14 : 10;
   for(let i=0;i<count;i++){
     const n = document.createElement('div');
-    if(type === 'star'){
-      n.className = 'star';
-      n.style.left = `${Math.random()*100}%`;
-      n.style.top = `${20 + Math.random()*55}%`;
+    if(type==='star'){
+      n.className='star';
+      n.style.left=`${Math.random()*100}%`;
+      n.style.top=`${20+Math.random()*55}%`;
       n.style.setProperty('--dx', `${(Math.random()*2-1)*120}px`);
-      n.style.setProperty('--dy', `${50 + Math.random()*140}px`);
+      n.style.setProperty('--dy', `${50+Math.random()*140}px`);
       n.style.background = ['#facc15','#60a5fa','#a78bfa','#34d399','#fb7185'][i%5];
     }else{
-      n.className = 'stream';
-      n.style.left = `${Math.random()*100}%`;
+      n.className='stream';
+      n.style.left=`${Math.random()*100}%`;
       n.style.background = ['#f43f5e','#22c55e','#3b82f6','#f59e0b','#8b5cf6'][i%5];
     }
     layer.appendChild(n);
     setTimeout(()=>n.remove(),1800);
   }
 }
-
 function flashCross(){
   const c = el('cross');
   c.classList.remove('show');
@@ -776,159 +748,132 @@ function flashCross(){
   c.classList.add('show');
   setTimeout(()=>c.classList.remove('show'),700);
 }
-
 function resetTimer(){
   clearInterval(t);
   timer = 45;
-  timerEl.textContent = timer;
-  timerEl.parentElement.style.borderColor = '#dbe4f0';
+  el('timer').textContent = timer;
+  el('timer').parentElement.style.borderColor = '#dbe4f0';
   t = setInterval(()=>{
     timer--;
-    timerEl.textContent = timer;
-    if(timer <= 10) timerEl.parentElement.style.borderColor = '#f59e0b';
-    if(timer <= 5) timerEl.parentElement.style.borderColor = '#dc2626';
+    el('timer').textContent = timer;
+    if(timer <= 10) el('timer').parentElement.style.borderColor = '#f59e0b';
+    if(timer <= 5) el('timer').parentElement.style.borderColor = '#dc2626';
     if(timer <= 0){
       clearInterval(t);
       handleWrong(true);
     }
   },1000);
 }
-
 function renderQuestion(){
   locked = false;
   attempts = 0;
   canRetry = true;
-  feedback.className = 'feedback neutral';
-  feedback.textContent = 'Choose the best answer to continue.';
-  nextBtn.classList.add('hide');
-  questionText.textContent = questions[idx].q;
-  questionNote.textContent = 'Select one answer only.';
-  options.innerHTML = '';
-  questions[idx].o.forEach((opt, i)=>{
+  el('feedback').className = 'feedback neutral';
+  el('feedback').textContent = 'Choose the best answer to continue.';
+  el('nextBtn').classList.add('hide');
+  el('questionText').textContent = questions[idx].q;
+  el('questionNote').textContent = 'Select one answer only.';
+  el('options').innerHTML = '';
+  questions[idx].o.forEach((opt,i)=>{
     const b = document.createElement('button');
     b.className = 'opt';
     b.innerHTML = `<span class="letter">${String.fromCharCode(65+i)}</span><span>${opt}</span>`;
-    b.onclick = ()=>choose(i, b);
-    options.appendChild(b);
+    b.onclick = ()=>choose(i,b);
+    el('options').appendChild(b);
   });
-  scoreEl.textContent = score;
-  qcount.textContent = `${idx+1}/${total}`;
-  attemptEl.textContent = '1';
-  livesEl.textContent = '2';
-  levelEl.textContent = idx + 1;
-  bar.style.width = `${(idx/total)*100}%`;
-  helperText.textContent = 'One retry after the first wrong attempt.';
+  el('score').textContent = score;
+  el('qcount').textContent = `${idx+1}/${total}`;
+  el('attempt').textContent = '1';
+  el('lives').textContent = '2';
+  el('level').textContent = idx+1;
+  el('bar').style.width = `${(idx/total)*100}%`;
+  el('helperText').textContent = 'One retry after the first wrong attempt.';
   resetTimer();
 }
-
 function handleWrong(fromTimer=false){
   if(locked) return;
   attempts++;
-  attemptEl.textContent = attempts + 1;
+  el('attempt').textContent = attempts+1;
   flashCross();
   el('questionCard').classList.add('shake');
   setTimeout(()=>el('questionCard').classList.remove('shake'),400);
   playSound('wrongSound');
-  const btns = [...options.querySelectorAll('button')];
+  const btns = [...el('options').querySelectorAll('button')];
   if(canRetry && attempts < 2 && !fromTimer){
     canRetry = false;
-    livesEl.textContent = '1';
-    feedback.className = 'feedback bad';
-    feedback.textContent = 'Wrong answer. Try one more time.';
-    helperText.textContent = 'You have 1 retry left.';
+    el('lives').textContent = '1';
+    el('feedback').className = 'feedback bad';
+    el('feedback').textContent = 'Wrong answer. Try one more time.';
+    el('helperText').textContent = 'You have 1 retry left.';
     resetTimer();
     return;
   }
   locked = true;
-  feedback.className = 'feedback bad';
-  feedback.innerHTML = `Correct answer: <strong>${questions[idx].o[questions[idx].a]}</strong><br>${questions[idx].e}`;
-  helperText.textContent = 'Explanation shown after the second wrong attempt or timeout.';
+  el('feedback').className = 'feedback bad';
+  el('feedback').innerHTML = `Correct answer: <strong>${questions[idx].o[questions[idx].a]}</strong><br>${questions[idx].e}`;
+  el('helperText').textContent = 'Explanation shown after the second wrong attempt or timeout.';
   btns.forEach((b,k)=>{
-    if(k === questions[idx].a) b.classList.add('correct');
+    if(k===questions[idx].a) b.classList.add('correct');
     b.disabled = true;
   });
-  nextBtn.classList.remove('hide');
-  nextBtn.textContent = idx === total - 1 ? 'See Final Challenge' : 'Next Question';
+  el('nextBtn').classList.remove('hide');
+  el('nextBtn').textContent = idx===total-1 ? 'See Final Challenge' : 'Next Question';
 }
-
 function choose(i, btn){
   if(locked) return;
   clearInterval(t);
-  const btns = [...options.querySelectorAll('button')];
-  if(i === questions[idx].a){
+  const btns = [...el('options').querySelectorAll('button')];
+  if(i===questions[idx].a){
     locked = true;
     score++;
-    scoreEl.textContent = score;
-    feedback.className = 'feedback ok';
-    feedback.textContent = 'Correct! Great thinking.';
+    el('score').textContent = score;
+    el('feedback').className = 'feedback ok';
+    el('feedback').textContent = 'Correct! Great thinking.';
     btn.classList.add('correct');
     burst('star');
     playSound('correctSound');
-    btns.forEach(b=>b.disabled = true);
-    nextBtn.classList.remove('hide');
-    nextBtn.textContent = idx === total - 1 ? 'See Final Challenge' : 'Next Question';
+    btns.forEach(b=>b.disabled=true);
+    el('nextBtn').classList.remove('hide');
+    el('nextBtn').textContent = idx===total-1 ? 'See Final Challenge' : 'Next Question';
   }else{
     btn.classList.add('wrong');
     handleWrong(false);
   }
 }
-
 function nextQuestion(){
-  if(idx < total - 1){
+  if(idx < total-1){
     idx++;
     renderQuestion();
   }else{
     showResult();
   }
 }
-
 function showResult(){
-  show(resultScreen);
+  show(el('resultScreen'));
   el('finalScore').textContent = `${score}/${total}`;
   const pct = Math.round((score/total)*100);
-  el('resultLine').textContent =
-    pct >= 90 ? 'Excellent work! You mastered the chapter with strong accuracy.' :
-    pct >= 70 ? 'Good job! You showed a solid understanding of degrees of comparison.' :
-    'Keep practicing! The chapter is clear, and you can improve with one more round.';
+  el('resultLine').textContent = pct>=90 ? 'Excellent work! You mastered the chapter with strong accuracy.' : pct>=70 ? 'Good job! You showed a solid understanding of degrees of comparison.' : 'Keep practicing! The chapter is clear, and you can improve with one more round.';
   el('finalExplain').innerHTML = `Final challenge completed. Your score tracker finished at <strong>${score}</strong> out of <strong>${total}</strong>.`;
   burst('star');
   playSound('clapSound');
   clearInterval(t);
 }
 
-el('startBtn').onclick = ()=>{
-  show(quizScreen);
-  idx = 0;
-  score = 0;
-  renderQuestion();
-};
-
-el('previewBtn').onclick = ()=>{
-  el('rulesText').textContent = 'Use the timer wisely. Choose the best grammar answer, retry once if needed, and finish the final challenge.';
-};
-
-nextBtn.onclick = nextQuestion;
-
+el('startBtn').onclick = ()=>{ show(el('quizScreen')); idx=0; score=0; renderQuestion(); };
+el('previewBtn').onclick = ()=>{ el('rulesText').textContent = 'Use the timer wisely. Choose the best grammar answer, retry once if needed, and finish the final challenge.'; };
+el('nextBtn').onclick = nextQuestion;
 el('restartBtn').onclick = ()=>{
   clearInterval(t);
-  idx = 0;
-  score = 0;
-  attempts = 0;
-  canRetry = true;
-  locked = false;
-  scoreEl.textContent = 0;
-  timerEl.textContent = '45';
-  feedback.className = 'feedback neutral';
-  feedback.textContent = 'Choose the best answer to continue.';
-  helperText.textContent = 'One retry after the first wrong attempt.';
-  show(introContent);
+  idx = 0; score = 0; attempts = 0; canRetry = true; locked = false;
+  el('score').textContent = 0;
+  el('timer').textContent = '45';
+  el('feedback').className='feedback neutral';
+  el('feedback').textContent='Choose the best answer to continue.';
+  el('helperText').textContent='One retry after the first wrong attempt.';
+  show(el('introContent'));
 };
-
-setTimeout(()=>{
-  splash.style.display = 'none';
-},5000);
-
-show(introContent);
+setTimeout(()=>{ el('splash').style.display='none'; }, 5000);
+show(el('introContent'));
 </script>
 </body>
 </html>
