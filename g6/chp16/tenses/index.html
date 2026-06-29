@@ -6,259 +6,253 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
 :root {
-    --primary: #ff6b6b;
-    --primary-hover: #fa5252;
-    --secondary: #4d96ff;
-    --secondary-hover: #3b7ed9;
-    --success: #6bc15b;
-    --success-bg: #f1fbe9;
-    --danger: #ff4a4a;
-    --danger-bg: #ffebeb;
-    --warning: #ffa94d;
-    --bg-gradient: linear-gradient(135deg, #ffeedd 0%, #fff0f5 50%, #e8f0fe 100%);
-    --surface: #ffffff;
-    --text-main: #2d3748;
-    --text-muted: #718096;
-    --border-radius: 24px;
-    --btn-radius: 18px;
-    --shadow-sm: 0 4px 8px rgba(0,0,0,0.04);
-    --shadow-md: 0 12px 28px rgba(0,0,0,0.06);
+    --primary-neon: #7000ff;
+    --primary-bright: #8a2be2;
+    --accent-citrus: #ccff00;
+    --accent-citrus-dark: #b5e600;
+    --success-teal: #00f5d4;
+    --success-bg: #e6fffb;
+    --danger-coral: #ff5470;
+    --danger-bg: #fff0f2;
+    --dark-ink: #111119;
+    --light-cream: #faf9f6;
+    --surface-white: #ffffff;
+    --card-radius: 20px;
+    --interactive-radius: 14px;
+    --neo-shadow: 0 8px 0px var(--dark-ink);
+    --active-shadow: 0 2px 0px var(--dark-ink);
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Comic Sans MS', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
 }
 
 body {
-    background: var(--bg-gradient);
-    color: var(--text-main);
+    background-color: #f3f0ff;
+    background-image: radial-gradient(var(--primary-bright) 0.5px, transparent 0.5px), radial-gradient(var(--primary-bright) 0.5px, #f3f0ff 0.5px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    color: var(--dark-ink);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 12px;
+    padding: 16px;
     overflow-x: hidden;
 }
 
-.bg-decorations {
+.ambient-layer {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
     pointer-events: none;
     z-index: 1;
-    overflow: hidden;
 }
-.floating-sparkle {
+.ambient-bubble {
     position: absolute;
-    background: rgba(255, 107, 107, 0.08);
-    border-radius: 50%;
-    animation: floatMove 8s ease-in-out infinite alternate;
+    background: linear-gradient(135deg, rgba(112, 0, 255, 0.05), rgba(204, 255, 0, 0.05));
+    border-radius: 35% 65% 70% 30% / 50% 30% 70% 50%;
+    animation: morphFloat 12s ease-in-out infinite alternate;
 }
 
-@keyframes floatMove {
-    0% { transform: translateY(0px) scale(1) rotate(0deg); }
-    100% { transform: translateY(-30px) scale(1.1) rotate(15deg); }
+@keyframes morphFloat {
+    0% { transform: translateY(0px) rotate(0deg); border-radius: 35% 65% 70% 30% / 50% 30% 70% 50%; }
+    100% { transform: translateY(-40px) rotate(15deg); border-radius: 50% 45% 60% 55% / 40% 60% 40% 60%; }
 }
 
-.screen-container {
+.game-container-card {
     position: relative;
     width: 100%;
-    max-width: 660px;
-    background: var(--surface);
-    border-radius: var(--border-radius);
-    padding: 24px;
-    box-shadow: var(--shadow-md);
-    border: 4px solid #ffffff;
+    max-width: 640px;
+    background: var(--surface-white);
+    border-radius: var(--card-radius);
+    padding: 28px;
+    border: 4px solid var(--dark-ink);
+    box-shadow: var(--neo-shadow);
     z-index: 10;
     display: none;
-    animation: screenReveal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+    transition: transform 0.2s ease;
 }
 
-@keyframes screenReveal {
-    0% { opacity: 0; transform: scale(0.95) translateY(15px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-#splashScreen { text-align: center; padding: 50px 20px; }
-.logo-wrapper {
+#splashScreen { text-align: center; padding: 60px 20px; }
+.logo-presentation {
     position: relative;
     display: inline-block;
-    animation: zoomSparkle 2.5s ease-in-out infinite alternate;
+    animation: simplePulse 2s ease-in-out infinite alternate;
 }
-.logo-img { width: 150px; height: 150px; object-fit: contain; }
-.loader-track {
-    width: 180px; height: 8px; background: #edf2f7;
-    border-radius: 10px; margin: 30px auto 0 auto; overflow: hidden;
+.logo-presentation img { width: 160px; height: 160px; object-fit: contain; }
+
+.loader-system {
+    width: 140px; height: 6px; background: #e4e2f0;
+    border-radius: 3px; margin: 36px auto 0 auto; overflow: hidden;
+    border: 2px solid var(--dark-ink);
 }
-.loader-run {
-    width: 0%; height: 100%; background: var(--secondary);
-    animation: loadFill 4.9s linear forwards;
+.loader-progress-line {
+    width: 0%; height: 100%; background: var(--primary-neon);
+    animation: uniformLoad 4.9s linear forwards;
 }
 
-@keyframes zoomSparkle {
-    0% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255,215,0,0)); }
-    100% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(255,215,0,0.6)); }
+@keyframes simplePulse {
+    0% { transform: scale(0.98); }
+    100% { transform: scale(1.04); }
 }
-@keyframes loadFill { to { width: 100%; } }
+@keyframes uniformLoad { to { width: 100%; } }
 
-.badge-header {
-    display: inline-block; background: #fff0e6; color: #ff8c00;
-    padding: 6px 16px; border-radius: 20px; font-weight: 800;
-    font-size: 14px; margin-bottom: 12px; border: 2px dashed #ff8c00;
+.badge-tag {
+    display: inline-block; background: var(--accent-citrus); color: var(--dark-ink);
+    padding: 6px 14px; border-radius: 8px; font-weight: 800;
+    font-size: 13px; margin-bottom: 16px; border: 2px solid var(--dark-ink);
+    text-transform: uppercase; letter-spacing: 0.5px;
 }
-h1.game-title { font-size: 2.2rem; color: #1a202c; margin-bottom: 20px; line-height: 1.2; }
-h1.game-title span { color: var(--secondary); }
+h1.game-headline { font-size: 2.1rem; font-weight: 900; color: var(--dark-ink); margin-bottom: 16px; line-height: 1.15; }
+h1.game-headline span { color: var(--primary-bright); text-decoration: underline var(--accent-citrus) 4px; }
 
-.hud-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px; }
-.hud-item {
-    background: #f7fafc; padding: 6px 14px; border-radius: 30px;
-    font-size: 14px; font-weight: 700; color: var(--text-main); border: 2px solid #e2e8f0;
+.hud-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 8px; }
+.hud-chip {
+    background: var(--surface-white); padding: 8px 14px; border-radius: var(--interactive-radius);
+    font-size: 14px; font-weight: 800; color: var(--dark-ink); border: 2px solid var(--dark-ink);
 }
-.audio-controls { display: flex; align-items: center; gap: 8px; background: #f7fafc; padding: 4px 12px; border-radius: 30px; border: 2px solid #e2e8f0; }
-.vol-range { width: 55px; accent-color: var(--secondary); cursor: pointer; }
+.audio-deck { display: flex; align-items: center; gap: 8px; background: var(--surface-white); padding: 6px 12px; border-radius: var(--interactive-radius); border: 2px solid var(--dark-ink); }
+.vol-slider-input { width: 50px; accent-color: var(--primary-neon); cursor: pointer; }
 
-.timer-container { position: relative; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; }
-.timer-svg { transform: rotate(-90deg); width: 44px; height: 44px; }
-.timer-bg { fill: none; stroke: #e2e8f0; stroke-width: 4; }
-.timer-circle {
-    fill: none; stroke: var(--success); stroke-width: 4;
-    stroke-linecap: round; stroke-dasharray: 113; stroke-dashoffset: 0;
+.timer-hub { position: relative; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; }
+.timer-svg-view { transform: rotate(-90deg); width: 44px; height: 44px; }
+.timer-svg-bg { fill: none; stroke: #e4e2f0; stroke-width: 5; }
+.timer-svg-fill {
+    fill: none; stroke: var(--success-teal); stroke-width: 5;
+    stroke-dasharray: 113; stroke-dashoffset: 0;
     transition: stroke-dashoffset 1s linear, stroke 0.3s;
 }
-.timer-text { position: absolute; font-size: 13px; font-weight: 800; color: var(--text-main); }
+.timer-counter-text { position: absolute; font-size: 13px; font-weight: 900; color: var(--dark-ink); }
 
-.progress-container { height: 12px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
-.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--success)); width: 0%; transition: width 0.3s ease; }
+.meter-track { height: 10px; background: #e4e2f0; border-radius: 5px; overflow: hidden; margin-bottom: 24px; border: 2px solid var(--dark-ink); }
+.meter-fill-bar { height: 100%; background: var(--primary-neon); width: 0%; transition: width 0.3s ease; }
 
-.image-card-box {
-    width: 100%; border-radius: 18px; border: 3px solid #e2e8f0;
-    background: #f8fafc; padding: 6px; display: none; justify-content: center; align-items: center; margin-bottom: 16px;
-    box-shadow: var(--shadow-sm);
+.illustration-box {
+    width: 100%; border-radius: var(--interactive-radius); border: 3px solid var(--dark-ink);
+    background: #fdfdfd; padding: 8px; display: none; justify-content: center; align-items: center; margin-bottom: 18px;
 }
-.image-card-box img { max-width: 100%; height: auto; max-height: 180px; border-radius: 12px; object-fit: contain; }
+.illustration-box img { max-width: 100%; height: auto; max-height: 170px; border-radius: 8px; object-fit: contain; }
 
-.quest-wrapper { font-size: 1.25rem; font-weight: 700; color: #1a202c; margin-bottom: 18px; text-align: left; line-height: 1.4; }
-.feedback-ribbon { min-height: 34px; font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; text-align: center; }
-.options-container { display: flex; flex-direction: column; gap: 10px; }
-.opt-card {
-    padding: 14px 18px; border-radius: var(--btn-radius); background: #ffffff;
-    border: 3px solid #e2e8f0; cursor: pointer; text-align: left; font-size: 1.05rem;
-    font-weight: 700; color: var(--text-main); box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease; display: flex; align-items: center;
+.question-text-plate { font-size: 1.2rem; font-weight: 800; color: var(--dark-ink); margin-bottom: 20px; line-height: 1.45; }
+.alert-banner-ribbon { min-height: 34px; font-size: 1.05rem; font-weight: 700; margin-bottom: 20px; line-height: 1.4; }
+.matrix-options-box { display: flex; flex-direction: column; gap: 12px; }
+
+.option-node-btn {
+    padding: 16px 20px; border-radius: var(--interactive-radius); background: var(--surface-white);
+    border: 2px solid var(--dark-ink); cursor: pointer; text-align: left; font-size: 1rem;
+    font-weight: 700; color: var(--dark-ink);
+    transition: all 0.15s ease; display: flex; align-items: center;
 }
-.opt-card:hover { border-color: var(--secondary); background: #f0f7ff; transform: translateY(-2px); }
-.opt-card:active { transform: translateY(1px); }
+.option-node-btn:hover { background: #faf8ff; border-color: var(--primary-neon); transform: translateY(-2px); }
 
-.opt-card.correct-flash { background: var(--success-bg) !important; border-color: var(--success) !important; color: #276749; animation: correctPop 0.4s ease; }
-.opt-card.wrong-flash { background: var(--danger-bg) !important; border-color: var(--danger) !important; color: #9b2c2c; animation: wrongShake 0.4s ease; }
-@keyframes correctPop { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-@keyframes wrongShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.option-node-btn.correct-flash { background: var(--success-bg) !important; border-color: var(--success-teal) !important; color: #007d6c; font-weight: 800; border-width: 3px !important; }
+.option-node-btn.wrong-flash { background: var(--danger-bg) !important; border-color: var(--danger-coral) !important; color: #a31c30; font-weight: 800; border-width: 3px !important; animation: hardShake 0.4s ease; }
+@keyframes hardShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 .node-lock { pointer-events: none !important; }
 
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
-.stat-pill { background: #f7fafc; padding: 10px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 14px; font-weight: 700; }
-.review-window { max-height: 250px; overflow-y: auto; text-align: left; margin: 16px 0; padding-right: 4px; display: none; }
-.review-node { padding: 12px; border-radius: 12px; background: #f7fafc; border-left: 5px solid #cbd5e0; margin-bottom: 10px; font-size: 14px; }
-.review-node.good { border-left-color: var(--success); background: #f6fedb; }
-.review-node.bad { border-left-color: var(--danger); background: #fff5f5; }
+.metrics-summary-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+.metric-pill-item { background: var(--light-cream); padding: 12px; border-radius: 12px; border: 2px solid var(--dark-ink); font-size: 14px; font-weight: 700; }
+.historical-logs-pannel { max-height: 240px; overflow-y: auto; text-align: left; margin: 20px 0; padding-right: 4px; display: none; }
+.log-row-node { padding: 14px; border-radius: 12px; background: var(--light-cream); border: 2px solid var(--dark-ink); margin-bottom: 12px; font-size: 14px; }
+.log-row-node.good { border-left: 8px solid var(--success-teal); }
+.log-row-node.bad { border-left: 8px solid var(--danger-coral); }
 
-.btn-core {
-    background: var(--primary); color: #ffffff; font-size: 1.15rem; font-weight: 800;
-    padding: 14px 32px; border: none; border-radius: var(--btn-radius); cursor: pointer;
-    box-shadow: 0 6px 0 #d94141; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 8px; margin: 8px;
+.btn-action-trigger {
+    background: var(--accent-citrus); color: var(--dark-ink); font-size: 1.1rem; font-weight: 800;
+    padding: 14px 32px; border: 2px solid var(--dark-ink); border-radius: var(--interactive-radius); cursor: pointer;
+    box-shadow: var(--neo-shadow); transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 8px; margin: 8px;
 }
-.btn-core:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 0 #d94141; }
-.btn-core:active { transform: translateY(4px); box-shadow: 0 2px 0 #d94141; }
-.btn-alt { background: var(--secondary); box-shadow: 0 6px 0 #2b6cb0; }
-.btn-alt:hover { background: var(--secondary-hover); box-shadow: 0 8px 0 #2b6cb0; }
-.btn-alt:active { box-shadow: 0 2px 0 #2b6cb0; }
+.btn-action-trigger:hover { background: var(--accent-citrus-dark); transform: translateY(-2px); box-shadow: 0 10px 0px var(--dark-ink); }
+.btn-action-trigger:active { transform: translateY(6px); box-shadow: var(--active-shadow); }
+.btn-action-trigger-alt { background: #ffffff; }
+.btn-action-trigger-alt:hover { background: #f3f0ff; }
 
-.confetti-bit { position: fixed; width: 10px; height: 10px; top: -10px; border-radius: 2px; z-index: 999; pointer-events: none; animation: fallDown 2.5s linear forwards; }
-@keyframes fallDown { to { transform: translateY(105vh) rotate(360deg); opacity: 0; } }
+.confetti-bit { position: fixed; width: 8px; height: 8px; top: -10px; border-radius: 1px; z-index: 999; pointer-events: none; animation: standardDrop 2.5s linear forwards; }
+@keyframes standardDrop { to { transform: translateY(105vh) rotate(360deg); opacity: 0; } }
 
 @media(max-width: 600px) {
-    body { padding: 8px; }
-    .screen-container { padding: 18px 14px; border-radius: 20px; }
-    h1.game-title { font-size: 1.65rem; }
-    .quest-wrapper { font-size: 1.1rem; }
-    .opt-card { font-size: 0.95rem; padding: 12px 14px; }
-    .btn-core { width: 100%; justify-content: center; margin: 6px 0; }
-    .stats-grid { grid-template-columns: 1fr; }
+    body { padding: 10px; }
+    .game-container-card { padding: 20px 16px; border-radius: 16px; }
+    h1.game-headline { font-size: 1.6rem; }
+    .question-text-plate { font-size: 1.1rem; }
+    .option-node-btn { font-size: 0.95rem; padding: 14px 16px; }
+    .btn-action-trigger { width: 100%; justify-content: center; margin: 6px 0; }
+    .metrics-summary-box { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
-<div class="bg-decorations">
-    <div class="floating-sparkle" style="width: 80px; height: 80px; top: 10%; left: -30px;"></div>
-    <div class="floating-sparkle" style="width: 120px; height: 120px; bottom: 5%; right: -40px; animation-delay: -2s;"></div>
+<div class="ambient-layer">
+    <div class="ambient-bubble" style="width: 90px; height: 90px; top: 12%; left: -25px;"></div>
+    <div class="ambient-bubble" style="width: 140px; height: 140px; bottom: 8%; right: -35px; animation-delay: -3s;"></div>
 </div>
 
-<div id="splashScreen" class="screen-container" style="display: block;">
-    <div class="logo-wrapper">
-        <img class="logo-img" src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.opacity='0.2'">
+<div id="splashScreen" class="game-container-card" style="display: block;">
+    <div class="logo-presentation">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.opacity='0.2'">
     </div>
-    <h2 style="font-size: 1.4rem; font-weight: 800; color: #4a5568; margin-top: 10px;">INNOVINE PORTAL</h2>
-    <div class="loader-track">
-        <div class="loader-run"></div>
+    <div class="loader-system">
+        <div class="loader-progress-line"></div>
     </div>
 </div>
 
-<div id="homeScreen" class="screen-container">
-    <div class="badge-header">Grade 6 English</div>
-    <h1 class="game-title">Chapter 16: <span>Tenses Journey</span></h1>
-    <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 28px;">Master simple, continuous, and perfect tenses accurately!</p>
-    <button class="btn-core" onclick="launchGamePlayLoop()">Start Adventure 🚀</button>
+<div id="homeScreen" class="game-container-card">
+    <div class="badge-tag">Grade 6 English</div>
+    <h1 class="game-headline">Chapter 16: <span>Tenses Adventure</span></h1>
+    <p style="font-size: 1.05rem; font-weight: 600; color: #44444f; margin-bottom: 26px;">Master simple, continuous, and perfect tenses through active challenge tracks.</p>
+    <button class="btn-action-trigger" onclick="launchGamePlayLoop()">Start Adventure 🚀</button>
 </div>
 
-<div id="gameScreen" class="screen-container">
-    <div class="hud-bar">
-        <div class="hud-item" id="hudProgressLabel">Question 1 / 15</div>
-        <div class="timer-container">
-            <svg class="timer-svg">
-                <circle class="timer-bg" cx="22" cy="22" r="18"></circle>
-                <circle class="timer-circle" id="timerCircleIndicator" cx="22" cy="22" r="18"></circle>
+<div id="gameScreen" class="game-container-card">
+    <div class="hud-panel">
+        <div class="hud-chip" id="hudProgressLabel">Question 1 / 15</div>
+        <div class="timer-hub">
+            <svg class="timer-svg-view">
+                <circle class="timer-svg-bg" cx="22" cy="22" r="18"></circle>
+                <circle class="timer-svg-fill" id="timerCircleIndicator" cx="22" cy="22" r="18"></circle>
             </svg>
-            <span class="timer-text" id="countdownLabel">20</span>
+            <span class="timer-counter-text" id="countdownLabel">20</span>
         </div>
-        <div class="hud-item" id="hudScoreLabel">⭐ 0</div>
-        <div class="audio-controls">
-            <span id="muteBtn" style="cursor:pointer; font-size:15px;" onclick="toggleSystemMute()">🔊</span>
-            <input type="range" id="volumeControl" class="vol-range" min="0" max="1" step="0.1" value="0.7" oninput="updateSystemVolume(this.value)">
+        <div class="hud-chip" id="hudScoreLabel">⭐ 0</div>
+        <div class="audio-deck">
+            <span id="muteBtn" style="cursor:pointer; font-size:14px;" onclick="toggleSystemMute()">🔊</span>
+            <input type="range" id="volumeControl" class="vol-slider-input" min="0" max="1" step="0.1" value="0.7" oninput="updateSystemVolume(this.value)">
         </div>
     </div>
 
-    <div class="progress-container">
-        <div class="progress-bar-fill" id="statusBarFill"></div>
+    <div class="meter-track">
+        <div class="meter-fill-bar" id="statusBarFill"></div>
     </div>
 
-    <div id="pictureAssetBox" class="image-card-box"></div>
-    <div class="quest-wrapper" id="questionTextBox">Loading your grammar objective...</div>
-    <div class="feedback-ribbon" id="feedbackNotificationBox"></div>
-    <div class="options-container" id="optionsMatrixGrid"></div>
+    <div id="pictureAssetBox" class="illustration-box"></div>
+    <div class="question-text-plate" id="questionTextBox">Loading objective task data...</div>
+    <div class="alert-banner-ribbon" id="feedbackNotificationBox"></div>
+    <div class="matrix-options-box" id="optionsMatrixGrid"></div>
 </div>
 
-<div id="scoreScreen" class="screen-container">
-    <div class="trophy-bounce">🏆</div>
-    <h2 style="font-size: 1.8rem; font-weight: 800; color: #1a202c;" id="badgeLabelField">Grammar Champion</h2>
-    <div class="big-score" id="pointsLabelField">0 / 150</div>
-    <div class="stars-group" id="starsLabelField">⭐⭐⭐</div>
+<div id="scoreScreen" class="game-container-card" style="text-align: center;">
+    <div style="font-size: 3.5rem; margin-bottom: 10px;">🏆</div>
+    <h2 style="font-size: 1.7rem; font-weight: 900; color: var(--dark-ink);" id="badgeLabelField">Grammar Explorer</h2>
+    <div style="font-size: 2.2rem; font-weight: 900; color: var(--primary-neon); margin: 8px 0;" id="pointsLabelField">0 / 150</div>
+    <div style="font-size: 1.5rem; margin-bottom: 16px;" id="starsLabelField">⭐⭐⭐</div>
 
-    <div class="stats-grid">
-        <div class="stat-pill" id="statCorrect">Correct: 0</div>
-        <div class="stat-pill" id="statAccuracy">Accuracy: 0%</div>
-        <div class="stat-pill" id="statTime">Time Taken: 0s</div>
-        <div class="stat-pill" id="statStatus">Status: Finished</div>
+    <div class="metrics-summary-box">
+        <div class="metric-pill-item" id="statCorrect">Correct: 0</div>
+        <div class="metric-pill-item" id="statAccuracy">Accuracy: 0%</div>
+        <div class="metric-pill-item" id="statTime">Time Taken: 0s</div>
+        <div class="metric-pill-item" id="statStatus">Status: Finished</div>
     </div>
     
-    <div id="reviewLogsContainer" class="review-window"></div>
+    <div id="reviewLogsContainer" class="historical-logs-pannel"></div>
 
-    <button class="btn-core" onclick="relaunchActiveGameInstance()">Play Again 🔄</button>
-    <button class="btn-core btn-alt" id="reviewToggleBtn" onclick="toggleReviewLogsWindow()">Review Answers 🔍</button>
+    <button class="btn-action-trigger" onclick="relaunchActiveGameInstance()">Play Again 🔄</button>
+    <button class="btn-action-trigger btn-action-trigger-alt" id="reviewToggleBtn" onclick="toggleReviewLogsWindow()">Review Answers 🔍</button>
 </div>
 
 <script>
@@ -400,8 +394,8 @@ let globalAppVolumeSetting = 0.7;
 let isSystemAudioMuted = false;
 
 function loadPersistentAudioSettings() {
-    const cachedVol = localStorage.getItem('edu_tense_vol');
-    const cachedMute = localStorage.getItem('edu_tense_mute');
+    const cachedVol = localStorage.getItem('edu_tense_vol_v2');
+    const cachedMute = localStorage.getItem('edu_tense_mute_v2');
     if(cachedVol !== null) {
         globalAppVolumeSetting = parseFloat(cachedVol);
         document.getElementById("volumeControl").value = globalAppVolumeSetting;
@@ -414,13 +408,13 @@ function loadPersistentAudioSettings() {
 
 function updateSystemVolume(volumeValue) {
     globalAppVolumeSetting = parseFloat(volumeValue);
-    localStorage.setItem('edu_tense_vol', globalAppVolumeSetting);
+    localStorage.setItem('edu_tense_vol_v2', globalAppVolumeSetting);
     if(globalAppVolumeSetting > 0 && isSystemAudioMuted) toggleSystemMute();
 }
 
 function toggleSystemMute() {
     isSystemAudioMuted = !isSystemAudioMuted;
-    localStorage.setItem('edu_tense_mute', isSystemAudioMuted);
+    localStorage.setItem('edu_tense_mute_v2', isSystemAudioMuted);
     document.getElementById("muteBtn").innerText = isSystemAudioMuted ? "🔇" : "🔊";
 }
 
@@ -490,11 +484,11 @@ function presentQuestionTemplateNode() {
     document.getElementById("questionTextBox").innerText = activeQuestionContext.q;
     
     const contextBanner = document.getElementById("feedbackNotificationBox");
-    contextBanner.innerHTML = `<span style="color:var(--text-muted)">⏳ Analyze options...</span>`;
+    contextBanner.innerHTML = `<span style="color:#666670">⏳ Analyze options context...</span>`;
 
     const graphicContainerNode = document.getElementById("pictureAssetBox");
     if(activeQuestionContext.image) {
-        graphicContainerNode.innerHTML = `<img src="assets/${activeQuestionContext.image}" alt="Question Context Asset">`;
+        graphicContainerNode.innerHTML = `<img src="assets/${activeQuestionContext.image}" alt="Question Graphic Context">`;
         graphicContainerNode.style.display = "flex";
     } else {
         graphicContainerNode.style.display = "none";
@@ -506,7 +500,7 @@ function presentQuestionTemplateNode() {
 
     activeQuestionContext.options.forEach(optionTextString => {
         const optionCardElement = document.createElement("div");
-        optionCardElement.className = "opt-card";
+        optionCardElement.className = "option-node-btn";
         optionCardElement.innerText = optionTextString;
         optionCardElement.onclick = () => validateSelectedNodeCard(optionCardElement, optionTextString, activeQuestionContext);
         optionsGridContainer.appendChild(optionCardElement);
@@ -522,7 +516,7 @@ function initiateQuestionCountdownTimer(activeContextObject) {
     
     countdownTextNode.innerText = currentQuestionTimeRemaining;
     strokeCircleNode.style.strokeDashoffset = "0";
-    strokeCircleNode.style.stroke = "var(--success)";
+    strokeCircleNode.style.stroke = "var(--success-teal)";
 
     matchTimerCountdownRef = setInterval(() => {
         currentQuestionTimeRemaining--;
@@ -532,7 +526,7 @@ function initiateQuestionCountdownTimer(activeContextObject) {
         strokeCircleNode.style.strokeDashoffset = calculationOffset;
 
         if(currentQuestionTimeRemaining <= 5) {
-            strokeCircleNode.style.stroke = "var(--danger)";
+            strokeCircleNode.style.stroke = "var(--danger-coral)";
             fireAudioEffect('tick');
         } else if(currentQuestionTimeRemaining <= 10) {
             strokeCircleNode.style.stroke = "var(--warning)";
@@ -546,21 +540,21 @@ function initiateQuestionCountdownTimer(activeContextObject) {
 }
 
 function handleQuestionTimeoutTransition(contextObject) {
-    const alternativeOptionNodes = document.querySelectorAll(".opt-card");
+    const alternativeOptionNodes = document.querySelectorAll(".option-node-btn");
     alternativeOptionNodes.forEach(node => {
         node.classList.add("node-lock");
         if(node.innerText === contextObject.answer) node.classList.add("wrong-flash");
     });
     
     fireAudioEffect('timeout');
-    document.getElementById("feedbackNotificationBox").innerHTML = `<span style="color:var(--danger)">⏰ Timeout! ${contextObject.hint}</span>`;
+    document.getElementById("feedbackNotificationBox").innerHTML = `<span style="color:var(--danger-coral)">⏰ Timeout! ${contextObject.hint}</span>`;
     historicalSessionLogs.push({ q: contextObject.q, c: contextObject.answer, u: "[Timeout]", status: false });
     executeNextStepTransitionDelay();
 }
 
 function validateSelectedNodeCard(clickedDOMNode, evaluatedValueString, contextObject) {
     clearInterval(matchTimerCountdownRef);
-    const combinedOptionsList = document.querySelectorAll(".opt-card");
+    const combinedOptionsList = document.querySelectorAll(".option-node-btn");
     combinedOptionsList.forEach(node => node.classList.add("node-lock"));
     
     const bannerBoxNode = document.getElementById("feedbackNotificationBox");
@@ -573,7 +567,7 @@ function validateSelectedNodeCard(clickedDOMNode, evaluatedValueString, contextO
         triggerConfettiVisualExplosion();
         
         const randomGreeting = encouragementCorrectPhrases[Math.floor(Math.random() * encouragementCorrectPhrases.length)];
-        bannerBoxNode.innerHTML = `<span style="color:var(--success)">🎉 ${randomGreeting} ${contextObject.hint}</span>`;
+        bannerBoxNode.innerHTML = `<span style="color:#007d6c;">🎉 ${randomGreeting} ${contextObject.hint}</span>`;
         historicalSessionLogs.push({ q: contextObject.q, c: contextObject.answer, u: evaluatedValueString, status: true });
     } else {
         clickedDOMNode.classList.add("wrong-flash");
@@ -584,7 +578,7 @@ function validateSelectedNodeCard(clickedDOMNode, evaluatedValueString, contextO
         });
         
         const randomEncouragement = encouragementWrongPhrases[Math.floor(Math.random() * encouragementWrongPhrases.length)];
-        bannerBoxNode.innerHTML = `<span style="color:var(--danger)">💡 ${randomEncouragement} ${contextObject.hint}</span>`;
+        bannerBoxNode.innerHTML = `<span style="color:#a31c30;">💡 ${randomEncouragement} ${contextObject.hint}</span>`;
         historicalSessionLogs.push({ q: contextObject.q, c: contextObject.answer, u: evaluatedValueString, status: false });
     }
     executeNextStepTransitionDelay();
@@ -636,11 +630,11 @@ function generateFinalMetricsDashboard() {
     
     historicalSessionLogs.forEach((logItem, idx) => {
         const reviewPillRow = document.createElement("div");
-        reviewPillRow.className = `review-node ${logItem.status ? 'good' : 'bad'}`;
+        reviewPillRow.className = `log-row-node ${logItem.status ? 'good' : 'bad'}`;
         reviewPillRow.innerHTML = `
-            <div style="font-weight:800; margin-bottom:4px;">Q${idx + 1}: ${logItem.q}</div>
-            <div>🟢 Correct Answer: <span style="color:#276749; font-weight:700;">${logItem.c}</span></div>
-            <div>👤 Your Answer: <span style="color:${logItem.status ? '#276749' : '#9b2c2c'}; font-weight:700;">${logItem.u}</span></div>
+            <div style="font-weight:800; margin-bottom:6px; color:var(--dark-ink);">Q${idx + 1}: ${logItem.q}</div>
+            <div style="margin-bottom:2px;">🟢 Correct: <span style="color:#007d6c; font-weight:700;">${logItem.c}</span></div>
+            <div>👤 Input: <span style="color:${logItem.status ? '#007d6c' : '#a31c30'}; font-weight:700;">${logItem.u}</span></div>
         `;
         logsContainer.appendChild(reviewPillRow);
     });
@@ -662,14 +656,14 @@ function toggleReviewLogsWindow() {
 }
 
 function triggerConfettiVisualExplosion() {
-    const rainbowColors = ["#ff6b6b", "#4d96ff", "#6bc15b", "#ecc94b", "#ff8c00"];
+    const neonColors = ["#7000ff", "#ccff00", "#00f5d4", "#ff5470", "#ff007f"];
     for (let i = 0; i < 40; i++) {
         const particle = document.createElement("div");
         particle.className = "confetti-bit";
         particle.style.left = Math.random() * 100 + "vw";
-        particle.style.backgroundColor = rainbowColors[Math.floor(Math.random() * rainbowColors.length)];
-        particle.style.animationDuration = (Math.random() * 1.3 + 1.2) + "s";
-        particle.style.transform = `scale(${Math.random() * 0.7 + 0.6})`;
+        particle.style.backgroundColor = neonColors[Math.floor(Math.random() * neonColors.length)];
+        particle.style.animationDuration = (Math.random() * 1.2 + 1.2) + "s";
+        particle.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
         document.body.appendChild(particle);
         setTimeout(() => particle.remove(), 2500);
     }
