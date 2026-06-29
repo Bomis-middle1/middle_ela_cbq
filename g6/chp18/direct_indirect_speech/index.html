@@ -263,50 +263,52 @@
             margin-top: 4px;
         }
 
+        /* EXPANDED IMAGE WORKSPACE STRUCTURE */
         .graphic-asset-container {
             width: 100%;
-            max-height: clamp(100px, 22vh, 160px);
+            max-height: clamp(160px, 35vh, 250px); /* Significant increase to make chart visible */
             border: 2px solid var(--dark-ink);
             border-radius: var(--interactive-radius);
             background: #fafcfc;
-            padding: 8px;
+            padding: 4px;
             display: none;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .graphic-asset-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Scales chart to its clear physical limits */
         }
 
+        /* SHRUNK PROMPT SPACE FOR SCANNABILITY */
         .prompt-text-card {
-            font-size: clamp(0.85rem, 2.8vh, 1.05rem);
+            font-size: clamp(0.75rem, 2.3vh, 0.9rem); /* Scaled down text */
             font-weight: 800;
-            line-height: 1.3;
+            line-height: 1.25;
             color: var(--dark-ink);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             white-space: pre-line;
         }
 
         .options-vertical-stack {
             display: flex;
             flex-direction: column;
-            gap: clamp(5px, 1.3vh, 10px);
+            gap: clamp(4px, 1vh, 8px);
             min-height: 0;
             overflow-y: auto;
         }
 
         .interactive-option-node {
-            min-height: clamp(40px, 6vh, 52px);
-            padding: 8px 14px;
+            min-height: clamp(36px, 5.5vh, 48px);
+            padding: 6px 12px;
             background: #ffffff;
             border: 2px solid var(--dark-ink);
             border-radius: var(--interactive-radius);
-            font-size: clamp(0.8rem, 2.2vh, 0.95rem);
+            font-size: clamp(0.75rem, 2vh, 0.9rem);
             font-weight: 700;
             color: var(--dark-ink);
             text-align: left;
@@ -581,7 +583,7 @@
                 "Rohan said that he finishes his project.",
                 "Rohan said that he has finished his project.",
                 "Rohan said that he had finished his project.",
-                "Rohan said that he was finishing his project."
+                "Rohan said that he was optical finishing his project."
             ],
             answer: "Rohan said that he had finished his project.",
             explanation: "Present Perfect 'have finished' shifts back to Past Perfect 'had finished'.",
