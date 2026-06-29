@@ -1,1 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 6 English Mastery: Tense Adventure Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+:root {
+    --primary: #ff6b6b;
+    --primary-hover: #fa5252;
+    --secondary: #4d96ff;
+    --secondary-hover: #3b7ed9;
+    --success: #6bc15b;
+    --success-bg: #f1fbe9;
+    --danger: #ff4a4a;
+    --danger-bg: #ffebeb;
+    --warning: #ffa94d;
+    --bg-gradient: linear-gradient(135deg, #ffeedd 0%, #fff0f5 50%, #e8f0fe 100%);
+    --surface: #ffffff;
+    --text-main: #2d3748;
+    --text-muted: #718096;
+    --border-radius: 24px;
+    --btn-radius: 18px;
+    --shadow-sm: 0 4px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 12px 28px rgba(0,0,0,0.06);
+}
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Comic Sans MS', 'Segoe UI', system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    overflow-x: hidden;
+}
+
+.bg-decorations {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+.floating-sparkle {
+    position: absolute;
+    background: rgba(255, 107, 107, 0.08);
+    border-radius: 50%;
+    animation: floatMove 8s ease-in-out infinite alternate;
+}
+
+@keyframes floatMove {
+    0% { transform: translateY(0px) scale(1) rotate(0deg); }
+    100% { transform: translateY(-30px) scale(1.1) rotate(15deg); }
+}
+
+.screen-container {
+    position: relative;
+    width: 100%;
+    max-width: 660px;
+    background: var(--surface);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    border: 4px solid #ffffff;
+    z-index: 10;
+    display: none;
+    animation: screenReveal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+}
+
+@keyframes screenReveal {
+    0% { opacity: 0; transform: scale(0.95) translateY(15px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+#splashScreen { text-align: center; padding: 50px 20px; }
+.logo-wrapper {
+    position: relative;
+    display: inline-block;
+    animation: zoomSparkle 2.5s ease-in-out infinite alternate;
+}
+.logo-img { width: 150px; height: 150px; object-fit: contain; }
+.loader-track {
+    width: 180px; height: 8px; background: #edf2f7;
+    border-radius: 10px; margin: 30px auto 0 auto; overflow: hidden;
+}
+.loader-run {
+    width: 0%; height: 100%; background: var(--secondary);
+    animation: loadFill 4.9s linear forwards;
+}
+
+@keyframes zoomSparkle {
+    0% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255,215,0,0)); }
+    100% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(255,215,0,0.6)); }
+}
+@keyframes loadFill { to { width: 100%; } }
+
+.badge-header {
+    display: inline-block; background: #fff0e6; color: #ff8c00;
+    padding: 6px 16px; border-radius: 20px; font-weight: 800;
+    font-size: 14px; margin-bottom: 12px; border: 2px dashed #ff8c00;
+}
+h1.game-title { font-size: 2.2rem; color: #1a202c; margin-bottom: 20px; line-height: 1.2; }
+h1.game-title span { color: var(--secondary); }
+
+.hud-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px; }
+.hud-item {
+    background: #f7fafc; padding: 6px 14px; border-radius: 30px;
+    font-size: 14px; font-weight: 700; color: var(--text-main); border: 2px solid #e2e8f0;
+}
+.audio-controls { display: flex; align-items: center; gap: 8px; background: #f7fafc; padding: 4px 12px; border-radius: 30px; border: 2px solid #e2e8f0; }
+.vol-range { width: 55px; accent-color: var(--secondary); cursor: pointer; }
+
+.timer-container { position: relative; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; }
+.timer-svg { transform: rotate(-90deg); width: 44px; height: 44px; }
+.timer-bg { fill: none; stroke: #e2e8f0; stroke-width: 4; }
+.timer-circle {
+    fill: none; stroke: var(--success); stroke-width: 4;
+    stroke-linecap: round; stroke-dasharray: 113; stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear, stroke 0.3s;
+}
+.timer-text { position: absolute; font-size: 13px; font-weight: 800; color: var(--text-main); }
+
+.progress-container { height: 12px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--success)); width: 0%; transition: width 0.3s ease; }
+
+.image-card-box {
+    width: 100%; border-radius: 18px; border: 3px solid #e2e8f0;
+    background: #f8fafc; padding: 6px; display: none; justify-content: center; align-items: center; margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+}
+.image-card-box img { max-width: 100%; height: auto; max-height: 180px; border-radius: 12px; object-fit: contain; }
+
+.quest-wrapper { font-size: 1.25rem; font-weight: 700; color: #1a202c; margin-bottom: 18px; text-align: left; line-height: 1.4; }
+.feedback-ribbon { min-height: 34px; font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; text-align: center; }
+.options-container { display: flex; flex-direction: column; gap: 10px; }
+.opt-card {
+    padding: 14px 18px; border-radius: var(--btn-radius); background: #ffffff;
+    border: 3px solid #e2e8f0; cursor: pointer; text-align: left; font-size: 1.05rem;
+    font-weight: 700; color: var(--text-main); box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease; display: flex; align-items: center;
+}
+.opt-card:hover { border-color: var(--secondary); background: #f0f7ff; transform: translateY(-2px); }
+.opt-card:active { transform: translateY(1px); }
+
+.opt-card.correct-flash { background: var(--success-bg) !important; border-color: var(--success) !important; color: #276749; animation: correctPop 0.4s ease; }
+.opt-card.wrong-flash { background: var(--danger-bg) !important; border-color: var(--danger) !important; color: #9b2c2c; animation: wrongShake 0.4s ease; }
+@keyframes correctPop { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+@keyframes wrongShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.node-lock { pointer-events: none !important; }
+
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+.stat-pill { background: #f7fafc; padding: 10px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 14px; font-weight: 700; }
+.review-window { max-height: 250px; overflow-y: auto; text-align: left; margin: 16px 0; padding-right: 4px; display: none; }
+.review-node { padding: 12px; border-radius: 12px; background: #f7fafc; border-left: 5px solid #cbd5e0; margin-bottom: 10px; font-size: 14px; }
+.review-node.good { border-left-color: var(--success); background: #f6fedb; }
+.review-node.bad { border-left-color: var(--danger); background: #fff5f5; }
+
+.btn-core {
+    background: var(--primary); color: #ffffff; font-size: 1.15rem; font-weight: 800;
+    padding: 14px 32px; border: none; border-radius: var(--btn-radius); cursor: pointer;
+    box-shadow: 0 6px 0 #d94141; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 8px; margin: 8px;
+}
+.btn-core:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 0 #d94141; }
+.btn-core:active { transform: translateY(4px); box-shadow: 0 2px 0 #d94141; }
+.btn-alt { background: var(--secondary); box-shadow: 0 6px 0 #2b6cb0; }
+.btn-alt:hover { background: var(--secondary-hover); box-shadow: 0 8px 0 #2b6cb0; }
+.btn-alt:active { box-shadow: 0 2px 0 #2b6cb0; }
+
+.confetti-bit { position: fixed; width: 10px; height: 10px; top: -10px; border-radius: 2px; z-index: 999; pointer-events: none; animation: fallDown 2.5s linear forwards; }
+@keyframes fallDown { to { transform: translateY(105vh) rotate(360deg); opacity: 0; } }
+
+@media(max-width: 600px) {
+    body { padding: 8px; }
+    .screen-container { padding: 18px 14px; border-radius: 20px; }
+    h1.game-title { font-size: 1.65rem; }
+    .quest-wrapper { font-size: 1.1rem; }
+    .opt-card { font-size: 0.95rem; padding: 12px 14px; }
+    .btn-core { width: 100%; justify-content: center; margin: 6px 0; }
+    .stats-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-decorations">
+    <div class="floating-sparkle" style="width: 80px; height: 80px; top: 10%; left: -30px;"></div>
+    <div class="floating-sparkle" style="width: 120px; height: 120px; bottom: 5%; right: -40px; animation-delay: -2s;"></div>
+</div>
+
+<div id="splashScreen" class="screen-container" style="display: block;">
+    <div class="logo-wrapper">
+        <img class="logo-img" src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.opacity='0.2'">
+    </div>
+    <h2 style="font-size: 1.4rem; font-weight: 800; color: #4a5568; margin-top: 10px;">INNOVINE PORTAL</h2>
+    <div class="loader-track">
+        <div class="loader-run"></div>
+    </div>
+</div>
+
+<div id="homeScreen" class="screen-container">
+    <div class="badge-header">Grade 6 English</div>
+    <h1 class="game-title">Chapter 16: <span>Tenses Journey</span></h1>
+    <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 28px;">Master simple, continuous, and perfect tenses accurately!</p>
+    <button class="btn-core" onclick="launchGamePlayLoop()">Start Adventure 🚀</button>
+</div>
+
+<div id="gameScreen" class="screen-container">
+    <div class="hud-bar">
+        <div class="hud-item" id="hudProgressLabel">Question 1 / 15</div>
+        <div class="timer-container">
+            <svg class="timer-svg">
+                <circle class="timer-bg" cx="22" cy="22" r="18"></circle>
+                <circle class="timer-circle" id="timerCircleIndicator" cx="22" cy="22" r="18"></circle>
+            </svg>
+            <span class="timer-text" id="countdownLabel">20</span>
+        </div>
+        <div class="hud-item" id="hudScoreLabel">⭐ 0</div>
+        <div class="audio-controls">
+            <span id="muteBtn" style="cursor:pointer; font-size:15px;" onclick="toggleSystemMute()">🔊</span>
+            <input type="range" id="volumeControl" class="vol-range" min="0" max="1" step="0.1" value="0.7" oninput="updateSystemVolume(this.value)">
+        </div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-bar-fill" id="statusBarFill"></div>
+    </div>
+
+    <div id="pictureAssetBox" class="image-card-box"></div>
+    <div class="quest-wrapper" id="questionTextBox">Loading your grammar objective...</div>
+    <div class="feedback-ribbon" id="feedbackNotificationBox"></div>
+    <div class="options-container" id="optionsMatrixGrid"></div>
+</div>
+
+<div id="scoreScreen" class="screen-container">
+    <div class="trophy-bounce">🏆</div>
+    <h2 style="font-size: 1.8rem; font-weight: 800; color: #1a202c;" id="badgeLabelField">Grammar Champion</h2>
+    <div class="big-score" id="pointsLabelField">0 / 150</div>
+    <div class="stars-group" id="starsLabelField">⭐⭐⭐</div>
+
+    <div class="stats-grid">
+        <div class="stat-pill" id="statCorrect">Correct: 0</div>
+        <div class="stat-pill" id="statAccuracy">Accuracy: 0%</div>
+        <div class="stat-pill" id="statTime">Time Taken: 0s</div>
+        <div class="stat-pill" id="statStatus">Status: Finished</div>
+    </div>
+    
+    <div id="reviewLogsContainer" class="review-window"></div>
+
+    <button class="btn-core" onclick="relaunchActiveGameInstance()">Play Again 🔄</button>
+    <button class="btn-core btn-alt" id="reviewToggleBtn" onclick="toggleReviewLogsWindow()">Review Answers 🔍</button>
+</div>
+
+<script>
+const questionsDataset = [
+    {
+        q: "You are writing a 'Meet the Student' profile for your school magazine. Which sentence correctly describes your regular daily habit?",
+        options: ["I am going to school every morning.", "I go to school every morning.", "I have gone to school every morning.", "I will going to school every morning."],
+        answer: "I go to school every morning.",
+        hint: "Simple Present is used for habitual or repeated actions."
+    },
+    {
+        q: "You are on a phone call with your mother. She asks what you are doing right now. Which response correctly describes an ongoing action?",
+        options: ["I study for my exam.", "I am studying for my exam.", "I have studied for my exam.", "I will study for my exam."],
+        answer: "I am studying for my exam.",
+        hint: "am/is/are + -ing shows an action happening at this exact moment (Present Continuous)."
+    },
+    {
+        q: "You are explaining to your friend why you didn't hear the doorbell yesterday evening. 'I ___ (sleep) when the bell rang.' Which tense correctly fills the blank?",
+        options: ["am sleeping", "was sleeping", "will be sleeping", "sleep"],
+        answer: "was sleeping",
+        hint: "Past Continuous represents a background action interrupted by a shorter past event ('bell rang')."
+    },
+    {
+        q: "You just finished lunch and your friend offers you a sandwich. What is the most natural way to say you are already full right now as a result of eating?",
+        options: ["I ate my lunch.", "I have eaten my lunch.", "I had eaten my lunch.", "I will have eaten my lunch."],
+        answer: "I have eaten my lunch.",
+        hint: "Present Perfect marks a just-completed action with a clear present result (you are full now)."
+    },
+    {
+        q: "You want to tell your teacher that your project will be completely done before Friday's deadline. Which sentence expresses this correctly?",
+        options: ["I will finish the project by Friday.", "I will have finished the project by Friday.", "I am finishing the project by Friday.", "I have finished the project by Friday."],
+        answer: "I will have finished the project by Friday.",
+        hint: "Future Perfect targets an action that will be completed before a specific future point."
+    },
+    {
+        q: "Which set of verb forms correctly fills all four entries in order for the student's diary?",
+        options: [
+            "write / played / visit / will complete",
+            "am writing / was playing / visit / will have completed",
+            "am writing / was playing / am visiting / will complete",
+            "write / was playing / visited / will have completed"
+        ],
+        answer: "am writing / was playing / visit / will have completed",
+        image: "picture1.png",
+        hint: "am writing = Continuous now; was playing = background past action; visit = habit; will have completed = completed before next Monday."
+    },
+    {
+        q: "Identify the tense used in each highlighted sentence from the sports commentary transcript:",
+        options: ["Simple Present / Simple Past", "Present Continuous / Present Perfect", "Present Perfect / Past Perfect", "Future Continuous / Simple Present"],
+        answer: "Present Continuous / Present Perfect",
+        image: "picture2.png",
+        hint: "'Is crossing' shows an ongoing action now; 'has won' marks a completed action with present importance."
+    },
+    {
+        q: "You arrive at the station late and the train is already gone. Which sentence correctly uses Past Perfect to show which action happened first?",
+        options: ["The train left before I arrived.", "The train had left before I arrived.", "The train was leaving before I arrived.", "The train has left before I arrived."],
+        answer: "The train had left before I arrived.",
+        hint: "Past Perfect ('had left') marks the earlier of two past actions — the train left before you got there."
+    },
+    {
+        q: "You are writing a letter to a friend: 'I ___ (live) in Mumbai since 2015' — you still live there today. Which tense correctly fills the blank?",
+        options: ["lived", "am living", "have lived", "will live"],
+        answer: "have lived",
+        hint: "Present Perfect represents an action that started in the past and continues into the present moment."
+    },
+    {
+        q: "Sort these sentences into two groups — Present Perfect and Past Perfect:\nP: 'She has submitted her assignment.' Q: 'He had already eaten when we arrived.' R: 'I have never visited Jaipur.' S: 'They had finished the test before the bell rang.'",
+        options: [
+            "Present Perfect: P, Q — Past Perfect: R, S",
+            "Present Perfect: Q, S — Past Perfect: P, R",
+            "Present Perfect: P, R — Past Perfect: Q, S",
+            "Present Perfect: R, S — Past Perfect: P, Q"
+        ],
+        answer: "Present Perfect: P, R — Past Perfect: Q, S",
+        hint: "P & R connect past events to the present (has/have); Q & S showcase the earlier of two past events (had)."
+    },
+    {
+        q: "Match each sentence with the situation it represents:\n1. 'India won independence in 1947.'\n2. 'She was reading when the lights went out.'\n3. 'They had left the building before the fire started.'\n4. 'He scored three goals in the final match.'",
+        options: [
+            "1=Past Continuous, 2=Simple Past, 3=Past Perfect, 4=Past Continuous",
+            "1=Simple Past, 2=Past Continuous, 3=Past Perfect, 4=Simple Past",
+            "1=Past Perfect, 2=Simple Past, 3=Past Continuous, 4=Past Perfect",
+            "1=Simple Past, 2=Past Perfect, 3=Past Continuous, 4=Simple Past"
+        ],
+        answer: "1=Simple Past, 2=Past Continuous, 3=Past Perfect, 4=Simple Past",
+        hint: "won/scored are completed past facts; was reading is a continuous past action; had left is an earlier past action."
+    },
+    {
+        q: "Three of these sentences use tenses correctly. One does NOT. Which is the odd one out?",
+        options: ["This time tomorrow, I will be flying to London.", "She has lived here since 2018.", "Yesterday, I have gone to the zoo.", "I was sleeping when the doorbell rang."],
+        answer: "Yesterday, I have gone to the zoo.",
+        hint: "'Yesterday' is a specific past point marker and must use Simple Past ('went'), not Present Perfect."
+    },
+    {
+        q: "A student wrote this paragraph. Which sentence has a tense error?\n'Yesterday, I have gone to the market. I was buying vegetables when I met my teacher. She has taught at our school since 2010.'",
+        options: [
+            "Sentence 1 — 'have gone' should be 'went' because 'yesterday' is a specific past time marker",
+            "Sentence 2 — 'was buying' should be 'bought' because it is a completed action",
+            "Sentence 3 — 'has taught' should be 'taught' because the teacher no longer teaches",
+            "There are no errors — all three sentences are correct"
+        ],
+        answer: "Sentence 1 — 'have gone' should be 'went' because 'yesterday' is a specific past time marker",
+        hint: "Specific historic calendar times like 'yesterday' cannot match up with Present Perfect elements."
+    },
+    {
+        q: "A student changes 'I ate my lunch' to 'I have eaten my lunch' when their friend offers them food. What is the effect of this tense change?",
+        options: [
+            "The meaning changes completely — the student is now hungrier",
+            "The Simple Past only reports a past fact; the Present Perfect connects the past action to the present situation",
+            "Both sentences mean exactly the same thing — the tense change makes no difference",
+            "The sentence becomes grammatically incorrect"
+        ],
+        answer: "The Simple Past only reports a past fact; the Present Perfect connects the past action to the present situation",
+        hint: "Present Perfect bridges the gap between past completion and your current present state outcome."
+    },
+    {
+        q: "Assertion: We use the Present Continuous for actions happening right now. Reason: The helping verb (am/is/are) combined with the '-ing' form shows that an action is still in progress.",
+        options: [
+            "Both are correct; the reason correctly explains the assertion.",
+            "Both are correct; but the reason does NOT explain the assertion.",
+            "The assertion is correct; the reason is wrong.",
+            "Both are wrong."
+        ],
+        answer: "Both are correct; the reason correctly explains the assertion.",
+        hint: "The structure am/is/are + -ing perfectly signals to listeners that an activity is actively ongoing."
+    }
+];
+
+const audioAssetRegistry = {
+    click: new Audio('assets/correct.mp3'),
+    correct: new Audio('assets/correct.mp3'),
+    wrong: new Audio('assets/wrong.mp3'),
+    tick: new Audio('assets/correct.mp3'),
+    timeout: new Audio('assets/wrong.mp3'),
+    victory: new Audio('assets/clapping.mp3')
+};
+
+let globalAppVolumeSetting = 0.7;
+let isSystemAudioMuted = false;
+
+function loadPersistentAudioSettings() {
+    const cachedVol = localStorage.getItem('edu_tense_vol');
+    const cachedMute = localStorage.getItem('edu_tense_mute');
+    if(cachedVol !== null) {
+        globalAppVolumeSetting = parseFloat(cachedVol);
+        document.getElementById("volumeControl").value = globalAppVolumeSetting;
+    }
+    if(cachedMute !== null) {
+        isSystemAudioMuted = (cachedMute === 'true');
+        document.getElementById("muteBtn").innerText = isSystemAudioMuted ? "🔇" : "🔊";
+    }
+}
+
+function updateSystemVolume(volumeValue) {
+    globalAppVolumeSetting = parseFloat(volumeValue);
+    localStorage.setItem('edu_tense_vol', globalAppVolumeSetting);
+    if(globalAppVolumeSetting > 0 && isSystemAudioMuted) toggleSystemMute();
+}
+
+function toggleSystemMute() {
+    isSystemAudioMuted = !isSystemAudioMuted;
+    localStorage.setItem('edu_tense_mute', isSystemAudioMuted);
+    document.getElementById("muteBtn").innerText = isSystemAudioMuted ? "🔇" : "🔊";
+}
+
+function fireAudioEffect(soundEffectId) {
+    if(isSystemAudioMuted) return;
+    const soundTrackInstance = audioAssetRegistry[soundEffectId];
+    if(soundTrackInstance) {
+        soundTrackInstance.volume = globalAppVolumeSetting;
+        soundTrackInstance.currentTime = 0;
+        soundTrackInstance.play().catch(() => {});
+    }
+}
+
+let randomizedQuestionsPool = [];
+let currentQuestionIndex = 0;
+let userAccumulatedScore = 0;
+let totalCorrectAnswersCount = 0;
+let matchTimerCountdownRef = null;
+let currentQuestionTimeRemaining = 20;
+let absoluteGameStartTimeStamp = null;
+let historicalSessionLogs = [];
+
+const encouragementCorrectPhrases = ["Excellent!", "Amazing!", "Fantastic!", "Well Done!", "Great Job!"];
+const encouragementWrongPhrases = ["Nice Try!", "Keep Learning!", "Almost There!", "Don't Give Up!"];
+
+function changeActiveScreen(currentScreenId, targetScreenId) {
+    document.getElementById(currentScreenId).style.display = "none";
+    document.getElementById(targetScreenId).style.display = "block";
+}
+
+function shuffleFisherYatesArray(arrayInstance) {
+    for (let i = arrayInstance.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arrayInstance[i], arrayInstance[j]] = [arrayInstance[j], arrayInstance[i]];
+    }
+    return arrayInstance;
+}
+
+function relaunchActiveGameInstance() {
+    fireAudioEffect('click');
+    document.getElementById("reviewLogsContainer").style.display = "none";
+    document.getElementById("reviewToggleBtn").innerText = "Review Answers 🔍";
+    changeActiveScreen("scoreScreen", "homeScreen");
+}
+
+function launchGamePlayLoop() {
+    randomizedQuestionsPool = shuffleFisherYatesArray([...questionsDataset]).map(item => {
+        return { ...item, options: shuffleFisherYatesArray([...item.options]) };
+    });
+    currentQuestionIndex = 0;
+    userAccumulatedScore = 0;
+    totalCorrectAnswersCount = 0;
+    historicalSessionLogs = [];
+    absoluteGameStartTimeStamp = Date.now();
+    
+    changeActiveScreen("homeScreen", "gameScreen");
+    presentQuestionTemplateNode();
+}
+
+function presentQuestionTemplateNode() {
+    clearInterval(matchTimerCountdownRef);
+    const activeQuestionContext = randomizedQuestionsPool[currentQuestionIndex];
+    
+    document.getElementById("hudProgressLabel").innerText = `Question ${currentQuestionIndex + 1} / ${randomizedQuestionsPool.length}`;
+    document.getElementById("statusBarFill").style.width = ((currentQuestionIndex) / randomizedQuestionsPool.length) * 100 + "%";
+    document.getElementById("hudScoreLabel").innerText = `⭐ ${userAccumulatedScore}`;
+    document.getElementById("questionTextBox").innerText = activeQuestionContext.q;
+    
+    const contextBanner = document.getElementById("feedbackNotificationBox");
+    contextBanner.innerHTML = `<span style="color:var(--text-muted)">⏳ Analyze options...</span>`;
+
+    const graphicContainerNode = document.getElementById("pictureAssetBox");
+    if(activeQuestionContext.image) {
+        graphicContainerNode.innerHTML = `<img src="assets/${activeQuestionContext.image}" alt="Question Context Asset">`;
+        graphicContainerNode.style.display = "flex";
+    } else {
+        graphicContainerNode.style.display = "none";
+        graphicContainerNode.innerHTML = "";
+    }
+
+    const optionsGridContainer = document.getElementById("optionsMatrixGrid");
+    optionsGridContainer.innerHTML = "";
+
+    activeQuestionContext.options.forEach(optionTextString => {
+        const optionCardElement = document.createElement("div");
+        optionCardElement.className = "opt-card";
+        optionCardElement.innerText = optionTextString;
+        optionCardElement.onclick = () => validateSelectedNodeCard(optionCardElement, optionTextString, activeQuestionContext);
+        optionsGridContainer.appendChild(optionCardElement);
+    });
+
+    initiateQuestionCountdownTimer(activeQuestionContext);
+}
+
+function initiateQuestionCountdownTimer(activeContextObject) {
+    currentQuestionTimeRemaining = 20;
+    const countdownTextNode = document.getElementById("countdownLabel");
+    const strokeCircleNode = document.getElementById("timerCircleIndicator");
+    
+    countdownTextNode.innerText = currentQuestionTimeRemaining;
+    strokeCircleNode.style.strokeDashoffset = "0";
+    strokeCircleNode.style.stroke = "var(--success)";
+
+    matchTimerCountdownRef = setInterval(() => {
+        currentQuestionTimeRemaining--;
+        countdownTextNode.innerText = currentQuestionTimeRemaining;
+        
+        const calculationOffset = 113 - (113 * currentQuestionTimeRemaining) / 20;
+        strokeCircleNode.style.strokeDashoffset = calculationOffset;
+
+        if(currentQuestionTimeRemaining <= 5) {
+            strokeCircleNode.style.stroke = "var(--danger)";
+            fireAudioEffect('tick');
+        } else if(currentQuestionTimeRemaining <= 10) {
+            strokeCircleNode.style.stroke = "var(--warning)";
+        }
+
+        if(currentQuestionTimeRemaining <= 0) {
+            clearInterval(matchTimerCountdownRef);
+            handleQuestionTimeoutTransition(activeContextObject);
+        }
+    }, 1000);
+}
+
+function handleQuestionTimeoutTransition(contextObject) {
+    const alternativeOptionNodes = document.querySelectorAll(".opt-card");
+    alternativeOptionNodes.forEach(node => {
+        node.classList.add("node-lock");
+        if(node.innerText === contextObject.answer) node.classList.add("wrong-flash");
+    });
+    
+    fireAudioEffect('timeout');
+    document.getElementById("feedbackNotificationBox").innerHTML = `<span style="color:var(--danger)">⏰ Timeout! ${contextObject.hint}</span>`;
+    historicalSessionLogs.push({ q: contextObject.q, c: contextObject.answer, u: "[Timeout]", status: false });
+    executeNextStepTransitionDelay();
+}
+
+function validateSelectedNodeCard(clickedDOMNode, evaluatedValueString, contextObject) {
+    clearInterval(matchTimerCountdownRef);
+    const combinedOptionsList = document.querySelectorAll(".opt-card");
+    combinedOptionsList.forEach(node => node.classList.add("node-lock"));
+    
+    const bannerBoxNode = document.getElementById("feedbackNotificationBox");
+
+    if(evaluatedValueString === contextObject.answer) {
+        clickedDOMNode.classList.add("correct-flash");
+        userAccumulatedScore += 10;
+        totalCorrectAnswersCount++;
+        fireAudioEffect('correct');
+        triggerConfettiVisualExplosion();
+        
+        const randomGreeting = encouragementCorrectPhrases[Math.floor(Math.random() * encouragementCorrectPhrases.length)];
+        bannerBoxNode.innerHTML = `<span style="color:var(--success)">🎉 ${randomGreeting} ${contextObject.hint}</span>`;
+        historicalSessionLogs.push({ q: contextObject.q, c: contextObject.answer, u: evaluatedValueString, status: true });
+    } else {
+        clickedDOMNode.classList.add("wrong-flash");
+        fireAudioEffect('wrong');
+        
+        combinedOptionsList.forEach(node => {
+            if(node.innerText === contextObject.answer) node.classList.add("correct-flash");
+        });
+        
+        const randomEncouragement = encouragementWrongPhrases[Math.floor(Math.random() * encouragementWrongPhrases.length)];
+        bannerBoxNode.innerHTML = `<span style="color:var(--danger)">💡 ${randomEncouragement} ${contextObject.hint}</span>`;
+        historicalSessionLogs.push({ q: contextObject.q, c: contextObject.answer, u: evaluatedValueString, status: false });
+    }
+    executeNextStepTransitionDelay();
+}
+
+function executeNextStepTransitionDelay() {
+    setTimeout(() => {
+        currentQuestionIndex++;
+        if(currentQuestionIndex < randomizedQuestionsPool.length) {
+            presentQuestionTemplateNode();
+        } else {
+            generateFinalMetricsDashboard();
+        }
+    }, 3800);
+}
+
+function generateFinalMetricsDashboard() {
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("scoreScreen").style.display = "block";
+    
+    const sessionDurationSeconds = Math.round((Date.now() - absoluteGameStartTimeStamp) / 1000);
+    const overallQuestionsCount = randomizedQuestionsPool.length;
+    const finalCalculatedPercentage = Math.round((totalCorrectAnswersCount / overallQuestionsCount) * 100);
+    
+    document.getElementById("pointsLabelField").innerText = `${userAccumulatedScore} / ${overallQuestionsCount * 10}`;
+    document.getElementById("statCorrect").innerText = `Correct: ${totalCorrectAnswersCount} / ${overallQuestionsCount}`;
+    document.getElementById("statAccuracy").innerText = `Accuracy: ${finalCalculatedPercentage}%`;
+    document.getElementById("statTime").innerText = `Time Taken: ${sessionDurationSeconds}s`;
+
+    let badgeTierString = "Grammar Beginner 🌟";
+    let starsSymbolString = "⭐☆☆";
+
+    if(finalCalculatedPercentage >= 85) {
+        badgeTierString = "Grammar Champion 🏆";
+        starsSymbolString = "⭐⭐⭐";
+        fireAudioEffect('victory');
+        triggerConfettiVisualExplosion();
+    } else if(finalCalculatedPercentage >= 60) {
+        badgeTierString = "Grammar Explorer 🚀";
+        starsSymbolString = "⭐⭐☆";
+        fireAudioEffect('victory');
+    }
+
+    document.getElementById("badgeLabelField").innerText = badgeTierString;
+    document.getElementById("starsLabelField").innerText = starsSymbolString;
+
+    const logsContainer = document.getElementById("reviewLogsContainer");
+    logsContainer.innerHTML = "";
+    
+    historicalSessionLogs.forEach((logItem, idx) => {
+        const reviewPillRow = document.createElement("div");
+        reviewPillRow.className = `review-node ${logItem.status ? 'good' : 'bad'}`;
+        reviewPillRow.innerHTML = `
+            <div style="font-weight:800; margin-bottom:4px;">Q${idx + 1}: ${logItem.q}</div>
+            <div>🟢 Correct Answer: <span style="color:#276749; font-weight:700;">${logItem.c}</span></div>
+            <div>👤 Your Answer: <span style="color:${logItem.status ? '#276749' : '#9b2c2c'}; font-weight:700;">${logItem.u}</span></div>
+        `;
+        logsContainer.appendChild(reviewPillRow);
+    });
+}
+
+function toggleReviewLogsWindow() {
+    fireAudioEffect('click');
+    const logsPanelNode = document.getElementById("reviewLogsContainer");
+    const reviewToggleActionBtn = document.getElementById("reviewToggleBtn");
+    
+    if(logsPanelNode.style.display === "none" || !logsPanelNode.style.display) {
+        logsPanelNode.style.display = "block";
+        reviewToggleActionBtn.innerText = "Hide Answers ✖";
+        logsPanelNode.scrollIntoView({ behavior: 'smooth' });
+    } else {
+        logsPanelNode.style.display = "none";
+        reviewToggleActionBtn.innerText = "Review Answers 🔍";
+    }
+}
+
+function triggerConfettiVisualExplosion() {
+    const rainbowColors = ["#ff6b6b", "#4d96ff", "#6bc15b", "#ecc94b", "#ff8c00"];
+    for (let i = 0; i < 40; i++) {
+        const particle = document.createElement("div");
+        particle.className = "confetti-bit";
+        particle.style.left = Math.random() * 100 + "vw";
+        particle.style.backgroundColor = rainbowColors[Math.floor(Math.random() * rainbowColors.length)];
+        particle.style.animationDuration = (Math.random() * 1.3 + 1.2) + "s";
+        particle.style.transform = `scale(${Math.random() * 0.7 + 0.6})`;
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 2500);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    loadPersistentAudioSettings();
+    setTimeout(() => { changeActiveScreen("splashScreen", "homeScreen"); }, 5000);
+});
+</script>
+</body>
+</html>
