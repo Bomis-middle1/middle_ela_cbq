@@ -1,1 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grade 6 English Mastery App - Chapter 20: Phrasal Verbs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <style>
+        :root {
+            --primary-neon: #ff6b6b;
+            --primary-dark: #4ecdc4;
+            --accent-citrus: #ffe66d;
+            --accent-citrus-dark: #f7d01e;
+            --success-teal: #1a535c;
+            --success-bg: #e8f8f5;
+            --danger-coral: #ff5470;
+            --danger-bg: #fff0f2;
+            --dark-ink: #2f2fa2;
+            --light-cream: #f7fff7;
+            --surface-white: #ffffff;
+            --card-radius: 24px;
+            --interactive-radius: 16px;
+            --neo-shadow: 0 8px 0px var(--dark-ink);
+            --active-shadow: 0 2px 0px var(--dark-ink);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background-color: #f0f7f4;
+            background-image: radial-gradient(var(--primary-dark) 0.6px, transparent 0.6px), radial-gradient(var(--primary-dark) 0.6px, #f0f7f4 0.6px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+            color: var(--dark-ink);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: clamp(6px, 2vw, 16px);
+            overflow: hidden;
+        }
+
+        .app-window-frame {
+            position: relative;
+            width: 100%;
+            max-width: 560px;
+            height: min(820px, 96vh);
+            background: var(--surface-white);
+            border-radius: var(--card-radius);
+            border: 5px solid var(--dark-ink);
+            box-shadow: var(--neo-shadow);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .screen-view {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: clamp(14px, 4vw, 28px);
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .active-view {
+            display: flex !important;
+        }
+
+        #splashScreen {
+            justify-content: center;
+            align-items: center;
+            background: var(--light-cream);
+        }
+
+        .splash-logo-container {
+            width: clamp(130px, 30vw, 200px);
+            height: clamp(130px, 30vw, 200px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: introPopGlow 5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .splash-logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes introPopGlow {
+            0% { transform: scale(0.5); opacity: 0; }
+            12% { transform: scale(1.06); opacity: 1; }
+            88% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.92); opacity: 0; }
+        }
+
+        #startScreen {
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .badge-marker {
+            background: var(--accent-citrus);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 14px;
+            border: 3px solid var(--dark-ink);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            transform: rotate(-1.5deg);
+            display: inline-block;
+        }
+
+        .app-title-text {
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            font-weight: 900;
+            text-align: center;
+            line-height: 1.2;
+            margin-top: 8px;
+        }
+
+        .app-title-text span {
+            color: var(--primary-neon);
+            text-decoration: underline var(--accent-citrus) 6px;
+        }
+
+        .audio-dashboard-deck {
+            background: var(--light-cream);
+            border: 3px solid var(--dark-ink);
+            border-radius: var(--interactive-radius);
+            padding: 14px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 12px 0;
+        }
+
+        .control-switch-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 14px;
+            border-top: 3px dashed #ccd9d5;
+            padding-top: 12px;
+        }
+
+        .native-slider {
+            flex: 1;
+            accent-color: var(--primary-neon);
+            height: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-toggle {
+            width: 24px;
+            height: 24px;
+            accent-color: var(--primary-dark);
+            cursor: pointer;
+        }
+
+        .hud-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hud-pill {
+            background: #ffffff;
+            border: 3px solid var(--dark-ink);
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .progress-track {
+            height: 12px;
+            background: #e2edea;
+            border: 3px solid var(--dark-ink);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-neon));
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .interactive-stage-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 0;
+            margin-top: 6px;
+        }
+
+        .graphic-asset-container {
+            width: 100%;
+            max-height: clamp(170px, 36vh, 260px);
+            border: 3px solid var(--dark-ink);
+            border-radius: var(--interactive-radius);
+            background: #ffffff;
+            padding: 8px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 12px;
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.06);
+        }
+
+        .graphic-asset-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .prompt-text-card {
+            font-size: clamp(0.9rem, 2.6vh, 1.15rem);
+            font-weight: 800;
+            line-height: 1.4;
+            color: var(--dark-ink);
+            margin-bottom: 12px;
+            white-space: pre-line;
+        }
+
+        .options-vertical-stack {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 1.3vh, 12px);
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .interactive-option-node {
+            min-height: clamp(44px, 6.5vh, 58px);
+            padding: 10px 16px;
+            background: #ffffff;
+            border: 3px solid var(--dark-ink);
+            border-radius: var(--interactive-radius);
+            font-size: clamp(0.82rem, 2.3vh, 1.05rem);
+            font-weight: 700;
+            color: var(--dark-ink);
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 5px 0 var(--dark-ink);
+            transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.1s ease;
+        }
+
+        .interactive-option-node:hover {
+            background: #f7fff7;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 var(--dark-ink);
+        }
+
+        .interactive-option-node:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 var(--dark-ink);
+        }
+
+        .feedback-modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(47, 47, 162, 0.4);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .feedback-alert-card {
+            background: #ffffff;
+            border: 4px solid var(--dark-ink);
+            border-radius: var(--card-radius);
+            box-shadow: 0 8px 0 var(--dark-ink);
+            padding: 24px;
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            animation: modalSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .feedback-status-title {
+            font-size: 26px;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .feedback-explanation-body {
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #222;
+            line-height: 1.5;
+            background: var(--light-cream);
+            padding: 14px;
+            border-radius: 12px;
+            border: 3px dashed #cbd5d2;
+            max-height: 160px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .state-node-correct {
+            background: var(--success-bg) !important;
+            border-color: var(--primary-dark) !important;
+            color: var(--success-teal) !important;
+            font-weight: 800;
+            box-shadow: 0 4px 0 var(--primary-dark) !important;
+            animation: nodeGlowPulse 0.8s infinite alternate ease-in-out;
+        }
+
+        @keyframes nodeGlowPulse {
+            from { filter: drop-shadow(0 0 2px var(--primary-dark)); }
+            to { filter: drop-shadow(0 0 10px var(--primary-dark)); }
+        }
+
+        .state-node-wrong {
+            background: var(--danger-bg) !important;
+            border-color: var(--danger-coral) !important;
+            color: #b31d35 !important;
+            box-shadow: 0 4px 0 var(--danger-coral) !important;
+            animation: systemNodeShake 0.4s ease;
+        }
+
+        @keyframes systemNodeShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        #summaryScreen {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .dashboard-trophy-graphic {
+            font-size: clamp(3.8rem, 10vh, 5rem);
+            animation: trophyFloat 3.5s ease-in-out infinite;
+        }
+
+        @keyframes trophyFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(4deg); }
+        }
+
+        .metrics-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            width: 100%;
+            max-width: 420px;
+            margin: 12px 0;
+        }
+
+        .metric-data-card {
+            background: var(--light-cream);
+            border: 3px solid var(--dark-ink);
+            border-radius: 14px;
+            padding: 14px;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 0 var(--dark-ink);
+        }
+
+        .metric-data-card div:last-child {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--primary-neon);
+            margin-top: 4px;
+        }
+
+        .btn-universal-trigger {
+            background: var(--accent-citrus);
+            color: var(--dark-ink);
+            font-size: 18px;
+            font-weight: 900;
+            padding: 14px 36px;
+            border: 3px solid var(--dark-ink);
+            border-radius: var(--interactive-radius);
+            cursor: pointer;
+            box-shadow: 0 5px 0 var(--dark-ink);
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.05s ease, box-shadow 0.05s ease;
+        }
+
+        .btn-universal-trigger:hover {
+            background: var(--accent-citrus-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 var(--dark-ink);
+        }
+
+        .btn-universal-trigger:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 var(--dark-ink);
+        }
+
+        .canvas-confetti-particle {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            z-index: 1000;
+            pointer-events: none;
+            animation: fallAnimation 2.8s linear forwards;
+        }
+
+        @keyframes fallAnimation {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-window-frame">
+    
+    <div id="feedbackModalDeck" class="feedback-modal-overlay">
+        <div class="feedback-alert-card">
+            <div id="modalStatusTitle" class="feedback-status-title">✅ Correct!</div>
+            <div id="modalExplanationBody" class="feedback-explanation-body">Explanation data loading...</div>
+        </div>
+    </div>
+
+    <div id="splashScreen" class="screen-view active-view">
+        <div class="splash-logo-container">
+            <img src="assets/innovine-logo.png" alt="Innovine Educational Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%234ecdc4\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'white\' font-weight=\'bold\' font-family=\'sans-serif\'>Innovine</text></svg>';">
+        </div>
+    </div>
+
+    <div id="startScreen" class="screen-view">
+        <div style="text-align: center;">
+            <div class="badge-marker">Chapter 20</div>
+            <h1 class="app-title-text">Phrasal Verbs</h1>
+            <p style="font-size: 15px; font-weight: 700; color: #444; margin-top: 8px; padding: 0 12px;">15 Competency-Based Challenges</p>
+        </div>
+
+        <div style="width:100%; display:flex; justify-content:center;">
+            <button class="btn-universal-trigger" style="font-size:22px; padding: 18px 46px;" onclick="playAudio('click'); commitRegistrationAndLaunchGame()">▶ Start Game</button>
+        </div>
+
+        <div class="audio-dashboard-deck">
+            <div class="control-switch-row">
+                <span>🔊 Sound Effects</span>
+                <input type="checkbox" id="sfxToggle" class="checkbox-toggle" checked onchange="playAudio('click')">
+            </div>
+            <div class="slider-wrapper">
+                <span>Volume</span>
+                <input type="range" id="masterVolumeSlider" class="native-slider" min="0" max="1" step="0.05" value="0.6" oninput="handleMasterVolumeUpdate(this.value)">
+                <span id="volumePercentageLabel">60%</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameplayScreen" class="screen-view">
+        <div class="hud-header">
+            <div class="hud-pill" id="hudProgressCounter">Question: 0/15</div>
+            <div class="hud-pill" style="background: #fffde6;"><span id="hudStarsCounter">⭐ 0</span></div>
+        </div>
+
+        <div class="progress-track">
+            <div id="liveProgressBarFill" class="progress-fill-bar"></div>
+        </div>
+
+        <div class="interactive-stage-area">
+            <div id="stageGraphicWrapper" class="graphic-asset-container"></div>
+            <div id="stagePromptCard" class="prompt-text-card">Loading phrasal verb scenario...</div>
+            <div id="stageOptionsStack" class="options-vertical-stack"></div>
+        </div>
+    </div>
+
+    <div id="summaryScreen" class="screen-view">
+        <div>
+            <div class="dashboard-trophy-graphic">🎉</div>
+            <h1 style="font-size: 28px; font-weight: 900;" id="summaryHeaderName">Congratulations!</h1>
+            <div class="badge-marker" id="performanceBadgeLabel" style="transform:none; margin-top: 8px; font-size:15px;">Phrasal Verb Ranger</div>
+        </div>
+
+        <div class="metrics-grid-layout">
+            <div class="metric-data-card">
+                <div>Final Score</div>
+                <div id="summaryScoreValue">0</div>
+            </div>
+            <div class="metric-data-card">
+                <div>Percentage</div>
+                <div id="summaryAccuracyValue">0%</div>
+            </div>
+            <div class="metric-data-card">
+                <div>Correct</div>
+                <div id="summaryCorrectValue">0</div>
+            </div>
+            <div class="metric-data-card">
+                <div>Incorrect</div>
+                <div id="summaryIncorrectValue">0</div>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:14px; justify-content:center; width:100%;">
+            <button class="btn-universal-trigger" onclick="playAudio('click'); commandRestartGameLoop()">🏠 Home</button>
+            <button class="btn-universal-trigger" style="background: var(--primary-dark);" onclick="playAudio('click'); commitRegistrationAndLaunchGame()">🔄 Play Again</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const educationalChapterQuizData = [
+        {
+            type: "Scenario",
+            q: "You are getting ready for school on a cold morning. Your mother says: \"It is cold outside, so ___ your jacket before you leave.\" Which phrasal verb correctly fills the blank?",
+            options: ["put off", "put on", "put out", "put up"],
+            answer: "put on",
+            explanation: "'put on' = to wear clothing — logical in cold weather context"
+        },
+        {
+            type: "Scenario",
+            q: "You are writing a story about an airport. You describe the moment the plane leaves the ground and rises into the sky. Which phrasal verb best fits?",
+            options: ["take in", "take off", "take out", "take after"],
+            answer: "take off",
+            explanation: "'take off' = moment a plane leaves the ground and becomes airborne"
+        },
+        {
+            type: "Scenario",
+            q: "You have been working on a very difficult puzzle for an hour. You are frustrated. Your friend encourages you: \"Don't ___ ! You are almost there!\" Which phrasal verb fits?",
+            options: ["give in", "give up", "give out", "give away"],
+            answer: "give up",
+            explanation: "'give up' = to stop trying — friend is encouraging you not to quit"
+        },
+        {
+            type: "Scenario",
+            q: "You are taking care of your younger sister while your parents are out. Which phrasal verb correctly describes what you are doing?",
+            options: ["looking for her", "looking after her", "looking at her", "looking into her"],
+            answer: "looking after her",
+            explanation: "'look after' = to take care of someone — used when responsible for a person"
+        },
+        {
+            type: "Scenario",
+            q: "You are on a phone call with your friend and the signal suddenly drops and the call ends. You text: \"Sorry, we got ___.\"",
+            options: ["cut out", "cut off", "cut down", "cut up"],
+            answer: "cut off",
+            explanation: "'cut off' = to be suddenly disconnected from a call"
+        },
+        {
+            type: "Picture",
+            q: "Q6. Which set of phrasal verbs correctly fills all four blanks in order?",
+            options: [
+                "put out / put off / ran into / broke down",
+                "put off / put out / ran away / broke up",
+                "put on / put away / ran out / broke out",
+                "put out / put on / ran into / broke out"
+            ],
+            answer: "put out / put off / ran into / broke down",
+            explanation: "put out=extinguish fire, put off=delay, ran into=chance meeting, broke down=mechanical failure",
+            image: "picture1.png"
+        },
+        {
+            type: "Picture",
+            q: "Q7. Which set of phrasal verbs correctly matches all four panels in order?",
+            options: [
+                "look after / watch out / get along / find out",
+                "look into / cut off / get by / look up",
+                "look up / watch out / get along / find out",
+                "find out / give up / get by / look into"
+            ],
+            answer: "look up / watch out / get along / find out",
+            explanation: "look up=search in reference, watch out=warning of danger, get along=friendly relationship, find out=discover",
+            image: "picture2.png"
+        },
+        {
+            type: "Application",
+            q: "What is the difference between these two sentences?\ni. \"I ran into my teacher at the mall.\"\nii. \"I ran away from the bee.\"",
+            options: [
+                "(i) means a planned meeting; (ii) means staying still",
+                "(i) means meeting someone by chance; (ii) means escaping or fleeing",
+                "Both mean exactly the same thing",
+                "(i) means physically hitting a wall; (ii) means running for exercise"
+            ],
+            answer: "(i) means meeting someone by chance; (ii) means escaping or fleeing",
+            explanation: "'ran into' = accidental meeting; 'ran away' = escape/flee — completely different meanings"
+        },
+        {
+            type: "Application",
+            q: "Which sentence uses the phrasal verb correctly in context?",
+            options: [
+                "Please turn off the lights — it is too dark in here.",
+                "Please turn on the lights — it is too dark in here.",
+                "Please turn up the lights — it is too bright in here.",
+                "Please turn out the lights — we cannot see anything."
+            ],
+            answer: "Please turn on the lights — it is too dark in here.",
+            explanation: "Dark room needs lights turned ON not OFF — contextual logic of phrasal verb"
+        },
+        {
+            type: "Pair/Classification",
+            q: "Sort these phrasal verbs into two groups — phrasal verbs meaning to stop/end something and phrasal verbs meaning to continue/manage:\nP: give up\nQ: get by\nR: call off\nS: carry on",
+            options: [
+                "Stop/End: P, Q — Continue/Manage: R, S",
+                "Stop/End: Q, S — Continue/Manage: P, R",
+                "Stop/End: P, R — Continue/Manage: Q, S",
+                "Stop/End: R, S — Continue/Manage: P, Q"
+            ],
+            answer: "Stop/End: P, R — Continue/Manage: Q, S",
+            explanation: "give up & call off = stopping/ending; get by & carry on = continuing/managing"
+        },
+        {
+            type: "Pair/Classification",
+            q: "Classify the phrasal verb in each sentence by its meaning:\n1. \"The fire broke out in the kitchen.\" — started suddenly\n2. \"She looked after the baby all day.\" — took care of\n3. \"He found out the answer.\" — discovered\n4. \"They called off the match.\" — cancelled",
+            options: [
+                "1=cancelled, 2=discovered, 3=took care of, 4=started suddenly",
+                "1=took care of, 2=started suddenly, 3=cancelled, 4=discovered",
+                "1=started suddenly, 2=took care of, 3=discovered, 4=cancelled",
+                "1=discovered, 2=cancelled, 3=started suddenly, 4=took care of"
+            ],
+            answer: "1=started suddenly, 2=took care of, 3=discovered, 4=cancelled",
+            explanation: "broke out=started suddenly, looked after=cared for, found out=discovered, called off=cancelled"
+        },
+        {
+            type: "Odd One Out",
+            q: "Three of the following sentences use phrasal verbs correctly in context. One sentence does NOT. Identify the odd one out.",
+            options: [
+                "She quickly put on her jacket before stepping outside in the cold.",
+                "The teacher decided to put off the test until next week.",
+                "The firefighters worked hard to put out the fire.",
+                "He put away his shoes before entering the house."
+            ],
+            answer: "He put away his shoes before entering the house.",
+            explanation: "'Put up' does not mean to place shoes in their proper place. 'Put away' is the correct phrasal verb for storing or keeping something back in its place."
+        },
+        {
+            type: "Error Detection",
+            q: "A student wrote: \"Please turn off the lights when you enter the dark room. Also, look out for a good book in the library — I want to look it up for my project.\" Which phrasal verb is used incorrectly?",
+            options: [
+                "'turn off' — you need to turn on lights in a dark room, not turn them off",
+                "'look out for' — this should be 'look after'",
+                "'look up' — this should be 'look into'",
+                "There are no errors — all phrasal verbs are used correctly"
+            ],
+            answer: "'turn off' — you need to turn on lights in a dark room, not turn them off",
+            explanation: "'Turn off' removes light — wrong in a dark room; should be 'turn on'"
+        },
+        {
+            type: "Cause–Effect",
+            q: "A student changes \"The teacher postponed the test\" to \"The teacher put off the test.\" What is the effect of using the phrasal verb?",
+            options: [
+                "The meaning changes — the test is now cancelled permanently",
+                "The phrasal verb 'put off' replaces the formal word 'postponed' with the same meaning, making the sentence sound more conversational and natural",
+                "The sentence becomes grammatically incorrect",
+                "'Put off' means something completely different from 'postponed'"
+            ],
+            answer: "The phrasal verb 'put off' replaces the formal word 'postponed' with the same meaning, making the sentence sound more conversational and natural",
+            explanation: "'Put off' is the conversational equivalent of formal 'postponed' — same meaning, different register"
+        },
+        {
+            type: "Assertion-Reason",
+            q: "Assertion: Phrasal verbs are common in everyday conversation but should be used carefully in very formal writing.\n\nReason: The meaning of a phrasal verb is often idiomatic — you cannot guess the full meaning just by looking at the two individual words separately.",
+            options: [
+                "Both are correct; the reason correctly explains the assertion.",
+                "Both are correct; but the reason does NOT explain the assertion.",
+                "The assertion is correct; the reason is wrong.",
+                "Both are wrong."
+            ],
+            answer: "Both are correct; the reason correctly explains the assertion.",
+            explanation: "Idiomatic meaning explains why phrasal verbs need care — 'give up' has nothing to do with giving or height"
+        }
+    ];
+
+    let audioSystemRegistry = {};
+    let masterVolumeLevel = 0.6;
+    let workingSessionQuestions = [];
+    let activeQuestionIndex = 0;
+    
+    let aggregateCorrectCount = 0;
+    let aggregateWrongCount = 0;
+    let activeSelectionProcessingLock = false;
+
+    function initializeAudioCoreEngine() {
+        const structuralTracks = [
+            { id: 'click', file: 'assets/click.mp3' },
+            { id: 'correct', file: 'assets/correct.mp3' },
+            { id: 'wrong', file: 'assets/wrong.mp3' },
+            { id: 'victory', file: 'assets/clapping.mp3' },
+            { id: 'completion', file: 'assets/correct.mp3' }
+        ];
+
+        structuralTracks.forEach(track => {
+            const audioObj = new Audio();
+            audioObj.src = track.file;
+            audioObj.preload = 'auto';
+            audioObj.volume = masterVolumeLevel;
+            
+            audioObj.onerror = () => {
+                audioSystemRegistry[track.id] = {
+                    play: () => {
+                        try {
+                            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                            const osc = ctx.createOscillator();
+                            const gain = ctx.createGain();
+                            osc.connect(gain);
+                            gain.connect(ctx.destination);
+                            gain.gain.value = masterVolumeLevel * 0.2;
+                            if (track.id === 'correct') {
+                                osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                                osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+                                osc.start(); osc.stop(ctx.currentTime + 0.25);
+                            } else if (track.id === 'wrong') {
+                                osc.frequency.setValueAtTime(220, ctx.currentTime);
+                                osc.frequency.setValueAtTime(180, ctx.currentTime + 0.1);
+                                osc.start(); osc.stop(ctx.currentTime + 0.3);
+                            } else {
+                                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                                osc.start(); osc.stop(ctx.currentTime + 0.08);
+                            }
+                        } catch(e){}
+                    }
+                };
+            };
+            audioSystemRegistry[track.id] = audioObj;
+        });
+    }
+
+    function playAudio(trackId) {
+        if (!document.getElementById('sfxToggle').checked) return;
+        const soundInstance = audioSystemRegistry[trackId];
+        if (soundInstance) {
+            try {
+                if (soundInstance.currentTime !== undefined) soundInstance.currentTime = 0;
+                soundInstance.play();
+            } catch(e) {}
+        }
+    }
+
+    function handleMasterVolumeUpdate(volValue) {
+        masterVolumeLevel = parseFloat(volValue);
+        document.getElementById('volumePercentageLabel').innerText = Math.round(masterVolumeLevel * 100) + "%";
+        for (let trackId in audioSystemRegistry) {
+            if (audioSystemRegistry.hasOwnProperty(trackId) && audioSystemRegistry[trackId].currentTime !== undefined) {
+                audioSystemRegistry[trackId].volume = masterVolumeLevel;
+            }
+        }
+    }
+
+    function executeFisherYatesShuffle(targetArray) {
+        let i = targetArray.length, j, temp;
+        while (--i > 0) {
+            j = Math.floor(Math.random() * (i + 1));
+            temp = targetArray[j];
+            targetArray[j] = targetArray[i];
+            targetArray[i] = temp;
+        }
+        return targetArray;
+    }
+
+    function navigateToActiveView(targetViewId) {
+        document.querySelectorAll('.screen-view').forEach(view => view.classList.remove('active-view'));
+        document.getElementById(targetViewId).classList.add('active-view');
+    }
+
+    function commitRegistrationAndLaunchGame() {
+        navigateToActiveView('gameplayScreen');
+        initializeFreshGameSequence();
+    }
+
+    function initializeFreshGameSequence() {
+        workingSessionQuestions = educationalChapterQuizData.map(item => {
+            const matchingOptionsCopy = [...item.options];
+            executeFisherYatesShuffle(matchingOptionsCopy);
+            return { ...item, options: matchingOptionsCopy };
+        });
+        
+        executeFisherYatesShuffle(workingSessionQuestions);
+        
+        activeQuestionIndex = 0;
+        aggregateCorrectCount = 0;
+        aggregateWrongCount = 0;
+        activeSelectionProcessingLock = false;
+
+        renderQuestionTemplateStage();
+    }
+
+    function renderQuestionTemplateStage() {
+        activeSelectionProcessingLock = false;
+        const currentDataPayload = workingSessionQuestions[activeQuestionIndex];
+
+        document.getElementById('hudProgressCounter').innerText = `Question ${activeQuestionIndex + 1} of ${workingSessionQuestions.length}`;
+        document.getElementById('hudStarsCounter').innerText = `⭐ ${aggregateCorrectCount}`;
+        document.getElementById('liveProgressBarFill').style.width = `${((activeQuestionIndex) / workingSessionQuestions.length) * 100}%`;
+        
+        const graphicBox = document.getElementById('stageGraphicWrapper');
+        if (currentDataPayload.image) {
+            graphicBox.innerHTML = `<img src="assets/${currentDataPayload.image}" alt="Phrasal Verb Worksheets Chart">`;
+            graphicBox.style.display = 'flex';
+        } else {
+            graphicBox.style.display = 'none';
+            graphicBox.innerHTML = '';
+        }
+
+        document.getElementById('stagePromptCard').innerText = currentDataPayload.q;
+        
+        const stackContainer = document.getElementById('stageOptionsStack');
+        stackContainer.innerHTML = '';
+
+        currentDataPayload.options.forEach((optionText) => {
+            const cardButton = document.createElement('button');
+            cardButton.className = 'interactive-option-node';
+            cardButton.setAttribute('role', 'button');
+            cardButton.innerHTML = `<span>${optionText}</span>`;
+            cardButton.onclick = () => { evaluateUserSelection(cardButton, optionText); };
+            stackContainer.appendChild(cardButton);
+        });
+    }
+
+    function evaluateUserSelection(selectedHTMLNode, selectedTextValue) {
+        if (activeSelectionProcessingLock) return;
+        activeSelectionProcessingLock = true;
+
+        const currentActiveData = workingSessionQuestions[activeQuestionIndex];
+        const isSelectionCorrect = (selectedTextValue.trim() === currentActiveData.answer.trim());
+
+        if (isSelectionCorrect) {
+            selectedHTMLNode.classList.add('state-node-correct');
+            aggregateCorrectCount++;
+            playAudio('correct');
+            triggerConfettiExplosionEffects();
+            displayFeedbackModal(true, currentActiveData.explanation);
+        } else {
+            selectedHTMLNode.classList.add('state-node-wrong');
+            aggregateWrongCount++;
+            playAudio('wrong');
+            
+            document.querySelectorAll('.interactive-option-node').forEach(node => {
+                if (node.innerText.trim() === currentActiveData.answer.trim()) {
+                    node.classList.add('state-node-correct');
+                }
+            });
+            displayFeedbackModal(false, currentActiveData.explanation);
+        }
+    }
+
+    function displayFeedbackModal(isCorrect, explanationText) {
+        const overlayNode = document.getElementById('feedbackModalDeck');
+        const statusTitleNode = document.getElementById('modalStatusTitle');
+        const explanationBodyNode = document.getElementById('modalExplanationBody');
+        const currentCorrectAnswer = workingSessionQuestions[activeQuestionIndex].answer;
+
+        if (isCorrect) {
+            statusTitleNode.innerText = "✅ Correct Answer";
+            statusTitleNode.style.color = "var(--success-teal)";
+            explanationBodyNode.innerText = "Correct!\n" + explanationText;
+        } else {
+            statusTitleNode.innerText = "❌ Incorrect";
+            statusTitleNode.style.color = "var(--danger-coral)";
+            explanationBodyNode.innerText = "Correct Answer: " + currentCorrectAnswer + "\n\nExplanation:\n" + explanationText;
+        }
+
+        overlayNode.style.display = 'flex';
+
+        setTimeout(() => {
+            overlayNode.style.display = 'none';
+            advanceGameplayFlowSequence();
+        }, 2000);
+    }
+
+    function advanceGameplayFlowSequence() {
+        activeQuestionIndex++;
+        if (activeQuestionIndex < workingSessionQuestions.length) {
+            renderQuestionTemplateStage();
+        } else {
+            renderFinalSummaryDashboard();
+        }
+    }
+
+    function renderFinalSummaryDashboard() {
+        navigateToActiveView('summaryScreen');
+        playAudio('completion');
+        setTimeout(() => { playAudio('victory'); }, 400);
+        triggerConfettiExplosionEffects();
+
+        const globalSessionQuestionsCount = workingSessionQuestions.length;
+        const calculatedPercentage = Math.round((aggregateCorrectCount / globalSessionQuestionsCount) * 100);
+
+        document.getElementById('summaryScoreValue').innerText = `${aggregateCorrectCount} / ${globalSessionQuestionsCount}`;
+        document.getElementById('summaryAccuracyValue').innerText = `${calculatedPercentage}%`;
+        document.getElementById('summaryCorrectValue').innerText = aggregateCorrectCount;
+        document.getElementById('summaryIncorrectValue').innerText = aggregateWrongCount;
+
+        const badgeLabelNode = document.getElementById('performanceBadgeLabel');
+        if (calculatedPercentage >= 85) {
+            badgeLabelNode.innerText = "⭐⭐⭐⭐⭐ Excellent!";
+        } else if (calculatedPercentage >= 60) {
+            badgeLabelNode.innerText = "⭐⭐⭐ Great Job!";
+        } else {
+            badgeLabelNode.innerText = "⭐ Keep Practising!";
+        }
+    }
+
+    function commandRestartGameLoop() {
+        navigateToActiveView('startScreen');
+    }
+
+    function triggerConfettiExplosionEffects() {
+        const engineColorMatrix = ["#ff6b6b", "#4ecdc4", "#ffe66d", "#ff5470", "#2f2fa2"];
+        for (let idx = 0; idx < 45; idx++) {
+            const particleNode = document.createElement("div");
+            particleNode.className = "canvas-confetti-particle";
+            particleNode.style.left = Math.random() * 100 + "vw";
+            particleNode.style.backgroundColor = engineColorMatrix[Math.floor(Math.random() * engineColorMatrix.length)];
+            particleNode.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
+            particleNode.style.animationDuration = (Math.random() * 1.5 + 1.3) + "s";
+            document.body.appendChild(particleNode);
+            setTimeout(() => { particleNode.remove(); }, 2800);
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        initializeAudioCoreEngine();
+        setTimeout(() => {
+            navigateToActiveView('startScreen');
+        }, 5000);
+    });
+</script>
+
+</body>
+</html>
