@@ -1,1 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Jungle Safari: Articles</title>
+    <style>
+        :root {
+            --primary-green: #2d6a4f;
+            --safari-gold: #f4a261;
+            --soft-cream: #f4f1de;
+            --jungle-dark: #1b4332;
+            --accent-orange: #e76f51;
+            --correct-green: #52b788;
+            --wrong-red: #e63946;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--soft-cream);
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Jungle Animations */
+        .jungle-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            opacity: 0.2;
+            background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232d6a4f'><path d='M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L7.21,18.22C11.53,18.25 18,14.5 21,9C21,9 17,9 17,8Z'/></svg>") no-repeat;
+            animation: fall 12s linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-50px) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(105vh) translateX(100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Logo Branding Screen */
+        #brand-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #brand-screen img {
+            max-width: 250px;
+            max-height: 250px;
+            object-fit: contain;
+        }
+
+        /* Container & Cards */
+        .game-container {
+            width: 90%;
+            max-width: 650px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(27, 67, 50, 0.15);
+            border: 3px solid var(--primary-green);
+            position: relative;
+            z-index: 10;
+            display: none;
+        }
+
+        .active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2 {
+            color: var(--jungle-dark);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p.description {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        /* Custom UI Elements */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            background-color: var(--jungle-dark);
+            transform: translateY(-2px);
+        }
+
+        /* HUD Tracker */
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #cbd5e1;
+            font-weight: bold;
+            color: var(--jungle-dark);
+        }
+
+        .timer-box {
+            background: var(--accent-orange);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Question & Options */
+        .clue-tag {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--safari-gold);
+            font-weight: 800;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: var(--jungle-dark);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #334155;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: var(--primary-green);
+            background-color: #f0fdf4;
+        }
+
+        /* Indicators and Feedback States */
+        .option-btn.correct {
+            background-color: #d1fae5 !important;
+            border-color: var(--correct-green) !important;
+            color: #065f46 !important;
+        }
+
+        .option-btn.wrong {
+            background-color: #fee2e2 !important;
+            border-color: var(--wrong-red) !important;
+            color: #991b1b !important;
+        }
+
+        .option-btn.wrong::after {
+            content: '❌';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .feedback-box.visible { display: block; }
+        .feedback-box.info { background: #eff6ff; border-left: 5px solid #3b82f6; color: #1e3a8a; }
+
+        /* Confetti Effect Layer */
+        .confetti-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 999;
+        }
+        .star-confetti {
+            position: absolute;
+            color: #ffd700;
+            font-size: 24px;
+            animation: burst 0.8s ease-out forwards;
+        }
+        @keyframes burst {
+            0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(1.2) rotate(360deg); opacity: 0; }
+        }
+
+        /* Results Screen styling */
+        .results-score {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary-green);
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="jungle-bg" id="jungle-bg"></div>
+
+    <div id="brand-screen">
+        <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+    </div>
+
+    <div class="game-container active" id="intro-screen">
+        <div class="clue-tag" style="text-align: center;">Grade 5 | Subject: English</div>
+        <h1>Grammar Jungle Safari</h1>
+        <p class="description">
+            Welcome, young Explorer! Track down clues hidden in real-world scenarios and test your wisdom on English <strong>Articles (A, An, The)</strong>. Clear your paths by cracking the context, outsmarting traps, and mastering sounds!
+        </p>
+        <button class="btn" onclick="startGame()">Begin Safari Quest 🌿</button>
+    </div>
+
+    <div class="game-container" id="quiz-screen">
+        <div class="hud">
+            <div>Quest Path: <span id="current-q-num">1</span>/10</div>
+            <div>Score: <span id="live-score">0</span> XP</div>
+            <div class="timer-box">⏱️ <span id="timer-count">45</span>s</div>
+        </div>
+
+        <div id="clue-context" class="clue-tag">Scenario Clue</div>
+        <div id="question-text" class="question-text">Loading question text...</div>
+
+        <div class="options-grid" id="options-container">
+            </div>
+
+        <div id="feedback-panel" class="feedback-box"></div>
+        <button class="btn" id="next-btn" style="margin-top: 15px; display: none;" onclick="handleNextStep()">Continue Quest ➡️</button>
+    </div>
+
+    <div class="game-container" id="challenge-screen">
+        <div class="clue-tag" style="text-align: center;">Ultimate Barrier</div>
+        <h2>The Final Gatekeeper Challenge</h2>
+        <p class="description">
+            You have reached the edge of the Grammar Jungle. The final challenge tests your mastery of the ultimate article trap. Clear this barrier to finish the safari!
+        </p>
+        <button class="btn" onclick="startFinalChallenge()">Face the Challenge 🔥</button>
+    </div>
+
+    <div class="game-container" id="result-screen">
+        <div class="clue-tag" style="text-align: center;">Safari Complete</div>
+        <h2>Quest Results</h2>
+        <div class="results-score"><span id="final-score">0</span>/10</div>
+        <p class="description" id="result-evaluation"></p>
+        <button class="btn" onclick="resetGame()">Restart Safari 🔄</button>
+    </div>
+
+    <div class="confetti-container" id="confetti-layer"></div>
+
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="snd-cheer" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+    <script>
+        // Setup Jungle background particles dynamically
+        const bgContainer = document.getElementById('jungle-bg');
+        for (let i = 0; i < 12; i++) {
+            let leaf = document.createElement('div');
+            leaf.className = 'leaf';
+            leaf.style.left = Math.random() * 100 + 'vw';
+            leaf.style.animationDelay = Math.random() * 8 + 's';
+            leaf.style.transform = `scale(${0.5 + Math.random()})`;
+            bgContainer.appendChild(leaf);
+        }
+
+        // 5 Second Brand Loading Gate
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const brandScreen = document.getElementById('brand-screen');
+                brandScreen.style.opacity = '0';
+                setTimeout(() => brandScreen.style.display = 'none', 500);
+            }, 5000);
+        });
+
+        // Dataset
+        const quizData = [
+            {
+                tag: "Hospital Situation – Context Understanding",
+                question: "A child is taken to a hospital after fainting at school. At reception, the nurse says, “A doctor will check him soon.” After a few minutes, another nurse says, “The doctor has already started the examination in Room 2.”\n\nWhy is “the doctor” used in the second sentence?",
+                options: [
+                    "It refers to any doctor available in the hospital",
+                    "It refers to a specific doctor already known in the situation",
+                    "It refers to all doctors working in the hospital",
+                    "It refers to a new doctor arriving from outside"
+                ],
+                correct: 1,
+                explanation: "We use 'the' because the doctor is now a specific, definite individual known from the previous context."
+            },
+            {
+                tag: "Airport Situation – Information Tracking",
+                question: "At an airport, passengers hear:\nFirst announcement: “An announcement will be made shortly.”\nSecond announcement: “The announcement is about a delayed flight.”\n\nWhat does “the announcement” mean here?",
+                options: [
+                    "Any announcement made in the airport",
+                    "A specific announcement already mentioned earlier",
+                    "Multiple announcements happening together",
+                    "A random sound in the airport"
+                ],
+                correct: 1,
+                explanation: "'The' specifies that it belongs to the particular announcement promised in the first statement."
+            },
+            {
+                tag: "Restaurant Situation – Meaning Difference",
+                question: "Two customers order food:\nCustomer A: “I want a soup.”\nCustomer B: “I want the soup.”\n\nWhat is the correct meaning difference?",
+                options: [
+                    "Both mean the same thing",
+                    "“a soup” means a specific soup, “the soup” means any soup",
+                    "“a soup” means any soup, “the soup” means a specific known soup",
+                    "Both are incorrect usage"
+                ],
+                correct: 2,
+                explanation: "'A soup' is non-specific (any soup available), while 'the soup' focuses on a particular item, like the soup of the day."
+            },
+            {
+                tag: "Science Class – General Truth Reasoning",
+                question: "In a science lesson, the teacher writes:\n“___ water boils at 100°C under normal conditions.”\n\nStudents discuss why no specific water is mentioned.",
+                options: [
+                    "Because it refers to water in general as a scientific fact",
+                    "Because only river water is considered",
+                    "Because water is a proper noun",
+                    "Because articles are not used in science"
+                ],
+                correct: 0,
+                explanation: "General facts about uncountable nouns (like water) use zero article when discussing the general substance."
+            },
+            {
+                tag: "Sound Rule – Error Analysis",
+                question: "A student writes:\n“She is an European girl living in India.”\n\nWhat is the correct reasoning for the error?",
+                options: [
+                    "European is plural",
+                    "“an” is always used before vowels",
+                    "“European” begins with a consonant sound",
+                    "Articles are optional in such sentences"
+                ],
+                correct: 2,
+                explanation: "'European' starts with a 'yoo' consonant sound (/j/). Therefore, it must be preceded by 'a', not 'an'."
+            },
+            {
+                tag: "Travel Context – Landmark Identity",
+                question: "A tourist writes:\n“We visited the Taj Mahal during our trip.”\n\nWhy is “the” used before Taj Mahal?",
+                options: [
+                    "Because it is a common building",
+                    "Because it is a unique, specific monument",
+                    "Because all places require “the”",
+                    "Because Taj Mahal is a plural noun"
+                ],
+                correct: 1,
+                explanation: "Unique architectural monuments and famous historic buildings require the definite article 'the'."
+            },
+            {
+                tag: "Daily Life – Zero Article Reasoning",
+                question: "A child says:\n“I go to school every day.”\n\nWhy is no article used before “school”?",
+                options: [
+                    "Because school is always plural",
+                    "Because it refers to activity/purpose, not a specific building",
+                    "Because articles are not allowed in English",
+                    "Because school is a proper noun"
+                ],
+                correct: 1,
+                explanation: "When talking about institutional places (school, bed, hospital) for their primary purpose, we omit the article."
+            },
+            {
+                tag: "Shopping Situation – Grammar Correction",
+                question: "A shopper says:\n“I bought an new mobile phone yesterday.”\n\nWhat is the correct correction?",
+                options: [
+                    "a new mobile phone",
+                    "the new mobile phone",
+                    "an mobile phone",
+                    "new a mobile phone"
+                ],
+                correct: 0,
+                explanation: "The word 'new' begins with a consonant sound /n/, meaning 'a' should be used instead of 'an'."
+            },
+            {
+                tag: "Zoo Learning – General Category Thinking",
+                question: "At a zoo, a guide says:\n“___ elephant is a very intelligent animal.”\n\nWhat does this sentence express?",
+                options: [
+                    "A specific elephant is being described",
+                    "Elephants in general are intelligent animals",
+                    "Only one elephant exists",
+                    "Elephants require no article rules"
+                ],
+                correct: 1,
+                explanation: "Singular countable nouns used with the definite article 'the' can represent an entire group or class of animals/things."
+            },
+            {
+                tag: "Final CBQ – Mixed Concept Trap",
+                question: "Choose the MOST correct sentence sentence out of the choices below:",
+                options: [
+                    "I saw a moon last night",
+                    "I saw the moon last night",
+                    "I saw moon a last night",
+                    "I saw an moon last night"
+                ],
+                correct: 1,
+                explanation: "The Earth has only one unique natural moon, so we must always refer to it as 'the moon'."
+            }
+        ];
+
+        // App States
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let attempts = 0;
+        let timerInterval;
+        let timeLeft = 45;
+
+        // Sound helpers
+        function playSound(id) {
+            const snd = document.getElementById(id);
+            if(snd && snd.play) {
+                snd.currentTime = 0;
+                snd.play().catch(e => console.log("Audio play blocked or unavailable"));
+            }
+        }
+
+        // Screen togglers
+        function switchScreen(currentId, nextId) {
+            document.getElementById(currentId).classList.remove('active');
+            document.getElementById(nextId).classList.add('active');
+        }
+
+        function startGame() {
+            currentQuestionIdx = 0;
+            score = 0;
+            attempts = 0;
+            document.getElementById('live-score').innerText = score;
+            switchScreen('intro-screen', 'quiz-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            attempts = 0;
+            timeLeft = 45;
+            document.getElementById('timer-count').innerText = timeLeft;
+            document.getElementById('current-q-num').innerText = currentQuestionIdx + 1;
+            
+            const qData = quizData[currentQuestionIdx];
+            document.getElementById('clue-context').innerText = qData.tag;
+            document.getElementById('question-text').innerText = qData.question;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            document.getElementById('feedback-panel').className = "feedback-box";
+            document.getElementById('next-btn').style.display = 'none';
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer-count').innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    revealCorrectAnswerAutomatically();
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(selectedIdx, clickedBtn) {
+            const qData = quizData[currentQuestionIdx];
+            const optionsContainer = document.getElementById('options-container');
+            const btns = optionsContainer.getElementsByClassName('option-btn');
+
+            if(selectedIdx === qData.correct) {
+                // Correct path
+                clearInterval(timerInterval);
+                clickedBtn.classList.add('correct');
+                score++;
+                document.getElementById('live-score').innerText = score;
+                triggerConfetti();
+                playSound('snd-correct');
+                disableAllOptions();
+                showFeedback(true, qData.explanation);
+            } else {
+                // Incorrect path
+                attempts++;
+                clickedBtn.classList.add('wrong');
+                playSound('snd-wrong');
+                
+                if(attempts === 1) {
+                    // One retry granted
+                    clickedBtn.disabled = true;
+                    showFeedback(false, "That path is blocked! Analyze the clue carefully and try alternative routing.");
+                } else {
+                    // Second failed attempt
+                    clearInterval(timerInterval);
+                    disableAllOptions();
+                    btns[qData.correct].classList.add('correct');
+                    showFeedback(false, `Path blocked completely! Correct alignment: ${qData.options[qData.correct]}. ${qData.explanation}`);
+                }
+            }
+        }
+
+        function revealCorrectAnswerAutomatically() {
+            disableAllOptions();
+            const qData = quizData[currentQuestionIdx];
+            const btns = document.getElementById('options-container').getElementsByClassName('option-btn');
+            btns[qData.correct].classList.add('correct');
+            showFeedback(false, `Time expired! Correct alignment: ${qData.options[qData.correct]}. ${qData.explanation}`);
+        }
+
+        function disableAllOptions() {
+            const btns = document.getElementById('options-container').getElementsByClassName('option-btn');
+            for(let btn of btns) {
+                btn.disabled = true;
+            }
+        }
+
+        function showFeedback(isCorrect, text) {
+            const panel = document.getElementById('feedback-panel');
+            panel.innerText = text;
+            panel.className = "feedback-box visible info";
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function handleNextStep() {
+            if (currentQuestionIdx === 8) {
+                // Moving to the 10th item (indexed 9) requires passing through challenge checkpoint
+                switchScreen('quiz-screen', 'challenge-screen');
+            } else if (currentQuestionIdx < quizData.length - 1) {
+                currentQuestionIdx++;
+                loadQuestion();
+            } else {
+                // Quiz completed
+                showFinalResults();
+            }
+        }
+
+        function startFinalChallenge() {
+            currentQuestionIdx = 9; // Index of the final challenge
+            switchScreen('challenge-screen', 'quiz-screen');
+            loadQuestion();
+            document.getElementById('clue-context').innerText = "🏆 FINAL GATEKEEPER CHALLENGE";
+        }
+
+        function triggerConfetti() {
+            const container = document.getElementById('confetti-layer');
+            for (let i = 0; i < 15; i++) {
+                const star = document.createElement('div');
+                star.className = 'star-confetti';
+                star.innerHTML = '★';
+                star.style.left = '50%';
+                star.style.top = '40%';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 150;
+                star.style.setProperty('--x', Math.cos(angle) * distance + 'px');
+                star.style.setProperty('--y', Math.sin(angle) * distance + 'px');
+                
+                container.appendChild(star);
+                setTimeout(() => star.remove(), 800);
+            }
+        }
+
+        function showFinalResults() {
+            clearInterval(timerInterval);
+            document.getElementById('final-score').innerText = score;
+            const evalText = document.getElementById('result-evaluation');
+            
+            if(score >= 8) {
+                evalText.innerText = "Exceptional performance, master survivalist! You mapped out the entire safari safely and conquered the grammar jungle rules effortlessly.";
+                playSound('snd-cheer');
+            } else if(score >= 5) {
+                evalText.innerText = "Good job explorer! You navigated the safari cleanly but stumbled into a few article traps. Sharpen your tools and try again!";
+            } else {
+                evalText.innerText = "The jungle rules can be complex. Review your vowel sounds and definitive contexts, then try clearing this path again!";
+            }
+            switchScreen('quiz-screen', 'result-screen');
+        }
+
+        function resetGame() {
+            switchScreen('result-screen', 'intro-screen');
+        }
+    </script>
+</body>
+</html>
