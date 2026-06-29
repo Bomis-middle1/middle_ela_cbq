@@ -1,1 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 6 English Grammar: Conjunctions Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+:root {
+    --primary: #ff6b6b;
+    --primary-hover: #fa5252;
+    --secondary: #4d96ff;
+    --secondary-hover: #3b7ed9;
+    --success: #6bc15b;
+    --success-bg: #f1fbe9;
+    --danger: #ff4a4a;
+    --danger-bg: #ffebeb;
+    --bg-gradient: linear-gradient(135deg, #ffeedd 0%, #fff0f5 50%, #e8f0fe 100%);
+    --surface: #ffffff;
+    --text-main: #2d3748;
+    --text-muted: #718096;
+    --border-radius: 20px;
+    --btn-radius: 16px;
+    --shadow-sm: 0 4px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 12px 28px rgba(0,0,0,0.06);
+}
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Comic Sans MS', 'Segoe UI', system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    overflow-x: hidden;
+}
+
+/* BACKGROUND DECORATIONS */
+.bg-decorations {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+.floating-prop {
+    position: absolute;
+    background: rgba(77, 150, 255, 0.07);
+    border-radius: 35% 65% 70% 30% / 50% 40% 60% 50%;
+    animation: floatMove 10s ease-in-out infinite alternate;
+}
+@keyframes floatMove {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-25px) rotate(10deg); }
+}
+
+/* CONTAINER FRAMEWORK */
+.screen-container {
+    position: relative;
+    width: 100%;
+    max-width: 680px;
+    background: var(--surface);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    border: 4px solid #ffffff;
+    z-index: 10;
+    display: none;
+    animation: screenReveal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+}
+@keyframes screenReveal {
+    0% { opacity: 0; transform: scale(0.96) translateY(10px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* SPLASH SCREEN UI */
+#splashScreen { text-align: center; padding: 40px 20px; }
+.logo-box { margin-bottom: 24px; }
+.logo-img { width: 130px; height: 130px; object-fit: contain; }
+.loader-bar-wrap {
+    width: 160px; height: 8px; background: #edf2f7;
+    border-radius: 10px; margin: 24px auto 0 auto; overflow: hidden;
+}
+.loader-fill {
+    width: 0%; height: 100%; background: var(--secondary);
+    animation: loadFill 4.8s linear forwards;
+}
+@keyframes loadFill { to { width: 100%; } }
+
+/* INSTRUCTIONS SCREEN UI */
+#homeScreen, #instructionScreen { text-align: center; }
+.badge-meta {
+    display: inline-block; background: #fff0e6; color: #ff8c00;
+    padding: 6px 16px; border-radius: 20px; font-weight: 800;
+    font-size: 14px; margin-bottom: 12px; border: 2px dashed #ff8c00;
+}
+h1.game-title { font-size: 2.2rem; color: #1a202c; margin-bottom: 24px; line-height: 1.2; }
+h1.game-title span { color: var(--secondary); }
+
+.instruction-card {
+    background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 16px;
+    padding: 20px; text-align: left; margin-bottom: 24px;
+}
+.instruction-card li {
+    list-style: none; position: relative; padding-left: 28px;
+    margin-bottom: 12px; font-weight: 600; font-size: 1.05rem;
+}
+.instruction-card li::before {
+    content: "⭐"; position: absolute; left: 0; top: 1px;
+}
+
+/* RUNTIME HUD */
+.hud-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.hud-item {
+    background: #f7fafc; padding: 6px 14px; border-radius: 30px;
+    font-size: 14px; font-weight: 700; color: var(--text-main); border: 2px solid #e2e8f0;
+}
+.audio-widget { display: flex; align-items: center; gap: 8px; background: #f7fafc; padding: 4px 12px; border-radius: 30px; border: 2px solid #e2e8f0;}
+.vol-slider { width: 60px; accent-color: var(--secondary); cursor: pointer; }
+
+/* PROGRESSION SYSTEMS */
+.progress-track { height: 12px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+.progress-run { height: 100%; background: linear-gradient(90deg, var(--secondary), #6bc15b); width: 0%; transition: width 0.3s ease; }
+
+/* GRAPHIC PANEL BOX */
+.graphic-panel {
+    width: 100%; border-radius: 16px; border: 3px solid #e2e8f0;
+    background: #f8fafc; padding: 6px; display: none; justify-content: center; align-items: center; margin-bottom: 14px;
+}
+.graphic-panel img { max-width: 100%; height: auto; max-height: 180px; border-radius: 10px; object-fit: contain; }
+
+/* QUEST AND COMPONENT STACKS */
+.quest-box { font-size: 1.25rem; font-weight: 700; color: #1a202c; margin-bottom: 18px; text-align: left; line-height: 1.4; }
+.alert-strip { min-height: 32px; font-size: 1.1rem; font-weight: 800; margin-bottom: 14px; text-align: center; }
+.options-stack { display: flex; flex-direction: column; gap: 10px; }
+.opt-node {
+    padding: 14px 18px; border-radius: var(--btn-radius); background: #ffffff;
+    border: 3px solid #e2e8f0; cursor: pointer; text-align: left; font-size: 1.05rem;
+    font-weight: 700; color: var(--text-main); box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease; display: flex; align-items: center;
+}
+.opt-node:hover { border-color: var(--secondary); background: #f0f7ff; transform: translateY(-2px); }
+.opt-node:active { transform: translateY(1px); }
+
+/* FEEDBACK STATES */
+.opt-node.correct-state { background: var(--success-bg) !important; border-color: var(--success) !important; color: #276749; animation: popPulse 0.4s ease; }
+.opt-node.wrong-state { background: var(--danger-bg) !important; border-color: var(--danger) !important; color: #9b2c2c; animation: shakeError 0.4s ease; }
+@keyframes popPulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+@keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.node-freeze { pointer-events: none !important; }
+.node-dim { opacity: 0.45; pointer-events: none !important; }
+
+/* SCOREBOARD PERFORMANCE LAYER */
+#scoreCardScreen { text-align: center; }
+.trophy-bounce { font-size: 4.5rem; display: inline-block; animation: bounceTrophy 1.5s ease-in-out infinite alternate; margin-bottom: 10px; }
+@keyframes bounceTrophy { from { transform: translateY(0); } to { transform: translateY(-12px); } }
+.big-score { font-size: 3.8rem; font-weight: 900; color: var(--secondary); margin: 10px 0; }
+.stars-group { font-size: 2.8rem; color: #ecc94b; margin-bottom: 20px; letter-spacing: 6px; }
+
+/* REVIEW LAYOUT MODULE */
+.review-scrollbox { max-height: 280px; overflow-y: auto; text-align: left; margin: 20px 0; padding-right: 6px; }
+.review-item { padding: 14px; border-radius: 12px; background: #f7fafc; border-left: 5px solid #cbd5e0; margin-bottom: 12px; }
+.review-item.is-correct { border-left-color: var(--success); background: #f6fedb; }
+.review-item.is-wrong { border-left-color: var(--danger); background: #fff5f5; }
+.review-scrollbox::-webkit-scrollbar { width: 6px; }
+.review-scrollbox::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
+
+/* BUTTONS CORE */
+.btn-core {
+    background: var(--primary); color: #ffffff; font-size: 1.15rem; font-weight: 800;
+    padding: 14px 32px; border: none; border-radius: var(--btn-radius); cursor: pointer;
+    box-shadow: 0 6px 0 #d94141; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 8px; margin: 8px;
+}
+.btn-core:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 0 #d94141; }
+.btn-core:active { transform: translateY(4px); box-shadow: 0 2px 0 #d94141; }
+.btn-alt { background: var(--secondary); box-shadow: 0 6px 0 #2b6cb0; }
+.btn-alt:hover { background: var(--secondary-hover); box-shadow: 0 8px 0 #2b6cb0; }
+.btn-alt:active { box-shadow: 0 2px 0 #2b6cb0; }
+
+/* ANIMATED CONFETTI SYSTEMS */
+.confetti-bit { position: fixed; width: 10px; height: 10px; top: -10px; border-radius: 2px; z-index: 999; pointer-events: none; animation: fallDown 2.5s linear forwards; }
+@keyframes fallDown { to { transform: translateY(105vh) rotate(360deg); opacity: 0; } }
+
+/* PLATFORM RESPONSIVENESS OVERRIDES */
+@media(max-width: 600px) {
+    body { padding: 8px; }
+    .screen-container { padding: 18px 14px; border-radius: 16px; }
+    h1.game-title { font-size: 1.7rem; }
+    .quest-box { font-size: 1.1rem; }
+    .opt-node { font-size: 0.95rem; padding: 12px 14px; }
+    .btn-core { width: 100%; justify-content: center; margin: 6px 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-decorations">
+    <div class="floating-prop" style="width: 100px; height: 100px; top: 12%; left: -40px;"></div>
+    <div class="floating-prop" style="width: 140px; height: 140px; bottom: 8%; right: -50px; animation-delay: -3s;"></div>
+</div>
+
+<div id="splashScreen" class="screen-container" style="display: block;">
+    <div class="logo-box">
+        <img class="logo-img" src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.opacity='0.3'">
+    </div>
+    <h2 style="font-size: 1.5rem; font-weight: 800; color: #4a5568;">LOADING GAME</h2>
+    <div class="loader-bar-wrap">
+        <div class="loader-fill"></div>
+    </div>
+</div>
+
+<div id="homeScreen" class="screen-container">
+    <div class="badge-meta">Grade 6 English</div>
+    <h1 class="game-title">Chapter 14: <span>Conjunctions Master</span></h1>
+    <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 30px;">Master the dynamic connectors of sentence building!</p>
+    <button class="btn-core" onclick="switchToScreen('homeScreen', 'instructionScreen')">Play Game 🚀</button>
+</div>
+
+<div id="instructionScreen" class="screen-container">
+    <div class="badge-meta">Instructions</div>
+    <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 16px;">How To Play! 🤔</h2>
+    <div class="instruction-card">
+        <ul>
+            <li>Read each question context carefully.</li>
+            <li>Look at the picture context illustration if one is provided.</li>
+            <li>Tap your target answer option node carefully.</li>
+            <li>You have 2 attempts per question before moving on.</li>
+        </ul>
+    </div>
+    <button class="btn-core btn-alt" onclick="switchToScreen('instructionScreen', 'homeScreen')">⬅ Back</button>
+    <button class="btn-core" onclick="launchGamePlayLoop()">Start Challenge! 🎯</button>
+</div>
+
+<div id="gamePlayScreen" class="screen-container">
+    <div class="hud-bar">
+        <div class="hud-item" id="hudProgressLabel">Question 1/12</div>
+        <div class="audio-widget">
+            <span id="muteToggleBtn" style="cursor:pointer; font-size:16px;" onclick="toggleAudioMuteState()">🔊</span>
+            <input type="range" id="volSliderNode" class="vol-slider" min="0" max="1" step="0.1" value="0.7" oninput="adjustVolumePreference(this.value)">
+        </div>
+    </div>
+
+    <div class="progress-track">
+        <div class="progress-run" id="progressBarFill"></div>
+    </div>
+
+    <div id="imagePanelBox" class="graphic-panel"></div>
+    <div class="quest-box" id="questBodyBox">Question string placeholder text?</div>
+    <div class="alert-strip" id="feedbackStripBox"></div>
+    <div class="options-stack" id="optionsBoxGrid"></div>
+</div>
+
+<div id="scoreCardScreen" class="screen-container">
+    <div class="trophy-bounce">🏆</div>
+    <h2 style="font-size: 1.8rem; font-weight: 800; color: #1a202c;" id="scoreHeadingField">Excellent Work!</h2>
+    <div class="big-score" id="scoreNumericalField">0 / 12</div>
+    <div class="stars-group" id="starsLayoutField">⭐⭐⭐</div>
+    
+    <div id="reviewDataContainer" class="review-scrollbox" style="display:none;"></div>
+
+    <button class="btn-core" onclick="restartFreshGameInstance()">Play Again 🔄</button>
+    <button class="btn-core btn-alt" id="reviewTriggerBtn" onclick="toggleReviewViewLayout()">Review Answers 🔍</button>
+</div>
+
+<script>
+/* ---------------- COMPLETE CHAPTER 14 INJECTED DATABASE ---------------- */
+const questionsDataset = [
+    {
+        q: "You studied very hard for your math test but the questions were still very difficult. Which conjunction best shows this contrast?",
+        options: [
+            "I studied hard so the test was difficult.",
+            "I studied hard and the test was difficult.",
+            "I studied hard, yet the test was difficult.",
+            "I studied hard or the test was difficult."
+        ],
+        answer: "I studied hard, yet the test was difficult.",
+        hint: "'Yet' shows a surprising contrast between effort and outcome."
+    },
+    {
+        q: "Your mom gives you a condition: \"You cannot play games ___ you finish your homework.\" Which word correctly fills the blank?",
+        options: ["because", "until", "though", "and"],
+        answer: "until",
+        hint: "'Until' shows the condition must be met before the reward."
+    },
+    {
+        q: "Which set of conjunction pairs correctly fills all four sentences in order based on the notebook chart patterns?",
+        options: [
+            "both/and — either/or — neither/nor — not only/but also",
+            "either/or — both/and — not only/but also — neither/nor",
+            "neither/nor — not only/but also — either/or — both/and",
+            "both/and — neither/nor — either/or — not only/but also"
+        ],
+        answer: "both/and — either/or — neither/nor — not only/but also",
+        image: "picture1.png",
+        hint: "both/and=two positives, either/or=choice, neither/nor=both rejected, not only/but also=extra emphasis."
+    },
+    {
+        q: "Which sentence on the classroom grammar chart has an structural error?",
+        options: [
+            "Sentence 1 — 'although' and 'but' cannot both be used in the same sentence",
+            "Sentence 2 — 'although' cannot be used with a sickness context",
+            "Sentence 3 — 'if' should be replaced with 'unless'",
+            "Sentence 4 — 'because' should be replaced with 'so'"
+        ],
+        answer: "Sentence 1 — 'although' and 'but' cannot both be used in the same sentence",
+        image: "picture2.jpg",
+        hint: "'Although' and 'but' both show contrast — using both is a double connector error."
+    },
+    {
+        q: "Which sentence uses the conjunction correctly to show that something happened even though there was a problem?",
+        options: [
+            "I went to school because I was sick.",
+            "I went to school if I was sick.",
+            "I went to school although I was sick.",
+            "I went to school since I was sick."
+        ],
+        answer: "I went to school although I was sick.",
+        hint: "'Although' = despite the obstacle, the action still happened."
+    },
+    {
+        q: "Which sentence is joined most logically for a professional email layout structure?",
+        options: [
+            "I am sending the file because you asked for it.",
+            "I am sending the file or you asked for it.",
+            "I am sending the file unless you asked for it.",
+            "I am sending the file but you asked for it."
+        ],
+        answer: "I am sending the file because you asked for it.",
+        hint: "'Because' logically explains the reason for sending the file."
+    },
+    {
+        q: "Sort these conjunctions into two distinct groups — Coordinating and Subordinating: P: because Q: and R: although S: but",
+        options: [
+            "Coordinating: P, R — Subordinating: Q, S",
+            "Coordinating: P, Q — Subordinating: R, S",
+            "Coordinating: Q, S — Subordinating: P, R",
+            "Coordinating: R, S — Subordinating: P, Q"
+        ],
+        answer: "Coordinating: Q, S — Subordinating: P, R",
+        hint: "And & but join equal clauses → Coordinating; because & although introduce dependent clauses → Subordinating."
+    },
+    {
+        q: "Classify the conjunction pair in each sentence correctly from 1 to 4:",
+        options: [
+            "1=either/or, 2=both/and, 3=not only/but also, 4=neither/nor",
+            "1=neither/nor, 2=either/or, 3=both/and, 4=not only/but also",
+            "1=both/and, 2=either/or, 3=neither/nor, 4=not only/but also",
+            "1=not only/but also, 2=neither/nor, 3=either/or, 4=both/and"
+        ],
+        answer: "1=both/and, 2=either/or, 3=neither/nor, 4=not only/but also",
+        hint: "both/and=two qualities, either/or=choice, neither/nor=both rejected, not only/but also=emphasis."
+    },
+    {
+        q: "Three of the following sentences use conjunctions correctly. One does NOT. Which is the odd one out?",
+        options: [
+            "I was late because I missed the bus.",
+            "We can go to the park or stay home.",
+            "Although it was raining, but we played outside.",
+            "She went to school although she was unwell."
+        ],
+        answer: "Although it was raining, but we played outside.",
+        hint: "'Although…but' is a double connector — only one contrast word allowed."
+    },
+    {
+        q: "A student wrote: \"Although it was hot, but we went out to play.\" What is the error?",
+        options: [
+            "'Although' and 'but' cannot both be used — they both show contrast, making it a double connector error",
+            "'Hot' should be 'hotly'",
+            "'Although' should always come at the end of the sentence",
+            "There is no error — the sentence is correct"
+        ],
+        answer: "'Although' and 'but' cannot both be used — they both show contrast, making it a double connector error",
+        hint: "'Although' and 'but' cannot coexist — remove one; correct form is 'Although it was hot, we went out'."
+    },
+    {
+        q: "A student changes \"It rained, so the match was cancelled\" to \"The match was cancelled because it rained.\" What happens when the student rewrites the sentence this way?",
+        options: [
+            "The meaning changes — in the second sentence the match was not cancelled",
+            "The conjunction type changes from coordinating ('so') to subordinating ('because'), but the meaning stays the same",
+            "The sentence becomes grammatically incorrect",
+            "'Because' becomes a coordinating conjunction in the new sentence"
+        ],
+        answer: "The conjunction type changes from coordinating ('so') to subordinating ('because'), but the meaning stays the same",
+        hint: "Meaning preserved; conjunction type shifts from coordinating to subordinating."
+    },
+    {
+        q: "Assertion: We use 'and' to add information. Reason: Coordinating conjunctions like 'and' join two ideas that are equally important.",
+        options: [
+            "Both are correct; the reason explains the assertion.",
+            "Both are correct; but the reason does not explain the assertion.",
+            "The assertion is correct; the reason is wrong.",
+            "Both are wrong."
+        ],
+        answer: "Both are correct; the reason explains the assertion.",
+        hint: "'And' joins equally weighted ideas — that is the defining feature of coordinating conjunctions."
+    }
+];
+
+/* ---------------- LOCAL FIXED AUDIO ASSETS MAP ---------------- */
+const soundSystemMap = {
+    click: new Audio('assets/correct.mp3'), // Safe interface callback tracker
+    correct: new Audio('assets/correct.mp3'),
+    wrong: new Audio('assets/wrong.mp3'),
+    applause: new Audio('assets/clapping.mp3'),
+    finish: new Audio('assets/correct.mp3')
+};
+
+let gameGlobalVolume = 0.7;
+let isAudioMuted = false;
+
+function loadUserAudioPreferences() {
+    const cachedVol = localStorage.getItem('edu_game_vol');
+    const cachedMute = localStorage.getItem('edu_game_mute');
+    
+    if(cachedVol !== null) {
+        gameGlobalVolume = parseFloat(cachedVol);
+        document.getElementById("volSliderNode").value = gameGlobalVolume;
+    }
+    if(cachedMute !== null) {
+        isAudioMuted = (cachedMute === 'true');
+        document.getElementById("muteToggleBtn").innerText = isAudioMuted ? "🔇" : "🔊";
+    }
+}
+
+function adjustVolumePreference(volumeValue) {
+    gameGlobalVolume = parseFloat(volumeValue);
+    localStorage.setItem('edu_game_vol', gameGlobalVolume);
+    if(gameGlobalVolume > 0 && isAudioMuted) {
+        toggleAudioMuteState();
+    }
+}
+
+function toggleAudioMuteState() {
+    isAudioMuted = !isAudioMuted;
+    localStorage.setItem('edu_game_mute', isAudioMuted);
+    document.getElementById("muteToggleBtn").innerText = isAudioMuted ? "🔇" : "🔊";
+}
+
+function playSoundTrack(soundId) {
+    if(isAudioMuted) return;
+    const targetedAudioNode = soundSystemMap[soundId];
+    if(targetedAudioNode) {
+        targetedAudioNode.volume = gameGlobalVolume;
+        targetedAudioNode.currentTime = 0;
+        targetedAudioNode.play().catch(() => {/* Safe catch blocks for browser strict gestures */});
+    }
+}
+
+/* ---------------- APPLICATION ENGINE CONTROLLER ---------------- */
+let scrambledQuestionsStack = [];
+let activeItemIdx = 0;
+let computedScoreCounter = 0;
+let remainingAttemptsPool = 2;
+let telemetryReviewJournal = [];
+
+window.addEventListener('DOMContentLoaded', () => {
+    loadUserAudioPreferences();
+    setTimeout(() => {
+        switchToScreen("splashScreen", "homeScreen");
+    }, 5000);
+});
+
+function switchToScreen(currentId, targetId) {
+    document.getElementById(currentId).style.display = "none";
+    document.getElementById(targetId).style.display = "block";
+}
+
+function shuffleDataArray(targetArray) {
+    for (let i = targetArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [targetArray[i], targetArray[j]] = [targetArray[j], targetArray[i]];
+    }
+    return targetArray;
+}
+
+function launchGamePlayLoop() {
+    playSoundTrack('click');
+
+    scrambledQuestionsStack = shuffleDataArray([...questionsDataset]).map(item => {
+        return {
+            ...item,
+            options: shuffleDataArray([...item.options])
+        };
+    });
+
+    activeItemIdx = 0;
+    computedScoreCounter = 0;
+    telemetryReviewJournal = [];
+
+    switchToScreen("instructionScreen", "gamePlayScreen");
+    displayQuestionCard();
+}
+
+function displayQuestionCard() {
+    remainingAttemptsPool = 2;
+    const currentQuestionContext = scrambledQuestionsStack[activeItemIdx];
+
+    document.getElementById("hudProgressLabel").innerText = `Question ${activeItemIdx + 1} / ${scrambledQuestionsStack.length}`;
+    document.getElementById("progressBarFill").style.width = ((activeItemIdx) / scrambledQuestionsStack.length) * 100 + "%";
+    document.getElementById("questBodyBox").innerText = currentQuestionContext.q;
+    
+    const feedbackBannerNode = document.getElementById("feedbackStripBox");
+    feedbackBannerNode.innerHTML = `<span style="color:var(--text-muted)">💡 2 Attempts Left</span>`;
+
+    const imageContainer = document.getElementById("imagePanelBox");
+    if(currentQuestionContext.image) {
+        imageContainer.innerHTML = `<img src="assets/${currentQuestionContext.image}" alt="Grammar Context Graphic Reference">`;
+        imageContainer.style.display = "flex";
+    } else {
+        imageContainer.style.display = "none";
+        imageContainer.innerHTML = "";
+    }
+
+    const interactionOptionsGrid = document.getElementById("optionsBoxGrid");
+    interactionOptionsGrid.innerHTML = "";
+
+    currentQuestionContext.options.forEach(optionTextString => {
+        const optionItemButton = document.createElement("div");
+        optionItemButton.className = "opt-node";
+        optionItemButton.innerText = optionTextString;
+        optionItemButton.onclick = () => validateSelectionNode(optionItemButton, optionTextString, currentQuestionContext);
+        interactionOptionsGrid.appendChild(optionItemButton);
+    });
+}
+
+function validateSelectionNode(selectedDOMNode, selectedStringValue, contextObject) {
+    playSoundTrack('click');
+    const totalRenderedOptions = document.querySelectorAll(".opt-node");
+    const topFeedbackStrip = document.getElementById("feedbackStripBox");
+
+    if(selectedStringValue === contextObject.answer) {
+        totalRenderedOptions.forEach(node => node.classList.add("node-freeze"));
+        selectedDOMNode.classList.add("correct-state");
+        
+        computedScoreCounter++;
+        playSoundTrack('correct');
+        topFeedbackStrip.innerHTML = `<span style="color:var(--success)">✅ Nice! Complete connection match!</span>`;
+        
+        journalReviewEntry(contextObject.q, contextObject.answer, selectedStringValue, true);
+        triggerNextCardTransitionDelay();
+        return;
+    }
+
+    if(remainingAttemptsPool === 2) {
+        remainingAttemptsPool--;
+        selectedDOMNode.classList.add("wrong-state");
+        selectedDOMNode.classList.add("node-dim");
+        playSoundTrack('wrong');
+        topFeedbackStrip.innerHTML = `<span style="color:#dd6b20">❌ Oops! Hint: ${contextObject.hint}</span>`;
+    } else {
+        totalRenderedOptions.forEach(node => node.classList.add("node-freeze"));
+        selectedDOMNode.classList.add("wrong-state");
+        playSoundTrack('wrong');
+        topFeedbackStrip.innerHTML = `<span style="color:var(--danger)">❌ Showing correct solution...</span>`;
+
+        totalRenderedOptions.forEach(node => {
+            if(node.innerText === contextObject.answer) {
+                node.classList.add("correct-state");
+            }
+        });
+
+        journalReviewEntry(contextObject.q, contextObject.answer, selectedStringValue, false);
+        triggerNextCardTransitionDelay();
+    }
+}
+
+function journalReviewEntry(question, correctAns, userAns, statusFlag) {
+    telemetryReviewJournal.push({
+        q: question,
+        c: correctAns,
+        u: userAns,
+        isCorrect: statusFlag
+    });
+}
+
+function triggerNextCardTransitionDelay() {
+    setTimeout(() => {
+        activeItemIdx++;
+        if(activeItemIdx < scrambledQuestionsStack.length) {
+            displayQuestionCard();
+        } else {
+            compileFinalPerformanceDashboard();
+        }
+    }, 1600);
+}
+
+function compileFinalPerformanceDashboard() {
+    document.getElementById("gamePlayScreen").style.display = "none";
+    document.getElementById("scoreCardScreen").style.display = "block";
+
+    const totalQuestionsCount = scrambledQuestionsStack.length;
+    const finalComputedPercentage = Math.round((computedScoreCounter / totalQuestionsCount) * 100);
+
+    document.getElementById("scoreNumericalField").innerText = `${computedScoreCounter} / ${totalQuestionsCount}`;
+    
+    let starsLayoutTemplate = "☆☆☆";
+    let messageHeadingText = "Keep Learning!";
+
+    if(finalComputedPercentage >= 85) {
+        starsLayoutTemplate = "⭐⭐⭐";
+        messageHeadingText = "🎉 Fantastic Mastery Score!";
+        playSoundTrack('applause');
+        triggerConfettiBlast();
+    } else if(finalComputedPercentage >= 60) {
+        starsLayoutTemplate = "⭐⭐☆";
+        messageHeadingText = "👍 Good Grammar Base!";
+        playSoundTrack('finish');
+    } else {
+        playSoundTrack('finish');
+    }
+
+    document.getElementById("starsLayoutField").innerText = starsLayoutTemplate;
+    document.getElementById("scoreHeadingField").innerText = messageHeadingText;
+
+    const reviewPanelScrollBox = document.getElementById("reviewDataContainer");
+    reviewPanelScrollBox.innerHTML = "";
+    
+    telemetryReviewJournal.forEach((log, index) => {
+        const reviewItemNode = document.createElement("div");
+        reviewItemNode.className = `review-item ${log.isCorrect ? 'is-correct' : 'is-wrong'}`;
+        reviewItemNode.innerHTML = `
+            <div style="font-weight:800; margin-bottom:6px;">Q${index + 1}: ${log.q}</div>
+            <div style="font-size:14px; font-weight:700;">🟢 Correct Answer: <span style="color:#276749">${log.c}</span></div>
+            <div style="font-size:14px; font-weight:700;">👤 Your Selection: <span style="color:${log.isCorrect ? '#276749' : '#9b2c2c'}">${log.u}</span></div>
+        `;
+        reviewPanelScrollBox.appendChild(reviewItemNode);
+    });
+}
+
+function toggleReviewViewLayout() {
+    playSoundTrack('click');
+    const dataBox = document.getElementById("reviewDataContainer");
+    const toggleBtn = document.getElementById("reviewTriggerBtn");
+
+    if(dataBox.style.display === "none") {
+        dataBox.style.display = "block";
+        toggleBtn.innerText = "Hide Review ✖";
+        dataBox.scrollIntoView({ behavior: 'smooth' });
+    } else {
+        dataBox.style.display = "none";
+        toggleBtn.innerText = "Review Answers 🔍";
+    }
+}
+
+function restartFreshGameInstance() {
+    playSoundTrack('click');
+    document.getElementById("reviewDataContainer").style.display = "none";
+    document.getElementById("reviewTriggerBtn").innerText = "Review Answers 🔍";
+    switchToScreen("scoreCardScreen", "homeScreen");
+}
+
+function triggerConfettiBlast() {
+    const colorSpectrum = ["#ff6b6b", "#4d96ff", "#6bc15b", "#ecc94b", "#ff8c00"];
+    for (let i = 0; i < 50; i++) {
+        const particleNode = document.createElement("div");
+        particleNode.className = "confetti-bit";
+        particleNode.style.left = Math.random() * 100 + "vw";
+        particleNode.style.backgroundColor = colorSpectrum[Math.floor(Math.random() * colorSpectrum.length)];
+        particleNode.style.animationDuration = (Math.random() * 1.2 + 1.4) + "s";
+        particleNode.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
+        document.body.appendChild(particleNode);
+        setTimeout(() => particleNode.remove(), 2600);
+    }
+}
+</script>
+</body>
+</html>
