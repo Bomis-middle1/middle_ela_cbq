@@ -1,1 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grade 6 English Mastery App - Chapter 18</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <style>
+        :root {
+            --primary-neon: #00cdac;
+            --primary-dark: #028090;
+            --accent-citrus: #ffea00;
+            --accent-citrus-dark: #e5d100;
+            --success-teal: #00f5d4;
+            --success-bg: #e6fffb;
+            --danger-coral: #ff5470;
+            --danger-bg: #fff0f2;
+            --dark-ink: #111119;
+            --light-cream: #faf9f6;
+            --surface-white: #ffffff;
+            --card-radius: 20px;
+            --interactive-radius: 12px;
+            --neo-shadow: 0 6px 0px var(--dark-ink);
+            --active-shadow: 0 2px 0px var(--dark-ink);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background-color: #eef9f6;
+            background-image: radial-gradient(var(--primary-dark) 0.5px, transparent 0.5px), radial-gradient(var(--primary-dark) 0.5px, #eef9f6 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            color: var(--dark-ink);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: clamp(4px, 2vw, 12px);
+            overflow: hidden;
+        }
+
+        .app-window-frame {
+            position: relative;
+            width: 100%;
+            max-width: 540px;
+            height: min(780px, 96vh);
+            background: var(--surface-white);
+            border-radius: var(--card-radius);
+            border: 4px solid var(--dark-ink);
+            box-shadow: var(--neo-shadow);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .screen-view {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: clamp(10px, 3.5vw, 20px);
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .active-view {
+            display: flex !important;
+        }
+
+        #splashScreen {
+            justify-content: center;
+            align-items: center;
+            background: var(--light-cream);
+        }
+
+        .splash-logo-container {
+            width: clamp(120px, 25vw, 180px);
+            height: clamp(120px, 25vw, 180px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: introPopGlow 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .splash-logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes introPopGlow {
+            0% { transform: scale(0.6); opacity: 0; }
+            15% { transform: scale(1.04); opacity: 1; }
+            85% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0; }
+        }
+
+        #registrationScreen {
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge-marker {
+            background: var(--accent-citrus);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 13px;
+            border: 2px solid var(--dark-ink);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transform: rotate(-1deg);
+            display: inline-block;
+        }
+
+        .app-title-text {
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            font-weight: 900;
+            text-align: center;
+            line-height: 1.2;
+            margin-top: 5px;
+        }
+
+        .app-title-text span {
+            color: var(--primary-dark);
+            text-decoration: underline var(--accent-citrus) 4px;
+        }
+
+        .input-panel {
+            width: 100%;
+            max-width: 360px;
+            margin: 10px 0;
+        }
+
+        .input-panel label {
+            display: block;
+            font-weight: 800;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            font-size: 12px;
+            color: var(--dark-ink);
+        }
+
+        .name-text-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            border: 3px solid var(--dark-ink);
+            border-radius: var(--interactive-radius);
+            background: var(--light-cream);
+            outline: none;
+        }
+
+        .audio-dashboard-deck {
+            background: var(--light-cream);
+            border: 3px solid var(--dark-ink);
+            border-radius: var(--interactive-radius);
+            padding: 10px;
+            width: 100%;
+            max-width: 380px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .control-switch-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .slider-wrapper {
+            grid-column: span 2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 12px;
+            border-top: 2px dashed #ccd9d5;
+            padding-top: 8px;
+        }
+
+        .native-slider {
+            flex: 1;
+            accent-color: var(--primary-dark);
+            height: 6px;
+            cursor: pointer;
+        }
+
+        .checkbox-toggle {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-dark);
+        }
+
+        .hud-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hud-pill {
+            background: #ffffff;
+            border: 2px solid var(--dark-ink);
+            padding: 6px 10px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .circular-countdown-clock {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--dark-ink);
+            background: conic-gradient(var(--danger-coral) 0%, var(--primary-neon) 0%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 900;
+            font-size: 13px;
+            box-shadow: 0 2px 0 var(--dark-ink);
+        }
+
+        .progress-track {
+            height: 8px;
+            background: #e2edea;
+            border: 2px solid var(--dark-ink);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 6px 0;
+        }
+
+        .progress-fill-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-neon);
+            transition: width 0.3s ease;
+        }
+
+        .interactive-stage-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 0;
+            margin-top: 4px;
+        }
+
+        .graphic-asset-container {
+            width: 100%;
+            max-height: clamp(100px, 22vh, 160px);
+            border: 2px solid var(--dark-ink);
+            border-radius: var(--interactive-radius);
+            background: #fafcfc;
+            padding: 8px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .graphic-asset-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .prompt-text-card {
+            font-size: clamp(0.85rem, 2.8vh, 1.05rem);
+            font-weight: 800;
+            line-height: 1.3;
+            color: var(--dark-ink);
+            margin-bottom: 8px;
+            white-space: pre-line;
+        }
+
+        .options-vertical-stack {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(5px, 1.3vh, 10px);
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .interactive-option-node {
+            min-height: clamp(40px, 6vh, 52px);
+            padding: 8px 14px;
+            background: #ffffff;
+            border: 2px solid var(--dark-ink);
+            border-radius: var(--interactive-radius);
+            font-size: clamp(0.8rem, 2.2vh, 0.95rem);
+            font-weight: 700;
+            color: var(--dark-ink);
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 3px 0 var(--dark-ink);
+            transition: all 0.05s ease;
+        }
+
+        .interactive-option-node:hover {
+            background: #fbfefe;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 0 var(--dark-ink);
+        }
+
+        .interactive-option-node:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 0 var(--dark-ink);
+        }
+
+        .feedback-modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(17, 17, 25, 0.4);
+            backdrop-filter: blur(3px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .feedback-alert-card {
+            background: #ffffff;
+            border: 3px solid var(--dark-ink);
+            border-radius: var(--card-radius);
+            box-shadow: 0 6px 0 var(--dark-ink);
+            padding: 18px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .feedback-status-title {
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .feedback-explanation-body {
+            font-size: 13px;
+            font-weight: 600;
+            color: #44444f;
+            line-height: 1.4;
+            background: var(--light-cream);
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px dashed #cbd5d2;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .state-node-correct {
+            background: var(--success-bg) !important;
+            border-color: var(--primary-dark) !important;
+            color: var(--primary-dark) !important;
+        }
+
+        .state-node-wrong {
+            background: var(--danger-bg) !important;
+            border-color: var(--danger-coral) !important;
+            color: #a31c30 !important;
+            animation: systemNodeShake 0.3s ease;
+        }
+
+        @keyframes systemNodeShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        #summaryScreen {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dashboard-trophy-graphic {
+            font-size: clamp(3rem, 8vh, 4rem);
+        }
+
+        .metrics-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin: 8px 0;
+        }
+
+        .metric-data-card {
+            background: var(--light-cream);
+            border: 2px solid var(--dark-ink);
+            border-radius: 12px;
+            padding: 10px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .metric-data-card div:last-child {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--primary-dark);
+            margin-top: 2px;
+        }
+
+        .btn-universal-trigger {
+            background: var(--accent-citrus);
+            color: var(--dark-ink);
+            font-size: 16px;
+            font-weight: 900;
+            padding: 12px 28px;
+            border: 3px solid var(--dark-ink);
+            border-radius: var(--interactive-radius);
+            cursor: pointer;
+            box-shadow: 0 4px 0 var(--dark-ink);
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-universal-trigger:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 var(--dark-ink);
+        }
+
+        .canvas-confetti-particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            z-index: 1000;
+            pointer-events: none;
+            animation: fallAnimation 2.5s linear forwards;
+        }
+
+        @keyframes fallAnimation {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-window-frame">
+    
+    <div id="feedbackModalDeck" class="feedback-modal-overlay">
+        <div class="feedback-alert-card">
+            <div id="modalStatusTitle" class="feedback-status-title">✅ Correct!</div>
+            <div id="modalExplanationBody" class="feedback-explanation-body">Explanation data card load context...</div>
+        </div>
+    </div>
+
+    <div id="splashScreen" class="screen-view active-view">
+        <div class="splash-logo-container">
+            <img src="assets/innovine-logo.png" alt="Innovine Educational Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%23028090\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'white\' font-weight=\'bold\'>Innovine</text></svg>';">
+        </div>
+    </div>
+
+    <div id="registrationScreen" class="screen-view">
+        <div style="text-align: center;">
+            <div class="badge-marker">Grade 6 English</div>
+            <h1 class="app-title-text">Chapter 18<br><span>Direct and Indirect Speech</span></h1>
+        </div>
+
+        <div class="input-panel">
+            <label for="studentNameField">Student Explorer Name:</label>
+            <input type="text" id="studentNameField" class="name-text-input" placeholder="Enter student name..." autocomplete="off">
+        </div>
+
+        <div class="audio-dashboard-deck">
+            <div class="control-switch-row">
+                <span>🎵 Background Music</span>
+                <input type="checkbox" id="musicToggle" class="checkbox-toggle" checked onchange="handleMusicToggle()">
+            </div>
+            <div class="control-switch-row">
+                <span>🔊 Sound Effects</span>
+                <input type="checkbox" id="sfxToggle" class="checkbox-toggle" checked>
+            </div>
+            <div class="slider-wrapper">
+                <span>Master Volume</span>
+                <input type="range" id="masterVolumeSlider" class="native-slider" min="0" max="1" step="0.05" value="0.6" oninput="handleMasterVolumeUpdate(this.value)">
+                <span id="volumePercentageLabel">60%</span>
+            </div>
+        </div>
+
+        <button class="btn-universal-trigger" onclick="commitRegistrationAndLaunchGame()">Enter Arena 🚀</button>
+    </div>
+
+    <div id="gameplayScreen" class="screen-view">
+        <div class="hud-header">
+            <div class="hud-pill" id="hudProgressCounter">Question: 0/0</div>
+            <div class="hud-pill" style="background: #fffde6;"><span id="hudStarsCounter">⭐ 0</span></div>
+            <div class="hud-pill" style="background: #e6faff;"><span id="hudScoreCounter">Score: 0</span></div>
+            <div id="timerClock" class="circular-countdown-clock">30</div>
+        </div>
+
+        <div class="progress-track">
+            <div id="liveProgressBarFill" class="progress-fill-bar"></div>
+        </div>
+
+        <div class="interactive-stage-area">
+            <div id="stageGraphicWrapper" class="graphic-asset-container"></div>
+            <div id="stagePromptCard" class="prompt-text-card">Loading question context...</div>
+            <div id="stageOptionsStack" class="options-vertical-stack"></div>
+        </div>
+    </div>
+
+    <div id="summaryScreen" class="screen-view">
+        <div>
+            <div class="dashboard-trophy-graphic">🏆</div>
+            <h1 style="font-size: 24px; font-weight: 900;" id="summaryHeaderName">Quiz Complete!</h1>
+            <div class="badge-marker" id="performanceBadgeLabel" style="transform:none; margin-top: 6px;">Speech Champion</div>
+        </div>
+
+        <div class="metrics-grid-layout">
+            <div class="metric-data-card">
+                <div>Final Score</div>
+                <div id="summaryScoreValue">0</div>
+            </div>
+            <div class="metric-data-card">
+                <div>Accuracy Rate</div>
+                <div id="summaryAccuracyValue">0%</div>
+            </div>
+            <div class="metric-data-card">
+                <div>Correct Answers</div>
+                <div id="summaryCorrectValue">0</div>
+            </div>
+            <div class="metric-data-card">
+                <div>Total Stars</div>
+                <div id="summaryStarsValue">0</div>
+            </div>
+        </div>
+
+        <button class="btn-universal-trigger" onclick="commandRestartGameLoop()">Restart Session 🔄</button>
+    </div>
+
+</div>
+
+<script>
+    const educationalChapterQuizData = [
+        {
+            type: "Scenario Based",
+            q: "Your friend says: \"I am hungry.\" Later you tell your teacher what he said.\n\nWhich sentence is correct?",
+            options: [
+                "He said that he is hungry.",
+                "He said that he was hungry.",
+                "He said that I was hungry.",
+                "He says that he was hungry."
+            ],
+            answer: "He said that he was hungry.",
+            explanation: "Present tense 'am' changes to Past tense 'was' in reported speech.",
+            image: null
+        },
+        {
+            type: "Scenario Based",
+            q: "Rohan told you: \"I have finished my project.\" How would you report this to the class?",
+            options: [
+                "Rohan said that he finishes his project.",
+                "Rohan said that he has finished his project.",
+                "Rohan said that he had finished his project.",
+                "Rohan said that he was finishing his project."
+            ],
+            answer: "Rohan said that he had finished his project.",
+            explanation: "Present Perfect 'have finished' shifts back to Past Perfect 'had finished'.",
+            image: null
+        },
+        {
+            type: "Scenario Based",
+            q: "The science teacher said: \"The Earth revolves around the Sun.\" How do you report this universal fact?",
+            options: [
+                "The teacher said that the Earth revolved around the Sun.",
+                "The teacher said that the Earth revolves around the Sun.",
+                "The teacher said the Earth was revolving around the Sun.",
+                "The teacher said that the Sun revolves around the Earth."
+            ],
+            answer: "The teacher said that the Earth revolves around the Sun.",
+            explanation: "Universal truths (scientific facts) do not change tense in reported speech.",
+            image: null
+        },
+        {
+            type: "Scenario Based",
+            q: "A teacher gives this instruction: \"Do the exercise now.\" Which is the correct reported version?",
+            options: [
+                "The teacher told us to do the exercise now.",
+                "The teacher told us to do the exercise then.",
+                "The teacher said that we do the exercise today.",
+                "The teacher says to do the exercise now."
+            ],
+            answer: "The teacher told us to do the exercise then.",
+            explanation: "Time word 'now' shifts to 'then' in reported speech.",
+            image: null
+        },
+        {
+            type: "Scenario Based",
+            q: "A friend asks: \"Are you coming to the party?\" How do you report this question to someone else?",
+            options: [
+                "She asked that I am coming to the party.",
+                "She asked if I was coming to the party.",
+                "She asked why I was coming to the party.",
+                "She asked to me coming to the party."
+            ],
+            answer: "She asked if I was coming to the party.",
+            explanation: "Yes/No questions use 'if/whether' in reported speech — not 'that' or 'why'.",
+            image: null
+        },
+        {
+            type: "Picture Based",
+            q: "Q6. [picture1: A classroom speech bubble chart showing four Direct Speech sentences on the left and four Indirect Speech versions on the right — but the right side is jumbled.]\n\nWhich matching is correct?",
+            options: [
+                "1=A, 2=C, 3=B, 4=D",
+                "1=C, 2=B, 3=A, 4=D",
+                "1=D, 2=A, 3=C, 4=B",
+                "1=B, 2=D, 3=A, 4=C"
+            ],
+            answer: "1=C, 2=B, 3=A, 4=D",
+            explanation: "1 matches with C ('said Meera that she was tired'), 2 with B ('ordered to open books'), 3 with A ('asked where his bag was'), and 4 with D ('said she liked her new dress').",
+            image: "picture1.png"
+        },
+        {
+            type: "Picture Based",
+            q: "Study the 'Words That Change' table framework:\nthis → ___\nhere → ___\ntomorrow → ___\nnow → ___\n\nWhich fills all four rows perfectly?",
+            options: [
+                "those / there / the next day / then",
+                "that / there / the next day / then",
+                "those / everywhere / the following day / later",
+                "that / where / yesterday / soon"
+            ],
+            answer: "that / there / the next day / then",
+            explanation: "Standard rules: this→that, here→there, tomorrow→the next day, now→then.",
+            image: "picture2.png"
+        },
+        {
+            type: "Application Based",
+            q: "Riya said: \"I like my new dress.\" Which pronouns change when we report this, and how?",
+            options: [
+                "'I' becomes 'She' and 'my' becomes 'her'",
+                "'I' becomes 'You' and 'my' becomes 'your'",
+                "'I' stays as 'I' — pronouns never change in reported speech",
+                "'My' becomes 'the' — possessives are replaced with articles"
+            ],
+            answer: "'I' becomes 'She' and 'my' becomes 'her'",
+            explanation: "First person 'I/my' shifts to third person 'she/her' to reflect the changing narrative perspective.",
+            image: null
+        },
+        {
+            type: "Application Based",
+            q: "Which sentence correctly converts \"Mother asked me to help her\" back into Direct Speech?",
+            options: [
+                "Mother said, \"Please help me.\"",
+                "Mother said, \"You help me.\"",
+                "Mother said, \"I help you.\"",
+                "Mother said, \"Please helped me.\""
+            ],
+            answer: "Mother said, \"Please help me.\"",
+            explanation: "Indirect command structures ('asked me to help') reverse back to standard direct imperatives.",
+            image: null
+        },
+        {
+            type: "Classification",
+            q: "Sort these reported speech sentences into two distinct groups:\nP: \"She told him to sit down quietly.\"\nQ: \"He said that he was feeling unwell.\"\nR: \"The coach ordered the players to run faster.\"\nS: \"Meera said that she had finished her homework.\"",
+            options: [
+                "Statements: P, R — Commands: Q, S",
+                "Statements: Q, R — Commands: P, S",
+                "Statements: Q, S — Commands: P, R",
+                "Statements: P, S — Commands: Q, R"
+            ],
+            answer: "Statements: Q, S — Commands: P, R",
+            explanation: "Q & S describe simple declarative information, while P & R convey clear operational commands.",
+            image: null
+        },
+        {
+            type: "Classification",
+            q: "Classify each sentence string as either Direct or Indirect Speech:\n1. \"I am fine,\" said Riya.\n2. She said that she would be late.\n3. He shouted, \"Stop!\"\n4. Father asked where my bag was.",
+            options: [
+                "1=Indirect, 2=Direct, 3=Indirect, 4=Direct",
+                "1=Direct, 2=Direct, 3=Indirect, 4=Indirect",
+                "1=Direct, 2=Indirect, 3=Direct, 4=Indirect",
+                "1=Indirect, 2=Indirect, 3=Direct, 4=Direct"
+            ],
+            answer: "1=Direct, 2=Indirect, 3=Direct, 4=Indirect",
+            explanation: "Quotation structures pinpoint exact direct remarks, whereas declarative markers outline indirect structures.",
+            image: null
+        },
+        {
+            type: "Odd One Out",
+            q: "Three configurations follow indirect speech parameters perfectly. One contains an error. Identify the odd one out.",
+            options: [
+                "He said that he was tired.",
+                "She asked if I was coming to the party.",
+                "The teacher said that the Earth revolves around the Sun.",
+                "He said me that he was hungry."
+            ],
+            answer: "He said me that he was hungry.",
+            explanation: "The verb 'said' cannot accept a direct human pronoun receiver without appending a target preposition.",
+            image: null
+        },
+        {
+            type: "Application Based",
+            q: "A student wrote: \"He said me that he was very tired after the match.\" What is the structural flaw, and how do you resolve it?",
+            options: [
+                "'tired' should be 'tiring'",
+                "'said' cannot be followed by a person directly — it should be 'told me' or 'said to me'",
+                "'he' should be 'I'",
+                "There is no error — the sentence is correct"
+            ],
+            answer: "'said' cannot be followed by a person directly — it should be 'told me' or 'said to me'",
+            explanation: "Replacing 'said me' with 'told me' fixes the transitive structural framework mismatch.",
+            image: null
+        },
+        {
+            type: "Cause–Effect",
+            q: "A student transforms \"I am hungry,\" he said to \"He said that he was hungry.\"\n\nIdentify the dual core shifts executed during this conversion.",
+            options: [
+                "The quotation marks were kept and the verb tense changed",
+                "The pronoun 'I' changed to 'he' and the tense changed from 'am' to 'was' — both shift because the perspective and time of reporting are different",
+                "Only the punctuation changed — the words stayed the same",
+                "The verb changed but the pronoun stayed as 'I'"
+            ],
+            answer: "The pronoun 'I' changed to 'he' and the tense changed from 'am' to 'was' — both shift because the perspective and time of reporting are different",
+            explanation: "The systemic narrative voice change re-aligns pronouns, while tense shifts back to match the frame of delivery.",
+            image: null
+        },
+        {
+            type: "Assertion–Reason",
+            q: "Assertion: In reported speech, quotation marks and commas around the spoken words are removed.\n\nReason: Indirect speech describes what was said as part of a single statement — it does not repeat the exact words, so the punctuation used for quoting is no longer needed.",
+            options: [
+                "Both are correct; the reason correctly explains the assertion.",
+                "Both are correct; but the reason does NOT explain the assertion.",
+                "The assertion is correct; the reason is wrong.",
+                "Both are wrong."
+            ],
+            answer: "Both are correct; the reason correctly explains the assertion.",
+            explanation: "Indirect speech acts as a narrative report rather than a word-for-word repetition, making standard quotation marks unnecessary.",
+            image: null
+        }
+    ];
+
+    let audioSystemRegistry = {};
+    let masterVolumeLevel = 0.6;
+    let studentProfileName = "Explorer";
+    let workingSessionQuestions = [];
+    let activeQuestionIndex = 0;
+    
+    let userRunningScore = 0;
+    let earnedStarsCount = 0;
+    let aggregateCorrectCount = 0;
+    
+    let stepCountdownInterval = null;
+    let absoluteSecondsRemaining = 30;
+    let activeSelectionProcessingLock = false;
+
+    function initializeAudioCoreEngine() {
+        const structuralTracks = [
+            { id: 'bgmusic', file: 'assets/bgmusic.mp3', loop: true },
+            { id: 'correct', file: 'assets/correct.mp3', loop: false },
+            { id: 'wrong', file: 'assets/wrong.mp3', loop: false },
+            { id: 'click', file: 'assets/click.mp3', loop: false },
+            { id: 'clap', file: 'assets/clapping.mp3', loop: false },
+            { id: 'levelcomplete', file: 'assets/levelcomplete.mp3', loop: false },
+            { id: 'gamecomplete', file: 'assets/gamecomplete.mp3', loop: false },
+            { id: 'restart', file: 'assets/restart.mp3', loop: false }
+        ];
+
+        structuralTracks.forEach(track => {
+            const audioObj = new Audio();
+            audioObj.src = track.file;
+            audioObj.loop = track.loop;
+            audioObj.preload = 'auto';
+            audioObj.volume = masterVolumeLevel;
+            audioSystemRegistry[track.id] = audioObj;
+        });
+    }
+
+    function playAudio(trackId) {
+        if (trackId === 'bgmusic' && !document.getElementById('musicToggle').checked) return;
+        if (trackId !== 'bgmusic' && !document.getElementById('sfxToggle').checked) return;
+
+        const soundInstance = audioSystemRegistry[trackId];
+        if (soundInstance) {
+            try {
+                soundInstance.currentTime = 0;
+                soundInstance.play().catch(() => {});
+            } catch(e) {}
+        }
+    }
+
+    function stopAudio(trackId) {
+        const soundInstance = audioSystemRegistry[trackId];
+        if (soundInstance) {
+            soundInstance.pause();
+            soundInstance.currentTime = 0;
+        }
+    }
+
+    function handleMasterVolumeUpdate(volValue) {
+        masterVolumeLevel = parseFloat(volValue);
+        document.getElementById('volumePercentageLabel').innerText = Math.round(masterVolumeLevel * 100) + "%";
+        for (let trackId in audioSystemRegistry) {
+            if (audioSystemRegistry.hasOwnProperty(trackId)) {
+                audioSystemRegistry[trackId].volume = masterVolumeLevel;
+            }
+        }
+    }
+
+    function handleMusicToggle() {
+        if (document.getElementById('musicToggle').checked) {
+            playAudio('bgmusic');
+        } else {
+            stopAudio('bgmusic');
+        }
+    }
+
+    function executeFisherYatesShuffle(targetArray) {
+        let i = targetArray.length, j, temp;
+        while (--i > 0) {
+            j = Math.floor(Math.random() * (i + 1));
+            temp = targetArray[j];
+            targetArray[j] = targetArray[i];
+            targetArray[i] = temp;
+        }
+        return targetArray;
+    }
+
+    function navigateToActiveView(targetViewId) {
+        document.querySelectorAll('.screen-view').forEach(view => view.classList.remove('active-view'));
+        document.getElementById(targetViewId).classList.add('active-view');
+    }
+
+    function commitRegistrationAndLaunchGame() {
+        const rawInput = document.getElementById('studentNameField').value.trim();
+        if (rawInput !== "") studentProfileName = rawInput;
+        playAudio('click');
+        playAudio('bgmusic');
+        navigateToActiveView('gameplayScreen');
+        initializeFreshGameSequence();
+    }
+
+    function initializeFreshGameSequence() {
+        workingSessionQuestions = educationalChapterQuizData.map(item => {
+            const matchingOptionsCopy = [...item.options];
+            if (item.type !== "Picture Based") {
+                executeFisherYatesShuffle(matchingOptionsCopy);
+            }
+            return { ...item, options: matchingOptionsCopy };
+        });
+        
+        let pictureQuestions = workingSessionQuestions.filter(q => q.type === "Picture Based");
+        let regularQuestions = workingSessionQuestions.filter(q => q.type !== "Picture Based");
+        executeFisherYatesShuffle(regularQuestions);
+        workingSessionQuestions = [...regularQuestions, ...pictureQuestions];
+        
+        activeQuestionIndex = 0;
+        userRunningScore = 0;
+        earnedStarsCount = 0;
+        aggregateCorrectCount = 0;
+        activeSelectionProcessingLock = false;
+
+        renderQuestionTemplateStage();
+    }
+
+    function renderQuestionTemplateStage() {
+        if (stepCountdownInterval) clearInterval(stepCountdownInterval);
+        activeSelectionProcessingLock = false;
+        absoluteSecondsRemaining = 30;
+        
+        const currentDataPayload = workingSessionQuestions[activeQuestionIndex];
+
+        document.getElementById('hudProgressCounter').innerText = `Q: ${activeQuestionIndex + 1}/${workingSessionQuestions.length}`;
+        document.getElementById('hudStarsCounter').innerText = `⭐ ${earnedStarsCount}`;
+        document.getElementById('hudScoreCounter').innerText = `Score: ${userRunningScore}`;
+        document.getElementById('liveProgressBarFill').style.width = `${((activeQuestionIndex) / workingSessionQuestions.length) * 100}%`;
+        
+        const graphicBox = document.getElementById('stageGraphicWrapper');
+        if (currentDataPayload.image) {
+            graphicBox.innerHTML = `<img src="assets/${currentDataPayload.image}" alt="Question Graphic Component" onerror="this.style.display='none';">`;
+            graphicBox.style.display = 'flex';
+        } else {
+            graphicBox.style.display = 'none';
+            graphicBox.innerHTML = '';
+        }
+
+        document.getElementById('stagePromptCard').innerText = currentDataPayload.q;
+        
+        const stackContainer = document.getElementById('stageOptionsStack');
+        stackContainer.innerHTML = '';
+
+        currentDataPayload.options.forEach((optionText) => {
+            const cardButton = document.createElement('button');
+            cardButton.className = 'interactive-option-node';
+            cardButton.setAttribute('role', 'button');
+            cardButton.innerHTML = `<span>${optionText}</span>`;
+            cardButton.onclick = () => evaluateUserSelection(cardButton, optionText);
+            stackContainer.appendChild(cardButton);
+        });
+
+        startGameplayCountdownTimer();
+    }
+
+    function startGameplayCountdownTimer() {
+        const timerUIElement = document.getElementById('timerClock');
+        timerUIElement.innerText = absoluteSecondsRemaining;
+        timerUIElement.style.background = `conic-gradient(var(--primary-neon) 100%, var(--primary-neon) 0%)`;
+
+        stepCountdownInterval = setInterval(() => {
+            absoluteSecondsRemaining--;
+            timerUIElement.innerText = absoluteSecondsRemaining;
+            const elapsedRatio = (absoluteSecondsRemaining / 30) * 100;
+            timerUIElement.style.background = `conic-gradient(var(--danger-coral) ${100 - elapsedRatio}%, var(--primary-neon) 0%)`;
+
+            if (absoluteSecondsRemaining <= 0) {
+                clearInterval(stepCountdownInterval);
+                triggerTimeoutFailure();
+            }
+        }, 1000);
+    }
+
+    function triggerTimeoutFailure() {
+        if (activeSelectionProcessingLock) return;
+        activeSelectionProcessingLock = true;
+        playAudio('wrong');
+        const currentCorrectAnswer = workingSessionQuestions[activeQuestionIndex].answer;
+        
+        document.querySelectorAll('.interactive-option-node').forEach(node => {
+            if (node.innerText.trim() === currentCorrectAnswer.trim()) {
+                node.classList.add('state-node-correct');
+            }
+        });
+        displayFeedbackModal(false, "Time up! " + workingSessionQuestions[activeQuestionIndex].explanation);
+    }
+
+    function evaluateUserSelection(selectedHTMLNode, selectedTextValue) {
+        if (activeSelectionProcessingLock) return;
+        activeSelectionProcessingLock = true;
+        clearInterval(stepCountdownInterval);
+
+        const currentActiveData = workingSessionQuestions[activeQuestionIndex];
+        const isSelectionCorrect = (selectedTextValue.trim() === currentActiveData.answer.trim());
+
+        if (isSelectionCorrect) {
+            selectedHTMLNode.classList.add('state-node-correct');
+            userRunningScore += 10;
+            aggregateCorrectCount++;
+            earnedStarsCount += (absoluteSecondsRemaining > 15) ? 2 : 1;
+            
+            playAudio('correct');
+            playAudio('clap');
+            triggerConfettiExplosionEffects();
+            displayFeedbackModal(true, currentActiveData.explanation);
+        } else {
+            selectedHTMLNode.classList.add('state-node-wrong');
+            playAudio('wrong');
+            
+            document.querySelectorAll('.interactive-option-node').forEach(node => {
+                if (node.innerText.trim() === currentActiveData.answer.trim()) {
+                    node.classList.add('state-node-correct');
+                }
+            });
+            displayFeedbackModal(false, currentActiveData.explanation);
+        }
+    }
+
+    function displayFeedbackModal(isCorrect, explanationText) {
+        const overlayNode = document.getElementById('feedbackModalDeck');
+        const statusTitleNode = document.getElementById('modalStatusTitle');
+        const explanationBodyNode = document.getElementById('modalExplanationBody');
+
+        if (isCorrect) {
+            statusTitleNode.innerText = "✅ Correct!";
+            statusTitleNode.style.color = "var(--primary-dark)";
+        } else {
+            statusTitleNode.innerText = "❌ Incorrect!";
+            statusTitleNode.style.color = "var(--danger-coral)";
+        }
+
+        explanationBodyNode.innerText = explanationText;
+        overlayNode.style.display = 'flex';
+
+        setTimeout(() => {
+            overlayNode.style.display = 'none';
+            advanceGameplayFlowSequence();
+        }, 2200);
+    }
+
+    function advanceGameplayFlowSequence() {
+        activeQuestionIndex++;
+        if (activeQuestionIndex < workingSessionQuestions.length) {
+            if (activeQuestionIndex % 5 === 0) playAudio('levelcomplete');
+            renderQuestionTemplateStage();
+        } else {
+            renderFinalSummaryDashboard();
+        }
+    }
+
+    function renderFinalSummaryDashboard() {
+        navigateToActiveView('summaryScreen');
+        stopAudio('bgmusic');
+        
+        playAudio('gamecomplete');
+        playAudio('clap');
+        triggerConfettiExplosionEffects();
+
+        const globalSessionQuestionsCount = workingSessionQuestions.length;
+        const netCalculatedAccuracyScore = Math.round((aggregateCorrectCount / globalSessionQuestionsCount) * 100);
+
+        document.getElementById('summaryHeaderName').innerText = `Awesome, ${studentProfileName}!`;
+        document.getElementById('summaryScoreValue').innerText = `${userRunningScore} / ${globalSessionQuestionsCount * 10}`;
+        document.getElementById('summaryAccuracyValue').innerText = `${netCalculatedAccuracyScore}%`;
+        document.getElementById('summaryCorrectValue').innerText = `${aggregateCorrectCount} / ${globalSessionQuestionsCount}`;
+        document.getElementById('summaryStarsValue').innerText = `${earnedStarsCount}`;
+
+        const badgeLabelNode = document.getElementById('performanceBadgeLabel');
+        if (netCalculatedAccuracyScore >= 90) {
+            badgeLabelNode.innerText = "🏆 Speech Champion";
+            badgeLabelNode.style.background = "var(--accent-citrus)";
+        } else if (netCalculatedAccuracyScore >= 75) {
+            badgeLabelNode.innerText = "🌟 Excellent Master";
+            badgeLabelNode.style.background = "var(--primary-neon)";
+        } else {
+            badgeLabelNode.innerText = "📚 Keep Practising";
+            badgeLabelNode.style.background = "#fff0f2";
+        }
+    }
+
+    function commandRestartGameLoop() {
+        playAudio('restart');
+        navigateToActiveView('registrationScreen');
+    }
+
+    function triggerConfettiExplosionEffects() {
+        const engineColorMatrix = ["#00cdac", "#028090", "#ffea00", "#ff5470", "#00f5d4"];
+        for (let idx = 0; idx < 40; idx++) {
+            const particleNode = document.createElement("div");
+            particleNode.className = "canvas-confetti-particle";
+            particleNode.style.left = Math.random() * 100 + "vw";
+            particleNode.style.backgroundColor = engineColorMatrix[Math.floor(Math.random() * engineColorMatrix.length)];
+            particleNode.style.transform = `scale(${Math.random() * 0.7 + 0.4})`;
+            particleNode.style.animationDuration = (Math.random() * 1.2 + 1.2) + "s";
+            document.body.appendChild(particleNode);
+            setTimeout(() => { particleNode.remove(); }, 2500);
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        initializeAudioCoreEngine();
+        setTimeout(() => {
+            navigateToActiveView('registrationScreen');
+        }, 1500);
+    });
+</script>
+
+</body>
+</html>
