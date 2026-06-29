@@ -1,1 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 6 English Mastery: Active and Passive Voice</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+:root {
+    --primary-neon: #00cdac;
+    --primary-dark: #028090;
+    --accent-citrus: #ffea00;
+    --accent-citrus-dark: #e5d100;
+    --success-teal: #00f5d4;
+    --success-bg: #e6fffb;
+    --danger-coral: #ff5470;
+    --danger-bg: #fff0f2;
+    --dark-ink: #111119;
+    --light-cream: #faf9f6;
+    --surface-white: #ffffff;
+    --card-radius: 20px;
+    --interactive-radius: 14px;
+    --neo-shadow: 0 8px 0px var(--dark-ink);
+    --active-shadow: 0 2px 0px var(--dark-ink);
+}
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+body {
+    background-color: #eef9f6;
+    background-image: radial-gradient(var(--primary-dark) 0.5px, transparent 0.5px), radial-gradient(var(--primary-dark) 0.5px, #eef9f6 0.5px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    color: var(--dark-ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    overflow-x: hidden;
+}
+
+.ambient-layer {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+.ambient-bubble {
+    position: absolute;
+    background: linear-gradient(135deg, rgba(2, 128, 144, 0.05), rgba(255, 234, 0, 0.05));
+    border-radius: 40% 60% 60% 40% / 50% 40% 60% 50%;
+    animation: morphFloat 14s ease-in-out infinite alternate;
+}
+
+@keyframes morphFloat {
+    0% { transform: translateY(0px) rotate(0deg); border-radius: 40% 60% 60% 40% / 50% 40% 60% 50%; }
+    100% { transform: translateY(-35px) rotate(10deg); border-radius: 55% 40% 65% 45% / 45% 55% 45% 55%; }
+}
+
+.game-container-card {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    background: var(--surface-white);
+    border-radius: var(--card-radius);
+    padding: 28px;
+    border: 4px solid var(--dark-ink);
+    box-shadow: var(--neo-shadow);
+    z-index: 10;
+    display: none;
+}
+
+#splashScreen { text-align: center; padding: 60px 20px; }
+.logo-presentation {
+    position: relative;
+    display: inline-block;
+    animation: simplePulse 2s ease-in-out infinite alternate;
+}
+.logo-presentation img { width: 160px; height: 160px; object-fit: contain; }
+
+.loader-system {
+    width: 140px; height: 6px; background: #e2edea;
+    border-radius: 3px; margin: 36px auto 0 auto; overflow: hidden;
+    border: 2px solid var(--dark-ink);
+}
+.loader-progress-line {
+    width: 0%; height: 100%; background: var(--primary-dark);
+    animation: uniformLoad 4.9s linear forwards;
+}
+
+@keyframes simplePulse {
+    0% { transform: scale(0.98); }
+    100% { transform: scale(1.04); }
+}
+@keyframes uniformLoad { to { width: 100%; } }
+
+.badge-tag {
+    display: inline-block; background: var(--accent-citrus); color: var(--dark-ink);
+    padding: 6px 14px; border-radius: 8px; font-weight: 800;
+    font-size: 13px; margin-bottom: 16px; border: 2px solid var(--dark-ink);
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+h1.game-headline { font-size: 2.1rem; font-weight: 900; color: var(--dark-ink); margin-bottom: 16px; line-height: 1.15; }
+h1.game-headline span { color: var(--primary-dark); text-decoration: underline var(--accent-citrus) 4px; }
+
+.input-group {
+    margin: 20px 0;
+    text-align: left;
+}
+.input-group label {
+    display: block;
+    font-weight: 800;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+}
+.text-field-input {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    border: 2px solid var(--dark-ink);
+    border-radius: var(--interactive-radius);
+    background: var(--light-cream);
+    outline: none;
+}
+.text-field-input:focus {
+    border-color: var(--primary-dark);
+    background: #ffffff;
+}
+
+.hud-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 8px; }
+.hud-chip {
+    background: var(--surface-white); padding: 8px 14px; border-radius: var(--interactive-radius);
+    font-size: 14px; font-weight: 800; color: var(--dark-ink); border: 2px solid var(--dark-ink);
+}
+.audio-deck { display: flex; align-items: center; gap: 8px; background: var(--surface-white); padding: 6px 12px; border-radius: var(--interactive-radius); border: 2px solid var(--dark-ink); }
+.vol-slider-input { width: 50px; accent-color: var(--primary-dark); cursor: pointer; }
+
+.meter-track { height: 10px; background: #e2edea; border-radius: 5px; overflow: hidden; margin-bottom: 24px; border: 2px solid var(--dark-ink); }
+.meter-fill-bar { height: 100%; background: var(--primary-dark); width: 0%; transition: width 0.3s ease; }
+
+.illustration-box {
+    width: 100%; border-radius: var(--interactive-radius); border: 3px solid var(--dark-ink);
+    background: #fdfdfd; padding: 8px; display: none; justify-content: center; align-items: center; margin-bottom: 18px;
+}
+.illustration-box img { max-width: 100%; height: auto; max-height: 220px; border-radius: 8px; object-fit: contain; }
+
+.question-text-plate { font-size: 1.2rem; font-weight: 800; color: var(--dark-ink); margin-bottom: 20px; line-height: 1.45; white-space: pre-line; }
+.alert-banner-ribbon { min-height: 34px; font-size: 1.05rem; font-weight: 700; margin-bottom: 20px; line-height: 1.4; }
+.matrix-options-box { display: flex; flex-direction: column; gap: 12px; }
+
+.option-node-btn {
+    padding: 16px 20px; border-radius: var(--interactive-radius); background: var(--surface-white);
+    border: 2px solid var(--dark-ink); cursor: pointer; text-align: left; font-size: 1rem;
+    font-weight: 700; color: var(--dark-ink);
+    transition: all 0.15s ease; display: flex; align-items: center;
+}
+.option-node-btn:hover { background: #f2faf8; border-color: var(--primary-dark); transform: translateY(-2px); }
+
+.option-node-btn.correct-flash { background: var(--success-bg) !important; border-color: var(--primary-dark) !important; color: #028090; font-weight: 800; border-width: 3px !important; }
+.option-node-btn.wrong-flash { background: var(--danger-bg) !important; border-color: var(--danger-coral) !important; color: #a31c30; font-weight: 800; border-width: 3px !important; animation: hardShake 0.4s ease; }
+@keyframes hardShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.node-lock { pointer-events: none !important; }
+
+.metrics-summary-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+.metric-pill-item { background: var(--light-cream); padding: 12px; border-radius: 12px; border: 2px solid var(--dark-ink); font-size: 14px; font-weight: 700; }
+
+.btn-action-trigger {
+    background: var(--accent-citrus); color: var(--dark-ink); font-size: 1.1rem; font-weight: 800;
+    padding: 14px 32px; border: 2px solid var(--dark-ink); border-radius: var(--interactive-radius); cursor: pointer;
+    box-shadow: var(--neo-shadow); transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 8px; margin: 8px;
+}
+.btn-action-trigger:hover { background: var(--accent-citrus-dark); transform: translateY(-2px); box-shadow: 0 10px 0px var(--dark-ink); }
+.btn-action-trigger:active { transform: translateY(6px); box-shadow: var(--active-shadow); }
+
+.confetti-bit { position: fixed; width: 8px; height: 8px; top: -10px; border-radius: 1px; z-index: 999; pointer-events: none; animation: standardDrop 2.5s linear forwards; }
+@keyframes standardDrop { to { transform: translateY(105vh) rotate(360deg); opacity: 0; } }
+
+@media(max-width: 600px) {
+    body { padding: 10px; }
+    .game-container-card { padding: 20px 16px; border-radius: 16px; }
+    h1.game-headline { font-size: 1.6rem; }
+    .question-text-plate { font-size: 1.1rem; }
+    .option-node-btn { font-size: 0.95rem; padding: 14px 16px; }
+    .btn-action-trigger { width: 100%; justify-content: center; margin: 6px 0; }
+    .metrics-summary-box { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient-layer">
+    <div class="ambient-bubble" style="width: 90px; height: 90px; top: 12%; left: -25px;"></div>
+    <div class="ambient-bubble" style="width: 140px; height: 140px; bottom: 8%; right: -35px; animation-delay: -3s;"></div>
+</div>
+
+<div id="splashScreen" class="game-container-card" style="display: block;">
+    <div class="logo-presentation">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.opacity='0.2'">
+    </div>
+    <div class="loader-system">
+        <div class="loader-progress-line"></div>
+    </div>
+</div>
+
+<div id="homeScreen" class="game-container-card">
+    <div class="badge-tag">Grade 6 English</div>
+    <h1 class="game-headline">Chapter 17: <span>Active & Passive Voice</span></h1>
+    
+    <div class="input-group">
+        <label for="studentNameInput">Enter Student Name:</label>
+        <input type="text" id="studentNameInput" class="text-field-input" placeholder="Type your name here..." autocomplete="off">
+    </div>
+
+    <button class="btn-action-trigger" onclick="validateRegistrationAndStart()">Start Quiz 🚀</button>
+</div>
+
+<div id="gameScreen" class="game-container-card">
+    <div class="hud-panel">
+        <div class="hud-chip" id="hudProgressLabel">Question 1 / 15</div>
+        <div class="hud-chip" id="hudScoreLabel">⭐ 0</div>
+        <div class="audio-deck">
+            <span id="muteBtn" style="cursor:pointer; font-size:14px;" onclick="toggleSystemMute()">🔊</span>
+            <input type="range" id="volumeControl" class="vol-slider-input" min="0" max="1" step="0.1" value="0.7" oninput="updateSystemVolume(this.value)">
+        </div>
+    </div>
+
+    <div class="meter-track">
+        <div class="meter-fill-bar" id="statusBarFill"></div>
+    </div>
+
+    <div id="pictureAssetBox" class="illustration-box"></div>
+    <div class="question-text-plate" id="questionTextBox">Loading question track...</div>
+    <div class="alert-banner-ribbon" id="feedbackNotificationBox"></div>
+    <div class="matrix-options-box" id="optionsMatrixGrid"></div>
+</div>
+
+<div id="scoreScreen" class="game-container-card" style="text-align: center;">
+    <div style="font-size: 3.5rem; margin-bottom: 10px;">🏆</div>
+    <h2 style="font-size: 1.5rem; font-weight: 800; color: #44444f;" id="studentGreetingLabel">Great Job!</h2>
+    <h1 style="font-size: 1.8rem; font-weight: 900; color: var(--dark-ink);" id="badgeLabelField">Performance Feedback</h1>
+    <div style="font-size: 2.2rem; font-weight: 900; color: var(--primary-dark); margin: 8px 0;" id="pointsLabelField">0 / 150</div>
+
+    <div class="metrics-summary-box">
+        <div class="metric-pill-item" id="statCorrect">Correct: 0</div>
+        <div class="metric-pill-item" id="statIncorrect">Incorrect: 0</div>
+        <div class="metric-pill-item" id="statAccuracy">Accuracy: 0%</div>
+    </div>
+
+    <button class="btn-action-trigger" onclick="relaunchActiveGameInstance()">Restart Quiz 🔄</button>
+</div>
+
+<script>
+// Complete, unfiltered 15 MCQ Dataset directly from the official source material
+const questionsDataset = [
+    {
+        q: "You are writing a story about a mischievous cat. You write: \"The cat chased the mouse.\" What is the focus of this sentence and what voice is it?",
+        options: [
+            "Passive Voice — focus on the mouse",
+            "Active Voice — focus on the cat doing the action",
+            "Active Voice — focus on the mouse doing the action",
+            "Passive Voice — focus on the cat"
+        ],
+        answer: "Active Voice — focus on the cat doing the action",
+        hint: "Doer (cat) performs the action directly → Active Voice"
+    },
+    {
+        q: "You are writing a formal news report about a new school building. You want to focus on the building being completed, not the workers. Which sentence is most appropriate?",
+        options: [
+            "The workers finished the school building yesterday.",
+            "The school building was finished by the workers yesterday.",
+            "They finished the school building yesterday.",
+            "Finishing the school building happened yesterday."
+        ],
+        answer: "The school building was finished by the workers yesterday.",
+        hint: "Focus shifted to receiver (building) not doer (workers) → Passive Voice used in formal writing"
+    },
+    {
+        q: "You walk into your room and find the window is broken. You have no idea who broke it. Which sentence most naturally fits this situation?",
+        options: [
+            "Someone broke the window.",
+            "The window was broken.",
+            "The window broke itself.",
+            "The window has broken."
+        ],
+        answer: "The window was broken.",
+        hint: "Doer is unknown → Passive Voice most naturally fits this situation"
+    },
+    {
+        q: "You are describing a classroom activity happening right now. Change \"The teacher is explaining the lesson\" into Passive Voice:",
+        options: [
+            "The lesson was explained by the teacher.",
+            "The lesson is explained by the teacher.",
+            "The lesson is being explained by the teacher.",
+            "The lesson has been explained by the teacher."
+        ],
+        answer: "The lesson is being explained by the teacher.",
+        hint: "Present Continuous Passive = is/are + being + Past Participle"
+    },
+    {
+        q: "A company makes an announcement: \"The company will launch a new app next month.\" Which correctly converts this to Passive Voice?",
+        options: [
+            "A new app will launched by the company.",
+            "A new app will be launched by the company.",
+            "A new app is launched by the company.",
+            "A new app will be launch by the company."
+        ],
+        answer: "A new app will be launched by the company.",
+        hint: "Future Simple Passive = will + be + Past Participle"
+    },
+    {
+        q: "Which classification is correct?",
+        options: [
+            "1=Passive, 2=Active, 3=Active, 4=Passive",
+            "1=Active, 2=Active, 3=Passive, 4=Passive",
+            "1=Active, 2=Passive, 3=Passive, 4=Active",
+            "1=Passive, 2=Passive, 3=Active, 4=Active"
+        ],
+        answer: "1=Active, 2=Passive, 3=Passive, 4=Active",
+        image: "picture1.png",
+        hint: "Postman/scientists as doer = Active; letter/planet as focus = Passive"
+    },
+    {
+        q: "Which set correctly fills all four blanks in order?",
+        options: [
+            "should be beaten / should be baked / should be mixed / should be served",
+            "are beaten / were baked / is mixed / was served",
+            "will be beaten / is baked / are mixed / should serve",
+            "were beaten / should be baked / is mixed / will serve"
+        ],
+        answer: "should be beaten / should be baked / should be mixed / should be served",
+        image: "picture2.png",
+        hint: "Commands converted to Passive use 'should be + Past Participle'"
+    },
+    {
+        q: "In the sentence \"The cake was eaten by Rohan\" — what happened to the original subject?",
+        options: [
+            "The subject (the cake) performed the action",
+            "The subject (the cake) received the action — it was acted upon by Rohan",
+            "There is no subject in the sentence",
+            "The cake and Rohan performed the action together"
+        ],
+        answer: "The subject (the cake) received the action — it was acted upon by Rohan",
+        hint: "In Passive Voice the grammatical subject receives the action — it does not perform it"
+    },
+    {
+        q: "Which sentence correctly converts \"Who painted this picture?\" into Passive Voice?",
+        options: [
+            "By whom was this picture painted?",
+            "This picture was painted by who?",
+            "Who was this picture painted by?",
+            "This picture is painted by whom?"
+        ],
+        answer: "By whom was this picture painted?",
+        hint: "'Who' as doer becomes 'By whom' in Passive — placed at the front of the question"
+    },
+    {
+        q: "Sort these sentences into two groups — Active Voice and Passive Voice:\nP: \"The dog bit the boy.\"\nQ: \"The trophy was won by our school.\"\nR: \"Riya wrote a beautiful poem.\"\nS: \"The windows were cleaned by the staff.\"",
+        options: [
+            "Active: P, Q — Passive: R, S",
+            "Active: Q, S — Passive: P, R",
+            "Active: P, R — Passive: Q, S",
+            "Active: R, S — Passive: P, Q"
+        ],
+        answer: "Active: P, R — Passive: Q, S",
+        hint: "P & R have doers acting directly → Active; Q & S have receivers as subject → Passive"
+    },
+    {
+        q: "Identify the tense used in each Passive Voice sentence:\n1. \"A letter is written by him.\"\n2. \"The lesson was being explained.\"\n3. \"The project has been completed.\"\n4. \"The app will be launched tomorrow.\"",
+        options: [
+            "1=Present Simple Passive, 2=Past Continuous Passive, 3=Present Perfect Passive, 4=Future Simple Passive",
+            "1=Past Simple Passive, 2=Present Continuous Passive, 3=Past Perfect Passive, 4=Present Simple Passive",
+            "1=Present Perfect Passive, 2=Future Simple Passive, 3=Present Simple Passive, 4=Past Continuous Passive",
+            "1=Future Simple Passive, 2=Present Simple Passive, 3=Past Continuous Passive, 4=Present Perfect Passive"
+        ],
+        answer: "1=Present Simple Passive, 2=Past Continuous Passive, 3=Present Perfect Passive, 4=Future Simple Passive",
+        hint: "Each structure correctly identified by tense + passive formula used"
+    },
+    {
+        q: "Three of the following sentences are in Passive Voice. One is NOT. Which is the odd one out?",
+        options: [
+            "The match was won by our team.",
+            "A new road is being built near our school.",
+            "The homework was done carefully.",
+            "The students celebrated their victory loudly."
+        ],
+        answer: "The students celebrated their victory loudly.",
+        hint: "'Students celebrated' = subject performing action directly → Active Voice"
+    },
+    {
+        q: "A student wrote these four passive sentences. One has an error. Find it:\na) \"The homework was done by me.\"\nb) \"The cake was ate by the children.\"\nc) \"The letter will be posted tomorrow.\"\nd) \"The lesson is being explained by the teacher.\"\n\nWhich option correctly identifies the error and fixes it?",
+        options: [
+            "Sentence (a) — 'me' should be 'I'",
+            "Sentence (b) — 'ate' should be 'eaten'; Passive Voice always requires the Past Participle (3rd form)",
+            "Sentence (c) — 'will be posted' should be 'will posted'",
+            "Sentence (d) — 'is being explained' should be 'is been explained'"
+        ],
+        answer: "Sentence (b) — 'ate' should be 'eaten'; Passive Voice always requires the Past Participle (3rd form)",
+        hint: "'Ate' is Simple Past (V2); Passive always requires Past Participle (V3) → 'eaten'"
+    },
+    {
+        q: "A science report changes \"Scientists discovered a new planet\" to \"A new planet was discovered.\" What is the effect of this change?",
+        options: [
+            "The meaning changes — the planet was not actually discovered",
+            "The sentence becomes grammatically incorrect without mentioning the scientists",
+            "The focus shifts from the scientists to the discovery itself, which is common in science reports.",
+            "The Active Voice version sounds more professional than the Passive version"
+        ],
+        answer: "The focus shifts from the scientists to the discovery itself, which is common in science reports.",
+        hint: "Removing the agent shifts focus to the event itself — standard in scientific and formal writing"
+    },
+    {
+        q: "Assertion: Active Voice is usually more direct and easier to understand than Passive Voice.\nReason: In Active Voice, the person or thing doing the action comes first, making the sentence stronger and clearer.",
+        options: [
+            "Both are correct; the reason correctly explains the assertion.",
+            "Both are correct; but the reason does NOT explain the assertion.",
+            "The assertion is correct; the reason is wrong.",
+            "Both are wrong."
+        ],
+        answer: "Both are correct; the reason correctly explains the assertion.",
+        hint: "Doer-first structure of Active Voice makes sentences more direct and easier to follow"
+    }
+];
+
+const audioAssetRegistry = {
+    click: new Audio('assets/correct.mp3'),
+    correct: new Audio('assets/correct.mp3'),
+    wrong: new Audio('assets/wrong.mp3'),
+    victory: new Audio('assets/clapping.mp3')
+};
+
+let globalAppVolumeSetting = 0.7;
+let isSystemAudioMuted = false;
+let studentProfileName = "Student";
+
+function updateSystemVolume(volumeValue) {
+    globalAppVolumeSetting = parseFloat(volumeValue);
+    if(globalAppVolumeSetting > 0 && isSystemAudioMuted) toggleSystemMute();
+}
+
+function toggleSystemMute() {
+    isSystemAudioMuted = !isSystemAudioMuted;
+    document.getElementById("muteBtn").innerText = isSystemAudioMuted ? "🔇" : "🔊";
+}
+
+function fireAudioEffect(soundEffectId) {
+    if(isSystemAudioMuted) return;
+    const soundTrackInstance = audioAssetRegistry[soundEffectId];
+    if(soundTrackInstance) {
+        soundTrackInstance.volume = globalAppVolumeSetting;
+        soundTrackInstance.currentTime = 0;
+        soundTrackInstance.play().catch(() => {});
+    }
+}
+
+let randomizedQuestionsPool = [];
+let currentQuestionIndex = 0;
+let userAccumulatedScore = 0;
+let totalCorrectAnswersCount = 0;
+let totalIncorrectAnswersCount = 0;
+
+function changeActiveScreen(currentScreenId, targetScreenId) {
+    document.getElementById(currentScreenId).style.display = "none";
+    document.getElementById(targetScreenId).style.display = "block";
+}
+
+function shuffleFisherYatesArray(arrayInstance) {
+    for (let i = arrayInstance.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arrayInstance[i], arrayInstance[j]] = [arrayInstance[j], arrayInstance[i]];
+    }
+    return arrayInstance;
+}
+
+function validateRegistrationAndStart() {
+    const rawInputName = document.getElementById("studentNameInput").value.trim();
+    if (rawInputName !== "") {
+        studentProfileName = rawInputName;
+    }
+    fireAudioEffect('click');
+    launchGamePlayLoop();
+}
+
+function relaunchActiveGameInstance() {
+    fireAudioEffect('click');
+    changeActiveScreen("scoreScreen", "homeScreen");
+}
+
+function launchGamePlayLoop() {
+    randomizedQuestionsPool = shuffleFisherYatesArray([...questionsDataset]).map(item => {
+        return { ...item, options: shuffleFisherYatesArray([...item.options]) };
+    });
+    currentQuestionIndex = 0;
+    userAccumulatedScore = 0;
+    totalCorrectAnswersCount = 0;
+    totalIncorrectAnswersCount = 0;
+    
+    changeActiveScreen("homeScreen", "gameScreen");
+    presentQuestionTemplateNode();
+}
+
+function presentQuestionTemplateNode() {
+    const activeQuestionContext = randomizedQuestionsPool[currentQuestionIndex];
+    
+    document.getElementById("hudProgressLabel").innerText = `Question ${currentQuestionIndex + 1} / ${randomizedQuestionsPool.length}`;
+    document.getElementById("statusBarFill").style.width = ((currentQuestionIndex) / randomizedQuestionsPool.length) * 100 + "%";
+    document.getElementById("hudScoreLabel").innerText = `⭐ ${userAccumulatedScore}`;
+    document.getElementById("questionTextBox").innerText = activeQuestionContext.q;
+    
+    const contextBanner = document.getElementById("feedbackNotificationBox");
+    contextBanner.innerHTML = `<span style="color:#666670">⏳ Analyze structure to choose the best answer...</span>`;
+
+    const graphicContainerNode = document.getElementById("pictureAssetBox");
+    if(activeQuestionContext.image) {
+        graphicContainerNode.innerHTML = `<img src="assets/${activeQuestionContext.image}" alt="Question Graphic Context">`;
+        graphicContainerNode.style.display = "flex";
+    } else {
+        graphicContainerNode.style.display = "none";
+        graphicContainerNode.innerHTML = "";
+    }
+
+    const optionsGridContainer = document.getElementById("optionsMatrixGrid");
+    optionsGridContainer.innerHTML = "";
+
+    activeQuestionContext.options.forEach(optionTextString => {
+        const optionCardElement = document.createElement("div");
+        optionCardElement.className = "option-node-btn";
+        optionCardElement.innerText = optionTextString;
+        optionCardElement.onclick = () => validateSelectedNodeCard(optionCardElement, optionTextString, activeQuestionContext);
+        optionsGridContainer.appendChild(optionCardElement);
+    });
+}
+
+function validateSelectedNodeCard(clickedDOMNode, evaluatedValueString, contextObject) {
+    const combinedOptionsList = document.querySelectorAll(".option-node-btn");
+    combinedOptionsList.forEach(node => node.classList.add("node-lock"));
+    
+    const bannerBoxNode = document.getElementById("feedbackNotificationBox");
+
+    if(evaluatedValueString === contextObject.answer) {
+        clickedDOMNode.classList.add("correct-flash");
+        userAccumulatedScore += 10;
+        totalCorrectAnswersCount++;
+        fireAudioEffect('correct');
+        triggerConfettiVisualExplosion();
+        bannerBoxNode.innerHTML = `<span style="color:#028090;">🎉 Correct! ${contextObject.hint}</span>`;
+    } else {
+        clickedDOMNode.classList.add("wrong-flash");
+        totalIncorrectAnswersCount++;
+        fireAudioEffect('wrong');
+        
+        combinedOptionsList.forEach(node => {
+            if(node.innerText === contextObject.answer) node.classList.add("correct-flash");
+        });
+        bannerBoxNode.innerHTML = `<span style="color:#a31c30;">💡 Review: ${contextObject.hint}</span>`;
+    }
+    executeNextStepTransitionDelay();
+}
+
+function executeNextStepTransitionDelay() {
+    setTimeout(() => {
+        currentQuestionIndex++;
+        if(currentQuestionIndex < randomizedQuestionsPool.length) {
+            presentQuestionTemplateNode();
+        } else {
+            generateFinalMetricsDashboard();
+        }
+    }, 3200);
+}
+
+function generateFinalMetricsDashboard() {
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("scoreScreen").style.display = "block";
+    
+    const overallQuestionsCount = randomizedQuestionsPool.length;
+    const finalCalculatedPercentage = Math.round((totalCorrectAnswersCount / overallQuestionsCount) * 100);
+    
+    document.getElementById("pointsLabelField").innerText = `${userAccumulatedScore} / ${overallQuestionsCount * 10}`;
+    document.getElementById("statCorrect").innerText = `Correct: ${totalCorrectAnswersCount}`;
+    document.getElementById("statIncorrect").innerText = `Incorrect: ${totalIncorrectAnswersCount}`;
+    document.getElementById("statAccuracy").innerText = `Accuracy: ${finalCalculatedPercentage}%`;
+    document.getElementById("studentGreetingLabel").innerText = `Great Effort, ${studentProfileName}!`;
+
+    let feedbackPhrase = "Keep Practising! 🌟";
+
+    if(finalCalculatedPercentage >= 85) {
+        feedbackPhrase = "Excellent! 🏆";
+        fireAudioEffect('victory');
+        triggerConfettiVisualExplosion();
+    } else if(finalCalculatedPercentage >= 70) {
+        feedbackPhrase = "Great Job! 🚀";
+        fireAudioEffect('victory');
+    } else if(finalCalculatedPercentage >= 50) {
+        feedbackPhrase = "Nice Effort! 👍";
+    }
+
+    document.getElementById("badgeLabelField").innerText = feedbackPhrase;
+}
+
+function triggerConfettiVisualExplosion() {
+    const neonColors = ["#00cdac", "#028090", "#ffea00", "#ff5470", "#00f5d4"];
+    for (let i = 0; i < 40; i++) {
+        const particle = document.createElement("div");
+        particle.className = "confetti-bit";
+        particle.style.left = Math.random() * 100 + "vw";
+        particle.style.backgroundColor = neonColors[Math.floor(Math.random() * neonColors.length)];
+        particle.style.animationDuration = (Math.random() * 1.2 + 1.2) + "s";
+        particle.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 2500);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => { changeActiveScreen("splashScreen", "homeScreen"); }, 5000);
+});
+</script>
+</body>
+</html>
