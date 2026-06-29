@@ -37,7 +37,7 @@
     position:fixed;
     inset:0;
     pointer-events:none;
-    opacity:.26;
+    opacity:.22;
     background:
       radial-gradient(circle at 20% 20%, rgba(255,255,255,.16) 0 2px, transparent 3px) 0 0/120px 120px,
       radial-gradient(circle at 80% 30%, rgba(255,255,255,.12) 0 2px, transparent 3px) 0 0/170px 170px;
@@ -47,7 +47,6 @@
     from{transform:translate3d(0,0,0)}
     to{transform:translate3d(-30px,24px,0)}
   }
-
   .wrap{
     position:relative;
     z-index:1;
@@ -58,8 +57,8 @@
     padding:8px;
   }
   .screen{
-    width:min(940px,100%);
-    height:min(760px,100%);
+    width:min(980px,100%);
+    height:min(780px,100%);
     border-radius:28px;
     overflow:hidden;
     position:relative;
@@ -69,7 +68,7 @@
     border:1px solid rgba(255,255,255,.12);
   }
   .bg-layer{
-    position:absolute;inset:0;pointer-events:none;opacity:.40;
+    position:absolute;inset:0;pointer-events:none;opacity:.38;
     background:
       radial-gradient(circle at 15% 20%, rgba(255,255,255,.16) 0 3px, transparent 4px),
       radial-gradient(circle at 75% 18%, rgba(255,255,255,.12) 0 2px, transparent 4px),
@@ -81,7 +80,6 @@
     from{transform:translateY(0)}
     to{transform:translateY(-10px)}
   }
-
   .topbar{
     display:flex;
     align-items:center;
@@ -124,7 +122,6 @@
     font-size:12px;
   }
   .pill strong{color:#fff}
-
   .panel{
     position:absolute;
     inset:58px 0 0;
@@ -134,7 +131,7 @@
     padding:8px;
   }
   .card{
-    width:min(860px,100%);
+    width:min(900px,100%);
     height:100%;
     border-radius:24px;
     background:rgba(255,255,255,.96);
@@ -145,7 +142,6 @@
     display:flex;
     flex-direction:column;
   }
-
   .hero{
     padding:16px 14px 12px;
     text-align:center;
@@ -180,7 +176,6 @@
     font-size:13px;
     line-height:1.4;
   }
-
   .content{
     flex:1 1 auto;
     display:grid;
@@ -190,7 +185,7 @@
     min-height:0;
   }
   .centerbox{
-    width:min(660px,100%);
+    width:min(680px,100%);
     text-align:center;
   }
   .chapter-tag{
@@ -270,7 +265,6 @@
     border:1px solid #dbe4f0;
     color:#0f172a;
   }
-
   .qwrap{
     display:none;
     flex:1 1 auto;
@@ -346,7 +340,7 @@
     background:#fff;
     border:2px solid #e5e7eb;
     color:#111827;
-    min-height:54px;
+    min-height:52px;
     display:flex;
     align-items:center;
     gap:10px;
@@ -444,7 +438,9 @@
     45%{transform:scale(1.08);opacity:1}
     100%{transform:scale(1);opacity:0}
   }
-  .confetti-layer,.streamer-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .confetti-layer,.streamer-layer{
+    position:absolute;inset:0;pointer-events:none;overflow:hidden;
+  }
   .star{
     position:absolute;
     width:10px;height:10px;
@@ -538,10 +534,7 @@
     line-height:1.45;
     font-size:14px;
   }
-
   @media (min-width: 768px){
-    .panel{padding:12px}
-    .qwrap{padding:14px}
     .options{grid-template-columns:1fr 1fr}
     .opt{font-size:14px}
   }
@@ -617,7 +610,6 @@
             <div class="pill">Level: <strong id="level">1</strong></div>
           </div>
           <div class="progress"><div class="bar" id="bar"></div></div>
-
           <div class="question-area">
             <div class="question-card" id="questionCard">
               <p class="qtext" id="questionText"></p>
@@ -718,23 +710,23 @@ function show(section){
 function playSound(id){
   const a = el(id);
   if(!a) return;
-  try{a.currentTime=0;a.play()}catch(e){}
+  try{ a.currentTime = 0; a.play(); }catch(e){}
 }
 function burst(type){
-  const layer = type==='star' ? el('confettiLayer') : el('streamerLayer');
-  const count = type==='star' ? 14 : 10;
+  const layer = type === 'star' ? el('confettiLayer') : el('streamerLayer');
+  const count = type === 'star' ? 14 : 10;
   for(let i=0;i<count;i++){
     const n = document.createElement('div');
-    if(type==='star'){
-      n.className='star';
-      n.style.left=`${Math.random()*100}%`;
-      n.style.top=`${20+Math.random()*55}%`;
+    if(type === 'star'){
+      n.className = 'star';
+      n.style.left = `${Math.random()*100}%`;
+      n.style.top = `${20 + Math.random()*55}%`;
       n.style.setProperty('--dx', `${(Math.random()*2-1)*120}px`);
-      n.style.setProperty('--dy', `${50+Math.random()*140}px`);
+      n.style.setProperty('--dy', `${50 + Math.random()*140}px`);
       n.style.background = ['#facc15','#60a5fa','#a78bfa','#34d399','#fb7185'][i%5];
     }else{
-      n.className='stream';
-      n.style.left=`${Math.random()*100}%`;
+      n.className = 'stream';
+      n.style.left = `${Math.random()*100}%`;
       n.style.background = ['#f43f5e','#22c55e','#3b82f6','#f59e0b','#8b5cf6'][i%5];
     }
     layer.appendChild(n);
@@ -813,17 +805,17 @@ function handleWrong(fromTimer=false){
   el('feedback').innerHTML = `Correct answer: <strong>${questions[idx].o[questions[idx].a]}</strong><br>${questions[idx].e}`;
   el('helperText').textContent = 'Explanation shown after the second wrong attempt or timeout.';
   btns.forEach((b,k)=>{
-    if(k===questions[idx].a) b.classList.add('correct');
+    if(k === questions[idx].a) b.classList.add('correct');
     b.disabled = true;
   });
   el('nextBtn').classList.remove('hide');
-  el('nextBtn').textContent = idx===total-1 ? 'See Final Challenge' : 'Next Question';
+  el('nextBtn').textContent = idx === total-1 ? 'See Final Challenge' : 'Next Question';
 }
 function choose(i, btn){
   if(locked) return;
   clearInterval(t);
   const btns = [...el('options').querySelectorAll('button')];
-  if(i===questions[idx].a){
+  if(i === questions[idx].a){
     locked = true;
     score++;
     el('score').textContent = score;
@@ -832,9 +824,9 @@ function choose(i, btn){
     btn.classList.add('correct');
     burst('star');
     playSound('correctSound');
-    btns.forEach(b=>b.disabled=true);
+    btns.forEach(b=>b.disabled = true);
     el('nextBtn').classList.remove('hide');
-    el('nextBtn').textContent = idx===total-1 ? 'See Final Challenge' : 'Next Question';
+    el('nextBtn').textContent = idx === total-1 ? 'See Final Challenge' : 'Next Question';
   }else{
     btn.classList.add('wrong');
     handleWrong(false);
@@ -852,14 +844,16 @@ function showResult(){
   show(el('resultScreen'));
   el('finalScore').textContent = `${score}/${total}`;
   const pct = Math.round((score/total)*100);
-  el('resultLine').textContent = pct>=90 ? 'Excellent work! You mastered the chapter with strong accuracy.' : pct>=70 ? 'Good job! You showed a solid understanding of degrees of comparison.' : 'Keep practicing! The chapter is clear, and you can improve with one more round.';
+  el('resultLine').textContent =
+    pct >= 90 ? 'Excellent work! You mastered the chapter with strong accuracy.' :
+    pct >= 70 ? 'Good job! You showed a solid understanding of degrees of comparison.' :
+    'Keep practicing! The chapter is clear, and you can improve with one more round.';
   el('finalExplain').innerHTML = `Final challenge completed. Your score tracker finished at <strong>${score}</strong> out of <strong>${total}</strong>.`;
   burst('star');
   playSound('clapSound');
   clearInterval(t);
 }
-
-el('startBtn').onclick = ()=>{ show(el('quizScreen')); idx=0; score=0; renderQuestion(); };
+el('startBtn').onclick = ()=>{ show(el('quizScreen')); idx = 0; score = 0; renderQuestion(); };
 el('previewBtn').onclick = ()=>{ el('rulesText').textContent = 'Use the timer wisely. Choose the best grammar answer, retry once if needed, and finish the final challenge.'; };
 el('nextBtn').onclick = nextQuestion;
 el('restartBtn').onclick = ()=>{
@@ -867,12 +861,12 @@ el('restartBtn').onclick = ()=>{
   idx = 0; score = 0; attempts = 0; canRetry = true; locked = false;
   el('score').textContent = 0;
   el('timer').textContent = '45';
-  el('feedback').className='feedback neutral';
-  el('feedback').textContent='Choose the best answer to continue.';
-  el('helperText').textContent='One retry after the first wrong attempt.';
+  el('feedback').className = 'feedback neutral';
+  el('feedback').textContent = 'Choose the best answer to continue.';
+  el('helperText').textContent = 'One retry after the first wrong attempt.';
   show(el('introContent'));
 };
-setTimeout(()=>{ el('splash').style.display='none'; }, 5000);
+setTimeout(()=>{ el('splash').style.display = 'none'; }, 5000);
 show(el('introContent'));
 </script>
 </body>
