@@ -1,1 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 6 English Grammar: Prepositions Master</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-gradient: linear-gradient(135deg, #f5f3ff 0%, #edd8fd 50%, #e0e7ff 100%);
+    --surface: rgba(255, 255, 255, 0.95);
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --correct: #10b981;
+    --correct-bg: #ecfdf5;
+    --wrong: #ef4444;
+    --wrong-bg: #fef2f2;
+    --hint-color: #b45309;
+    --border-radius: 16px;
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 25px -5px rgba(79, 70, 229, 0.12), 0 8px 16px -6px rgba(79, 70, 229, 0.06);
+}
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    overflow-x: hidden;
+}
+
+/* BACKGROUND DECORATIONS */
+.bg-decorations {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+.floating-shape {
+    position: absolute;
+    background: rgba(139, 92, 246, 0.06);
+    border-radius: 50%;
+    animation: floatAnimation 8s ease-in-out infinite alternate;
+}
+@keyframes floatAnimation {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-30px) rotate(15deg); }
+}
+
+/* SCREEN MANAGER CONTAINER */
+.screen-layout {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 28px 24px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    z-index: 10;
+    display: none;
+}
+
+/* SPLASH SCREEN CSS */
+#splash {
+    text-align: center;
+    padding: 40px 20px;
+}
+.splash-logo-container {
+    margin-bottom: 24px;
+    position: relative;
+    animation: zoomFadeReveal 1.2s ease-out forwards;
+}
+.custom-logo-img {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 16px rgba(79, 70, 229, 0.2));
+}
+.loading-ring {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    margin-top: 32px;
+    border: 4px solid rgba(79, 70, 229, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spinLoop 1s linear infinite;
+}
+@keyframes spinLoop { to { transform: rotate(360deg); } }
+@keyframes zoomFadeReveal {
+    0% { opacity: 0; transform: scale(0.85); filter: blur(4px); }
+    100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+/* HOME SCREEN CSS */
+#home { text-align: center; padding: 20px; }
+.chapter-badge {
+    display: inline-block;
+    background: #e0e7ff;
+    color: #3730a3;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+h1.title-header {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+    margin-bottom: 24px;
+}
+h1.title-header span { color: var(--primary); display: block; font-size: 2.4rem; }
+
+/* TOP BAR CONTROLS */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    gap: 12px;
+}
+.badge-status {
+    background: #ffffff;
+    padding: 6px 14px;
+    border-radius: 30px;
+    box-shadow: var(--shadow-sm);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    border: 1px solid #e2e8f0;
+}
+.volume-control-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    padding: 4px 12px;
+    border-radius: 30px;
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--shadow-sm);
+}
+.volume-control-wrapper label { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+.audio-slider {
+    width: 70px;
+    height: 6px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+/* PROGRESS ELEMENT INDICATORS */
+.progress-container {
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 8px;
+    width: 100%;
+    margin-bottom: 16px;
+}
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #8b5cf6);
+    width: 0%;
+    border-radius: 10px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* GAMEPLAY QUESTION CARD LAYOUT */
+.question-slide-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.illustration-panel {
+    width: 100%;
+    margin: 0 auto 14px auto;
+    border-radius: var(--border-radius);
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 6px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+.illustration-panel img {
+    max-width: 100%;
+    height: auto;
+    max-height: 190px;
+    border-radius: 10px;
+    object-fit: contain;
+}
+.question-text-block {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: #0f172a;
+    margin-bottom: 16px;
+    text-align: left;
+}
+.interactive-options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+.option-node {
+    padding: 12px 16px;
+    border-radius: var(--border-radius);
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+.option-node:hover {
+    border-color: var(--primary);
+    background: #f5f3ff;
+    transform: translateY(-1px);
+}
+.option-node:active { transform: translateY(1px); }
+
+/* FEEDBACK OVERLAYS AND STATE HOOKS */
+.option-node.node-correct {
+    background: var(--correct-bg) !important;
+    border-color: var(--correct) !important;
+    color: #065f46;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+}
+.option-node.node-wrong {
+    background: var(--wrong-bg) !important;
+    border-color: var(--wrong) !important;
+    color: #991b1b;
+    animation: errorShake 0.4s ease-in-out;
+}
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-3px); }
+}
+.node-frozen { pointer-events: none !important; }
+.node-soft-dim { opacity: 0.55; pointer-events: none !important; }
+
+/* RUNTIME HUD ATTEMPTS BANNER */
+.feedback-hud-strip {
+    min-height: 38px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+/* GAME CTAS BUTTONS */
+.btn-primary {
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 14px 36px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+}
+.btn-primary:active { transform: translateY(1px); }
+
+/* END SCREEN RESULTS SCORECARD */
+#resultScreen { text-align: center; }
+.trophy-container {
+    position: relative;
+    margin-bottom: 16px;
+    animation: bouncePop 1s ease-out infinite alternate;
+}
+@keyframes bouncePop {
+    from { transform: translateY(0) scale(1); }
+    to { transform: translateY(-10px) scale(1.05); }
+}
+.score-big-text {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--primary);
+    margin: 8px 0;
+}
+.stars-display {
+    font-size: 2.6rem;
+    color: #f59e0b;
+    margin-bottom: 16px;
+    letter-spacing: 4px;
+}
+.p-remark {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 28px;
+}
+
+/* REWARD PARTICLE GENERATION ELEMENTS */
+.particle-confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    border-radius: 2px;
+    z-index: 999;
+    pointer-events: none;
+    animation: dropFall 2.8s linear forwards;
+}
+@keyframes dropFall {
+    to { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+}
+.sparkle-pop {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #f59e0b, 0 0 20px #f59e0b;
+    pointer-events: none;
+    z-index: 998;
+    animation: blastOut 0.6s ease-out forwards;
+}
+@keyframes blastOut {
+    to { transform: translate(var(--mx), var(--my)) scale(0); opacity: 0; }
+}
+
+/* RESPONSIVE SCALING ADAPTATION MECHANISM */
+@media(max-width: 600px) {
+    body { padding: 10px; }
+    .screen-layout { padding: 20px 16px; border-radius: 20px; }
+    h1.title-header { font-size: 1.6rem; }
+    h1.title-header span { font-size: 1.9rem; }
+    .question-text-block { font-size: 1.05rem; }
+    .option-node { font-size: 0.9rem; padding: 10px 14px; min-height: 48px; }
+    .illustration-panel img { max-height: 150px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-decorations">
+    <div class="floating-shape" style="width: 120px; height: 120px; top: 10%; left: 5%;"></div>
+    <div class="floating-shape" style="width: 160px; height: 160px; bottom: 15%; right: 5%; animation-delay: -2s;"></div>
+    <div class="floating-shape" style="width: 90px; height: 90px; top: 70%; left: 8%; animation-delay: -4s;"></div>
+</div>
+
+<div id="splash" class="screen-layout" style="display: block;">
+    <div class="splash-logo-container">
+        <img class="custom-logo-img" src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.opacity='0.3'">
+    </div>
+    <div style="font-size: 1.4rem; font-weight: 800; color: #1e293b; margin-top: 12px; letter-spacing: 0.5px;">INNOVINE PORTAL</div>
+    <div class="loading-ring"></div>
+</div>
+
+<div id="home" class="screen-layout">
+    <div class="chapter-badge">Chapter 13</div>
+    <h1 class="title-header">Prepositions<span>Master Challenge</span></h1>
+    <div style="margin: 30px 0;">
+        <button class="btn-primary" onclick="initiateChallengeRun()">
+            Start Game
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </button>
+    </div>
+</div>
+
+<div id="gameboard" class="screen-layout">
+    <div class="top-bar">
+        <div class="badge-status" id="hudProgressText">Question 1 of 12</div>
+        <div class="volume-control-wrapper">
+            <label for="volumeSlider">🔊 Audio</label>
+            <input type="range" id="volumeSlider" class="audio-slider" min="0" max="1" step="0.1" value="0.7">
+        </div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-fill" id="hudProgressBar"></div>
+    </div>
+
+    <div class="question-slide-content">
+        <div id="illustrationWrapper" class="illustration-panel"></div>
+        <div class="question-text-block" id="questionField"></div>
+        <div class="feedback-hud-strip" id="feedbackPrompt"></div>
+        <div class="interactive-options-grid" id="optionsBox"></div>
+    </div>
+</div>
+
+<div id="resultScreen" class="screen-layout">
+    <div class="trophy-container">
+        <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+            <path d="M4 22h16"></path>
+            <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"></path>
+            <path d="M12 2a6 6 0 0 1 6 6v5a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8a6 6 0 0 1 6-6z" fill="#fef3c7"></path>
+        </svg>
+    </div>
+    <h2 style="font-size: 1.8rem; font-weight: 800; color: #0f172a;">Challenge Finished!</h2>
+    <div class="score-big-text" id="finalScoreDisplay">00 / 12</div>
+    <div style="font-size:1.1rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;" id="finalPercentage">0%</div>
+    <div class="stars-display" id="starsDisplay">★★★</div>
+    <p class="p-remark" id="remarkDisplay">Great job!</p>
+    <button class="btn-primary" onclick="resetChallengeLoop()">
+        Play Again
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+    </button>
+</div>
+
+<script>
+/* ---------------- ENGINE DATABASE MATRIX ---------------- */
+const questionsDataset = [
+    {
+        q: "Your brother says: \"I saw it ___ the shelf, tucked ___ two big encyclopedias.\" Choose the correct pair:",
+        options: ["in / among", "on / between", "at / behind", "over / across"],
+        answer: "on / between",
+        hint: "'On' maps out the surface of the shelf; 'between' acts exclusively when bounded by two explicit objects."
+    },
+    {
+        q: "You are describing your walk to school: \"I walked ___ the bridge and then went ___ the tunnel.\" Which pair is correct?",
+        options: ["over / through", "through / over", "under / at", "across / into"],
+        answer: "over / through",
+        hint: "'Over' matches traveling higher up across a structure; 'through' represents passing inside an enclosed tunnel."
+    },
+    {
+        q: "A student wrote in a diary: \"I jumped on the swimming pool.\" Why is this wrong?",
+        options: [
+            "It should be 'in the swimming pool' (already there)",
+            "It should be 'into the swimming pool' (movement from outside to inside)",
+            "'Jumped' cannot take a preposition",
+            "Swimming pools only use 'at'"
+        ],
+        answer: "It should be 'into the swimming pool' (movement from outside to inside)",
+        hint: "'Into' is required here because it indicates physical trajectory or crossing space limits to enter inside."
+    },
+    {
+        q: "Which sentence shows the correct use of 'since'?",
+        options: [
+            "I have been waiting here since two hours.",
+            "I have been waiting here since 8:00 AM.",
+            "I have been waiting here since Tuesday for.",
+            "I have been waiting here since long time."
+        ],
+        answer: "I have been waiting here since 8:00 AM.",
+        hint: "'Since' acts relative to a single fixed marker pinpoint in time, whereas 'for' marks full timeline lengths."
+    },
+    {
+        q: "Which set of prepositions correctly fills all four blanks in order?",
+        options: ["on / in / between / at", "at / on / between / on", "in / at / among / on", "on / at / among / in"],
+        answer: "at / on / between / on",
+        image: "picture1.png",
+        hint: "Remember: 'at' specifies structural endpoints, 'on' covers a flat shelf, 'between' is for two people, and 'on' names streets."
+    },
+    {
+        q: "Which set of prepositions correctly fills all three blanks?",
+        options: ["in / on / at", "at / in / on", "on / in / at", "in / at / on"],
+        answer: "on / in / at",
+        image: "picture2.png",
+        hint: "We use 'on' directly matching specific calendar days, 'in' containing general full months, and 'at' labeling precise clock times."
+    },
+    {
+        q: "Sort these prepositions into two groups — Prepositions of Place and Prepositions of Time: P: between Q: since R: under S: during",
+        options: [
+            "Place: P, Q — Time: R, S",
+            "Place: Q, R — Time: P, S",
+            "Place: P, R — Time: Q, S",
+            "Place: R, S — Time: P, Q"
+        ],
+        answer: "Place: P, R — Time: Q, S",
+        hint: "'Between' and 'under' communicate location positions (Place); 'since' and 'during' identify period positions (Time)."
+    },
+    {
+        q: "Classify the preposition in each sentence as showing Movement or Position: 1. \"The cat is under the table.\" 2. \"She jumped into the pool.\" 3. \"The book is on the shelf.\" 4. \"He ran across the field.\"",
+        options: [
+            "Movement: 1, 3 — Position: 2, 4",
+            "Movement: 1, 2 — Position: 3, 4",
+            "Movement: 2, 4 — Position: 1, 3",
+            "Movement: 3, 4 — Position: 1, 2"
+        ],
+        answer: "Movement: 2, 4 — Position: 1, 3",
+        hint: "'Into' and 'across' map continuous dynamic paths (Movement); 'under' and 'on' specify static resting coordinates (Position)."
+    },
+    {
+        q: "Three of the following sentences use prepositions correctly. One does NOT. Which is the odd one out?",
+        options: [
+            "I have been waiting since 9:00 AM.",
+            "The party starts at 6:00 PM.",
+            "Our vacation begins on the 15th of August.",
+            "I was born in Monday."
+        ],
+        answer: "I was born in Monday.",
+        hint: "Days of the week require 'on' rather than 'in'. The correct configuration must be 'on Monday'."
+    },
+    {
+        q: "A student wrote: \"I was sitting in the bus when I saw my friend. Then I got off and walked on the park.\" Identify ALL the preposition errors:",
+        options: [
+            "'in the bus' should be 'on the bus'; 'on the park' should be 'to the park'",
+            "'in the bus' is correct; only 'on the park' is wrong",
+            "Both prepositions are correct — no errors",
+            "'in the bus' should be 'at the bus'; 'on the park' should be 'in the park'"
+        ],
+        answer: "'in the bus' should be 'on the bus'; 'on the park' should be 'to the park'",
+        hint: "We stand/walk inside public transit, requiring 'on the bus'; changing direction towards an area requires 'to the park'."
+    },
+    {
+        q: "A student changes \"She walked towards the hospital\" to \"She walked to the hospital.\" How does the meaning change?",
+        options: [
+            "The meaning stays the same — 'to' and 'towards' are interchangeable",
+            "The sentence becomes grammatically incorrect",
+            "The meaning changes — the first only implies direction; the second confirms she reached the hospital",
+            "'To' becomes a preposition of time in the new sentence"
+        ],
+        answer: "The meaning changes — the first only implies direction; the second confirms she reached the hospital",
+        hint: "'Towards' specifies orientation trajectory line only; 'to' explicitly confirms full trip completion or arrival at that point."
+    },
+    {
+        q: "Assertion: We say \"in the car\" but \"on the bus.\" Reason: We generally use 'on' with public transport such as buses and trains, but 'in' with smaller private vehicles like cars",
+        options: [
+            "Both are correct; the reason explains the assertion.",
+            "Both are correct; but the reason does not explain the assertion.",
+            "The assertion is correct; the reason is wrong.",
+            "Both are wrong."
+        ],
+        answer: "Both are correct; the reason explains the assertion.",
+        hint: "Evaluate whether transit size dictates walking platform surfaces ('on') versus low private seats ('in')."
+    }
+];
+
+/* ---------------- WEB AUDIO ENGINE PIPELINE ---------------- */
+let audioContextInstance = null;
+let masterOutputVolumeNode = null;
+
+function initializeAudioEngine() {
+    if (audioContextInstance) return;
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioContextInstance = new AudioContextClass();
+        masterOutputVolumeNode = audioContextInstance.createGain();
+        masterOutputVolumeNode.gain.setValueAtTime(0.7, audioContextInstance.currentTime);
+        masterOutputVolumeNode.connect(audioContextInstance.destination);
+    } catch (error) {
+        console.warn("Web Audio engine failed to initialize standard configurations.", error);
+    }
+}
+
+function playSynthesizedSound(soundCategory) {
+    if (!audioContextInstance) initializeAudioEngine();
+    if (audioContextInstance && audioContextInstance.state === 'suspended') {
+        audioContextInstance.resume();
+    }
+    if (!audioContextInstance || !masterOutputVolumeNode) return;
+
+    const ctx = audioContextInstance;
+    const now = ctx.currentTime;
+
+    switch(soundCategory) {
+        case 'start':
+            playToneFrequency(261.63, 'sine', 0.1, 0.12);
+            playToneFrequency(329.63, 'sine', 0.12, 0.12);
+            playToneFrequency(392.00, 'sine', 0.14, 0.25);
+            break;
+        case 'click':
+            playToneFrequency(600, 'triangle', 0, 0.05, 0.4);
+            break;
+        case 'correct':
+            playToneFrequency(523.25, 'sine', 0, 0.1);
+            playToneFrequency(659.25, 'sine', 0.08, 0.22);
+            break;
+        case 'wrong':
+            playToneFrequency(180, 'sawtooth', 0, 0.15, 0.5);
+            playToneFrequency(130, 'sawtooth', 0.1, 0.25, 0.5);
+            break;
+        case 'applause':
+            for(let i=0; i<18; i++) {
+                let randomizedTimingOffset = i * 0.04 + Math.random() * 0.02;
+                let pitchFreq = 220 + Math.random() * 260;
+                playToneFrequency(pitchFreq, 'triangle', randomizedTimingOffset, 0.06, 0.25);
+            }
+            break;
+        case 'finish':
+            playToneFrequency(392.00, 'sine', 0, 0.15);
+            playToneFrequency(523.25, 'sine', 0.12, 0.15);
+            playToneFrequency(659.25, 'sine', 0.24, 0.15);
+            playToneFrequency(783.99, 'sine', 0.36, 0.4);
+            break;
+    }
+}
+
+function playToneFrequency(frequencyHz, waveType, delayTimeSeconds, playDurationSeconds, volumeScalarValue = 1.0) {
+    const ctx = audioContextInstance;
+    const oscNode = ctx.createOscillator();
+    const envGainNode = ctx.createGain();
+
+    oscNode.type = waveType;
+    oscNode.frequency.setValueAtTime(frequencyHz, ctx.currentTime + delayTimeSeconds);
+
+    envGainNode.gain.setValueAtTime(0, ctx.currentTime + delayTimeSeconds);
+    envGainNode.gain.linearRampToValueAtTime(0.3 * volumeScalarValue, ctx.currentTime + delayTimeSeconds + 0.02);
+    envGainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delayTimeSeconds + playDurationSeconds);
+
+    oscNode.connect(envGainNode);
+    envGainNode.connect(masterOutputVolumeNode);
+
+    oscNode.start(ctx.currentTime + delayTimeSeconds);
+    oscNode.stop(ctx.currentTime + delayTimeSeconds + playDurationSeconds);
+}
+
+/* ---------------- APPLICATION ARCHITECTURE RUNTIME ---------------- */
+let activeTrackIdx = 0;
+let validPointsAccumulator = 0;
+let dynamicChallengeStack = [];
+let answerAttemptsCounter = 1;
+
+window.addEventListener('DOMContentLoaded', () => {
+    const inputControlSlider = document.getElementById("volumeSlider");
+    inputControlSlider.addEventListener('input', (event) => {
+        const value = parseFloat(event.target.value);
+        if (masterOutputVolumeNode) {
+            masterOutputVolumeNode.gain.setValueAtTime(value, audioContextInstance.currentTime);
+        }
+    });
+
+    setTimeout(() => {
+        transitionScreenView("splash", "home");
+        playSynthesizedSound('start');
+    }, 5000);
+});
+
+function transitionScreenView(incomingId, outgoingId) {
+    document.getElementById(incomingId).style.display = "none";
+    const outNode = document.getElementById(outgoingId);
+    outNode.style.display = "block";
+}
+
+function initiateChallengeRun() {
+    initializeAudioEngine();
+    
+    dynamicChallengeStack = arrayScrambler([...questionsDataset]).map(node => {
+        return {
+            ...node,
+            options: arrayScrambler([...node.options])
+        };
+    });
+
+    activeTrackIdx = 0;
+    validPointsAccumulator = 0;
+    
+    transitionScreenView("home", "gameboard");
+    renderActiveQuestionCard();
+}
+
+function renderActiveQuestionCard() {
+    answerAttemptsCounter = 1;
+    const currentCardContext = dynamicChallengeStack[activeTrackIdx];
+
+    document.getElementById("hudProgressText").innerText = `Question ${activeTrackIdx + 1} of ${dynamicChallengeStack.length}`;
+    document.getElementById("hudProgressBar").style.width = ((activeTrackIdx) / dynamicChallengeStack.length) * 100 + "%";
+    document.getElementById("questionField").innerText = currentCardContext.q;
+    
+    const bannerBox = document.getElementById("feedbackPrompt");
+    bannerBox.innerHTML = `<span style="color:var(--text-muted)">💡 2 Attempts Remaining</span>`;
+
+    // Local assets file integration path
+    const graphicWrapper = document.getElementById("illustrationWrapper");
+    if (currentCardContext.image) {
+        graphicWrapper.innerHTML = `<img src="assets/${currentCardContext.image}" alt="Question Graphic Context">`;
+        graphicWrapper.style.display = "flex";
+    } else {
+        graphicWrapper.style.display = "none";
+        graphicWrapper.innerHTML = "";
+    }
+
+    const targetGrid = document.getElementById("optionsBox");
+    targetGrid.innerHTML = "";
+
+    currentCardContext.options.forEach(optionText => {
+        const optionItemButton = document.createElement("div");
+        optionItemButton.className = "option-node";
+        optionItemButton.innerText = optionText;
+        optionItemButton.onclick = () => validateSelectionCore(optionItemButton, optionText, currentCardContext);
+        targetGrid.appendChild(optionItemButton);
+    });
+}
+
+function validateSelectionCore(selectedButtonDOM, selectedValueText, dataContextObject) {
+    playSynthesizedSound('click');
+    const everyOptionDOMs = document.querySelectorAll(".option-node");
+    const infoHudBanner = document.getElementById("feedbackPrompt");
+
+    if (selectedValueText === dataContextObject.answer) {
+        everyOptionDOMs.forEach(node => node.classList.add("node-frozen"));
+        selectedButtonDOM.classList.add("node-correct");
+        
+        validPointsAccumulator++;
+        playSynthesizedSound('correct');
+        deployRewardParticles(selectedButtonDOM);
+        infoHudBanner.innerHTML = `<span style="color:var(--correct)">✨ Correct! Excellent work.</span>`;
+
+        setTimeout(() => {
+            advanceChallengeSequence();
+        }, 1200);
+        return;
+    }
+
+    if (answerAttemptsCounter === 1) {
+        answerAttemptsCounter++;
+        selectedButtonDOM.classList.add("node-wrong");
+        selectedButtonDOM.classList.add("node-soft-dim");
+        playSynthesizedSound('wrong');
+        infoHudBanner.innerHTML = `<span style="color:var(--hint-color)">⚠️ Try again! Hint: ${dataContextObject.hint}</span>`;
+    } else {
+        everyOptionDOMs.forEach(node => node.classList.add("node-frozen"));
+        selectedButtonDOM.classList.add("node-wrong");
+        playSynthesizedSound('wrong');
+        infoHudBanner.innerHTML = `<span style="color:var(--wrong)">✕ Let's look at the correct solution.</span>`;
+
+        everyOptionDOMs.forEach(node => {
+            if (node.innerText === dataContextObject.answer) {
+                node.classList.add("node-correct");
+            }
+        });
+
+        setTimeout(() => {
+            advanceChallengeSequence();
+        }, 1200);
+    }
+}
+
+function advanceChallengeSequence() {
+    activeTrackIdx++;
+    if (activeTrackIdx >= dynamicChallengeStack.length) {
+        compileFinalReportSummary();
+    } else {
+        renderActiveQuestionCard();
+    }
+}
+
+function compileFinalReportSummary() {
+    document.getElementById("gameboard").style.display = "none";
+    document.getElementById("resultScreen").style.display = "block";
+
+    const totalQuestionsCount = dynamicChallengeStack.length;
+    const finalCalculatedRatio = Math.round((validPointsAccumulator / totalQuestionsCount) * 100);
+
+    document.getElementById("finalScoreDisplay").innerText = `${validPointsAccumulator} / ${totalQuestionsCount}`;
+    document.getElementById("finalPercentage").innerText = `${finalCalculatedRatio}% Score`;
+
+    let scoreStarsLayout = "★☆☆☆☆";
+    let encouragementText = "Keep Practicing!";
+
+    if (finalCalculatedRatio >= 90) {
+        scoreStarsLayout = "★★★★★";
+        encouragementText = "Outstanding Performance! Master level! 🏆";
+        playSynthesizedSound('applause');
+        triggerConfettiCascade();
+    } else if (finalCalculatedRatio >= 75) {
+        scoreStarsLayout = "★★★★☆";
+        encouragementText = "Excellent Job! Highly skilled! 🌟";
+        playSynthesizedSound('applause');
+        triggerConfettiCascade();
+    } else if (finalCalculatedRatio >= 60) {
+        scoreStarsLayout = "★★★☆☆";
+        encouragementText = "Well Done! Good grammar base.";
+        playSynthesizedSound('finish');
+    } else if (finalCalculatedRatio >= 40) {
+        scoreStarsLayout = "★★☆☆☆";
+        encouragementText = "Great Effort! Try reviewing prepositions.";
+        playSynthesizedSound('finish');
+    } else {
+        playSynthesizedSound('finish');
+    }
+
+    document.getElementById("starsDisplay").innerText = scoreStarsLayout;
+    document.getElementById("remarkDisplay").innerText = encouragementText;
+}
+
+function resetChallengeLoop() {
+    transitionScreenView("resultScreen", "home");
+    playSynthesizedSound('start');
+}
+
+/* ---------------- EFFECTS AND HELPERS ---------------- */
+function arrayScrambler(targetArray) {
+    for (let currentIdx = targetArray.length - 1; currentIdx > 0; currentIdx--) {
+        const replacementIdx = Math.floor(Math.random() * (currentIdx + 1));
+        [targetArray[currentIdx], targetArray[replacementIdx]] = [targetArray[replacementIdx], targetArray[currentIdx]];
+    }
+    return targetArray;
+}
+
+function deployRewardParticles(originatingDOMElement) {
+    const boundedRect = originatingDOMElement.getBoundingClientRect();
+    const midCoordinateX = boundedRect.left + (boundedRect.width / 2);
+    const midCoordinateY = boundedRect.top + (boundedRect.height / 2);
+
+    for (let i = 0; i < 12; i++) {
+        const sparkNode = document.createElement("div");
+        sparkNode.className = "sparkle-pop";
+        sparkNode.style.left = midCoordinateX + "px";
+        sparkNode.style.top = midCoordinateY + "px";
+
+        const destinationAngle = Math.random() * Math.PI * 2;
+        const blastRadius = 30 + Math.random() * 45;
+        const projectX = Math.cos(destinationAngle) * blastRadius + "px";
+        const projectY = Math.sin(destinationAngle) * blastRadius + "px";
+
+        sparkNode.style.setProperty('--mx', projectX);
+        sparkNode.style.setProperty('--my', projectY);
+
+        document.body.appendChild(sparkNode);
+        setTimeout(() => sparkNode.remove(), 600);
+    }
+}
+
+function triggerConfettiCascade() {
+    const dynamicPalette = ["#4f46e5", "#10b981", "#f59e0b", "#ec4899", "#3b82f6"];
+    for (let i = 0; i < 60; i++) {
+        const particle = document.createElement("div");
+        particle.className = "particle-confetti";
+        particle.style.left = Math.random() * 100 + "vw";
+        particle.style.backgroundColor = dynamicPalette[Math.floor(Math.random() * dynamicPalette.length)];
+        particle.style.animationDuration = (Math.random() * 1.2 + 1.6) + "s";
+        particle.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 2800);
+    }
+}
+</script>
+</body>
+</html>
