@@ -181,6 +181,7 @@
             margin-bottom: 25px;
             line-height: 1.6;
             font-weight: 600;
+            white-space: pre-line;
         }
 
         .options-grid {
@@ -294,7 +295,7 @@
             <div class="timer-box">⏱️ <span id="timer-count">45</span>s</div>
         </div>
 
-        <div id="clue-context" class="clue-tag">Scenario Clue</div>
+        <div id="clue-context" class="clue-tag">Safari Clue</div>
         <div id="question-text" class="question-text">Loading question text...</div>
 
         <div class="options-grid" id="options-container">
@@ -348,10 +349,9 @@
             }, 5000);
         });
 
-        // Dataset
+        // Dataset (Cleaned question fields)
         const quizData = [
             {
-                tag: "Hospital Situation – Context Understanding",
                 question: "A child is taken to a hospital after fainting at school. At reception, the nurse says, “A doctor will check him soon.” After a few minutes, another nurse says, “The doctor has already started the examination in Room 2.”\n\nWhy is “the doctor” used in the second sentence?",
                 options: [
                     "It refers to any doctor available in the hospital",
@@ -363,7 +363,6 @@
                 explanation: "We use 'the' because the doctor is now a specific, definite individual known from the previous context."
             },
             {
-                tag: "Airport Situation – Information Tracking",
                 question: "At an airport, passengers hear:\nFirst announcement: “An announcement will be made shortly.”\nSecond announcement: “The announcement is about a delayed flight.”\n\nWhat does “the announcement” mean here?",
                 options: [
                     "Any announcement made in the airport",
@@ -375,7 +374,6 @@
                 explanation: "'The' specifies that it belongs to the particular announcement promised in the first statement."
             },
             {
-                tag: "Restaurant Situation – Meaning Difference",
                 question: "Two customers order food:\nCustomer A: “I want a soup.”\nCustomer B: “I want the soup.”\n\nWhat is the correct meaning difference?",
                 options: [
                     "Both mean the same thing",
@@ -387,7 +385,6 @@
                 explanation: "'A soup' is non-specific (any soup available), while 'the soup' focuses on a particular item, like the soup of the day."
             },
             {
-                tag: "Science Class – General Truth Reasoning",
                 question: "In a science lesson, the teacher writes:\n“___ water boils at 100°C under normal conditions.”\n\nStudents discuss why no specific water is mentioned.",
                 options: [
                     "Because it refers to water in general as a scientific fact",
@@ -399,7 +396,6 @@
                 explanation: "General facts about uncountable nouns (like water) use zero article when discussing the general substance."
             },
             {
-                tag: "Sound Rule – Error Analysis",
                 question: "A student writes:\n“She is an European girl living in India.”\n\nWhat is the correct reasoning for the error?",
                 options: [
                     "European is plural",
@@ -411,8 +407,7 @@
                 explanation: "'European' starts with a 'yoo' consonant sound (/j/). Therefore, it must be preceded by 'a', not 'an'."
             },
             {
-                tag: "Travel Context – Landmark Identity",
-                question: "A tourist writes:\n“We visited the Taj Mahal during our trip.”\n\nWhy is “the” used before Taj Mahal?",
+                question: "We visited the Taj Mahal during our trip.\n\nWhy is “the” used before Taj Mahal?",
                 options: [
                     "Because it is a common building",
                     "Because it is a unique, specific monument",
@@ -423,7 +418,6 @@
                 explanation: "Unique architectural monuments and famous historic buildings require the definite article 'the'."
             },
             {
-                tag: "Daily Life – Zero Article Reasoning",
                 question: "A child says:\n“I go to school every day.”\n\nWhy is no article used before “school”?",
                 options: [
                     "Because school is always plural",
@@ -435,7 +429,6 @@
                 explanation: "When talking about institutional places (school, bed, hospital) for their primary purpose, we omit the article."
             },
             {
-                tag: "Shopping Situation – Grammar Correction",
                 question: "A shopper says:\n“I bought an new mobile phone yesterday.”\n\nWhat is the correct correction?",
                 options: [
                     "a new mobile phone",
@@ -447,7 +440,6 @@
                 explanation: "The word 'new' begins with a consonant sound /n/, meaning 'a' should be used instead of 'an'."
             },
             {
-                tag: "Zoo Learning – General Category Thinking",
                 question: "At a zoo, a guide says:\n“___ elephant is a very intelligent animal.”\n\nWhat does this sentence express?",
                 options: [
                     "A specific elephant is being described",
@@ -459,8 +451,7 @@
                 explanation: "Singular countable nouns used with the definite article 'the' can represent an entire group or class of animals/things."
             },
             {
-                tag: "Final CBQ – Mixed Concept Trap",
-                question: "Choose the MOST correct sentence sentence out of the choices below:",
+                question: "Choose the MOST correct sentence out of the choices below:",
                 options: [
                     "I saw a moon last night",
                     "I saw the moon last night",
@@ -479,7 +470,6 @@
         let timerInterval;
         let timeLeft = 45;
 
-        // Sound helpers
         function playSound(id) {
             const snd = document.getElementById(id);
             if(snd && snd.play) {
@@ -488,7 +478,6 @@
             }
         }
 
-        // Screen togglers
         function switchScreen(currentId, nextId) {
             document.getElementById(currentId).classList.remove('active');
             document.getElementById(nextId).classList.add('active');
@@ -510,7 +499,6 @@
             document.getElementById('current-q-num').innerText = currentQuestionIdx + 1;
             
             const qData = quizData[currentQuestionIdx];
-            document.getElementById('clue-context').innerText = qData.tag;
             document.getElementById('question-text').innerText = qData.question;
             
             const optionsContainer = document.getElementById('options-container');
@@ -548,7 +536,6 @@
             const btns = optionsContainer.getElementsByClassName('option-btn');
 
             if(selectedIdx === qData.correct) {
-                // Correct path
                 clearInterval(timerInterval);
                 clickedBtn.classList.add('correct');
                 score++;
@@ -558,17 +545,14 @@
                 disableAllOptions();
                 showFeedback(true, qData.explanation);
             } else {
-                // Incorrect path
                 attempts++;
                 clickedBtn.classList.add('wrong');
                 playSound('snd-wrong');
                 
                 if(attempts === 1) {
-                    // One retry granted
                     clickedBtn.disabled = true;
                     showFeedback(false, "That path is blocked! Analyze the clue carefully and try alternative routing.");
                 } else {
-                    // Second failed attempt
                     clearInterval(timerInterval);
                     disableAllOptions();
                     btns[qData.correct].classList.add('correct');
@@ -601,19 +585,17 @@
 
         function handleNextStep() {
             if (currentQuestionIdx === 8) {
-                // Moving to the 10th item (indexed 9) requires passing through challenge checkpoint
                 switchScreen('quiz-screen', 'challenge-screen');
             } else if (currentQuestionIdx < quizData.length - 1) {
                 currentQuestionIdx++;
                 loadQuestion();
             } else {
-                // Quiz completed
                 showFinalResults();
             }
         }
 
         function startFinalChallenge() {
-            currentQuestionIdx = 9; // Index of the final challenge
+            currentQuestionIdx = 9;
             switchScreen('challenge-screen', 'quiz-screen');
             loadQuestion();
             document.getElementById('clue-context').innerText = "🏆 FINAL GATEKEEPER CHALLENGE";
