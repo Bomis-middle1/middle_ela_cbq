@@ -10,8 +10,26 @@ body{
 margin:0;
 font-family:Arial;
 background:linear-gradient(135deg,#eef6ff,#f7fbff);
+overflow-x:hidden;
 }
 
+/* FLOATING BACKGROUND */
+.star{
+position:fixed;
+width:6px;
+height:6px;
+background:#ffffff55;
+border-radius:50%;
+animation:float 12s linear infinite;
+}
+
+@keyframes float{
+0%{transform:translateY(100vh);opacity:0}
+50%{opacity:1}
+100%{transform:translateY(-10vh);opacity:0}
+}
+
+/* LAYOUT */
 .center{
 display:flex;
 justify-content:center;
@@ -26,7 +44,7 @@ padding:20px;
 background:white;
 padding:20px;
 border-radius:16px;
-box-shadow:0 6px 18px rgba(0,0,0,0.12);
+box-shadow:0 6px 20px rgba(0,0,0,0.12);
 width:92%;
 max-width:780px;
 }
@@ -52,20 +70,27 @@ transition:0.2s;
 
 .option:hover{background:#e3f2fd}
 
+/* IMAGE */
 img{
 max-width:100%;
-max-height:200px;
+max-height:220px;
 object-fit:contain;
 border-radius:12px;
 margin:10px 0;
 box-shadow:0 4px 10px rgba(0,0,0,0.2);
 }
 
+/* TOP BAR */
 .top{
 display:flex;
 justify-content:space-between;
 font-size:14px;
 margin-bottom:10px;
+}
+
+.timer{
+font-weight:bold;
+color:#d32f2f;
 }
 
 .progress{
@@ -83,6 +108,10 @@ background:#4caf50;
 transition:0.3s;
 }
 
+/* FEEDBACK */
+.correct{background:#c8f7c5 !important}
+.wrong{background:#ffd6d6 !important}
+
 #msg{
 font-size:14px;
 margin-top:10px;
@@ -93,11 +122,22 @@ color:#444;
 
 <body>
 
+<!-- BACKGROUND ANIMATION -->
+<script>
+for(let i=0;i<25;i++){
+let s=document.createElement("div");
+s.className="star";
+s.style.left=Math.random()*100+"vw";
+s.style.animationDuration=(6+Math.random()*8)+"s";
+document.body.appendChild(s);
+}
+</script>
+
 <!-- SPLASH -->
 <div id="splash" class="center">
-<img src="assests/innovine-logo.png"
+<img src="assets/innovine-logo.png"
 style="width:180px"
-onerror="this.outerHTML='<h3>⚠️ Upload innovine-logo.png inside assests folder</h3>'">
+onerror="this.outerHTML='<h3>⚠️ Upload innovine-logo.png inside assets folder</h3>'">
 </div>
 
 <!-- INTRO -->
@@ -105,11 +145,11 @@ onerror="this.outerHTML='<h3>⚠️ Upload innovine-logo.png inside assests fold
 <div class="card">
 <h2>Homophones, Homonyms & Homographs</h2>
 <p>Grade 6 English CBQ</p>
-<button onclick="startQuiz()">START QUIZ</button>
+<button onclick="startGame()">START QUIZ</button>
 </div>
 </div>
 
-<!-- OBSERVE -->
+<!-- OBSERVE SCREEN -->
 <div id="observe" class="center" style="display:none;">
 <div class="card">
 <h3>👀 Observe Carefully</h3>
@@ -125,13 +165,15 @@ onerror="this.outerHTML='<h3>⚠️ Upload innovine-logo.png inside assests fold
 
 <div class="top">
 <div>Score: <span id="score">0</span></div>
-<div>Time: <span id="time">45</span></div>
+<div class="timer">Time: <span id="time">45</span></div>
 </div>
 
 <div class="progress"><div class="fill" id="fill"></div></div>
 
 <h3 id="qtext"></h3>
+
 <div id="options"></div>
+
 <p id="msg"></p>
 
 </div>
@@ -146,13 +188,13 @@ onerror="this.outerHTML='<h3>⚠️ Upload innovine-logo.png inside assests fold
 </div>
 </div>
 
-<audio id="clap" src="assests/clapping.mp3"></audio>
-<audio id="correct" src="assests/correct.mp3"></audio>
-<audio id="wrong" src="assests/wrong.mp3"></audio>
+<audio id="clap" src="assets/clapping.mp3"></audio>
+<audio id="correct" src="assets/correct.mp3"></audio>
+<audio id="wrong" src="assets/wrong.mp3"></audio>
 
 <script>
 
-/* ================= DATA (UNCHANGED CONTENT LOGIC) ================= */
+/* ================= QUESTIONS ================= */
 
 const questions = [
 {
@@ -167,17 +209,11 @@ q:`Q2. Mix one cup of ___ with sugar.`,
 options:["flower","flour","floor","fleur"],
 answer:"flour"
 },
-{
-type:"text",
-q:`Q3. Bank (river / money) is a:`,
-options:["Homophone","Homograph","Homonym","Antonym"],
-answer:"Homonym"
-},
 
-/* IMAGE Q6 */
+/* OBSERVE Q6 */
 {
 type:"observe",
-image:"assests/picture1.png",
+image:"assets/picture1.png",
 q:`Q6. Which set correctly fills all blanks in order?`,
 options:[
 "they're / their / there / they're",
@@ -188,10 +224,10 @@ options:[
 answer:"there / their / they're / there"
 },
 
-/* IMAGE Q7 */
+/* OBSERVE Q7 */
 {
 type:"observe",
-image:"assests/picture2.png",
+image:"assets/picture2.png",
 q:`Q7. What type of word relationship is shown?`,
 options:["Homophones","Homographs","Homonyms","Antonyms"],
 answer:"Homonyms"
@@ -211,6 +247,7 @@ let index=0;
 let score=0;
 let attempts=0;
 let timer;
+let timeLeft=45;
 
 /* ================= SPLASH ================= */
 
@@ -221,7 +258,7 @@ document.getElementById("intro").style.display="flex";
 
 /* ================= START ================= */
 
-function startQuiz(){
+function startGame(){
 document.getElementById("intro").style.display="none";
 loadQuestion();
 }
@@ -237,7 +274,6 @@ return;
 
 let q=questions[index];
 
-/* OBSERVE MODE */
 if(q.type==="observe"){
 document.getElementById("observe").style.display="flex";
 document.getElementById("quiz").style.display="none";
@@ -255,17 +291,17 @@ document.getElementById("observe").style.display="none";
 showQuiz(questions[index]);
 }
 
-/* ================= QUIZ ================= */
+/* ================= SHOW QUIZ ================= */
 
 function showQuiz(q){
 
 document.getElementById("quiz").style.display="flex";
-
+document.getElementById("msg").innerText="";
 document.getElementById("qtext").innerText=q.q;
 
 let html="";
 q.options.forEach(o=>{
-html+=`<div class="option" onclick="check('${o}')">${o}</div>`;
+html+=`<div class="option" onclick="check('${o}',this)">${o}</div>`;
 });
 
 document.getElementById("options").innerHTML=html;
@@ -274,8 +310,6 @@ startTimer();
 }
 
 /* ================= TIMER ================= */
-
-let timeLeft=45;
 
 function startTimer(){
 clearInterval(timer);
@@ -294,18 +328,21 @@ wrongAnswer();
 
 /* ================= CHECK ================= */
 
-function check(opt){
+function check(opt,el){
 
 let q=questions[index];
 
 if(opt===q.answer){
 score++;
 document.getElementById("score").innerText=score;
-next();
+el.classList.add("correct");
+setTimeout(()=>next(),700);
 }else{
 attempts++;
+el.classList.add("wrong");
+
 if(attempts<2){
-document.getElementById("msg").innerText="Try Again!";
+document.getElementById("msg").innerText="Try again!";
 }else{
 wrongAnswer();
 }
@@ -317,7 +354,6 @@ wrongAnswer();
 function wrongAnswer(){
 index++;
 attempts=0;
-document.getElementById("msg").innerText="";
 loadQuestion();
 }
 
@@ -326,7 +362,6 @@ loadQuestion();
 function next(){
 index++;
 attempts=0;
-document.getElementById("msg").innerText="";
 loadQuestion();
 }
 
