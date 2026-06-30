@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Homophones CBQ Game</title>
+<title>Homophones, Homonyms & Homographs</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -28,7 +28,7 @@ padding:20px;
 border-radius:16px;
 box-shadow:0 6px 18px rgba(0,0,0,0.12);
 width:92%;
-max-width:750px;
+max-width:780px;
 }
 
 button{
@@ -54,7 +54,7 @@ transition:0.2s;
 
 img.qimg{
 max-width:100%;
-max-height:260px;
+max-height:240px;
 border-radius:12px;
 margin:10px 0;
 box-shadow:0 4px 10px rgba(0,0,0,0.2);
@@ -84,14 +84,8 @@ transition:0.3s;
 
 #msg{
 font-size:14px;
+margin-top:10px;
 color:#444;
-margin-top:10px;
-}
-
-.observe{
-font-size:18px;
-margin-top:10px;
-color:#333;
 }
 </style>
 </head>
@@ -108,8 +102,7 @@ onerror="this.outerHTML='<h3>Upload innovine-logo.png inside assests folder</h3>
 <!-- INTRO -->
 <div id="intro" class="center" style="display:none;">
 <div class="card">
-<h2>Chapter 23</h2>
-<h3>Homophones, Homonyms & Homographs</h3>
+<h2>Chapter 23 - Homophones, Homonymns, Homographs</h2>
 <p>Grade 6 • English</p>
 <p>15 Questions + Bonus</p>
 <button onclick="startQuiz()">START QUIZ</button>
@@ -121,7 +114,7 @@ onerror="this.outerHTML='<h3>Upload innovine-logo.png inside assests folder</h3>
 <div class="card">
 <h3>Observe the image carefully</h3>
 <img id="obsImg" class="qimg">
-<p class="observe">Look carefully and understand the meaning</p>
+<p>Think before answering</p>
 <button onclick="nextFromObserve()">Next</button>
 </div>
 </div>
@@ -157,172 +150,272 @@ onerror="this.outerHTML='<h3>Upload innovine-logo.png inside assests folder</h3>
 </div>
 </div>
 
-<audio id="correct" src="assests/correct.mp3"></audio>
-<audio id="wrong" src="assests/wrong.mp3"></audio>
 <audio id="clap" src="assests/clapping.mp3"></audio>
 
 <script>
 
-/* ---------------- QUESTIONS ---------------- */
+/* ================= EXACT QUESTIONS (NO SHORTENING) ================= */
+
 const questions = [
+
 {
 type:"text",
-q:"Riya is texting directions: I am ___ waiting for you.",
+q:`Q1. Riya is texting directions to Aarav: "Come to the park. I am ___ waiting for you near the gate." Which word correctly fills the blank?`,
 options:["their","there","here","hear"],
-answer:"here"
+answer:"there"
 },
+
 {
 type:"text",
-q:"Mix one cup of ___ with sugar.",
+q:`Q2. Meera is writing a recipe: "Mix one cup of ___ with sugar and knead into dough." Which homophone is correct?`,
 options:["flower","flour","floor","fleur"],
 answer:"flour"
 },
+
 {
 type:"text",
-q:"Meaning of 'wound' shows:",
-options:["Homophone","Homograph","Homonym","Same meaning"],
-answer:"Homograph"
-},
-{
-type:"text",
-q:"Bank (river / money) is a:",
-options:["Homophone","Homograph","Homonym","Antonym"],
-answer:"Homonym"
+q:`Q3. Rohan's science teacher wrote two sentences on the board: Sentence A: "The doctor dressed the wound carefully." Sentence B: "She wound the thread around the bobbin." What does this tell us about the word 'wound'?`,
+options:[
+"It is a homophone — same sound, different spelling",
+"It is a homograph — same spelling but different pronunciation and meaning",
+"It is a homonym — same sound and spelling, same meaning",
+"Both sentences use 'wound' in exactly the same way"
+],
+answer:"It is a homograph — same spelling but different pronunciation and meaning"
 },
 
-/* ---------------- IMAGE Q6 ---------------- */
+{
+type:"text",
+q:`Q4. A student reads: "The bank was flooded after the heavy rains." His friend reads: "I deposited my savings at the bank." What kind of word is 'bank'?`,
+options:[
+"Homophone — sounds the same as another word",
+"Homograph — spelled the same but pronounced differently",
+"Homonym — same spelling and pronunciation but different meanings",
+"They are two completely different words"
+],
+answer:"Homonym — same spelling and pronunciation but different meanings"
+},
+
+{
+type:"text",
+q:`Q5. Aarav is writing a story set in a medieval castle. He writes: "The brave ___ rode through the dark ___." Which homophone pair correctly fills both blanks?`,
+options:["night / knight","knight / night","knight / knight","night / night"],
+answer:"knight / night"
+},
+
+/* ================= OBSERVE Q6 ================= */
+
 {
 type:"observe",
 image:"assests/picture1.png",
-q:"Q6: Based on the worksheet, choose correct order of words.",
-options:["their / there / they're / their",
+q:`Q6. [picture1: A grammar worksheet showing four sentences with blanks and three word choices beside each.Which set correctly fills all four blanks in order?`,
+options:[
+"their / there / they're / their",
 "they're / there / their / their",
 "there / their / they're / there",
-"they're / their / there / they're"],
+"they're / their / there / they're"
+],
 answer:"there / their / they're / there"
 },
 
-/* ---------------- IMAGE Q7 ---------------- */
+/* ================= OBSERVE Q7 ================= */
+
 {
 type:"observe",
 image:"assests/picture2.png",
-q:"Q7: What type of word relationship is shown?",
-options:["Homophones","Homographs","Homonyms","Antonyms"],
-answer:"Homonyms"
+q:`Q7. [picture2: A classroom chart showing four pairs of sentences — Pair 1: 'The bat flew out of the cave at night.' / 'He hit the ball with his bat.' Pair 2: 'The dog's bark scared the postman.' / 'The bark of the tree was rough.' Pair 3: 'Turn on the light — it's dark.' / 'This bag is very light — I can carry it easily.' Pair 4: 'She went to the bank to withdraw money.' / 'We sat by the river bank.'] All four pairs show the same type of word relationship. What is it?`,
+options:[
+"Homophones — same sound, different spelling",
+"Homographs — same spelling, different pronunciation",
+"Homonyms — same spelling and sound, but different meanings",
+"Antonyms — words with opposite meanings"
+],
+answer:"Homonyms — same spelling and sound, but different meanings"
 },
 
 {
 type:"text",
-q:"I need to ___ a letter.",
-options:["right","write","rite","wright"],
-answer:"write"
+q:`Q8. A student writes: "I need to right a letter to my teacher." What is the error and how should it be fixed?`,
+options:[
+"'right' is spelled incorrectly — it should be 'rite'",
+"'right' is the wrong homophone — the correct word here is 'write'",
+"There is no error — 'right' is correct in this context",
+"'right' should be replaced with 'wright'"
+],
+answer:"'right' is the wrong homophone — the correct word here is 'write'"
 },
 
 {
 type:"text",
-q:"Lead pipe / lead team shows:",
-options:["Homophone","Homograph","Homonym","Same"],
-answer:"Homograph"
+q:`Q9. Read these two sentences: "Be careful — the lead pipe is very heavy." "The captain will lead the team onto the field." What type of word is 'lead' in these sentences and why?`,
+options:[
+"Homophone — 'lead' sounds different from another word spelled differently",
+"Homonym — same spelling and sound but different meanings",
+"Homograph — same spelling but different pronunciation and meaning",
+"Both sentences use 'lead' with exactly the same meaning"
+],
+answer:"Homograph — same spelling but different pronunciation and meaning"
+},
+
+{
+type:"text",
+q:`Q10. Sort these word pairs into two groups — Homophones and Homonyms: P: there / their Q: bark (dog) / bark (tree) R: flour / flower S: light (lamp) / light (not heavy)`,
+options:[
+"Homophones: P, Q — Homonyms: R, S",
+"Homophones: Q, S — Homonyms: P, R",
+"Homophones: P, R — Homonyms: Q, S",
+"Homophones: R, S — Homonyms: P, Q"
+],
+answer:"Homophones: P, R — Homonyms: Q, S"
+},
+
+{
+type:"text",
+q:`Q11. Classify each pair of underlined words — Homophone, Homonym or Homograph:
+1. "I could not bear the pain." / "A bear lives in the forest."
+2. "She shed a tear when she heard the news." / "He made a tear in the paper."
+3. "The knight guarded the castle." / "It was a cold night."
+4. "She sat by the river bank." / "The bank closes at 5 PM."`,
+options:[
+"1=Homograph, 2=Homophone, 3=Homonym, 4=Homograph",
+"1=Homonym, 2=Homograph, 3=Homophone, 4=Homonym",
+"1=Homophone, 2=Homonym, 3=Homograph, 4=Homophone",
+"1=Homograph, 2=Homonym, 3=Homophone, 4=Homograph"
+],
+answer:"1=Homonym, 2=Homograph, 3=Homophone, 4=Homonym"
+},
+
+{
+type:"text",
+q:`Q12. Three of the following word pairs are homophones. One is NOT. Which is the odd one out?`,
+options:["write / right","flour / flower","hear / here","bat / bat"],
+answer:"bat / bat"
+},
+
+{
+type:"text",
+q:`Q13. A student wrote this paragraph: "Their going to the market too buy too kilos of flower. They're bags are very heavy." Identify ALL the homophone errors:`,
+options:[
+"Their→They're; too→to; too→two; flower→flour; They're→Their",
+"Their is correct; too→to; flower→flour; They're is correct",
+"Their→There; too→two; flower is correct; They're→Their",
+"There are no errors — all homophones are used correctly"
+],
+answer:"Their→They're; too→to; too→two; flower→flour; They're→Their"
+},
+
+{
+type:"text",
+q:`Q14. A student writes: "The doctor treated his wound" and then changes it to "He wound the bandage around his arm." What has happened to the word 'wound' between the two sentences?`,
+options:[
+"It has become a homophone",
+"It is being used as a homograph",
+"It has become a homonym",
+"The word has been used incorrectly"
+],
+answer:"It is being used as a homograph"
+},
+
+{
+type:"text",
+q:`Q15. Assertion: The words 'to', 'too' and 'two' are homophones but cannot be used interchangeably. Reason: Although they sound identical, each has a distinct meaning and spelling.`,
+options:[
+"Both are correct; the reason correctly explains the assertion",
+"Both are correct; but reason does NOT explain assertion",
+"Assertion correct; reason wrong",
+"Both wrong"
+],
+answer:"Both are correct; the reason correctly explains the assertion"
 }
+
 ];
 
-/* ---------------- STATE ---------------- */
+/* ================= STATE ================= */
+
 let index=0;
 let score=0;
-let attempts=0;
-let pendingObserve=false;
+let mode="quiz";
 
-/* ---------------- SPLASH ---------------- */
+/* ================= SPLASH ================= */
+
 setTimeout(()=>{
 document.getElementById("splash").style.display="none";
 document.getElementById("intro").style.display="flex";
 },5000);
 
-/* ---------------- START ---------------- */
+/* ================= START ================= */
+
 function startQuiz(){
 document.getElementById("intro").style.display="none";
-loadQuestion();
+load();
 }
 
-/* ---------------- LOAD ---------------- */
-function loadQuestion(){
+/* ================= LOAD ================= */
+
+function load(){
 
 if(index>=questions.length){
 showResult();
 return;
 }
 
-attempts=0;
-
 let q=questions[index];
 
-/* IMAGE OBSERVE FLOW */
+/* OBSERVE FLOW */
 if(q.type==="observe"){
-pendingObserve=true;
-
+mode="observe";
 document.getElementById("observe").style.display="flex";
 document.getElementById("obsImg").src=q.image;
 return;
 }
 
-/* NORMAL QUESTION */
-showQuiz(q);
+showQuestion(q);
 }
+
+/* ================= OBSERVE NEXT ================= */
 
 function nextFromObserve(){
 document.getElementById("observe").style.display="none";
-showQuiz(questions[index]);
+showQuestion(questions[index]);
 }
 
-function showQuiz(q){
+/* ================= QUESTION ================= */
 
+function showQuestion(q){
+
+mode="quiz";
 document.getElementById("quiz").style.display="flex";
 
 document.getElementById("qtext").innerText=q.q;
 
-let html="";
-let shuffled=[...q.options].sort(()=>Math.random()-0.5);
+let opts=[...q.options].sort(()=>Math.random()-0.5);
 
-shuffled.forEach(o=>{
+let html="";
+opts.forEach(o=>{
 html+=`<div class="option" onclick="check('${o}')">${o}</div>`;
 });
 
 document.getElementById("options").innerHTML=html;
-
-document.getElementById("fill").style.width=
-(index/questions.length)*100+"%";
 }
 
-/* ---------------- CHECK ---------------- */
+/* ================= CHECK ================= */
+
 function check(opt){
 
 let q=questions[index];
 
 if(opt===q.answer){
 score++;
-document.getElementById("score").innerText=score;
-next();
-}else{
-attempts++;
-if(attempts<2){
-document.getElementById("msg").innerText="Try Again!";
-}else{
-document.getElementById("msg").innerText=
-"Correct Answer: "+q.answer;
-setTimeout(next,2000);
-}
-}
-}
-
-/* ---------------- NEXT ---------------- */
-function next(){
 index++;
-document.getElementById("msg").innerText="";
-document.getElementById("quiz").style.display="none";
-loadQuestion();
+load();
+}else{
+index++;
+load();
+}
 }
 
-/* ---------------- RESULT ---------------- */
+/* ================= RESULT ================= */
+
 function showResult(){
 
 document.getElementById("quiz").style.display="none";
@@ -330,19 +423,14 @@ document.getElementById("result").style.display="flex";
 
 let percent=Math.round((score/questions.length)*100);
 
-document.getElementById("finalScore").innerText=
-"Score: "+score+"/"+questions.length+" ("+percent+"%)";
-
-let msg="💪 Keep Practising!";
+let msg="Keep Practising!";
 if(percent>=70) msg="🏆 Outstanding!";
 else if(percent>=60) msg="🌟 Excellent!";
 else if(percent>=45) msg="😊 Good Job!";
 
 document.getElementById("finalMsg").innerText=msg;
-
-if(percent>=70){
-document.getElementById("clap").play();
-}
+document.getElementById("finalScore").innerText=
+"Score: "+score+"/"+questions.length+" ("+percent+"%)";
 }
 
 </script>
