@@ -1,1 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grade 7 ELA Interactive Quiz - Subject–Verb Agreement</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <style>
+        :root {
+            --slate-blue: #2b3a67;
+            --mint-teal: #41b3a3;
+            --amber-gold: #e27d60;
+            --gold-dark: #c36246;
+            --deep-purple: #1d1e2c;
+            --cream-bg: #f5f7fa;
+            --card-white: #ffffff;
+            --success-green: #2ec4b6;
+            --danger-red: #e71d36;
+            
+            --panel-radius: 16px;
+            --elem-radius: 10px;
+            --classic-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-line: 2px solid #e1e6eb;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--cream-bg);
+            color: var(--deep-purple);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Light Academic Floating Geometric Background */
+        .bg-decorations {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .shape {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(65, 179, 163, 0.1), rgba(43, 58, 103, 0.05));
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation: floatMove 20s infinite linear alternate;
+        }
+        .shape-1 { width: 300px; height: 300px; top: -50px; left: -50px; }
+        .shape-2 { width: 250px; height: 250px; bottom: -50px; right: -50px; animation-delay: -5s; }
+        .shape-3 { width: 180px; height: 180px; top: 40%; right: 10%; animation-delay: -10s; border-radius: 50%; }
+
+        @keyframes floatMove {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(30px) rotate(15deg); }
+        }
+
+        .main-frame {
+            position: relative;
+            width: 100%;
+            max-width: 620px;
+            height: min(780px, 94vh);
+            background: var(--card-white);
+            border-radius: var(--panel-radius);
+            box-shadow: var(--classic-shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .view-panel {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: clamp(16px, 4vw, 32px);
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .view-active {
+            display: flex !important;
+        }
+
+        /* Splash Screen */
+        #splashScreen {
+            justify-content: center;
+            align-items: center;
+            background: #ffffff;
+        }
+        .splash-logo-box {
+            width: 180px;
+            height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: splashPop 5s ease-in-out forwards;
+        }
+        .splash-logo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes splashPop {
+            0% { transform: scale(0.85); opacity: 0; }
+            10% { transform: scale(1); opacity: 1; }
+            90% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0; }
+        }
+
+        /* Headers & Badges */
+        .meta-badge {
+            background: rgba(43, 58, 103, 0.08);
+            color: var(--slate-blue);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .screen-title {
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            color: var(--slate-blue);
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        /* HUD top bar */
+        .hud-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .hud-item {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--slate-blue);
+            background: var(--cream-bg);
+            padding: 6px 12px;
+            border-radius: var(--elem-radius);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .timer-accent {
+            background: rgba(231, 29, 54, 0.1);
+            color: var(--danger-red);
+        }
+
+        /* Progress Bar */
+        .bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--mint-teal);
+            transition: width 0.3s ease;
+        }
+
+        /* Question & Stack Layout */
+        .content-scroller {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            padding-right: 4px;
+        }
+
+        .prompt-card {
+            font-size: clamp(1rem, 2.5vh, 1.2rem);
+            font-weight: 600;
+            line-height: 1.5;
+            color: var(--deep-purple);
+            margin-bottom: 20px;
+            white-space: pre-line;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-node {
+            background: #ffffff;
+            border: var(--border-line);
+            border-radius: var(--elem-radius);
+            padding: 14px 18px;
+            font-size: clamp(0.9rem, 2.2vh, 1.05rem);
+            font-weight: 500;
+            color: var(--deep-purple);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .option-node:hover {
+            border-color: var(--slate-blue);
+            background: rgba(43, 58, 103, 0.02);
+        }
+
+        /* Interactive Verification Status Styles */
+        .node-correct {
+            background: #e6f9f7 !important;
+            border-color: var(--success-green) !important;
+            color: var(--success-green) !important;
+            font-weight: 700;
+            box-shadow: 0 0 8px rgba(46, 196, 182, 0.2);
+        }
+        .node-wrong {
+            background: #ffebee !important;
+            border-color: var(--danger-red) !important;
+            color: var(--danger-red) !important;
+            animation: nodeShake 0.4s ease;
+        }
+
+        @keyframes nodeShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* Feedback Display Drawer */
+        .feedback-drawer {
+            margin-top: 16px;
+            background: #f8f9fa;
+            border-left: 4px solid var(--slate-blue);
+            padding: 14px;
+            border-radius: 4px var(--elem-radius) var(--elem-radius) 4px;
+            display: none;
+        }
+        .feedback-status {
+            font-weight: 800;
+            font-size: 15px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .feedback-txt {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #4a5568;
+        }
+
+        /* Global Call To Action Buttons */
+        .btn-action {
+            background: var(--amber-gold);
+            color: #ffffff;
+            border: none;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: var(--elem-radius);
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-action:hover {
+            background: var(--gold-dark);
+        }
+
+        /* Audio Dashboard Widget */
+        .audio-widget {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--cream-bg);
+            padding: 8px 16px;
+            border-radius: var(--elem-radius);
+            width: fit-content;
+            margin-top: 12px;
+        }
+        .audio-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .vol-slider {
+            accent-color: var(--slate-blue);
+            width: 80px;
+            cursor: pointer;
+        }
+
+        /* Motivational / Results Grids */
+        .center-graphic-stack {
+            text-align: center;
+            margin: auto 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .big-emoji {
+            font-size: 4.5rem;
+            animation: pulseBeat 2s infinite ease-in-out;
+        }
+        @keyframes pulseBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .results-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .metric-tile {
+            background: var(--cream-bg);
+            padding: 14px;
+            border-radius: var(--elem-radius);
+            text-align: center;
+        }
+        .metric-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+        }
+        .metric-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--slate-blue);
+            margin-top: 4px;
+        }
+
+        .confetti-canvas-particle {
+            position: fixed;
+            width: 8px; height: 8px;
+            pointer-events: none;
+            z-index: 999;
+            animation: confettiFall 3s linear forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-decorations">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+</div>
+
+<div class="main-frame">
+
+    <div id="splashScreen" class="view-panel view-active">
+        <div class="splash-logo-box">
+            <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%232b3a67\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'white\' font-size=\'14\' font-weight=\'bold\'>Innovine</text></svg>';">
+        </div>
+    </div>
+
+    <div id="startScreen" class="view-panel">
+        <div>
+            <div class="meta-badge">Grade 7 • ELA</div>
+            <h1 class="screen-title" style="margin-bottom: 12px;">Subject–Verb Agreement</h1>
+            <p style="color: #4a5568; font-size: 15px; line-height: 1.5;">Master collective nouns, proximity matching, parentheticals, and 'many a' rules in this advanced grammar challenge.</p>
+        </div>
+
+        <div class="center-graphic-stack">
+            <div class="big-emoji">📚</div>
+            <button class="btn-action" style="font-size: 18px; padding: 16px 40px;" onclick="handleUIAudioTrigger('click'); bootQuizGameplaySequence();">Start Quiz</button>
+        </div>
+
+        <div class="audio-widget">
+            <button id="muteBtn" class="audio-btn" onclick="toggleMuteState()">🔊</button>
+            <input type="range" id="volControl" class="vol-slider" min="0" max="1" step="0.1" value="0.7" oninput="adjustMasterVolume(this.value)">
+        </div>
+    </div>
+
+    <div id="quizScreen" class="view-panel">
+        <div>
+            <div class="hud-row">
+                <div class="hud-item" id="hudQuestionTracker">Q: 1/10</div>
+                <div class="hud-item timer-accent" id="hudTimerClock">⏱️ 45s</div>
+                <div class="hud-item" id="hudScoreTracker" style="background: #fffde6;">⭐ 0</div>
+            </div>
+            <div class="bar-container">
+                <div id="barMetricFill" class="bar-fill"></div>
+            </div>
+        </div>
+
+        <div class="content-scroller">
+            <div id="cardQuestionText" class="prompt-card">Loading question...</div>
+            <div id="stackOptionsBox" class="options-grid"></div>
+            
+            <div id="drawerFeedbackCard" class="feedback-drawer">
+                <div id="labelFeedbackStatus" class="feedback-status"></div>
+                <div id="txtFeedbackExplanation" class="feedback-txt"></div>
+            </div>
+        </div>
+
+        <div id="footerControlsRow" style="display: none; justify-content: flex-end;">
+            <button class="btn-action" id="btnNextStep" onclick="handleUIAudioTrigger('click'); handleNextStepNavigation();">Continue</button>
+        </div>
+    </div>
+
+    <div id="finalChallengeScreen" class="view-panel">
+        <div>
+            <div class="meta-badge">Final Check!</div>
+            <h1 class="screen-title">🎯 Final Grammar Challenge Complete!</h1>
+        </div>
+
+        <div class="center-graphic-stack">
+            <div class="big-emoji">🎯</div>
+            <p style="color: #4a5568; font-size: 16px; font-weight: 600;">"Let's see how well you've mastered Subject–Verb Agreement."</p>
+        </div>
+
+        <div style="display: flex; justify-content: center;">
+            <button class="btn-action" style="width: 100%;" onclick="handleUIAudioTrigger('click'); navigateToResultsDashboard();">Continue</button>
+        </div>
+    </div>
+
+    <div id="summaryScreen" class="view-panel">
+        <div>
+            <div class="meta-badge">Quiz Complete</div>
+            <h1 class="screen-title">Performance Review</h1>
+        </div>
+
+        <div class="center-graphic-stack" style="margin: 12px 0;">
+            <div id="badgeLabelContainer" class="meta-badge" style="background: var(--amber-gold); color: #fff; font-size: 15px; padding: 8px 20px;">🏆 Grammar Expert</div>
+            
+            <div class="results-matrix">
+                <div class="metric-tile">
+                    <div class="metric-label">Final Score</div>
+                    <div class="metric-val" id="summaryScoreField">0 / 10</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="metric-label">Accuracy</div>
+                    <div class="metric-val" id="summaryPercentageField">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-action" style="flex: 1; background: #6c757d;" onclick="handleUIAudioTrigger('click'); restartCompleteQuizSession();">Restart Quiz</button>
+            <button class="btn-action" style="flex: 1;" onclick="handleUIAudioTrigger('click'); restartCompleteQuizSession();">Play Again</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Chapter 2 — Subject–Verb Agreement Content Matrix
+    const academicQuizDataset = [
+        {
+            q: "Aarav is writing a formal report: \"The quality of the paintings ___ truly remarkable.\" His teacher tells him the subject is not 'paintings' but the noun before 'of'. Which verb is correct?",
+            options: [
+                "are",
+                "were",
+                "is",
+                "have been"
+            ],
+            answer: "is",
+            explanation: "Real subject is 'quality' (singular) — 'of the paintings' is just a modifying phrase"
+        },
+        {
+            q: "A school notice reads: \"Neither the captain nor the players ___ satisfied with the result.\" Which verb is correct and why?",
+            options: [
+                "was — because 'neither' makes everything singular",
+                "is — because 'captain' comes first",
+                "are — because the verb agrees with 'players', the subject closest to it",
+                "were — because the event is in the past"
+            ],
+            answer: "are — because the verb agrees with 'players', the subject closest to it",
+            explanation: "Neither/Nor rule — verb agrees with closest subject 'players' (plural) → 'are'"
+        },
+        {
+            q: "Riya is writing about her favourite hobby: \"Reading novels and writing poems ___ my favourite pastime.\" Which verb correctly fills the blank?",
+            options: [
+                "is",
+                "are",
+                "were",
+                "have been"
+            ],
+            answer: "is",
+            explanation: "Two gerunds joined by 'and' form a single concept/idea → treated as singular"
+        },
+        {
+            q: "A sports commentator says: \"The team ___ celebrating their victory on the field.\" Which sentence reflects that the commentator is treating the team as individual members rather than one unit?",
+            options: [
+                "The team is celebrating their victory on the field.",
+                "The team are celebrating their victory on the field.",
+                "The team was celebrating their victory on the field.",
+                "The team celebrates their victory on the field."
+            ],
+            answer: "The team are celebrating their victory on the field.",
+            explanation: "'are celebrating their' treats team as individuals acting separately → plural sense"
+        },
+        {
+            q: "Meera's science teacher writes on the board: \"Ten kilometres ___ a long distance to walk in one hour.\" Which verb is correct?",
+            options: [
+                "are",
+                "were",
+                "is",
+                "have been"
+            ],
+            answer: "is",
+            explanation: "Measurements of distance/time/money treated as single unit → singular verb"
+        },
+        {
+            q: "Which sentence correctly treats the italicised phrase as a parenthetical addition that does NOT change the subject?",
+            options: [
+                "Rohan, along with his friends, are going to the market.",
+                "Rohan, along with his friends, is going to the market.",
+                "Rohan, along with his friends, were going to the market.",
+                "Rohan, along with his friends, am going to the market."
+            ],
+            answer: "Rohan, along with his friends, is going to the market.",
+            explanation: "'Along with' is parenthetical — real subject remains 'Rohan' (singular) → 'is'"
+        },
+        {
+            q: "Sort these subjects into two groups — those that always take a Singular verb and those that always take a Plural verb: P: The news Q: Scissors R: Everyone S: Spectacles",
+            options: [
+                "Singular: P, Q — Plural: R, S",
+                "Singular: Q, S — Plural: P, R",
+                "Singular: P, R — Plural: Q, S",
+                "Singular: R, S — Plural: P, Q"
+            ],
+            answer: "Singular: P, R — Plural: Q, S",
+            explanation: "news & everyone = always singular; scissors & spectacles = always plural (two-part nouns)"
+        },
+        {
+            q: "Classify the agreement rule being applied in each sentence:\n1. \"The jury is ready to deliver its verdict.\"\n2. \"Many a student has failed this test.\"\n3. \"Not only the students but also the teacher was surprised.\"\n4. \"There were several mistakes in the report.\"",
+            options: [
+                "1=Closest subject rule, 2=Collective noun as unit, 3=Many a rule, 4=There+plural",
+                "1=Collective noun as unit, 2=Many a rule, 3=Closest subject rule, 4=There+plural",
+                "1=Many a rule, 2=Closest subject rule, 3=There+plural, 4=Collective noun",
+                "1=There+plural, 2=Collective noun, 3=Many a rule, 4=Closest subject rule"
+            ],
+            answer: "1=Collective noun as unit, 2=Many a rule, 3=Closest subject rule, 4=There+plural",
+            explanation: "jury as one unit=collective noun rule; many a=singular rule; not only/but also=closest subject rule; there+plural=existential there rule"
+        },
+        {
+            q: "A student wrote this paragraph:\n\"The quality of these photographs are outstanding. Each of the pictures show a different landscape. Neither the photographer nor his assistants was available for comment.\"\nIdentify the sentence with the error:",
+            options: [
+                "Sentence 1 — real subject is 'quality' (singular) → verb should be 'is' not 'are'",
+                "Sentence 2 — 'each' is plural so 'show' is correct",
+                "Sentence 3 — 'assistants' is plural so 'were' should be used",
+                "There are no errors — all three sentences are correct"
+            ],
+            answer: "Sentence 1 — real subject is 'quality' (singular) → verb should be 'is' not 'are'",
+            explanation: "'Of these photographs' is a modifier — real subject 'quality' is singular → 'is'"
+        },
+        {
+            q: "Assertion: We say \"Many a student has struggled with this topic\" not \"have struggled.\"\nReason: 'Many a' — despite suggesting a large number — is always followed by a singular noun and a singular verb.",
+            options: [
+                "Both are correct; the reason correctly explains the assertion.",
+                "Both are correct; but the reason does NOT explain the assertion.",
+                "The assertion is correct; the reason is wrong.",
+                "Both are wrong — 'many' always takes a plural verb."
+            ],
+            answer: "Both are correct; the reason correctly explains the assertion.",
+            explanation: "'Many a' is a fixed expression that always pairs with singular noun + singular verb despite plural meaning"
+        }
+    ];
+
+    let currentQuestionIdx = 0;
+    let baselineScoreValue = 0;
+    let questionAttemptCount = 0; 
+    let secondsRemaining = 45;
+    let structuralTimerRef = null;
+    let audioOutputMuted = false;
+    let currentMasterVolume = 0.7;
+
+    const audioAssets = {
+        correct: new Audio('assets/correct.mp3'),
+        wrong: new Audio('assets/wrong.mp3'),
+        clapping: new Audio('assets/clapping.mp3')
+    };
+
+    function routeToPanel(panelId) {
+        document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('view-active'));
+        document.getElementById(panelId).classList.add('view-active');
+    }
+
+    function toggleMuteState() {
+        audioOutputMuted = !audioOutputMuted;
+        document.getElementById('muteBtn').innerText = audioOutputMuted ? "🔇" : "🔊";
+    }
+
+    function adjustMasterVolume(vol) {
+        currentMasterVolume = parseFloat(vol);
+        audioOutputMuted = (currentMasterVolume === 0);
+        document.getElementById('muteBtn').innerText = audioOutputMuted ? "🔇" : "🔊";
+    }
+
+    function handleUIAudioTrigger(type) {
+        if (audioOutputMuted) return;
+        if (audioAssets[type]) {
+            try {
+                audioAssets[type].volume = currentMasterVolume;
+                audioAssets[type].currentTime = 0;
+                audioAssets[type].play().catch(() => playSynthAudioFallback(type));
+                return;
+            } catch (e) {}
+        }
+        playSynthAudioFallback(type);
+    }
+
+    function playSynthAudioFallback(type) {
+        try {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = context.createOscillator();
+            const amp = context.createGain();
+            osc.connect(amp);
+            amp.connect(context.destination);
+            amp.gain.value = currentMasterVolume * 0.15;
+
+            if (type === 'click') {
+                osc.frequency.setValueAtTime(587.33, context.currentTime); 
+                osc.start(); osc.stop(context.currentTime + 0.06);
+            } else if (type === 'correct' || type === 'clapping') {
+                osc.frequency.setValueAtTime(523.25, context.currentTime); 
+                osc.frequency.setValueAtTime(659.25, context.currentTime + 0.1); 
+                osc.frequency.setValueAtTime(783.99, context.currentTime + 0.2); 
+                osc.start(); osc.stop(context.currentTime + 0.35);
+            } else if (type === 'wrong') {
+                osc.frequency.setValueAtTime(293.66, context.currentTime); 
+                osc.frequency.setValueAtTime(220.00, context.currentTime + 0.12); 
+                osc.start(); osc.stop(context.currentTime + 0.3);
+            }
+        } catch(e) {}
+    }
+
+    function triggerStarConfettiBurst() {
+        for (let i = 0; i < 40; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'confetti-canvas-particle';
+            particle.innerText = ['⭐', '✨', '✔', '🎈'][Math.floor(Math.random() * 4)];
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.top = '-20px';
+            particle.style.fontSize = Math.random() * 15 + 10 + 'px';
+            particle.style.animationDuration = Math.random() * 2 + 1.5 + 's';
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 3000);
+        }
+    }
+
+    function bootQuizGameplaySequence() {
+        currentQuestionIdx = 0;
+        baselineScoreValue = 0;
+        routeToPanel('quizScreen');
+        loadQuestionDataNode();
+    }
+
+    function loadQuestionDataNode() {
+        questionAttemptCount = 0;
+        secondsRemaining = 45;
+        
+        document.getElementById('drawerFeedbackCard').style.display = 'none';
+        document.getElementById('footerControlsRow').style.display = 'none';
+        
+        const payload = academicQuizDataset[currentQuestionIdx];
+        
+        document.getElementById('hudQuestionTracker').innerText = `Q: ${currentQuestionIdx + 1}/${academicQuizDataset.length}`;
+        document.getElementById('hudScoreTracker').innerText = `⭐ ${baselineScoreValue}`;
+        document.getElementById('barMetricFill').style.width = `${(currentQuestionIdx / academicQuizDataset.length) * 100}%`;
+        document.getElementById('hudTimerClock').innerText = `⏱️ ${secondsRemaining}s`;
+
+        document.getElementById('cardQuestionText').innerText = payload.q;
+        
+        const stackBox = document.getElementById('stackOptionsBox');
+        stackBox.innerHTML = '';
+
+        payload.options.forEach(optText => {
+            const btn = document.createElement('button');
+            btn.className = 'option-node';
+            btn.innerHTML = `<span>${optText}</span>`;
+            btn.onclick = () => evaluateOptionSelection(btn, optText);
+            stackBox.appendChild(btn);
+        });
+
+        clearInterval(structuralTimerRef);
+        structuralTimerRef = setInterval(updateGameplayTimerTick, 1000);
+    }
+
+    function updateGameplayTimerTick() {
+        secondsRemaining--;
+        if (secondsRemaining <= 0) {
+            secondsRemaining = 0;
+            document.getElementById('hudTimerClock').innerText = `⏱️ ${secondsRemaining}s`;
+            clearInterval(structuralTimerRef);
+            handleTimeoutExhaustion();
+        } else {
+            document.getElementById('hudTimerClock').innerText = `⏱️ ${secondsRemaining}s`;
+        }
+    }
+
+    function handleTimeoutExhaustion() {
+        questionAttemptCount = 2; 
+        lockOptionSelectionNodes();
+        exposeCorrectVerificationSequence(false);
+    }
+
+    function evaluateOptionSelection(selectedBtn, selectedText) {
+        if (questionAttemptCount >= 2) return;
+
+        const payload = academicQuizDataset[currentQuestionIdx];
+        const isCorrect = (selectedText === payload.answer);
+
+        if (isCorrect) {
+            clearInterval(structuralTimerRef);
+            selectedBtn.classList.add('node-correct');
+            if (questionAttemptCount === 0) {
+                baselineScoreValue += 10;
+            } else if (questionAttemptCount === 1) {
+                baselineScoreValue += 5;
+            }
+            document.getElementById('hudScoreTracker').innerText = `⭐ ${baselineScoreValue}`;
+            handleUIAudioTrigger('correct');
+            triggerStarConfettiBurst();
+            exposeCorrectVerificationSequence(true);
+        } else {
+            questionAttemptCount++;
+            selectedBtn.classList.add('node-wrong');
+            handleUIAudioTrigger('wrong');
+
+            if (questionAttemptCount === 1) {
+                setTimeout(() => {
+                    selectedBtn.classList.remove('node-wrong');
+                    alert("❌ Incorrect! Try Again.");
+                }, 400);
+            } else if (questionAttemptCount === 2) {
+                clearInterval(structuralTimerRef);
+                exposeCorrectVerificationSequence(false);
+            }
+        }
+    }
+
+    function lockOptionSelectionNodes() {
+        document.querySelectorAll('.option-node').forEach(btn => btn.style.cursor = 'default');
+    }
+
+    function exposeCorrectVerificationSequence(isUserCorrect) {
+        lockOptionSelectionNodes();
+        const payload = academicQuizDataset[currentQuestionIdx];
+        
+        document.querySelectorAll('.option-node').forEach(btn => {
+            if (btn.innerText.trim() === payload.answer.trim()) {
+                btn.classList.add('node-correct');
+            }
+        });
+
+        const drawer = document.getElementById('drawerFeedbackCard');
+        const status = document.getElementById('labelFeedbackStatus');
+        const text = document.getElementById('txtFeedbackExplanation');
+
+        drawer.style.display = 'block';
+        if (isUserCorrect) {
+            status.innerText = "✔ Correct Answer";
+            status.style.color = "var(--success-green)";
+            document.getElementById('footerControlsRow').style.display = 'flex';
+        } else {
+            status.innerText = "❌ Incorrect";
+            status.style.color = "var(--danger-red)";
+            text.innerText = payload.explanation;
+            
+            // Automated fallback transition after 3 second delay for incorrect choices
+            setTimeout(() => {
+                handleNextStepNavigation();
+            }, 3000);
+        }
+        text.innerText = payload.explanation;
+    }
+
+    function handleNextStepNavigation() {
+        currentQuestionIdx++;
+        if (currentQuestionIdx < academicQuizDataset.length) {
+            loadQuestionDataNode();
+        } else {
+            routeToPanel('finalChallengeScreen');
+        }
+    }
+
+    function navigateToResultsDashboard() {
+        routeToPanel('summaryScreen');
+        handleUIAudioTrigger('clapping');
+        
+        const totalPossible = academicQuizDataset.length * 10;
+        const accurateRatio = Math.round((baselineScoreValue / totalPossible) * 100);
+        
+        document.getElementById('summaryScoreField').innerText = `${baselineScoreValue} / ${totalPossible}`;
+        document.getElementById('summaryPercentageField').innerText = `${accurateRatio}%`;
+
+        const badge = document.getElementById('badgeLabelContainer');
+        if (accurateRatio >= 85) {
+            badge.innerText = "🏆 Grammar Expert";
+            badge.style.background = "var(--success-green)";
+        } else if (accurateRatio >= 70) {
+            badge.innerText = "🥇 Excellent";
+            badge.style.background = "var(--mint-teal)";
+        } else if (accurateRatio >= 50) {
+            badge.innerText = "🥈 Great Job";
+            badge.style.background = "var(--amber-gold)";
+        } else {
+            badge.innerText = "🥉 Keep Practising";
+            badge.style.background = "#6c757d";
+        }
+        triggerStarConfettiBurst();
+    }
+
+    function restartCompleteQuizSession() {
+        currentQuestionIdx = 0;
+        baselineScoreValue = 0;
+        routeToPanel('startScreen');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            routeToPanel('startScreen');
+        }, 5000);
+    });
+</script>
+
+</body>
+</html>
