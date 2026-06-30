@@ -43,7 +43,6 @@
             overflow: hidden;
         }
 
-        /* Ambient Educational Background Elements */
         .bg-decorations {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -66,7 +65,6 @@
             100% { transform: translateY(40px) scale(1.05) rotate(25deg); }
         }
 
-        /* Shell Frame container */
         .main-frame {
             position: relative;
             width: 100%;
@@ -95,7 +93,6 @@
             display: flex !important;
         }
 
-        /* Splash Screen */
         #splashScreen {
             justify-content: center;
             align-items: center;
@@ -103,36 +100,27 @@
             text-align: center;
         }
         .splash-logo-box {
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            animation: splashFadeInOut 5s ease-in-out forwards;
+            animation: splashFadeInOut 4s ease-in-out forwards;
         }
         .splash-logo-box img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            margin-bottom: 12px;
-        }
-        .branding-fallback-msg {
-            font-size: 11px;
-            color: #a0aec0;
-            max-width: 260px;
-            margin-top: 10px;
-            line-height: 1.3;
         }
 
         @keyframes splashFadeInOut {
             0% { transform: scale(0.9); opacity: 0; }
-            12% { transform: scale(1); opacity: 1; }
-            88% { transform: scale(1); opacity: 1; }
+            15% { transform: scale(1); opacity: 1; }
+            85% { transform: scale(1); opacity: 1; }
             100% { transform: scale(0.96); opacity: 0; }
         }
 
-        /* Generic Typography & Badges */
         .meta-badge {
             background: rgba(43, 58, 103, 0.07);
             color: var(--slate-blue);
@@ -153,7 +141,6 @@
             line-height: 1.25;
         }
 
-        /* HUD top layout bar */
         .hud-row {
             display: flex;
             justify-content: space-between;
@@ -177,7 +164,6 @@
             color: var(--danger-red);
         }
 
-        /* Progress Bar elements */
         .bar-container {
             width: 100%;
             height: 8px;
@@ -193,7 +179,6 @@
             transition: width 0.35s ease;
         }
 
-        /* Interactive Scroller Area */
         .content-scroller {
             flex: 1;
             display: flex;
@@ -202,22 +187,6 @@
             overflow-y: auto;
             margin-bottom: 16px;
             padding-right: 4px;
-        }
-
-        /* Responsive Asset Image Container */
-        .question-asset-wrapper {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-        .question-asset-img {
-            max-width: 100%;
-            max-height: 200px;
-            object-fit: contain;
-            border-radius: var(--elem-radius);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid #e1e6eb;
         }
 
         .prompt-card {
@@ -256,7 +225,6 @@
             background: rgba(43, 58, 103, 0.02);
         }
 
-        /* Interactive Choice Modifiers */
         .node-correct {
             background: #e6f9f7 !important;
             border-color: var(--success-green) !important;
@@ -277,7 +245,6 @@
             75% { transform: translateX(5px); }
         }
 
-        /* Feedback Drawers */
         .feedback-drawer {
             margin-top: 16px;
             background: #f8f9fa;
@@ -298,7 +265,6 @@
             color: #4a5568;
         }
 
-        /* Action Controls Layout */
         .btn-action {
             background: var(--amber-gold);
             color: #ffffff;
@@ -342,7 +308,6 @@
             cursor: pointer;
         }
 
-        /* Center Display Graphic Stack components */
         .center-graphic-stack {
             text-align: center;
             margin: auto 0;
@@ -360,7 +325,6 @@
             50% { transform: scale(1.06); }
         }
 
-        /* Matrix Tables for Results rendering */
         .results-matrix {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -387,7 +351,6 @@
             margin-top: 2px;
         }
 
-        /* Review Mode Module UI Elements */
         .review-box-container {
             flex: 1;
             overflow-y: auto;
@@ -426,7 +389,6 @@
             display: inline-block;
         }
 
-        /* Floating Confetti system nodes */
         .confetti-node-particle {
             position: fixed;
             width: 8px; height: 8px;
@@ -452,18 +414,15 @@
 
     <div id="splashScreen" class="view-panel view-active">
         <div class="splash-logo-box">
-            <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('logoFallbackMsgBlock').style.display='block';">
-            <div id="logoFallbackMsgBlock" class="branding-fallback-msg" style="display:none; color: var(--danger-red); font-weight:600;">
-                ⚠️ Please upload the Innovine logo inside the assets folder as:<br><strong>assets/logo.png</strong>
-            </div>
+            <img src="assets/innovine-logo.png" alt="Innovine Logo" id="mainAppLogo">
         </div>
     </div>
 
     <div id="startScreen" class="view-panel">
         <div>
-            <div class="meta-badge" id="introMetaLabel">Grade 7 • ELA</div>
-            <h1 class="screen-title" id="introChapterTitle">Chapter 3 - Punctuation</h1>
-            <p id="introTopicSub" style="color: #4a5568; font-size: 14px; margin-top: 6px; font-weight: 500;">Full stop · Question mark · Exclamation mark · Comma · Quotation marks · Colon · Apostrophe · Capital letters</p>
+            <div class="meta-badge">Grade 7 • ELA</div>
+            <h1 class="screen-title">Chapter 3 - Punctuation</h1>
+            <p style="color: #4a5568; font-size: 14px; margin-top: 6px; font-weight: 500;">Full stop · Question mark · Exclamation mark · Comma · Quotation marks · Colon · Apostrophe · Capital letters</p>
         </div>
 
         <div class="center-graphic-stack">
@@ -490,9 +449,6 @@
         </div>
 
         <div class="content-scroller">
-            <div id="questionAssetHolderFrame" class="question-asset-wrapper" style="display:none;">
-                <img id="questionAssetImgElement" class="question-asset-img" src="" alt="Question Graphic Context">
-            </div>
             <div id="cardQuestionTextContent" class="prompt-card">...</div>
             <div id="stackOptionsBoxWrapper" class="options-grid"></div>
             
@@ -572,14 +528,6 @@
 </div>
 
 <script>
-    const quizStructuralConfig = {
-        chapterTitle: "Chapter 3 - Punctuation",
-        grade: "Grade 7",
-        subject: "Subject: ELA",
-        topic: "Topic: Full stop · Question mark · Exclamation mark · Comma · Quotation marks · Colon · Apostrophe · Capital letters",
-        totalCount: 12
-    };
-
     const initialQuestionRawMatrix = [
         {
             q: "Riya is writing a formal email to her principal. She writes: \"Dear Principal I am writing to inform you that our class would like to organise a science exhibition next Friday we hope you will approve our request\" Which version correctly adds ALL punctuation?",
@@ -626,7 +574,7 @@
             explanation: "Direct quote needs comma after 'said', opening capital, closing full stop inside quotes"
         },
         {
-            q: "[picture1] A student's paragraph shown on screen with four punctuation errors highlighted in red — \"the childrens playground was recently renovated. it's equipment includes: swings, slides and climbing frames. mr kapoor said we're very proud of this project. isnt it wonderful\" Which option correctly fixes ALL four highlighted errors?",
+            q: "A student's paragraph is written below with four punctuation errors:\n\"the childrens playground was recently renovated. it's equipment includes: swings, slides and climbing frames. mr kapoor said we're very proud of this project. isnt it wonderful\"\n\nWhich option correctly fixes ALL four errors?",
             options: [
                 "The children's playground was recently renovated. Its equipment includes: swings, slides and climbing frames. Mr Kapoor said, \"We're very proud of this project.\" Isn't it wonderful?",
                 "The childrens' playground was recently renovated. It's equipment includes: swings, slides and climbing frames. Mr Kapoor said \"We're very proud of this project.\" Isnt it wonderful!",
@@ -637,7 +585,7 @@
             explanation: "children's=plural possession; Its=possessive(no apostrophe); Mr Kapoor=title+name; Isn't it wonderful?=question"
         },
         {
-            q: "[picture2] A grammar worksheet showing four sentences — each with a colon used in a different way. Students must identify which use is correct and which is wrong:\nUse 1: \"She loves three things: music, reading and cricket.\"\nUse 2: \"I went to: the market yesterday.\"\nUse 3: \"The results were clear: practice makes perfect.\"\nUse 4: \"He said: that he was tired.\"\nWhich two uses of the colon are correct?",
+            q: "Consider the following four sentences, each using a colon in a different way:\n\nUse 1: \"She loves three things: music, reading and cricket.\"\nUse 2: \"I went to: the market yesterday.\"\nUse 3: \"The results were clear: practice makes perfect.\"\nUse 4: \"He said: that he was tired.\"\n\nWhich two uses of the colon are correct?",
             options: [
                 "Uses 1 and 2",
                 "Uses 2 and 4",
@@ -670,7 +618,7 @@
             explanation: "Non-essential clause 'who scored the highest' separated by commas on both sides"
         },
         {
-            q: "Sort these apostrophe uses into two groups — Apostrophe for Contraction and Apostrophe for Possession: P: \"The girl's notebook was lost.\" Q: \"They're going to the library.\" R: \"Rohan's project won first prize.\" S: \"It's raining outside.\"",
+            q: "Sort these apostrophe uses into two groups — Apostrophe for Contraction and Apostrophe for Possession:\nP: \"The girl's notebook was lost.\"\nQ: \"They're going to the library.\"\nR: \"Rohan's project won first prize.\"\nS: \"It's raining outside.\"",
             options: [
                 "Contraction: P, R — Possession: Q, S",
                 "Contraction: P, Q — Possession: R, S",
@@ -800,18 +748,6 @@
         }
     }
 
-    function parseInlinePictureTokens(questionText) {
-        const regexPattern = /\[(picture\d+)[^\]]*\]/i;
-        const matchingGroup = questionText.match(regexPattern);
-        if (matchingGroup && matchingGroup[1]) {
-            return {
-                cleanedText: questionText.replace(regexPattern, '').trim(),
-                imagePath: `assets/${matchingGroup[1].toLowerCase()}.png`
-            };
-        }
-        return { cleanedText: questionText, imagePath: null };
-    }
-
     function scrambleOptionArrays(sourceMatrix) {
         return sourceMatrix.map(item => {
             const linkedOptions = item.options.map(opt => ({ text: opt, match: opt === item.answer }));
@@ -852,19 +788,7 @@
         document.getElementById('barMetricProgressIndicator').style.width = `${(activeQuestionIndex / compiledRuntimeQuestions.length) * 100}%`;
         document.getElementById('hudTimerClockLabel').innerText = `⏱️ ${countdownTimeLeft}s`;
 
-        const evaluationPayload = parseInlinePictureTokens(nodeData.originalPrompt);
-        const assetFrame = document.getElementById('questionAssetHolderFrame');
-        const assetImg = document.getElementById('questionAssetImgElement');
-        
-        if (evaluationPayload.imagePath) {
-            assetImg.src = evaluationPayload.imagePath;
-            assetFrame.style.display = 'flex';
-        } else {
-            assetFrame.style.display = 'none';
-            assetImg.src = '';
-        }
-
-        document.getElementById('cardQuestionTextContent').innerText = evaluationPayload.cleanedText;
+        document.getElementById('cardQuestionTextContent').innerText = nodeData.originalPrompt;
 
         const optionsContainer = document.getElementById('stackOptionsBoxWrapper');
         optionsContainer.innerHTML = '';
@@ -1017,11 +941,9 @@
             const block = document.createElement('div');
             block.className = 'review-item-block';
 
-            const cleanPromptText = parseInlinePictureTokens(item.originalPrompt).cleanedText;
-
             block.innerHTML = `
                 <div class="review-item-header">Item ${index + 1}</div>
-                <div class="review-item-q">${cleanPromptText}</div>
+                <div class="review-item-q">${item.originalPrompt}</div>
                 <div class="review-item-ans">✔ Correct Answer: ${item.trueAnswerString}</div>
                 <div class="feedback-txt" style="margin-top:4px;"><strong>Explanation:</strong> ${item.explanationText}</div>
             `;
@@ -1040,7 +962,7 @@
     window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             switchActiveViewPanel('startScreen');
-        }, 5000);
+        }, 4000);
     });
 </script>
 
