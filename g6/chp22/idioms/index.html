@@ -1,1 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Idioms Quiz Game</title>
 
+<style>
+*{box-sizing:border-box;font-family:Arial, sans-serif;margin:0;padding:0}
+body{
+  background: linear-gradient(120deg,#e3f2fd,#fff3e0,#e8f5e9);
+  overflow-x:hidden;
+  min-height:100vh;
+}
+
+/* Floating background sparkles */
+.sparkle{
+  position:fixed;
+  width:6px;height:6px;
+  background:#fff;
+  border-radius:50%;
+  opacity:0.6;
+  animation: floatUp 10s linear infinite;
+}
+@keyframes floatUp{
+  0%{transform:translateY(100vh);opacity:0}
+  50%{opacity:1}
+  100%{transform:translateY(-10vh);opacity:0}
+}
+
+/* Splash */
+#splash{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+#splash img{
+  width:80%;
+  max-width:300px;
+  animation: fadeIn 2s ease-in-out;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* Screens */
+.screen{
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+.active{display:block;}
+
+/* Card */
+.card{
+  background:#fff;
+  padding:20px;
+  margin:20px auto;
+  max-width:800px;
+  border-radius:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Buttons */
+button{
+  padding:12px 20px;
+  margin-top:15px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+  background:#1976d2;
+  color:white;
+}
+button:hover{background:#0d47a1}
+
+/* Question */
+.option{
+  display:block;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+  background:#f1f1f1;
+  cursor:pointer;
+  transition:0.2s;
+}
+.option:hover{background:#e0e0e0}
+
+.correct{background:#c8e6c9 !important}
+.wrong{background:#ffcdd2 !important}
+
+.shake{
+  animation:shake 0.3s;
+}
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-5px)}
+  50%{transform:translateX(5px)}
+  75%{transform:translateX(-5px)}
+  100%{transform:translateX(0)}
+}
+
+/* Progress */
+#progressBar{
+  width:100%;
+  background:#ddd;
+  border-radius:10px;
+  overflow:hidden;
+  margin:10px 0;
+}
+#progress{
+  height:10px;
+  width:0%;
+  background:#4caf50;
+}
+
+/* Timer */
+#timer{
+  font-weight:bold;
+  color:#d32f2f;
+}
+
+/* Image */
+.qimg{
+  max-width:90%;
+  border-radius:12px;
+  border:2px solid #ddd;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  margin:10px 0;
+}
+
+/* Confetti */
+.confetti{
+  position:fixed;
+  width:8px;height:8px;
+  background:red;
+  top:0;
+  animation: fall 2s linear forwards;
+}
+@keyframes fall{
+  to{transform:translateY(100vh) rotate(360deg);opacity:0}
+}
+
+/* Badge */
+.badge{
+  font-size:20px;
+  margin-top:10px;
+  font-weight:bold;
+}
+
+/* Final Challenge */
+.final{
+  background:linear-gradient(135deg,#fff176,#81d4fa);
+  padding:20px;
+  border-radius:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Sparkles -->
+<script>
+for(let i=0;i<25;i++){
+  let s=document.createElement("div");
+  s.className="sparkle";
+  s.style.left=Math.random()*100+"vw";
+  s.style.animationDuration=(5+Math.random()*5)+"s";
+  document.body.appendChild(s);
+}
+</script>
+
+<!-- Splash -->
+<div id="splash">
+  <img src="assets/innovine-logo.png" />
+</div>
+
+<!-- Intro -->
+<div id="intro" class="screen">
+  <div class="card">
+    <h1>Chapter 22: Idioms</h1>
+    <h3>Grade 6 | English</h3>
+    <p>Topic: Idioms</p>
+    <button onclick="showInstructions()">Start</button>
+  </div>
+</div>
+
+<!-- Instructions -->
+<div id="instructions" class="screen">
+  <div class="card">
+    <h2>Instructions</h2>
+    <p>• One question at a time</p>
+    <p>• Timer per question</p>
+    <p>• 2 attempts allowed</p>
+    <p>• Score updates automatically</p>
+    <button onclick="startQuiz()">Start Quiz</button>
+  </div>
+</div>
+
+<!-- Quiz -->
+<div id="quiz" class="screen">
+  <div class="card">
+    <h3 id="qInfo"></h3>
+    <div id="progressBar"><div id="progress"></div></div>
+    <p>Score: <span id="score">0</span></p>
+    <p>Time: <span id="timer"></span></p>
+
+    <div id="imgContainer"></div>
+    <h2 id="question"></h2>
+    <div id="options"></div>
+    <p id="msg"></p>
+  </div>
+</div>
+
+<!-- Final Challenge -->
+<div id="final" class="screen">
+  <div class="card final">
+    <h2>🏆 Final Challenge</h2>
+    <p id="bonusQ"></p>
+    <div id="bonusOptions"></div>
+  </div>
+</div>
+
+<!-- Result -->
+<div id="result" class="screen">
+  <div class="card">
+    <h2>Results</h2>
+    <p id="finalScore"></p>
+    <p id="percent"></p>
+    <p id="badge"></p>
+    <button onclick="location.reload()">Restart Quiz</button>
+  </div>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/clapping.mp3"></audio>
+
+<script>
+const questions = [
+{q:"Priya studied all night before her board exam. Her mom found her at 2 AM with her books still open. Which idiom best describes what Priya was doing?",o:["Breaking the ice","Burning the midnight oil","Biting the bullet","Kicking the bucket"],a:1,e:"Studying through the night = burning the midnight oil"},
+{q:"Aarav's new gaming laptop cost ₹1,20,000. His dad looked at the bill and said, 'This really ___!'",o:["broke the ice","hit the nail on the head","cost an arm and a leg","burned the midnight oil"],a:2,e:"Something extremely expensive = costs an arm and a leg"},
+{q:"Riya said the real reason canteen food is bad is poor planning. Teacher said she ___",o:["pulled someone's leg","hit the nail on the head","barked up the wrong tree","broken the ice"],a:1,e:"Identifying exact truth = hitting the nail on the head"},
+{q:"Stop ___ what's done is done.",o:["biting the bullet","burning the midnight oil","crying over spilt milk","breaking the ice"],a:2,e:"Useless regret = crying over spilt milk"},
+{q:"Investigators were clearly ___",o:["in hot water","barking up the wrong tree","pulling someone's leg","biting the bullet"],a:1,e:"Wrong suspicion = barking up the wrong tree"},
+{q:"[picture1:] Meera starts conversation between awkward students. Which idiom?",o:["She pulled their leg","She broke the ice","She hit the nail on the head","She bit the bullet"],a:1,e:"Starting conversation = breaking the ice"},
+{q:"[picture2:] Match speech bubbles idiom question",o:["1=burn midnight oil...","1=bite bullet...","1=pull leg...","1=bite bullet again"],a:1,e:"Correct matching logic"},
+{q:"Riya is in hot water now means?",o:["Feeling warm","In trouble","Working hard","Excited"],a:1,e:"In hot water = trouble"},
+{q:"Correct use of 'pull someone's leg'?",o:["Stopping fall","Joking about winning lottery","Medical check","Tug of war"],a:1,e:"Means joking/teasing"},
+{q:"Negative vs positive idioms",o:["P,Q negative","Q,S negative","P,R negative Q,S positive","R,S negative"],a:2,e:"Classification logic"},
+{q:"Effort vs mistake",o:["1,4 effort","2,3 effort","1,3 effort","3,4 effort"],a:2,e:"Effort = burn midnight oil, bite bullet"},
+{q:"Odd one out",o:["Bite bullet","Burn midnight oil","In hot water","Cry over spilt milk"],a:1,e:"Only working hard idiom"},
+{q:"Incorrect idiom usage",o:["a","b","c","d"],a:3,e:"Kick the bucket used wrongly"},
+{q:"Effect of idiom",o:["less serious","unclear","same meaning vivid","incorrect grammar"],a:2,e:"Idioms add expressiveness"},
+{q:"Best idiom for difficulty decision",o:["cry over spilt milk","bite bullet","kick bucket","break ice"],a:1,e:"Endure difficulty bravely"}
+];
+
+let index=0,score=0,attempt=0,time=45,interval;
+
+let order = [...Array(questions.length).keys()].sort(()=>Math.random()-0.5);
+let used = [];
+
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+document.getElementById("intro").classList.add("active");
+},5000);
+
+function showInstructions(){
+  document.getElementById("intro").classList.remove("active");
+  document.getElementById("instructions").classList.add("active");
+}
+
+function startQuiz(){
+  document.getElementById("instructions").classList.remove("active");
+  document.getElementById("quiz").classList.add("active");
+  loadQ();
+}
+
+function loadQ(){
+  if(index>=questions.length){finalChallenge();return;}
+  attempt=0;
+  time=45;
+  let q=questions[order[index]];
+  used.push(order[index]);
+
+  document.getElementById("qInfo").innerText=`Question ${index+1} of ${questions.length}`;
+  document.getElementById("question").innerText=q.q;
+  document.getElementById("msg").innerText="";
+  document.getElementById("imgContainer").innerHTML="";
+
+  if(q.q.includes("picture1")){
+    document.getElementById("imgContainer").innerHTML='<img class="qimg" src="assets/picture1.png">';
+  }
+  if(q.q.includes("picture2")){
+    document.getElementById("imgContainer").innerHTML='<img class="qimg" src="assets/picture2.png">';
+  }
+
+  let opts=q.o.map((op,i)=>({text:op,idx:i}));
+  opts.sort(()=>Math.random()-0.5);
+
+  let correct=opts.findIndex(o=>o.idx===q.a);
+
+  let html="";
+  opts.forEach((o,i)=>{
+    html+=`<div class='option' onclick='check(${i},${correct})'>${o.text}</div>`;
+  });
+
+  document.getElementById("options").innerHTML=html;
+
+  startTimer();
+  updateProgress();
+}
+
+function startTimer(){
+  clearInterval(interval);
+  interval=setInterval(()=>{
+    time--;
+    document.getElementById("timer").innerText=time;
+    if(time<=0){
+      clearInterval(interval);
+      wrongAttempt(true);
+    }
+  },1000);
+}
+
+function check(i,c){
+  let opts=document.querySelectorAll(".option");
+  if(i===c){
+    opts[i].classList.add("correct");
+    document.getElementById("correctSound").play();
+    score+=10;
+    document.getElementById("score").innerText=score;
+    clearInterval(interval);
+    createConfetti();
+    setTimeout(()=>{index++;loadQ();},1500);
+  }else{
+    wrongAttempt(false,i);
+  }
+}
+
+function wrongAttempt(timeout=false,i){
+  document.getElementById("wrongSound").play();
+  attempt++;
+
+  let opts=document.querySelectorAll(".option");
+  if(i!==undefined) opts[i].classList.add("wrong");
+
+  document.getElementById("quiz").classList.add("shake");
+  setTimeout(()=>document.getElementById("quiz").classList.remove("shake"),300);
+
+  if(attempt<2 && !timeout){
+    document.getElementById("msg").innerText="Try Again!";
+    return;
+  }
+
+  let q=questions[order[index]];
+  document.getElementById("msg").innerText=`Correct Answer: ${q.o[q.a]} — ${q.e}`;
+
+  setTimeout(()=>{
+    index++;
+    loadQ();
+  },2500);
+}
+
+function updateProgress(){
+  document.getElementById("progress").style.width=((index/questions.length)*100)+"%";
+}
+
+function finalChallenge(){
+  document.getElementById("quiz").classList.remove("active");
+  document.getElementById("final").classList.add("active");
+
+  let q=questions[Math.floor(Math.random()*questions.length)];
+  document.getElementById("bonusQ").innerText=q.q;
+
+  let html="";
+  q.o.forEach((o,i)=>{
+    html+=`<div class='option' onclick='finish(${i},${q.a})'>${o}</div>`;
+  });
+
+  document.getElementById("bonusOptions").innerHTML=html;
+}
+
+function finish(i,a){
+  if(i===a){
+    score+=20;
+    document.getElementById("clapSound").play();
+    createConfetti();
+  }
+  showResult();
+}
+
+function showResult(){
+  document.getElementById("final").classList.remove("active");
+  document.getElementById("result").classList.add("active");
+
+  let total=questions.length*10;
+  let percent=Math.round((score/(total+20))*100);
+
+  document.getElementById("finalScore").innerText="Score: "+score;
+  document.getElementById("percent").innerText="Percentage: "+percent+"%";
+
+  let badge="⭐ Grammar Beginner";
+  if(percent>60) badge="🌟 Grammar Explorer";
+  if(percent>80) badge="🏅 Grammar Champion";
+  if(percent>95) badge="👑 Grammar Master";
+
+  document.getElementById("badge").innerText=badge;
+
+  if(percent>80) document.getElementById("clapSound").play();
+}
+
+function createConfetti(){
+  for(let i=0;i<30;i++){
+    let c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=["red","blue","green","yellow"][Math.floor(Math.random()*4)];
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),2000);
+  }
+}
+
+</script>
+
+</body>
+</html>
