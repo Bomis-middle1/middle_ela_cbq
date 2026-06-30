@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Homophones, Homonyms & Homographs</title>
+<title>Homophones CBQ Game</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -10,10 +10,8 @@ body{
 margin:0;
 font-family:Arial;
 background:linear-gradient(135deg,#eef6ff,#f7fbff);
-overflow-x:hidden;
 }
 
-/* SPLASH */
 .center{
 display:flex;
 justify-content:center;
@@ -28,7 +26,7 @@ padding:20px;
 background:white;
 padding:20px;
 border-radius:16px;
-box-shadow:0 6px 20px rgba(0,0,0,0.12);
+box-shadow:0 6px 18px rgba(0,0,0,0.12);
 width:92%;
 max-width:750px;
 }
@@ -43,8 +41,6 @@ font-size:16px;
 cursor:pointer;
 }
 
-button:hover{transform:scale(1.05)}
-
 .option{
 padding:12px;
 margin:8px 0;
@@ -56,15 +52,12 @@ transition:0.2s;
 
 .option:hover{background:#e3f2fd}
 
-.correct{background:#c8f7c5 !important}
-.wrong{background:#ffd6d6 !important}
-
 img.qimg{
 max-width:100%;
+max-height:260px;
 border-radius:12px;
 margin:10px 0;
 box-shadow:0 4px 10px rgba(0,0,0,0.2);
-cursor:zoom-in;
 }
 
 .top{
@@ -94,6 +87,12 @@ font-size:14px;
 color:#444;
 margin-top:10px;
 }
+
+.observe{
+font-size:18px;
+margin-top:10px;
+color:#333;
+}
 </style>
 </head>
 
@@ -117,13 +116,23 @@ onerror="this.outerHTML='<h3>Upload innovine-logo.png inside assests folder</h3>
 </div>
 </div>
 
+<!-- OBSERVE SCREEN -->
+<div id="observe" class="center" style="display:none;">
+<div class="card">
+<h3>Observe the image carefully</h3>
+<img id="obsImg" class="qimg">
+<p class="observe">Look carefully and understand the meaning</p>
+<button onclick="nextFromObserve()">Next</button>
+</div>
+</div>
+
 <!-- QUIZ -->
 <div id="quiz" class="center" style="display:none;">
 <div class="card">
 
 <div class="top">
 <div>Score: <span id="score">0</span></div>
-<div>Time: <span id="time">45</span>s</div>
+<div>Time: <span id="time">45</span></div>
 </div>
 
 <div class="progress"><div class="fill" id="fill"></div></div>
@@ -157,60 +166,63 @@ onerror="this.outerHTML='<h3>Upload innovine-logo.png inside assests folder</h3>
 /* ---------------- QUESTIONS ---------------- */
 const questions = [
 {
+type:"text",
 q:"Riya is texting directions: I am ___ waiting for you.",
 options:["their","there","here","hear"],
-answer:"here",
-explanation:"Here means at this place."
+answer:"here"
 },
 {
+type:"text",
 q:"Mix one cup of ___ with sugar.",
 options:["flower","flour","floor","fleur"],
-answer:"flour",
-explanation:"Flour is used in baking."
+answer:"flour"
 },
 {
+type:"text",
 q:"Meaning of 'wound' shows:",
 options:["Homophone","Homograph","Homonym","Same meaning"],
-answer:"Homograph",
-explanation:"Same spelling, different pronunciation."
+answer:"Homograph"
 },
 {
+type:"text",
 q:"Bank (river / money) is a:",
 options:["Homophone","Homograph","Homonym","Antonym"],
-answer:"Homonym",
-explanation:"Same spelling, different meanings."
+answer:"Homonym"
 },
+
+/* ---------------- IMAGE Q6 ---------------- */
 {
-q:"Brave ___ rode through dark ___.",
-options:["night/knight","knight/night","knight/knight","night/night"],
-answer:"knight/night",
-explanation:"Knight = warrior, night = time."
+type:"observe",
+image:"assests/picture1.png",
+q:"Q6: Based on the worksheet, choose correct order of words.",
+options:["their / there / they're / their",
+"they're / there / their / their",
+"there / their / they're / there",
+"they're / their / there / they're"],
+answer:"there / their / they're / there"
 },
+
+/* ---------------- IMAGE Q7 ---------------- */
 {
-q:"picture1",
-image:true,
-options:["a","b","c","d"],
-answer:"b",
-explanation:"Grammar structure check."
-},
-{
-q:"picture2",
-image:true,
+type:"observe",
+image:"assests/picture2.png",
+q:"Q7: What type of word relationship is shown?",
 options:["Homophones","Homographs","Homonyms","Antonyms"],
-answer:"Homonyms",
-explanation:"Same spelling & sound, different meaning."
+answer:"Homonyms"
 },
+
 {
+type:"text",
 q:"I need to ___ a letter.",
 options:["right","write","rite","wright"],
-answer:"write",
-explanation:"Write means to compose."
+answer:"write"
 },
+
 {
+type:"text",
 q:"Lead pipe / lead team shows:",
 options:["Homophone","Homograph","Homonym","Same"],
-answer:"Homograph",
-explanation:"Different pronunciation."
+answer:"Homograph"
 }
 ];
 
@@ -218,8 +230,7 @@ explanation:"Different pronunciation."
 let index=0;
 let score=0;
 let attempts=0;
-let timer;
-let timeLeft=45;
+let pendingObserve=false;
 
 /* ---------------- SPLASH ---------------- */
 setTimeout(()=>{
@@ -230,7 +241,6 @@ document.getElementById("intro").style.display="flex";
 /* ---------------- START ---------------- */
 function startQuiz(){
 document.getElementById("intro").style.display="none";
-document.getElementById("quiz").style.display="flex";
 loadQuestion();
 }
 
@@ -243,22 +253,32 @@ return;
 }
 
 attempts=0;
-timeLeft=45;
 
 let q=questions[index];
+
+/* IMAGE OBSERVE FLOW */
+if(q.type==="observe"){
+pendingObserve=true;
+
+document.getElementById("observe").style.display="flex";
+document.getElementById("obsImg").src=q.image;
+return;
+}
+
+/* NORMAL QUESTION */
+showQuiz(q);
+}
+
+function nextFromObserve(){
+document.getElementById("observe").style.display="none";
+showQuiz(questions[index]);
+}
+
+function showQuiz(q){
+
+document.getElementById("quiz").style.display="flex";
+
 document.getElementById("qtext").innerText=q.q;
-
-let img=document.getElementById("qimg");
-img.style.display="none";
-
-if(q.q==="picture1"){
-img.src="assests/picture1.png";
-img.style.display="block";
-}
-if(q.q==="picture2"){
-img.src="assests/picture2.png";
-img.style.display="block";
-}
 
 let html="";
 let shuffled=[...q.options].sort(()=>Math.random()-0.5);
@@ -288,7 +308,7 @@ if(attempts<2){
 document.getElementById("msg").innerText="Try Again!";
 }else{
 document.getElementById("msg").innerText=
-"Correct Answer: "+q.answer+" — "+q.explanation;
+"Correct Answer: "+q.answer;
 setTimeout(next,2000);
 }
 }
@@ -298,6 +318,7 @@ setTimeout(next,2000);
 function next(){
 index++;
 document.getElementById("msg").innerText="";
+document.getElementById("quiz").style.display="none";
 loadQuestion();
 }
 
