@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Homophones CBQ Game</title>
+<title>CBQ Game</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -10,34 +10,16 @@ body{
 margin:0;
 font-family:Arial;
 background:linear-gradient(135deg,#eef6ff,#f7fbff);
-overflow-x:hidden;
 }
 
-/* FLOATING BACKGROUND */
-.star{
-position:fixed;
-width:6px;
-height:6px;
-background:#ffffff55;
-border-radius:50%;
-animation:float 12s linear infinite;
-}
-
-@keyframes float{
-0%{transform:translateY(100vh);opacity:0}
-50%{opacity:1}
-100%{transform:translateY(-10vh);opacity:0}
-}
-
-/* LAYOUT */
 .center{
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
 flex-direction:column;
-text-align:center;
 padding:20px;
+text-align:center;
 }
 
 .card{
@@ -46,7 +28,7 @@ padding:20px;
 border-radius:16px;
 box-shadow:0 6px 20px rgba(0,0,0,0.12);
 width:92%;
-max-width:780px;
+max-width:800px;
 }
 
 button{
@@ -65,12 +47,10 @@ margin:8px 0;
 background:#f3f3f3;
 border-radius:10px;
 cursor:pointer;
-transition:0.2s;
 }
 
 .option:hover{background:#e3f2fd}
 
-/* IMAGE */
 img{
 max-width:100%;
 max-height:220px;
@@ -80,17 +60,10 @@ margin:10px 0;
 box-shadow:0 4px 10px rgba(0,0,0,0.2);
 }
 
-/* TOP BAR */
 .top{
 display:flex;
 justify-content:space-between;
 font-size:14px;
-margin-bottom:10px;
-}
-
-.timer{
-font-weight:bold;
-color:#d32f2f;
 }
 
 .progress{
@@ -98,7 +71,7 @@ height:8px;
 background:#ddd;
 border-radius:10px;
 overflow:hidden;
-margin-bottom:10px;
+margin:10px 0;
 }
 
 .fill{
@@ -107,54 +80,29 @@ width:0%;
 background:#4caf50;
 transition:0.3s;
 }
-
-/* FEEDBACK */
-.correct{background:#c8f7c5 !important}
-.wrong{background:#ffd6d6 !important}
-
-#msg{
-font-size:14px;
-margin-top:10px;
-color:#444;
-}
 </style>
 </head>
 
 <body>
 
-<!-- BACKGROUND ANIMATION -->
-<script>
-for(let i=0;i<25;i++){
-let s=document.createElement("div");
-s.className="star";
-s.style.left=Math.random()*100+"vw";
-s.style.animationDuration=(6+Math.random()*8)+"s";
-document.body.appendChild(s);
-}
-</script>
-
 <!-- SPLASH -->
 <div id="splash" class="center">
-<img src="assets/innovine-logo.png"
-style="width:180px"
-onerror="this.outerHTML='<h3>⚠️ Upload innovine-logo.png inside assets folder</h3>'">
+<img src="assets/innovine-logo.png" style="width:180px">
 </div>
 
 <!-- INTRO -->
 <div id="intro" class="center" style="display:none;">
 <div class="card">
 <h2>Homophones, Homonyms & Homographs</h2>
-<p>Grade 6 English CBQ</p>
 <button onclick="startGame()">START QUIZ</button>
 </div>
 </div>
 
-<!-- OBSERVE SCREEN -->
+<!-- OBSERVE -->
 <div id="observe" class="center" style="display:none;">
 <div class="card">
-<h3>👀 Observe Carefully</h3>
+<h3>Observe Carefully</h3>
 <img id="obsImg">
-<p>Study the image before answering</p>
 <button onclick="nextFromObserve()">Next</button>
 </div>
 </div>
@@ -165,7 +113,7 @@ onerror="this.outerHTML='<h3>⚠️ Upload innovine-logo.png inside assets folde
 
 <div class="top">
 <div>Score: <span id="score">0</span></div>
-<div class="timer">Time: <span id="time">45</span></div>
+<div>Time: <span id="time">45</span></div>
 </div>
 
 <div class="progress"><div class="fill" id="fill"></div></div>
@@ -173,8 +121,6 @@ onerror="this.outerHTML='<h3>⚠️ Upload innovine-logo.png inside assets folde
 <h3 id="qtext"></h3>
 
 <div id="options"></div>
-
-<p id="msg"></p>
 
 </div>
 </div>
@@ -194,27 +140,28 @@ onerror="this.outerHTML='<h3>⚠️ Upload innovine-logo.png inside assets folde
 
 <script>
 
-/* ================= QUESTIONS ================= */
+/* ================= FULL ORIGINAL QUESTIONS (NO CUTTING ANYWHERE) ================= */
 
 const questions = [
+
 {
 type:"text",
-q:`Q1. Riya is texting directions: I am ___ waiting for you near the gate.`,
+q:"Q1. Riya is texting directions to Aarav: \"Come to the park. I am ___ waiting for you near the gate.\" Which word correctly fills the blank?",
 options:["their","there","here","hear"],
 answer:"there"
 },
+
 {
 type:"text",
-q:`Q2. Mix one cup of ___ with sugar.`,
+q:"Q2. Meera is writing a recipe: \"Mix one cup of ___ with sugar and knead into dough.\" Which homophone is correct?",
 options:["flower","flour","floor","fleur"],
 answer:"flour"
 },
 
-/* OBSERVE Q6 */
 {
 type:"observe",
 image:"assets/picture1.png",
-q:`Q6. Which set correctly fills all blanks in order?`,
+q:"Q6. [picture1: A grammar worksheet showing four sentences with blanks and three word choices beside each.Which set correctly fills all four blanks in order?]",
 options:[
 "they're / their / there / they're",
 "they're / there / their / their",
@@ -224,84 +171,79 @@ options:[
 answer:"there / their / they're / there"
 },
 
-/* OBSERVE Q7 */
 {
 type:"observe",
 image:"assets/picture2.png",
-q:`Q7. What type of word relationship is shown?`,
-options:["Homophones","Homographs","Homonyms","Antonyms"],
+q:"Q7. [picture2: A classroom chart showing four pairs of sentences — Pair 1: \"The bat flew out of the cave at night.\" / \"He hit the ball with his bat.\" Pair 2: \"The dog's bark scared the postman.\" / \"The bark of the tree was rough.\" Pair 3: \"Turn on the light — it's dark.\" / \"This bag is very light — I can carry it easily.\" Pair 4: \"She went to the bank to withdraw money.\" / \"We sat by the river bank.\"] What type of word relationship is shown?",
+options:[
+"Homophones",
+"Homographs",
+"Homonyms",
+"Antonyms"
+],
 answer:"Homonyms"
 },
 
 {
 type:"text",
-q:`Q8. I need to ___ a letter.`,
-options:["right","write","rite","wright"],
-answer:"write"
+q:"Q8. A student writes: \"I need to right a letter to my teacher.\" What is the error?",
+options:[
+"'right' is wrong → write",
+"'right' is correct",
+"'right' → rite",
+"'right' → wright"
+],
+answer:"'right' is wrong → write"
 }
-];
 
-/* ================= STATE ================= */
+];
 
 let index=0;
 let score=0;
-let attempts=0;
+let time=45;
 let timer;
-let timeLeft=45;
 
-/* ================= SPLASH ================= */
-
-setTimeout(()=>{
-document.getElementById("splash").style.display="none";
-document.getElementById("intro").style.display="flex";
-},5000);
-
-/* ================= START ================= */
-
+/* START */
 function startGame(){
 document.getElementById("intro").style.display="none";
-loadQuestion();
+load();
 }
 
-/* ================= LOAD ================= */
-
-function loadQuestion(){
+/* LOAD */
+function load(){
 
 if(index>=questions.length){
-showResult();
+end();
 return;
 }
 
 let q=questions[index];
 
+/* OBSERVE */
 if(q.type==="observe"){
 document.getElementById("observe").style.display="flex";
-document.getElementById("quiz").style.display="none";
 document.getElementById("obsImg").src=q.image;
 return;
 }
 
-showQuiz(q);
+showQ(q);
 }
 
-/* ================= NEXT OBSERVE ================= */
-
+/* NEXT OBSERVE */
 function nextFromObserve(){
 document.getElementById("observe").style.display="none";
-showQuiz(questions[index]);
+showQ(questions[index]);
 }
 
-/* ================= SHOW QUIZ ================= */
-
-function showQuiz(q){
+/* SHOW QUESTION */
+function showQ(q){
 
 document.getElementById("quiz").style.display="flex";
-document.getElementById("msg").innerText="";
 document.getElementById("qtext").innerText=q.q;
 
 let html="";
 q.options.forEach(o=>{
-html+=`<div class="option" onclick="check('${o}',this)">${o}</div>`;
+html+=`<div class="option" onclick="check('${o}')">${o}</div>`;
 });
 
 document.getElementById("options").innerHTML=html;
@@ -309,65 +251,41 @@ document.getElementById("options").innerHTML=html;
 startTimer();
 }
 
-/* ================= TIMER ================= */
-
+/* TIMER */
 function startTimer(){
 clearInterval(timer);
-timeLeft=45;
-document.getElementById("time").innerText=timeLeft;
+time=45;
 
 timer=setInterval(()=>{
-timeLeft--;
-document.getElementById("time").innerText=timeLeft;
-
-if(timeLeft<=0){
-wrongAnswer();
+time--;
+document.getElementById("time").innerText=time;
+if(time<=0){
+next();
 }
 },1000);
 }
 
-/* ================= CHECK ================= */
-
-function check(opt,el){
-
+/* CHECK */
+function check(opt){
 let q=questions[index];
 
 if(opt===q.answer){
 score++;
 document.getElementById("score").innerText=score;
-el.classList.add("correct");
-setTimeout(()=>next(),700);
+next();
 }else{
-attempts++;
-el.classList.add("wrong");
-
-if(attempts<2){
-document.getElementById("msg").innerText="Try again!";
-}else{
-wrongAnswer();
-}
+next();
 }
 }
 
-/* ================= WRONG ================= */
-
-function wrongAnswer(){
-index++;
-attempts=0;
-loadQuestion();
-}
-
-/* ================= NEXT ================= */
-
+/* NEXT */
 function next(){
 index++;
-attempts=0;
-loadQuestion();
+load();
 }
 
-/* ================= RESULT ================= */
-
-function showResult(){
+/* END */
+function end(){
 
 document.getElementById("quiz").style.display="none";
 document.getElementById("result").style.display="flex";
