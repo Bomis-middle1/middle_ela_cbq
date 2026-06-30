@@ -1,1 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chapter 3 - Punctuation | Innovine Academic Engine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <style>
+        :root {
+            --slate-blue: #2b3a67;
+            --mint-teal: #41b3a3;
+            --amber-gold: #e27d60;
+            --gold-dark: #c36246;
+            --deep-purple: #1d1e2c;
+            --cream-bg: #f5f7fa;
+            --card-white: #ffffff;
+            --success-green: #2ec4b6;
+            --danger-red: #e71d36;
+            
+            --panel-radius: 16px;
+            --elem-radius: 10px;
+            --classic-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-line: 2px solid #e1e6eb;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--cream-bg);
+            color: var(--deep-purple);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient Educational Background Elements */
+        .bg-decorations {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(65, 179, 163, 0.08), rgba(43, 58, 103, 0.04));
+            border-radius: 50%;
+            animation: floatingShift 25s infinite linear alternate;
+        }
+        .p-1 { width: 350px; height: 350px; top: -80px; left: -80px; border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%; }
+        .p-2 { width: 280px; height: 280px; bottom: -60px; right: -60px; animation-delay: -7s; }
+        .p-3 { width: 140px; height: 140px; top: 35%; right: 8%; animation-delay: -12s; background: rgba(226, 125, 96, 0.04); }
+
+        @keyframes floatingShift {
+            0% { transform: translateY(0) scale(1) rotate(0deg); }
+            100% { transform: translateY(40px) scale(1.05) rotate(25deg); }
+        }
+
+        /* Shell Frame container */
+        .main-frame {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            height: min(840px, 96vh);
+            background: var(--card-white);
+            border-radius: var(--panel-radius);
+            box-shadow: var(--classic-shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .view-panel {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: clamp(16px, 4vw, 32px);
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .view-active {
+            display: flex !important;
+        }
+
+        /* Splash Screen */
+        #splashScreen {
+            justify-content: center;
+            align-items: center;
+            background: #ffffff;
+            text-align: center;
+        }
+        .splash-logo-box {
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: splashFadeInOut 5s ease-in-out forwards;
+        }
+        .splash-logo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+        .branding-fallback-msg {
+            font-size: 11px;
+            color: #a0aec0;
+            max-width: 260px;
+            margin-top: 10px;
+            line-height: 1.3;
+        }
+
+        @keyframes splashFadeInOut {
+            0% { transform: scale(0.9); opacity: 0; }
+            12% { transform: scale(1); opacity: 1; }
+            88% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.96); opacity: 0; }
+        }
+
+        /* Generic Typography & Badges */
+        .meta-badge {
+            background: rgba(43, 58, 103, 0.07);
+            color: var(--slate-blue);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .screen-title {
+            font-size: clamp(1.4rem, 4.2vw, 1.9rem);
+            color: var(--slate-blue);
+            font-weight: 800;
+            line-height: 1.25;
+        }
+
+        /* HUD top layout bar */
+        .hud-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .hud-item {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--slate-blue);
+            background: var(--cream-bg);
+            padding: 6px 12px;
+            border-radius: var(--elem-radius);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .timer-alert-accent {
+            background: rgba(231, 29, 54, 0.09);
+            color: var(--danger-red);
+        }
+
+        /* Progress Bar elements */
+        .bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--mint-teal);
+            transition: width 0.35s ease;
+        }
+
+        /* Interactive Scroller Area */
+        .content-scroller {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            padding-right: 4px;
+        }
+
+        /* Responsive Asset Image Container */
+        .question-asset-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .question-asset-img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: var(--elem-radius);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e1e6eb;
+        }
+
+        .prompt-card {
+            font-size: clamp(0.95rem, 2.1vh, 1.1rem);
+            font-weight: 600;
+            line-height: 1.5;
+            color: var(--deep-purple);
+            margin-bottom: 18px;
+            white-space: pre-line;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-node {
+            background: #ffffff;
+            border: var(--border-line);
+            border-radius: var(--elem-radius);
+            padding: 12px 16px;
+            font-size: clamp(0.85rem, 1.9vh, 1rem);
+            font-weight: 500;
+            color: var(--deep-purple);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 48px;
+        }
+        .option-node:hover {
+            border-color: var(--slate-blue);
+            background: rgba(43, 58, 103, 0.02);
+        }
+
+        /* Interactive Choice Modifiers */
+        .node-correct {
+            background: #e6f9f7 !important;
+            border-color: var(--success-green) !important;
+            color: var(--success-green) !important;
+            font-weight: 700;
+            box-shadow: 0 0 8px rgba(46, 196, 182, 0.15);
+        }
+        .node-wrong {
+            background: #ffebee !important;
+            border-color: var(--danger-red) !important;
+            color: var(--danger-red) !important;
+            animation: localShake 0.4s ease;
+        }
+
+        @keyframes localShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Feedback Drawers */
+        .feedback-drawer {
+            margin-top: 16px;
+            background: #f8f9fa;
+            border-left: 4px solid var(--slate-blue);
+            padding: 14px;
+            border-radius: 4px var(--elem-radius) var(--elem-radius) 4px;
+            display: none;
+        }
+        .feedback-status {
+            font-weight: 800;
+            font-size: 14px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .feedback-txt {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #4a5568;
+        }
+
+        /* Action Controls Layout */
+        .btn-action {
+            background: var(--amber-gold);
+            color: #ffffff;
+            border: none;
+            padding: 14px 30px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: var(--elem-radius);
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-action:hover {
+            background: var(--gold-dark);
+        }
+
+        .audio-dashboard {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--cream-bg);
+            padding: 6px 14px;
+            border-radius: var(--elem-radius);
+            width: fit-content;
+            margin-top: 12px;
+        }
+        .audio-toggle-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .volume-ranger {
+            accent-color: var(--slate-blue);
+            width: 75px;
+            cursor: pointer;
+        }
+
+        /* Center Display Graphic Stack components */
+        .center-graphic-stack {
+            text-align: center;
+            margin: auto 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+        .panel-emoji {
+            font-size: 4rem;
+            animation: softPulse 2.5s infinite ease-in-out;
+        }
+        @keyframes softPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        /* Matrix Tables for Results rendering */
+        .results-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            margin: 14px 0;
+        }
+        .metric-tile {
+            background: var(--cream-bg);
+            padding: 12px;
+            border-radius: var(--elem-radius);
+            text-align: center;
+        }
+        .metric-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+        }
+        .metric-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--slate-blue);
+            margin-top: 2px;
+        }
+
+        /* Review Mode Module UI Elements */
+        .review-box-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 14px;
+            padding-right: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .review-item-block {
+            border: 1px solid #e1e6eb;
+            border-radius: var(--elem-radius);
+            padding: 14px;
+            background: #fafbfc;
+        }
+        .review-item-header {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--slate-blue);
+            margin-bottom: 6px;
+        }
+        .review-item-q {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--deep-purple);
+        }
+        .review-item-ans {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--success-green);
+            margin-bottom: 6px;
+            background: #e6f9f7;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        /* Floating Confetti system nodes */
+        .confetti-node-particle {
+            position: fixed;
+            width: 8px; height: 8px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: verticalFallDown 2.5s linear forwards;
+        }
+        @keyframes verticalFallDown {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-decorations">
+    <div class="shape particle p-1"></div>
+    <div class="shape particle p-2"></div>
+    <div class="shape particle p-3"></div>
+</div>
+
+<div class="main-frame">
+
+    <div id="splashScreen" class="view-panel view-active">
+        <div class="splash-logo-box">
+            <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('logoFallbackMsgBlock').style.display='block';">
+            <div id="logoFallbackMsgBlock" class="branding-fallback-msg" style="display:none; color: var(--danger-red); font-weight:600;">
+                ⚠️ Please upload the Innovine logo inside the assets folder as:<br><strong>assets/logo.png</strong>
+            </div>
+        </div>
+    </div>
+
+    <div id="startScreen" class="view-panel">
+        <div>
+            <div class="meta-badge" id="introMetaLabel">Grade 7 • ELA</div>
+            <h1 class="screen-title" id="introChapterTitle">Chapter 3 - Punctuation</h1>
+            <p id="introTopicSub" style="color: #4a5568; font-size: 14px; margin-top: 6px; font-weight: 500;">Full stop · Question mark · Exclamation mark · Comma · Quotation marks · Colon · Apostrophe · Capital letters</p>
+        </div>
+
+        <div class="center-graphic-stack">
+            <div class="panel-emoji">📝</div>
+            <button class="btn-action" style="font-size: 17px; padding: 15px 36px;" onclick="handleLocalAudioPlay('click'); bootInteractiveQuizEngine();">Start Game</button>
+        </div>
+
+        <div class="audio-dashboard">
+            <button id="globalMuteBtn" class="audio-toggle-icon" onclick="toggleSystemMuteState()">🔊</button>
+            <input type="range" id="systemVolSlider" class="volume-ranger" min="0" max="1" step="0.1" value="0.7" oninput="modifyMasterOutputVolume(this.value)">
+        </div>
+    </div>
+
+    <div id="quizScreen" class="view-panel">
+        <div>
+            <div class="hud-row">
+                <div class="hud-item" id="hudTrackerLabel">Question -- / 12</div>
+                <div class="hud-item timer-alert-accent" id="hudTimerClockLabel">⏱️ 45s</div>
+                <div class="hud-item" id="hudLiveScoreLabel" style="background: #fffde6;">Score: 0</div>
+            </div>
+            <div class="bar-container">
+                <div id="barMetricProgressIndicator" class="bar-fill"></div>
+            </div>
+        </div>
+
+        <div class="content-scroller">
+            <div id="questionAssetHolderFrame" class="question-asset-wrapper" style="display:none;">
+                <img id="questionAssetImgElement" class="question-asset-img" src="" alt="Question Graphic Context">
+            </div>
+            <div id="cardQuestionTextContent" class="prompt-card">...</div>
+            <div id="stackOptionsBoxWrapper" class="options-grid"></div>
+            
+            <div id="drawerFeedbackCard" class="feedback-drawer">
+                <div id="labelFeedbackStatus" class="feedback-status"></div>
+                <div id="txtFeedbackExplanation" class="feedback-txt"></div>
+            </div>
+        </div>
+
+        <div id="footerControlsRow" style="display: none; justify-content: flex-end;">
+            <button class="btn-action" id="btnNextStep" onclick="handleLocalAudioPlay('click'); advanceToNextSequenceItem();">Continue</button>
+        </div>
+    </div>
+
+    <div id="finalChallengeScreen" class="view-panel">
+        <div>
+            <div class="meta-badge">Final Stretch</div>
+            <h1 class="screen-title">🎯 Challenge Complete!</h1>
+        </div>
+
+        <div class="center-graphic-stack">
+            <div class="panel-emoji">🏁</div>
+            <p style="color: #4a5568; font-size: 15px; font-weight: 600; text-align:center; padding: 0 12px;">"Fantastic! You've completed all the questions. Ready to see your final score?"</p>
+        </div>
+
+        <div style="display: flex; justify-content: center;">
+            <button class="btn-action" style="width: 100%;" onclick="handleLocalAudioPlay('click'); shiftToResultsViewPanel();">Finish</button>
+        </div>
+    </div>
+
+    <div id="summaryScreen" class="view-panel">
+        <div>
+            <div class="meta-badge">Performance Scorecard</div>
+            <h1 class="screen-title" id="summaryPerformanceBadgeText">Good Try</h1>
+        </div>
+
+        <div class="center-graphic-stack" style="margin: 8px 0;">
+            <div class="results-matrix">
+                <div class="metric-tile">
+                    <div class="metric-label">Final Score</div>
+                    <div class="metric-val" id="summaryPointsLabel">0</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="metric-label">Accuracy</div>
+                    <div class="metric-val" id="summaryAccuracyPercentLabel">0%</div>
+                </div>
+                <div class="metric-tile" style="background: #e6f9f7;">
+                    <div class="metric-label" style="color: var(--success-green);">Correct</div>
+                    <div class="metric-val" id="summaryCorrectCountLabel" style="color: var(--success-green);">0</div>
+                </div>
+                <div class="metric-tile" style="background: #ffebee;">
+                    <div class="metric-label" style="color: var(--danger-red);">Incorrect</div>
+                    <div class="metric-val" id="summaryWrongCountLabel" style="color: var(--danger-red);">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+            <button class="btn-action" style="flex: 1; background: #6c757d;" onclick="handleLocalAudioPlay('click'); buildComprehensiveReviewModule();">Review Answers</button>
+            <button class="btn-action" style="flex: 1;" onclick="handleLocalAudioPlay('click'); resetAndReplayQuizSession();">Play Again</button>
+        </div>
+    </div>
+
+    <div id="reviewScreen" class="view-panel">
+        <div>
+            <div class="meta-badge">Study Deck</div>
+            <h1 class="screen-title" style="margin-bottom: 10px;">Item Review</h1>
+        </div>
+
+        <div id="reviewScrollerDeck" class="review-box-container"></div>
+
+        <div>
+            <button class="btn-action" style="width: 100%; background: var(--slate-blue);" onclick="handleLocalAudioPlay('click'); switchActiveViewPanel('summaryScreen');">Back To Scorecard</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const quizStructuralConfig = {
+        chapterTitle: "Chapter 3 - Punctuation",
+        grade: "Grade 7",
+        subject: "Subject: ELA",
+        topic: "Topic: Full stop · Question mark · Exclamation mark · Comma · Quotation marks · Colon · Apostrophe · Capital letters",
+        totalCount: 12
+    };
+
+    const initialQuestionRawMatrix = [
+        {
+            q: "Riya is writing a formal email to her principal. She writes: \"Dear Principal I am writing to inform you that our class would like to organise a science exhibition next Friday we hope you will approve our request\" Which version correctly adds ALL punctuation?",
+            options: [
+                "Dear Principal, I am writing to inform you that our class would like to organise a science exhibition next Friday. We hope you will approve our request.",
+                "Dear Principal! I am writing to inform you, that our class would like to organise a science exhibition. next Friday we hope you will approve our request.",
+                "Dear Principal; I am writing to inform you that our class would like to organise a science exhibition next Friday, we hope you will approve our request.",
+                "Dear Principal. I am writing to inform you that our class would like to organise a science exhibition next Friday! We hope you will approve our request!"
+            ],
+            answer: "Dear Principal, I am writing to inform you that our class would like to organise a science exhibition next Friday. We hope you will approve our request.",
+            explanation: "Comma after salutation; full stop between complete sentences; no unnecessary exclamation in formal writing"
+        },
+        {
+            q: "Aarav is making a list of items needed for the science project. He writes: \"We need the following items ___ test tubes, a magnifying glass, litmus paper and safety goggles.\" Which punctuation mark correctly fills the blank before the list?",
+            options: [
+                "A comma",
+                "A full stop",
+                "A colon",
+                "A question mark"
+            ],
+            answer: "A colon",
+            explanation: "Colon introduces a list — placed after a complete statement before itemised items"
+        },
+        {
+            q: "Meera writes in her story: \"The old mans coat was hanging on the chair next to his daughters schoolbag.\" Which version correctly adds ALL apostrophes?",
+            options: [
+                "The old man's coat was hanging on the chair next to his daughters schoolbag.",
+                "The old mans coat was hanging on the chair next to his daughter's schoolbag.",
+                "The old man's coat was hanging on the chair next to his daughter's schoolbag.",
+                "The old man's coat was hanging on the chair next to his daughters' schoolbag."
+            ],
+            answer: "The old man's coat was hanging on the chair next to his daughter's schoolbag.",
+            explanation: "'man's' = one man's coat; 'daughter's' = one daughter's bag — both singular possession"
+        },
+        {
+            q: "A student is writing a newspaper article and wants to include a direct quote from the principal. He writes: The principal said that the school had achieved remarkable results this year. His editor tells him this is Indirect Speech and asks him to convert it to a direct quote with correct punctuation. Which is correct?",
+            options: [
+                "The principal said, \"The school has achieved remarkable results this year.\"",
+                "The principal said \"the school has achieved remarkable results this year\".",
+                "The principal said: the school has achieved remarkable results this year.",
+                "The principal said, 'The school has achieved remarkable results this year'."
+            ],
+            answer: "The principal said, \"The school has achieved remarkable results this year.\"",
+            explanation: "Direct quote needs comma after 'said', opening capital, closing full stop inside quotes"
+        },
+        {
+            q: "[picture1] A student's paragraph shown on screen with four punctuation errors highlighted in red — \"the childrens playground was recently renovated. it's equipment includes: swings, slides and climbing frames. mr kapoor said we're very proud of this project. isnt it wonderful\" Which option correctly fixes ALL four highlighted errors?",
+            options: [
+                "The children's playground was recently renovated. Its equipment includes: swings, slides and climbing frames. Mr Kapoor said, \"We're very proud of this project.\" Isn't it wonderful?",
+                "The childrens' playground was recently renovated. It's equipment includes: swings, slides and climbing frames. Mr Kapoor said \"We're very proud of this project.\" Isnt it wonderful!",
+                "The children's playground was recently renovated. Its' equipment includes: swings, slides and climbing frames. Mr Kapoor said, \"We're very proud of this project.\" Isn't it wonderful!",
+                "The childrens playground was recently renovated. It's equipment includes swings, slides and climbing frames. Mr kapoor said \"We're very proud of this project.\" Isn't it wonderful?"
+            ],
+            answer: "The children's playground was recently renovated. Its equipment includes: swings, slides and climbing frames. Mr Kapoor said, \"We're very proud of this project.\" Isn't it wonderful?",
+            explanation: "children's=plural possession; Its=possessive(no apostrophe); Mr Kapoor=title+name; Isn't it wonderful?=question"
+        },
+        {
+            q: "[picture2] A grammar worksheet showing four sentences — each with a colon used in a different way. Students must identify which use is correct and which is wrong:\nUse 1: \"She loves three things: music, reading and cricket.\"\nUse 2: \"I went to: the market yesterday.\"\nUse 3: \"The results were clear: practice makes perfect.\"\nUse 4: \"He said: that he was tired.\"\nWhich two uses of the colon are correct?",
+            options: [
+                "Uses 1 and 2",
+                "Uses 2 and 4",
+                "Uses 1 and 3",
+                "Uses 3 and 4"
+            ],
+            answer: "Uses 1 and 3",
+            explanation: "Use 1: colon before list after complete clause ✓; Use 3: colon before explanation ✓; Use 2: colon interrupts verb phrase ✗; Use 4: colon before 'that' clause ✗"
+        },
+        {
+            q: "A student writes two sentences while describing a butterfly:\n“It’s a lovely day.”\n“Its wings are broken.”\nHer friend says both are correct but used differently. What explains the difference?",
+            options: [
+                "Both words show possession in different ways",
+                "“It’s” means “it is,” while “its” shows that something belongs to it",
+                "“Its” is always used at the beginning of a sentence",
+                "“It’s” is used only for animals, not objects"
+            ],
+            answer: "“It’s” means “it is,” while “its” shows that something belongs to it",
+            explanation: "“It’s” = it is (contraction); “its” = possession → meaning decides usage, not spelling memory."
+        },
+        {
+            q: "Which sentence uses the comma correctly to separate a non-essential clause?",
+            options: [
+                "Aarav, who scored the highest, will represent the school.",
+                "Aarav who, scored the highest will represent the school.",
+                "Aarav who scored, the highest will represent the school.",
+                "Aarav, who scored the highest will, represent the school."
+            ],
+            answer: "Aarav, who scored the highest, will represent the school.",
+            explanation: "Non-essential clause 'who scored the highest' separated by commas on both sides"
+        },
+        {
+            q: "Sort these apostrophe uses into two groups — Apostrophe for Contraction and Apostrophe for Possession: P: \"The girl's notebook was lost.\" Q: \"They're going to the library.\" R: \"Rohan's project won first prize.\" S: \"It's raining outside.\"",
+            options: [
+                "Contraction: P, R — Possession: Q, S",
+                "Contraction: P, Q — Possession: R, S",
+                "Contraction: Q, S — Possession: P, R",
+                "Contraction: R, S — Possession: P, Q"
+            ],
+            answer: "Contraction: Q, S — Possession: P, R",
+            explanation: "They're=they are; It's=it is → Contractions; girl's & Rohan's → Possession"
+        },
+        {
+            q: "A teacher asks: “In which sentence does punctuation affect meaning, not just correctness?”\nThree sentences are punctuated correctly and clearly. One creates confusion about meaning due to incorrect punctuation. Which is the odd one out?",
+            options: [
+                "The principal announced, \"School will close early today.\"",
+                "We need three things: courage, patience and hard work.",
+                "Its the teams final match of the season.",
+                "Riya's bag, which was brand new, got torn in the rain."
+            ],
+            answer: "Its the teams final match of the season.",
+            explanation: "Missing apostrophes (“It’s”, “team’s”) cause meaning confusion (contraction + possession), not just a minor punctuation slip."
+        },
+        {
+            q: "A student writes \"The boys books were on the table\" and their teacher asks them to add an apostrophe. The student writes \"The boys' books were on the table.\" Another student writes \"The boy's books were on the table.\" What causes the difference in meaning between these two versions?",
+            options: [
+                "There is no difference — both apostrophes mean the same thing",
+                "The position of the apostrophe changes the number — 'boy's' means one boy owns the books; 'boys'' means multiple boys own the books",
+                "'Boys'' is always wrong — apostrophes never go after the 's'",
+                "Both versions are incorrect — books cannot be owned by boys"
+            ],
+            answer: "The position of the apostrophe changes the number — 'boy's' means one boy owns the books; 'boys'' means multiple boys own the books",
+            explanation: "Apostrophe position before or after 's' determines singular vs plural ownership"
+        },
+        {
+            q: "Assertion: A colon is used before a list or an explanation, not randomly before any noun or verb. Reason: The colon signals to the reader that what follows directly expands on or itemises what was just stated — it must come after a complete clause.",
+            options: [
+                "Both are correct; the reason correctly explains the assertion.",
+                "Both are correct; but the reason does NOT explain the assertion.",
+                "The assertion is correct; the reason is wrong.",
+                "Both are wrong — a colon can be placed anywhere in a sentence."
+            ],
+            answer: "Both are correct; the reason correctly explains the assertion.",
+            explanation: "Colon must follow a complete clause — it announces that something specific follows"
+        }
+    ];
+
+    let compiledRuntimeQuestions = [];
+    let activeQuestionIndex = 0;
+    let computedUserScore = 0;
+    let trackingCorrectCount = 0;
+    let trackingWrongCount = 0;
+    let activeQuestionAttemptNum = 0;
+    let countdownTimeLeft = 45;
+    let timerIntervalRef = null;
+    let systemOutputMuted = false;
+    let systemOutputVolume = 0.7;
+
+    const audioResourceMap = {
+        click: new Audio('assets/click.mp3'),
+        correct: new Audio('assets/correct.mp3'),
+        wrong: new Audio('assets/wrong.mp3')
+    };
+
+    function switchActiveViewPanel(panelId) {
+        document.querySelectorAll('.view-panel').forEach(view => view.classList.remove('view-active'));
+        document.getElementById(panelId).classList.add('view-active');
+    }
+
+    function toggleSystemMuteState() {
+        systemOutputMuted = !systemOutputMuted;
+        document.getElementById('globalMuteBtn').innerText = systemOutputMuted ? "🔇" : "🔊";
+    }
+
+    function modifyMasterOutputVolume(val) {
+        systemOutputVolume = parseFloat(val);
+        systemOutputMuted = (systemOutputVolume === 0);
+        document.getElementById('globalMuteBtn').innerText = systemOutputMuted ? "🔇" : "🔊";
+    }
+
+    function handleLocalAudioPlay(type) {
+        if (systemOutputMuted) return;
+        if (audioResourceMap[type]) {
+            try {
+                audioResourceMap[type].volume = systemOutputVolume;
+                audioResourceMap[type].currentTime = 0;
+                audioResourceMap[type].play().catch(() => executeSynthesizedAudioFallback(type));
+                return;
+            } catch (err) {}
+        }
+        executeSynthesizedAudioFallback(type);
+    }
+
+    function executeSynthesizedAudioFallback(type) {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const generator = audioCtx.createOscillator();
+            const outputGain = audioCtx.createGain();
+            generator.connect(outputGain);
+            outputGain.connect(audioCtx.destination);
+            outputGain.gain.value = systemOutputVolume * 0.12;
+
+            if (type === 'click') {
+                generator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                generator.start(); generator.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'correct') {
+                generator.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                generator.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08);
+                generator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.16);
+                generator.start(); generator.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                generator.frequency.setValueAtTime(300, audioCtx.currentTime);
+                generator.frequency.setValueAtTime(200, audioCtx.currentTime + 0.1);
+                generator.start(); generator.stop(audioCtx.currentTime + 0.25);
+            }
+        } catch (e) {}
+    }
+
+    function generateStarVisualBurst() {
+        for (let i = 0; i < 35; i++) {
+            const star = document.createElement('div');
+            star.className = 'confetti-node-particle';
+            star.innerText = ['⭐', '✨', '🎈', '🎉'][Math.floor(Math.random() * 4)];
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = '-20px';
+            star.style.fontSize = Math.random() * 16 + 12 + 'px';
+            star.style.animationDuration = Math.random() * 1.5 + 1.5 + 's';
+            document.body.appendChild(star);
+            setTimeout(() => star.remove(), 2500);
+        }
+    }
+
+    function parseInlinePictureTokens(questionText) {
+        const regexPattern = /\[(picture\d+)[^\]]*\]/i;
+        const matchingGroup = questionText.match(regexPattern);
+        if (matchingGroup && matchingGroup[1]) {
+            return {
+                cleanedText: questionText.replace(regexPattern, '').trim(),
+                imagePath: `assets/${matchingGroup[1].toLowerCase()}.png`
+            };
+        }
+        return { cleanedText: questionText, imagePath: null };
+    }
+
+    function scrambleOptionArrays(sourceMatrix) {
+        return sourceMatrix.map(item => {
+            const linkedOptions = item.options.map(opt => ({ text: opt, match: opt === item.answer }));
+            for (let i = linkedOptions.length - 1; i > 0; i--) {
+                const targetIdx = Math.floor(Math.random() * (i + 1));
+                [linkedOptions[i], linkedOptions[targetIdx]] = [linkedOptions[targetIdx], linkedOptions[i]];
+            }
+            return {
+                originalPrompt: item.q,
+                shuffledOptions: linkedOptions.map(o => o.text),
+                trueAnswerString: item.answer,
+                explanationText: item.explanation
+            };
+        });
+    }
+
+    function bootInteractiveQuizEngine() {
+        compiledRuntimeQuestions = scrambleOptionArrays(initialQuestionRawMatrix);
+        activeQuestionIndex = 0;
+        computedUserScore = 0;
+        trackingCorrectCount = 0;
+        trackingWrongCount = 0;
+        switchActiveViewPanel('quizScreen');
+        loadActiveQuestionNode();
+    }
+
+    function loadActiveQuestionNode() {
+        activeQuestionAttemptNum = 0;
+        countdownTimeLeft = 45;
+        
+        document.getElementById('drawerFeedbackCard').style.display = 'none';
+        document.getElementById('footerControlsRow').style.display = 'none';
+
+        const nodeData = compiledRuntimeQuestions[activeQuestionIndex];
+        
+        document.getElementById('hudTrackerLabel').innerText = `Question ${activeQuestionIndex + 1} / ${compiledRuntimeQuestions.length}`;
+        document.getElementById('hudLiveScoreLabel').innerText = `Score: ${computedUserScore}`;
+        document.getElementById('barMetricProgressIndicator').style.width = `${(activeQuestionIndex / compiledRuntimeQuestions.length) * 100}%`;
+        document.getElementById('hudTimerClockLabel').innerText = `⏱️ ${countdownTimeLeft}s`;
+
+        const evaluationPayload = parseInlinePictureTokens(nodeData.originalPrompt);
+        const assetFrame = document.getElementById('questionAssetHolderFrame');
+        const assetImg = document.getElementById('questionAssetImgElement');
+        
+        if (evaluationPayload.imagePath) {
+            assetImg.src = evaluationPayload.imagePath;
+            assetFrame.style.display = 'flex';
+        } else {
+            assetFrame.style.display = 'none';
+            assetImg.src = '';
+        }
+
+        document.getElementById('cardQuestionTextContent').innerText = evaluationPayload.cleanedText;
+
+        const optionsContainer = document.getElementById('stackOptionsBoxWrapper');
+        optionsContainer.innerHTML = '';
+
+        nodeData.shuffledOptions.forEach(optionText => {
+            const optionBtn = document.createElement('button');
+            optionBtn.className = 'option-node';
+            optionBtn.innerHTML = `<span>${optionText}</span>`;
+            optionBtn.onclick = () => evaluateUserChoiceSelection(optionBtn, optionText);
+            optionsContainer.appendChild(optionBtn);
+        });
+
+        clearInterval(timerIntervalRef);
+        timerIntervalRef = setInterval(executeClockTickSequence, 1000);
+    }
+
+    function executeClockTickSequence() {
+        countdownTimeLeft--;
+        if (countdownTimeLeft <= 0) {
+            countdownTimeLeft = 0;
+            document.getElementById('hudTimerClockLabel').innerText = `⏱️ ${countdownTimeLeft}s`;
+            clearInterval(timerIntervalRef);
+            handleTimeoutExhaustionWorkflow();
+        } else {
+            document.getElementById('hudTimerClockLabel').innerText = `⏱️ ${countdownTimeLeft}s`;
+        }
+    }
+
+    function handleTimeoutExhaustionWorkflow() {
+        handleLocalAudioPlay('wrong');
+        activeQuestionAttemptNum++;
+        
+        if (activeQuestionAttemptNum === 1) {
+            alert("⏰ Time expired for Attempt 1! Try once more.");
+            countdownTimeLeft = 45;
+            document.getElementById('hudTimerClockLabel').innerText = `⏱️ ${countdownTimeLeft}s`;
+            timerIntervalRef = setInterval(executeClockTickSequence, 1000);
+        } else {
+            trackingWrongCount++;
+            freezeActiveInteractionGrid();
+            revealCorrectAnswerSequence(false);
+        }
+    }
+
+    function evaluateUserChoiceSelection(selectedBtn, selectedText) {
+        const nodeData = compiledRuntimeQuestions[activeQuestionIndex];
+        const isMatch = (selectedText === nodeData.trueAnswerString);
+
+        if (isMatch) {
+            clearInterval(timerIntervalRef);
+            selectedBtn.classList.add('node-correct');
+            computedUserScore++;
+            trackingCorrectCount++;
+            document.getElementById('hudLiveScoreLabel').innerText = `Score: ${computedUserScore}`;
+            handleLocalAudioPlay('correct');
+            generateStarVisualBurst();
+            revealCorrectAnswerSequence(true);
+        } else {
+            activeQuestionAttemptNum++;
+            selectedBtn.classList.add('node-wrong');
+            handleLocalAudioPlay('wrong');
+
+            if (activeQuestionAttemptNum === 1) {
+                setTimeout(() => {
+                    selectedBtn.classList.remove('node-wrong');
+                    alert("❌ Incorrect! Try once more.");
+                }, 400);
+            } else {
+                clearInterval(timerIntervalRef);
+                trackingWrongCount++;
+                freezeActiveInteractionGrid();
+                revealCorrectAnswerSequence(false);
+            }
+        }
+    }
+
+    function freezeActiveInteractionGrid() {
+        document.querySelectorAll('.option-node').forEach(btn => btn.style.cursor = 'default');
+    }
+
+    function revealCorrectAnswerSequence(isUserCorrect) {
+        freezeActiveInteractionGrid();
+        const nodeData = compiledRuntimeQuestions[activeQuestionIndex];
+
+        document.querySelectorAll('.option-node').forEach(btn => {
+            if (btn.innerText.trim() === nodeData.trueAnswerString.trim()) {
+                btn.classList.add('node-correct');
+            }
+        });
+
+        const drawer = document.getElementById('drawerFeedbackCard');
+        const statusLabel = document.getElementById('labelFeedbackStatus');
+        const explanationText = document.getElementById('txtFeedbackExplanation');
+
+        drawer.style.display = 'block';
+        explanationText.innerText = nodeData.explanationText;
+
+        if (isUserCorrect) {
+            statusLabel.innerText = "✔ Correct Answer";
+            statusLabel.style.color = "var(--success-green)";
+            document.getElementById('footerControlsRow').style.display = 'flex';
+        } else {
+            statusLabel.innerText = "❌ Attempt Limit Reached";
+            statusLabel.style.color = "var(--danger-red)";
+            
+            setTimeout(() => {
+                advanceToNextSequenceItem();
+            }, 3500);
+        }
+    }
+
+    function advanceToNextSequenceItem() {
+        activeQuestionIndex++;
+        if (activeQuestionIndex < compiledRuntimeQuestions.length) {
+            loadActiveQuestionNode();
+        } else {
+            switchActiveViewPanel('finalChallengeScreen');
+        }
+    }
+
+    function shiftToResultsViewPanel() {
+        switchActiveViewPanel('summaryScreen');
+        
+        const totalItems = compiledRuntimeQuestions.length;
+        const finalRatio = totalItems > 0 ? Math.round((computedUserScore / totalItems) * 100) : 0;
+
+        document.getElementById('summaryPointsLabel').innerText = `${computedUserScore} / ${totalItems}`;
+        document.getElementById('summaryAccuracyPercentLabel').innerText = `${finalRatio}%`;
+        document.getElementById('summaryCorrectCountLabel').innerText = trackingCorrectCount;
+        document.getElementById('summaryWrongCountLabel').innerText = trackingWrongCount;
+
+        const badge = document.getElementById('summaryPerformanceBadgeText');
+        if (finalRatio >= 85) {
+            badge.innerText = "🏆 Excellent";
+        } else if (finalRatio >= 70) {
+            badge.innerText = "🥇 Great Job";
+        } else if (finalRatio >= 50) {
+            badge.innerText = "🥈 Good Try";
+        } else {
+            badge.innerText = "🥉 Keep Practising";
+        }
+    }
+
+    function buildComprehensiveReviewModule() {
+        switchActiveViewPanel('reviewScreen');
+        const container = document.getElementById('reviewScrollerDeck');
+        container.innerHTML = '';
+
+        compiledRuntimeQuestions.forEach((item, index) => {
+            const block = document.createElement('div');
+            block.className = 'review-item-block';
+
+            const cleanPromptText = parseInlinePictureTokens(item.originalPrompt).cleanedText;
+
+            block.innerHTML = `
+                <div class="review-item-header">Item ${index + 1}</div>
+                <div class="review-item-q">${cleanPromptText}</div>
+                <div class="review-item-ans">✔ Correct Answer: ${item.trueAnswerString}</div>
+                <div class="feedback-txt" style="margin-top:4px;"><strong>Explanation:</strong> ${item.explanationText}</div>
+            `;
+            container.appendChild(block);
+        });
+    }
+
+    function resetAndReplayQuizSession() {
+        activeQuestionIndex = 0;
+        computedUserScore = 0;
+        trackingCorrectCount = 0;
+        trackingWrongCount = 0;
+        switchActiveViewPanel('startScreen');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            switchActiveViewPanel('startScreen');
+        }, 5000);
+    });
+</script>
+
+</body>
+</html>
