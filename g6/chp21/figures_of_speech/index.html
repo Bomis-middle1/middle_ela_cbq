@@ -2,415 +2,269 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Grade 6 English - Figures of Speech</title>
+<title>Grade 6 - Figures of Speech</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
-    margin:0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#ffecd2,#fcb69f);
-    overflow-x:hidden;
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#ffeaa7,#fab1a0);
+overflow-x:hidden;
 }
+
 .screen{
-    display:none;
-    width:100%;
-    min-height:100vh;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    padding:20px;
+display:none;
+min-height:100vh;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+padding:15px;
 }
+
 .active{display:flex;}
-.logo-screen img{
-    width:200px;
-    animation: zoom 2s ease-in-out;
+
+.logo{
+width:220px;
+animation:zoom 2s ease;
 }
+
 @keyframes zoom{
-    from{transform:scale(0.5);opacity:0;}
-    to{transform:scale(1);opacity:1;}
+from{transform:scale(0.4);opacity:0;}
+to{transform:scale(1);opacity:1;}
 }
+
 .card{
-    background:#fff;
-    width:95%;
-    max-width:700px;
-    padding:20px;
-    border-radius:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-    animation: fadeIn 0.5s;
+background:white;
+width:95%;
+max-width:720px;
+padding:20px;
+border-radius:18px;
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
 }
-@keyframes fadeIn{
-    from{opacity:0;transform:translateY(20px);}
-    to{opacity:1;transform:translateY(0);}
+
+.q{
+font-size:18px;
+font-weight:bold;
+margin-bottom:10px;
 }
-.question{
-    font-size:20px;
-    font-weight:bold;
-    margin-bottom:10px;
-}
-img.qimg{
-    max-width:100%;
-    max-height:200px;
-    margin:10px 0;
-    border-radius:10px;
-}
+
 .option{
-    display:block;
-    background:#f1f1f1;
-    padding:12px;
-    margin:8px 0;
-    border-radius:10px;
-    font-size:18px;
-    cursor:pointer;
-    transition:0.3s;
+background:#f1f1f1;
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+transition:0.2s;
 }
+
 .option:hover{background:#ddd;}
-.correct{background:#4CAF50 !important;color:#fff;}
-.wrong{background:#f44336 !important;color:#fff;}
-#scoreBoard{
-    font-size:18px;
-    margin-bottom:10px;
+
+.correct{background:#2ecc71!important;color:white;}
+.wrong{background:#e74c3c!important;color:white;}
+
+.top{
+display:flex;
+justify-content:space-between;
+width:100%;
+max-width:720px;
+margin-bottom:10px;
+font-size:16px;
 }
-#explanation{
-    margin-top:10px;
-    font-style:italic;
+
+img{
+max-width:100%;
+border-radius:10px;
+margin:10px 0;
 }
-button{
-    padding:10px 20px;
-    font-size:16px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
+
+#timer{
+font-weight:bold;
+color:#2d3436;
 }
-#restartBtn{
-    background:#2196F3;
-    color:white;
+
+.confetti{
+position:fixed;
+width:8px;height:8px;
+background:gold;
+top:0;
+animation:fall 1s linear;
 }
-.slider{
-    width:150px;
-}
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    width:100%;
-    max-width:700px;
-    margin-bottom:10px;
+
+@keyframes fall{
+to{transform:translateY(100vh) rotate(360deg);opacity:0;}
 }
 </style>
 </head>
 
 <body>
 
-<!-- INNOVINE SPLASH -->
-<div class="screen logo-screen active" id="logoScreen">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo">
+<!-- SPLASH -->
+<div class="screen active" id="splash">
+<img src="assets/innovine-logo.png" class="logo">
 </div>
 
-<!-- GAME SCREEN -->
-<div class="screen" id="gameScreen">
-    <div class="topbar">
-        <div id="scoreBoard">Score: 0</div>
-        <div>
-            🔊 <input type="range" min="0" max="1" step="0.1" id="volumeSlider">
-        </div>
-    </div>
-
-    <div class="card">
-        <div id="questionBox"></div>
-        <div id="optionsBox"></div>
-        <div id="explanation"></div>
-    </div>
+<!-- INTRO -->
+<div class="screen" id="intro">
+<h2>Figures of Speech Game</h2>
+<button onclick="startGame()">Start</button>
 </div>
 
-<!-- RESULT SCREEN -->
-<div class="screen" id="resultScreen">
-    <div class="card">
-        <h2>🎉 Game Over</h2>
-        <div id="finalScore"></div>
-        <button id="restartBtn" onclick="restartGame()">Restart</button>
-    </div>
+<!-- GAME -->
+<div class="screen" id="game">
+<div class="top">
+<div>Score: <span id="score">0</span></div>
+<div id="timer">45</div>
+<div>🔊 <input type="range" min="0" max="1" step="0.1" id="vol"></div>
 </div>
 
-<!-- AUDIO -->
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/clapping.mp3"></audio>
+<div class="card">
+<div id="qbox"></div>
+<div id="obox"></div>
+<div id="exp"></div>
+</div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="result">
+<div class="card">
+<h2>Final Score</h2>
+<div id="final"></div>
+<button onclick="location.reload()">Restart</button>
+</div>
+</div>
+
+<audio id="correct" src="assets/correct.mp3"></audio>
+<audio id="wrong" src="assets/wrong.mp3"></audio>
+<audio id="clap" src="assets/clapping.mp3"></audio>
 
 <script>
-const questionsData = [
-{
-q:`You are writing a poem about a fast runner. Which sentence helps the reader imagine his speed by comparing it to something else using “like” or “as”?`,
-options:[
-"He is a lightning bolt on the track.",
-"He runs as fast as the wind.",
-"He ran to the finish line quickly.",
-"The track was long and dusty."
-],
-answer:1,
-explanation:"'As fast as' uses comparison → Simile"
-},
-{
-q:`You are describing a very cold room. Which sentence describe the room by directly comparing it to something else without using "like" or "as".`,
-options:[
-"The room was like a refrigerator.",
-"The room was as cold as ice.",
-"The room was an icebox.",
-"It was very cold in the room."
-],
-answer:2,
-explanation:"Direct comparison without 'like/as' → Metaphor"
-},
-{
-q:`You are writing a poem about a windy evening. You write: "The wind whistled through the trees and tugged at the curtains." Which figure of speech is being used?`,
-options:["Hyperbole","Alliteration","Personification","Onomatopoeia"],
-answer:2,
-explanation:"Wind given human actions → Personification"
-},
-{
-q:`You are extremely hungry after football practice. You tell your mom: "I am so hungry I could eat a horse!" What figure of speech is this?`,
-options:["Personification","Hyperbole","Idiom","Metaphor"],
-answer:1,
-explanation:"Extreme exaggeration → Hyperbole"
-},
-{
-q:`Before his friend goes on stage for a school play, Rohan says: "Break a leg!" What does it mean?`,
-options:[
-"I hope you have an accident.",
-"Good luck with your performance.",
-"You should dance faster.",
-"Sit down and rest."
-],
-answer:1,
-explanation:"Idiomatic expression meaning good luck"
-},
-{
-q:`[picture1] A student's poem displayed on a classroom wall. Identify the two figures of speech used in these lines.`,
-options:["Simile and Hyperbole","Personification and Alliteration","Metaphor and Onomatopoeia","Alliteration and Simile"],
-answer:1,
-image:"picture1.png",
-explanation:"Personification + Alliteration"
-},
-{
-q:`[picture2] A comic book page showing four panels. What figure of speech do all four panels demonstrate?`,
-options:[
-"Alliteration",
-"Personification",
-"Onomatopoeia",
-"Hyperbole"
-],
-answer:2,
-image:"picture2.png",
-explanation:"Sound words like BUZZ, CRASH → Onomatopoeia"
-},
-{
-q:`Which sentence creates a strong sound effect by repeating the same starting sound?`,
-options:[
-"The stars winked at me from the dark sky.",
-"Laughter is the best medicine.",
-"Seven slippery snakes slid slowly southward.",
-"I have told you a million times!"
-],
-answer:2,
-explanation:"Repeated 's' sound → Alliteration"
-},
-{
-q:`Match: 1. "The fire swallowed the entire forest." 2. "I've told you a thousand times!"`,
-options:[
-"1=Simile; 2=Metaphor",
-"1=Personification; 2=Hyperbole",
-"1=Alliteration; 2=Idiom",
-"1=Onomatopoeia; 2=Personification"
-],
-answer:1,
-explanation:"Fire human action + exaggeration"
-},
-{
-q:`Sort: P "Her voice is music..." Q "He fought like a lion..." R "Life is a journey..." S "soft as velvet"`,
-options:[
-"Simile: P,R — Metaphor: Q,S",
-"Simile: P,Q — Metaphor: R,S",
-"Simile: Q,S — Metaphor: P,R",
-"Simile: R,S — Metaphor: P,Q"
-],
-answer:2,
-explanation:"like/as → simile; direct → metaphor"
-},
-{
-q:`Classify: 1 cats and dogs 2 thunder roared 3 tick tock 4 cry for a year`,
-options:[
-"1=Personification, 2=Idiom, 3=Hyperbole, 4=Onomatopoeia",
-"1=Hyperbole, 2=Onomatopoeia, 3=Idiom, 4=Personification",
-"1=Idiom, 2=Personification, 3=Onomatopoeia, 4=Hyperbole",
-"1=Onomatopoeia, 2=Hyperbole, 3=Personification, 4=Idiom"
-],
-answer:2,
-explanation:"Correct classification of figures"
-},
-{
-q:`Which is the odd one out?`,
-options:[
-"The stars danced across the sky.",
-"He ran like the wind.",
-"I have told you a million times.",
-"The sun rises in the east."
-],
-answer:3,
-explanation:"Literal sentence → no figure of speech"
-},
-{
-q:`Identify wrong label sentence`,
-options:[
-"Peter Piper picked... — Alliteration",
-"The classroom was a zoo — Simile (wrong)",
-"I'm so tired... — Hyperbole",
-"The kettle hummed — Personification"
-],
-answer:1,
-explanation:"It is Metaphor, not Simile"
-},
-{
-q:`Effect: "He ran very fast" → "He ran like the wind"`,
-options:[
-"Grammatically incorrect",
-"He becomes slower",
-"More vivid simile, same meaning",
-"Becomes metaphor"
-],
-answer:2,
-explanation:"Simile enhances imagery"
-},
-{
-q:`Assertion: buzzing = onomatopoeia Reason: word mimics sound`,
-options:[
-"Both correct and reason explains",
-"Both correct but no explanation link",
-"Assertion correct, reason wrong",
-"Both wrong"
-],
-answer:0,
-explanation:"Buzz mimics bee sound → correct"
-}
+
+const questions = [
+{q:`You are writing a poem about a fast runner. Which sentence helps the reader imagine his speed by comparing it to something else using “like” or “as”?`,o:["He is a lightning bolt on the track.","He runs as fast as the wind.","He ran to the finish line quickly.","The track was long and dusty."],a:1},
+{q:`You are describing a very cold room. Which sentence describe the room by directly comparing it to something else without using "like" or "as".`,o:["The room was like a refrigerator.","The room was as cold as ice.","The room was an icebox.","It was very cold in the room."],a:2},
+{q:`You are writing a poem about a windy evening. You write: "The wind whistled through the trees and tugged at the curtains." Which figure of speech is being used?`,o:["Hyperbole","Alliteration","Personification","Onomatopoeia"],a:2},
+{q:`You are extremely hungry after football practice. You tell your mom: "I am so hungry I could eat a horse!" Since you clearly don't mean this literally, what figure of speech is this?`,o:["Personification","Hyperbole","Idiom","Metaphor"],a:1},
+{q:`Before his friend goes on stage for a school play, Rohan says: "Break a leg!" His friend smiles and walks on confidently. What does the idiom actually mean here?`,o:["I hope you have an accident.","Good luck with your performance.","You should dance faster.","Sit down and rest."],a:1},
+
+{img:"picture1.png",q:`A student's poem displayed on a classroom wall. Identify the two figures of speech used in these lines.`,o:["Simile and Hyperbole","Personification and Alliteration","Metaphor and Onomatopoeia","Alliteration and Simile"],a:1},
+
+{img:"picture2.png",q:`A comic book page showing four panels. What figure of speech do all four panels demonstrate?`,o:["Alliteration","Personification","Onomatopoeia","Hyperbole"],a:2},
+
+{q:`Which sentence creates a strong sound effect by repeating the same starting sound in several words?`,o:["The stars winked at me from the dark sky.","Laughter is the best medicine.","Seven slippery snakes slid slowly southward.","I have told you a million times!"],a:2},
+
+{q:`Match each example to its correct figure of speech: 1. "The fire swallowed the entire forest." 2. "I've told you a thousand times!"`,o:["1=Simile; 2=Metaphor","1=Personification; 2=Hyperbole","1=Alliteration; 2=Idiom","1=Onomatopoeia; 2=Personification"],a:1},
+
+{q:`Sort these sentences into two groups — Simile and Metaphor: P: "Her voice is music to my ears." Q: "He fought like a lion in the final match." R: "Life is a journey with no map." S: "The baby's skin was as soft as velvet."`,o:["Simile: P, R — Metaphor: Q, S","Simile: P, Q — Metaphor: R, S","Simile: Q, S — Metaphor: P, R","Simile: R, S — Metaphor: P, Q"],a:2},
+
+{q:`Classify each sentence by its figure of speech — Personification, Onomatopoeia, Hyperbole or Idiom: 1. "It is raining cats and dogs outside." 2. "The thunder roared angrily across the sky." 3. "The clock ticked and tocked in the silent room." 4. "I have so much homework — I could cry for a year!"`,o:["1=Personification, 2=Idiom, 3=Hyperbole, 4=Onomatopoeia","1=Hyperbole, 2=Onomatopoeia, 3=Idiom, 4=Personification","1=Idiom, 2=Personification, 3=Onomatopoeia, 4=Hyperbole","1=Onomatopoeia, 2=Hyperbole, 3=Personification, 4=Idiom"],a:2},
+
+{q:`Which is the odd one out?`,o:["The stars danced across the sky.","He ran like the wind.","I have told you a million times.","The sun rises in the east."],a:3},
+
+{q:`A student labelled four sentences in her notebook. One label is wrong. Find it.`,o:["Peter Piper picked... — Alliteration","The classroom was a zoo — Simile","I'm so tired... — Hyperbole","The kettle hummed — Personification"],a:1},
+
+{q:`A student changes "He ran very fast" to "He ran like the wind." What is the effect of this change?`,o:["Grammatically incorrect","He becomes slower","More vivid simile, same meaning","Becomes metaphor"],a:2},
+
+{q:`Assertion: "The buzzing bee flew away" contains Onomatopoeia. Reason: The word 'buzzing' mimics the actual sound a bee makes — the word itself sounds like the thing it describes.`,o:["Both correct and reason explains","Both correct but no explanation","Assertion correct, reason wrong","Both wrong"],a:0}
 ];
 
-let order = [];
-let current = 0;
-let score = 0;
+let i=0,score=0,attempt=0,timer=45,interval;
 
-const gameScreen = document.getElementById("gameScreen");
-const logoScreen = document.getElementById("logoScreen");
-const resultScreen = document.getElementById("resultScreen");
-
-const qBox = document.getElementById("questionBox");
-const optBox = document.getElementById("optionsBox");
-const expBox = document.getElementById("explanation");
-const scoreBoard = document.getElementById("scoreBoard");
-
-const correctSound = document.getElementById("correctSound");
-const wrongSound = document.getElementById("wrongSound");
-const clapSound = document.getElementById("clapSound");
-
-let volume = 0.5;
-
-document.getElementById("volumeSlider").oninput = (e)=>{
-volume = e.target.value;
-correctSound.volume = volume;
-wrongSound.volume = volume;
-clapSound.volume = volume;
-};
-
-function shuffle(arr){
-return arr.sort(()=>Math.random()-0.5);
-}
+const qbox=document.getElementById("qbox");
+const obox=document.getElementById("obox");
+const exp=document.getElementById("exp");
 
 function startGame(){
-order = shuffle([...Array(questionsData.length).keys()]);
-current = 0;
-score = 0;
-showQ();
+document.getElementById("intro").classList.remove("active");
+document.getElementById("game").classList.add("active");
+loadQ();
+startTimer();
 }
 
-function showQ(){
-expBox.innerHTML="";
-let q = questionsData[order[current]];
+function loadQ(){
+clearInterval(interval);
+timer=45;
+attempt=0;
 
-qBox.innerHTML = q.q;
+let q=questions[i];
+qbox.innerHTML=q.q;
+obox.innerHTML="";
+exp.innerHTML="";
+document.getElementById("score").innerText=score;
 
-optBox.innerHTML = "";
+if(q.img){
+let img=document.createElement("img");
+img.src="assets/"+q.img;
+qbox.appendChild(img);
+}
 
-let opts = q.options.map((o,i)=>({
-text:o,
-isCorrect:i===q.answer
-}));
-
-opts = shuffle(opts);
-
-opts.forEach(opt=>{
-let div = document.createElement("div");
-div.className="option";
-div.innerText = opt.text;
-
-div.onclick = ()=>{
-handleAnswer(div, opt.isCorrect, q.explanation);
-};
-optBox.appendChild(div);
+q.o.forEach((opt,idx)=>{
+let d=document.createElement("div");
+d.className="option";
+d.innerText=opt;
+d.onclick=()=>check(d,idx,q);
+obox.appendChild(d);
 });
-
-if(q.image){
-let img = document.createElement("img");
-img.src = "assets/"+q.image;
-img.className="qimg";
-qBox.appendChild(img);
 }
 
-scoreBoard.innerText = "Score: "+score;
-}
-
-function handleAnswer(div, correct, explanation){
-let options = document.querySelectorAll(".option");
-options.forEach(o=>o.style.pointerEvents="none");
-
-if(correct){
-div.classList.add("correct");
+function check(el,idx,q){
+if(idx===q.a){
+el.classList.add("correct");
 score++;
-correctSound.play();
+document.getElementById("correct").play();
+showExp(q,true);
+setTimeout(next,1000);
 }else{
-div.classList.add("wrong");
-wrongSound.play();
+attempt++;
+el.classList.add("wrong");
+document.getElementById("wrong").play();
+
+if(attempt===1){
+exp.innerHTML="Try again!";
+}else{
+showExp(q,false);
+setTimeout(next,1200);
+}
+}
 }
 
-expBox.innerHTML = explanation;
-scoreBoard.innerText = "Score: "+score;
-
-setTimeout(()=>{
-current++;
-if(current < order.length){
-showQ();
-}else{
-endGame();
+function showExp(q,correct){
+exp.innerHTML = correct ? "Correct!" : "Correct Answer Explained after 2nd attempt.";
 }
-},1500);
+
+function next(){
+i++;
+if(i<questions.length)loadQ();
+else endGame();
+}
+
+function startTimer(){
+interval=setInterval(()=>{
+timer--;
+document.getElementById("timer").innerText=timer;
+if(timer<=0){
+next();
+}
+},1000);
 }
 
 function endGame(){
-gameScreen.classList.remove("active");
-resultScreen.classList.add("active");
-clapSound.play();
-
-let percent = Math.round((score/order.length)*100);
-document.getElementById("finalScore").innerHTML =
-`Score: ${score}/${order.length}<br>Percentage: ${percent}%`;
+document.getElementById("game").classList.remove("active");
+document.getElementById("result").classList.add("active");
+document.getElementById("clap").play();
+document.getElementById("final").innerHTML="Score: "+score+"/"+questions.length;
 }
 
-function restartGame(){
-location.reload();
-}
-
-window.onload = ()=>{
+window.onload=()=>{
 setTimeout(()=>{
-logoScreen.classList.remove("active");
-gameScreen.classList.add("active");
-startGame();
+document.getElementById("splash").classList.remove("active");
+document.getElementById("intro").classList.add("active");
 },5000);
+};
+
+document.getElementById("vol").oninput=(e)=>{
+document.querySelectorAll("audio").forEach(a=>a.volume=e.target.value);
 };
 </script>
 
