@@ -1,1 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Grade 7 ELA Quiz - Chapter 8</title>
+    <style>
+        :root {
+            --slate-blue: #2b3a67;
+            --mint-teal: #41b3a3;
+            --amber-gold: #e27d60;
+            --gold-dark: #c36246;
+            --deep-purple: #1d1e2c;
+            --cream-bg: #f4f7fc;
+            --card-white: #ffffff;
+            --success-green: #2ec4b6;
+            --danger-red: #e71d36;
+            --panel-radius: 20px;
+            --elem-radius: 12px;
+            --classic-shadow: 0 10px 30px rgba(43, 58, 103, 0.08);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--cream-bg);
+            color: var(--deep-purple);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            overflow-x: hidden;
+        }
+
+        /* SCREEN IMPLEMENTATIONS */
+        .container {
+            width: 100%;
+            max-width: 660px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .container.active-view {
+            display: block;
+            opacity: 1;
+        }
+
+        /* MANDATORY SPLASH LOGO SCREEN (STRICT 5 SECONDS) */
+        #splash {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #splash img {
+            width: 240px;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 20px;
+            animation: fadeInOut 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0.6; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1.02); }
+        }
+
+        .hidden { display: none !important; }
+
+        /* PLAYFUL EDUCATIONAL CARD THEME */
+        .card {
+            background: var(--card-white);
+            padding: clamp(24px, 5vw, 40px);
+            border-radius: var(--panel-radius);
+            width: 100%;
+            box-shadow: var(--classic-shadow);
+            border: 1px solid rgba(43, 58, 103, 0.04);
+            text-align: center;
+            transform: translateY(10px);
+            animation: cardSlideUp 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes cardSlideUp {
+            to { transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--slate-blue);
+            font-size: clamp(24px, 4vw, 30px);
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        h2 {
+            color: var(--slate-blue);
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            color: var(--mint-teal);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* TOP PERFORMANCE / HEADERS BAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--slate-blue);
+            padding: 14px 20px;
+            border-radius: var(--elem-radius);
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(43, 58, 103, 0.1);
+        }
+
+        /* PROGRESS TRACKING INDICATOR */
+        .progress-wrapper {
+            width: 100%;
+            height: 12px;
+            background: rgba(43, 58, 103, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--mint-teal), var(--success-green));
+            transition: width 0.6s ease-in-out;
+        }
+
+        /* QUESTION FIELD RENDERING */
+        .question-text {
+            font-size: clamp(16px, 3.5vw, 18px);
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        /* OPTION TOUCH INTERACTIVE SYSTEM */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            width: 100%;
+            background: #ffffff;
+            border: 2.5px solid #e2e8f0;
+            border-radius: var(--elem-radius);
+            padding: 16px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            transform: translateY(-2px);
+            border-color: var(--slate-blue);
+            background: rgba(43, 58, 103, 0.02);
+            box-shadow: 0 6px 15px rgba(43, 58, 103, 0.05);
+        }
+
+        .option-btn.disabled {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* FEEDBACK STATES */
+        .option-btn.correct-state {
+            background: #e6f9f7 !important;
+            border-color: var(--success-green) !important;
+            color: var(--success-green) !important;
+            box-shadow: 0 0 20px rgba(46, 196, 182, 0.2);
+            animation: correctGlow 0.5s ease infinite alternate;
+        }
+
+        .option-btn.wrong-state {
+            background: #ffebee !important;
+            border-color: var(--danger-red) !important;
+            color: var(--danger-red) !important;
+        }
+
+        @keyframes correctGlow {
+            0% { box-shadow: 0 0 10px rgba(46, 196, 182, 0.2); }
+            100% { box-shadow: 0 0 25px rgba(46, 196, 182, 0.4); }
+        }
+
+        /* FLOATING FEEDBACK BANNER */
+        .feedback-banner {
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 15px;
+            min-height: 30px;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .feedback-banner.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* AUDIO VOLUME CONTROL LAYER */
+        .audio-dashboard {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 2px solid #f1f5f9;
+        }
+
+        .vol-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            transition: transform 0.2s;
+        }
+
+        .vol-btn:hover { transform: scale(1.15); }
+
+        .slider-control {
+            width: 100px;
+            accent-color: var(--amber-gold);
+            cursor: pointer;
+        }
+
+        /* CORE BUTTON MATRIX */
+        .btn-action {
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--elem-radius);
+            background: var(--amber-gold);
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(226, 125, 96, 0.2);
+            margin: 8px;
+        }
+
+        .btn-action:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(195, 98, 70, 0.3);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.2);
+        }
+        .btn-secondary:hover {
+            background: #475569;
+            box-shadow: 0 6px 15px rgba(71, 85, 105, 0.3);
+        }
+
+        /* PARTICLE CELEBRATION LAYER */
+        .confetti-particle {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            animation: floatDown 1.8s ease-out forwards;
+        }
+
+        @keyframes floatDown {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
+        }
+
+        /* REVIEW SCROLL BOX CONFIG */
+        .review-box {
+            max-height: 55vh;
+            overflow-y: auto;
+            text-align: left;
+            margin: 20px 0;
+            padding-right: 6px;
+        }
+
+        .review-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--elem-radius);
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .review-card.correct-log { border-left: 6px solid var(--success-green); }
+        .review-card.wrong-log { border-left: 6px solid var(--danger-red); }
+    </style>
+</head>
+<body>
+
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <div id="splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="handleLogoFallback(this)">
+    </div>
+
+    <div id="home" class="container">
+        <div class="card">
+            <h1>Chapter 8 – Infinitives, Gerunds and Participles</h1>
+            <div class="subtitle">Grade 7 English Language Arts</div>
+            <p style="color: #4a5568; font-size: 16px; margin-bottom: 30px; font-weight: 500;">
+                Test your mastery of verbals with these 13 competency-based application scenarios.
+            </p>
+            <button class="btn-action" onclick="initializeQuizEngine()">Start Quiz</button>
+        </div>
+    </div>
+
+    <div id="quiz" class="container">
+        <div class="topbar">
+            <div id="progressText">Question 1 of 13</div>
+            <div>Score: <span id="scoreCounter">0</span></div>
+        </div>
+        <div class="progress-wrapper">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <div class="card">
+            <div id="questionContainer" class="question-text"></div>
+            <div id="optionsGrid" class="options-container"></div>
+            <div id="feedbackBanner" class="feedback-banner"></div>
+            
+            <div class="audio-dashboard">
+                <button class="vol-btn" onclick="setVolumeState('mute')">🔇</button>
+                <button class="vol-btn" onclick="setVolumeState('med')">🔉</button>
+                <button class="vol-btn" onclick="setVolumeState('max')">🔊</button>
+                <input type="range" id="volumeSlider" class="slider-control" min="0" max="1" step="0.1" value="0.5" oninput="handleSliderMovement(this.value)">
+            </div>
+        </div>
+    </div>
+
+    <div id="result" class="container">
+        <div class="card">
+            <h2>🎉 Quiz Completed!</h2>
+            <div class="subtitle">Chapter 8 Performance Breakdown</div>
+            <div id="finalScoreDisplay" style="font-size: 32px; font-weight: 800; color: var(--slate-blue); margin-bottom: 8px;">0 / 13</div>
+            <div id="percentageDisplay" style="font-size: 18px; font-weight: 700; color: var(--mint-teal); margin-bottom: 20px;">0%</div>
+            <p id="performanceFeedback" style="font-size: 16px; color: #4a5568; margin-bottom: 30px; font-weight: 600;"></p>
+            
+            <button class="btn-action" onclick="initializeQuizEngine()">Play Again</button>
+            <button class="btn-action btn-secondary" onclick="generateReviewBreakdown()">Review Answers</button>
+        </div>
+    </div>
+
+    <div id="review" class="container">
+        <div class="card">
+            <h2>Performance Review</h2>
+            <div class="subtitle">Detailed Response Logs</div>
+            <div id="reviewBox" class="review-box"></div>
+            <button class="btn-action" onclick="changeViewport('home')">Back To Home</button>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================
+        UNMODIFIED RIGID DATABANK - CHAPTER 8 MCQS
+        ========================================================== */
+        const originalDataset = [
+            {
+                q: `Q1. Riya writes in her diary: "___ in the rain is something I have always loved." She wants the verb 'walk' to act as the subject of her sentence. Which form is correct?`,
+                options: ["a) To walking", "b) Walk", "c) Walking", "d) Walked"],
+                answer: "c) Walking",
+                reason: "Gerund (-ing form) acts as subject of the sentence — 'Walking in the rain is…'"
+            },
+            {
+                q: `Q2. Aarav's teacher writes on the board: "The broken chair in the corner needs to be repaired." She asks the class — what is the role of 'broken' in this sentence?`,
+                options: [
+                    "a) It is a Gerund acting as the subject",
+                    "b) It is an Infinitive showing purpose",
+                    "c) It is a Past Participle acting as an adjective describing the chair",
+                    "d) It is a Finite verb showing a past action"
+                ],
+                answer: "c) It is a Past Participle acting as an adjective describing the chair",
+                reason: "'Broken' describes the state of 'chair' — Past Participle used as adjective"
+            },
+            {
+                q: `Q3. Meera wants to explain the purpose of her visit to the library. She writes: "I went to the library ___ (borrow) some books on ancient history." Which form correctly fills the blank to show purpose?`,
+                options: ["a) borrowing", "b) borrowed", "c) to borrow", "d) having borrowed"],
+                answer: "c) to borrow",
+                reason: "Infinitive 'to borrow' shows the purpose of going to the library"
+            },
+            {
+                q: `Q4. A student reads: "Smiling brightly, the child ran towards her mother." Her teacher asks what grammatical role "Smiling brightly" plays in this sentence. What is the correct answer?`,
+                options: [
+                    "a) It is a Gerund phrase acting as the subject",
+                    "b) It is a Present Participle phrase describing the child",
+                    "c) It is an Infinitive phrase showing purpose",
+                    "d) It is the main predicate of the sentence"
+                ],
+                answer: "b) It is a Present Participle phrase describing the child",
+                reason: "Present Participle phrase 'Smiling brightly' describes the child — simultaneous action"
+            },
+            {
+                q: `Q5. Rohan's friend says: "My hobby is collecting rare stamps from different countries." Rohan asks what grammatical role 'collecting' plays here. What is the correct answer?`,
+                options: [
+                    "a) It is a Present Participle describing a noun",
+                    "b) It is an Infinitive showing purpose",
+                    "c) It is a Gerund acting as a subject complement — it completes the meaning of the linking verb \"is.\"",
+                    "d) It is a Finite verb in the Present Continuous tense"
+                ],
+                answer: "c) It is a Gerund acting as a subject complement — it completes the meaning of the linking verb \"is.\"",
+                reason: "'Collecting' follows 'is' and completes the subject 'hobby' → Gerund as Subject Complement"
+            },
+            {
+                q: `Q6. A student's story on a classroom display board showing four verb forms circled in red as errors — \nError 1: "To swimming is her greatest passion." \nError 2: "She avoided to go out in the rain." \nError 3: "The breaking window was repaired." (meaning: already broken) \nError 4: "He went to the market for buy vegetables."\nWhich option correctly fixes ALL four errors?`,
+                options: [
+                    "a) Swimming / going / broken / to buy",
+                    "b) To swim / going / breaking / buying",
+                    "c) Swimming / to go / broken / buying",
+                    "d) To swim / going / broken / to buy"
+                ],
+                answer: "a) Swimming / going / broken / to buy",
+                reason: "To swimming→Swimming (Gerund as subject); avoided to go→avoided going (after 'avoid' use Gerund); breaking→broken (state, not action); for buy→to buy (purpose needs Infinitive)"
+            },
+            {
+                q: `Q7. In which sentence is the Gerund used as the Object of the verb?`,
+                options: [
+                    "a) Swimming is excellent exercise.",
+                    "b) Her favourite hobby is painting.",
+                    "c) She admitted stealing the cookie from the jar.",
+                    "d) Running fast, he caught the bus just in time."
+                ],
+                answer: "c) She admitted stealing the cookie from the jar.",
+                reason: "'Stealing' follows verb 'admitted' as its object → Gerund as object"
+            },
+            {
+                q: `Q8. Which sentence uses an Infinitive correctly to show purpose?`,
+                options: [
+                    "a) I went to the kitchen for getting a glass of water.",
+                    "b) I went to the kitchen to get a glass of water.",
+                    "c) I went to the kitchen getting a glass of water.",
+                    "d) I went to the kitchen having got a glass of water."
+                ],
+                answer: "b) I went to the kitchen to get a glass of water.",
+                reason: "'to get' = Infinitive of purpose — 'for getting' is incorrect in standard English"
+            },
+            {
+                q: `Q9. Sort these underlined verb forms into two groups — Gerund and Present Participle: \nP: "Laughing loudly, she dropped her phone." \nQ: "She loves reading mystery novels." \nR: "Running is the best way to stay fit." \nS: "The barking dog kept everyone awake."`,
+                options: [
+                    "a) Gerund: P, S — Participle: Q, R",
+                    "b) Gerund: P, R — Participle: Q, S",
+                    "c) Gerund: Q, R — Participle: P, S",
+                    "d) Gerund: Q, S — Participle: P, R"
+                ],
+                answer: "c) Gerund: Q, R — Participle: P, S",
+                reason: "Q & R = Gerund (object/subject — acts as noun); P & S = Participle (describes noun/shows simultaneous action)"
+            },
+            {
+                q: `Q10. Classify the role of the Infinitive in each sentence: \n1. "She went to the shop to buy groceries." \n2. "To err is human." \n3. "He was happy to receive the award." \n4. "She asked me to close the door."`,
+                options: [
+                    "a) 1=Subject, 2=Purpose, 3=Object, 4=Adjective",
+                    "b) 1=Purpose, 2=Subject, 3=Adjective, 4=Object",
+                    "c) 1=Object, 2=Adjective, 3=Subject, 4=Purpose",
+                    "d) 1=Adjective, 2=Object, 3=Purpose, 4=Subject"
+                ],
+                answer: "b) 1=Purpose, 2=Subject, 3=Adjective, 4=Object",
+                reason: "to buy=purpose; To err=subject; to receive=adjective(modifies 'happy'); to close=object of 'asked'"
+            },
+            {
+                q: `Q11. Three of the following sentences use the verb form correctly. One does NOT. Which is the odd one out?`,
+                options: [
+                    "a) Swimming every morning keeps her healthy.",
+                    "b) He enjoys playing football after school.",
+                    "c) She decided to leaving early because of the rain.",
+                    "d) Tired after the long journey, he fell asleep immediately."
+                ],
+                answer: "c) She decided to leaving early because of the rain.",
+                reason: "'decided' is followed by Infinitive → 'to leave' not 'to leaving'"
+            },
+            {
+                q: `Q12. A student changes "She was singing and she walked into the room" to "Singing softly, she walked into the room." What is the effect of this change?`,
+                options: [
+                    "a) The meaning changes — she is no longer singing",
+                    "b) The Present Participle phrase replaces a full clause — making the sentence more concise while showing that both actions happen simultaneously",
+                    "c) 'Singing' becomes a Gerund in the new sentence",
+                    "d) The sentence becomes grammatically incorrect"
+                ],
+                answer: "b) The Present Participle phrase replaces a full clause — making the sentence more concise while showing that both actions happen simultaneously",
+                reason: "Participle phrase condenses two clauses into one — shows simultaneous actions concisely"
+            },
+            {
+                q: `Q13. Assertion: In "I love swimming" and "Swimming is fun," 'swimming' plays two different grammatical roles. Reason: In the first sentence 'swimming' is the Object of the verb 'love' (Gerund as object); in the second it is the Subject of the verb 'is' (Gerund as subject) — the same '-ing' form can function differently depending on its position.`,
+                options: [
+                    "a) Both are correct; the reason correctly explains the assertion.",
+                    "b) Both are correct; but the reason does NOT explain the assertion.",
+                    "c) The assertion is correct; the reason is wrong.",
+                    "d) Both are wrong — 'swimming' plays the same role in both sentences."
+                ],
+                answer: "a) Both are correct; the reason correctly explains the assertion.",
+                reason: "Position determines Gerund's role — before verb=subject; after verb=object"
+            }
+        ];
+
+        // ENGINE RUNTIME STATE PROPERTIES
+        let quizBank = [];
+        let activeQuestionIndex = 0;
+        let scoreTracker = 0;
+        let runningResponseLogs = [];
+        let trackingVolumeLevel = 0.5;
+
+        // PRELOAD AND BYPASS ROUTINES
+        window.addEventListener('DOMContentLoaded', () => {
+            handleSliderMovement(trackingVolumeLevel);
+            setTimeout(() => {
+                let splash = document.getElementById("splash");
+                if (splash) {
+                    splash.style.opacity = "0";
+                    setTimeout(() => {
+                        splash.classList.add("hidden");
+                        changeViewport("home");
+                    }, 500);
+                }
+            }, 5000); // Absolute strict 5-second loading wait time
+        });
+
+        function handleLogoFallback(img) {
+            img.style.display = "none";
+            let fallbackIndicator = document.createElement("div");
+            fallbackIndicator.style.textAlign = "center";
+            fallbackIndicator.innerHTML = `
+                <div style="font-size: 40px; margin-bottom: 10px;">🎒</div>
+                <div style="font-weight: 800; color: var(--slate-blue); font-size: 20px;">Innovine Quiz Engine</div>
+            `;
+            img.parentNode.appendChild(fallbackIndicator);
+        }
+
+        function changeViewport(id) {
+            document.querySelectorAll(".container").forEach(view => view.classList.remove("active-view"));
+            let targetView = document.getElementById(id);
+            if (targetView) {
+                targetView.classList.add("active-view");
+            }
+        }
+
+        // BALANCED RANDOMIZATION IMPLEMENTATION
+        function cloneAndShuffleDataset() {
+            let clonedArray = JSON.parse(JSON.stringify(originalDataset));
+            // Fisher-Yates Question Shuffling algorithm
+            for (let i = clonedArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [clonedArray[i], clonedArray[j]] = [clonedArray[j], clonedArray[i]];
+            }
+            
+            // Randomize individual options array while preserving validity
+            clonedArray.forEach(item => {
+                for (let x = item.options.length - 1; x > 0; x--) {
+                    const y = Math.floor(Math.random() * (x + 1));
+                    [item.options[x], item.options[y]] = [item.options[y], item.options[x]];
+                }
+            });
+            return clonedArray;
+        }
+
+        function initializeQuizEngine() {
+            quizBank = cloneAndShuffleDataset();
+            activeQuestionIndex = 0;
+            scoreTracker = 0;
+            runningResponseLogs = [];
+            document.getElementById("scoreCounter").innerText = scoreTracker;
+            changeViewport("quiz");
+            renderActiveQuestion();
+        }
+
+        function renderActiveQuestion() {
+            let data = quizBank[activeQuestionIndex];
+            
+            document.getElementById("progressText").innerText = `Question ${activeQuestionIndex + 1} of ${quizBank.length}`;
+            document.getElementById("progressBar").style.width = `${((activeQuestionIndex) / quizBank.length) * 100}%`;
+            document.getElementById("questionContainer").innerText = data.q;
+            
+            let grid = document.getElementById("optionsGrid");
+            grid.innerHTML = "";
+            
+            let banner = document.getElementById("feedbackBanner");
+            banner.className = "feedback-banner";
+            banner.innerText = "";
+
+            data.options.forEach(optText => {
+                let btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = optText;
+                btn.onclick = () => parseSelectionResponse(optText, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function parseSelectionResponse(selectedOption, targetButton) {
+            // Lock inputs instantly
+            document.querySelectorAll(".option-btn").forEach(b => b.classList.add("disabled"));
+            let data = quizBank[activeQuestionIndex];
+            let isCorrect = (selectedOption === data.answer);
+            let banner = document.getElementById("feedbackBanner");
+
+            // Track state for review mapping
+            runningResponseLogs.push({
+                q: data.q,
+                chosen: selectedOption,
+                correct: data.answer,
+                passed: isCorrect
+            });
+
+            if (isCorrect) {
+                scoreTracker++;
+                document.getElementById("scoreCounter").innerText = scoreTracker;
+                targetButton.classList.add("correct-state");
+                triggerConfettiBurst();
+                playQuizAudio(true);
+                
+                banner.innerText = "✅ Correct!";
+                banner.style.color = "var(--success-green)";
+                banner.classList.add("show");
+
+                setTimeout(() => {
+                    advanceQuizPointer();
+                }, 1500); // 1.5 seconds continuation delay
+            } else {
+                targetButton.classList.add("wrong-state");
+                playQuizAudio(false);
+                
+                // Track down correct element and flash its identity
+                document.querySelectorAll(".option-btn").forEach(b => {
+                    if (b.innerText === data.answer) {
+                        b.classList.add("correct-state");
+                    }
+                });
+
+                banner.innerText = "❌ Incorrect!";
+                banner.style.color = "var(--danger-red)";
+                banner.classList.add("show");
+
+                setTimeout(() => {
+                    advanceQuizPointer();
+                }, 2000); // 2 seconds continuation delay
+            }
+        }
+
+        function advanceQuizPointer() {
+            activeQuestionIndex++;
+            if (activeQuestionIndex < quizBank.length) {
+                renderActiveQuestion();
+            } else {
+                document.getElementById("progressBar").style.width = "100%";
+                displayFinalScoreboard();
+            }
+        }
+
+        // AUDIO ROUTINES
+        function handleSliderMovement(val) {
+            trackingVolumeLevel = parseFloat(val);
+            document.getElementById("volumeSlider").value = trackingVolumeLevel;
+            document.getElementById("correctSound").volume = trackingVolumeLevel;
+            document.getElementById("wrongSound").volume = trackingVolumeLevel;
+        }
+
+        function setVolumeState(profile) {
+            if (profile === 'mute') handleSliderMovement(0);
+            else if (profile === 'med') handleSliderMovement(0.5);
+            else if (profile === 'max') handleSliderMovement(1.0);
+        }
+
+        function playQuizAudio(isCorrect) {
+            try {
+                let node = document.getElementById(isCorrect ? "correctSound" : "wrongSound");
+                if (node) {
+                    node.currentTime = 0;
+                    node.play().catch(() => console.log("Audio presentation skipped due to interaction rules"));
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        // VISUAL EFFECTS
+        function triggerConfettiBurst() {
+            let colors = ['#41b3a3', '#e27d60', '#2ec4b6', '#ffb703', '#ff006e'];
+            for (let i = 0; i < 25; i++) {
+                let p = document.createElement("div");
+                p.className = "confetti-particle";
+                p.style.left = (Math.random() * 80 + 10) + "vw";
+                p.style.top = "25vh";
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.animationDelay = (Math.random() * 0.3) + "s";
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 2000);
+            }
+        }
+
+        // EVALUATION CONSOLE DISPLAY
+        function displayFinalScoreboard() {
+            changeViewport("result");
+            let ratio = (scoreTracker / quizBank.length);
+            let pct = Math.round(ratio * 100);
+
+            document.getElementById("finalScoreDisplay").innerText = `${scoreTracker} / ${quizBank.length}`;
+            document.getElementById("percentageDisplay").innerText = `${pct}%`;
+
+            let feedbackMsg = "";
+            if (pct >= 90) feedbackMsg = "Excellent!";
+            else if (pct >= 70) feedbackMsg = "Great Job!";
+            else if (pct >= 50) feedbackMsg = "Good Effort!";
+            else feedbackMsg = "Keep Practising!";
+
+            document.getElementById("performanceFeedback").innerText = feedbackMsg;
+        }
+
+        // REVIEW VIEW COMPILATION
+        function generateReviewBreakdown() {
+            changeViewport("review");
+            let container = document.getElementById("reviewBox");
+            container.innerHTML = "";
+
+            // Use fixed sequential historical logs order (no dynamic mix matching)
+            runningResponseLogs.forEach((log, index) => {
+                let itemCard = document.createElement("div");
+                itemCard.className = `review-card ${log.passed ? 'correct-log' : 'wrong-log'}`;
+                
+                itemCard.innerHTML = `
+                    <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--slate-blue);">Item Number ${index + 1}</div>
+                    <div style="font-weight: 600; margin-bottom: 12px; font-size: 15px; color:var(--deep-purple);">${log.q}</div>
+                    <div style="font-size: 14px; margin: 4px 0;"><strong>Selected Option:</strong> <span style="color: ${log.passed ? 'var(--success-green)' : 'var(--danger-red)'}">${log.passed ? '🟢' : '🔴'} ${log.chosen}</span></div>
+                    <div style="font-size: 14px; margin: 4px 0;"><strong>Correct Answer:</strong> <span style="color: var(--success-green)">🟢 ${log.correct}</span></div>
+                `;
+                container.appendChild(itemCard);
+            });
+        }
+    </script>
+</body>
+</html>
