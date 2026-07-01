@@ -1,1 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Grade 7 ELA Quiz - Chapter 9</title>
+    <style>
+        :root {
+            --slate-blue: #2b3a67;
+            --mint-teal: #41b3a3;
+            --amber-gold: #e27d60;
+            --gold-dark: #c36246;
+            --deep-purple: #1d1e2c;
+            --cream-bg: #f4f7fc;
+            --card-white: #ffffff;
+            --success-green: #2ec4b6;
+            --danger-red: #e71d36;
+            --panel-radius: 20px;
+            --elem-radius: 12px;
+            --classic-shadow: 0 10px 30px rgba(43, 58, 103, 0.08);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--cream-bg);
+            color: var(--deep-purple);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-streamer {
+            position: absolute;
+            top: -50px;
+            width: 2px;
+            height: 120px;
+            background: linear-gradient(to bottom, rgba(65, 179, 163, 0.15), transparent);
+            animation: dropStreamer 8s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes dropStreamer {
+            0% { transform: translateY(-100px) rotate(15deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(110vh) rotate(15deg); opacity: 0; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 660px;
+            display: none;
+            position: relative;
+            z-index: 10;
+            animation: cardPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes cardPop {
+            0% { transform: scale(0.92); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #splash {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #splash img {
+            width: 240px;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        .card {
+            background: var(--card-white);
+            padding: clamp(24px, 5vw, 40px);
+            border-radius: var(--panel-radius);
+            width: 100%;
+            box-shadow: var(--classic-shadow);
+            border: 1px solid rgba(43, 58, 103, 0.04);
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: var(--slate-blue);
+            font-size: clamp(24px, 4vw, 30px);
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: var(--mint-teal);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--slate-blue);
+            padding: 14px 20px;
+            border-radius: var(--elem-radius);
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(43, 58, 103, 0.1);
+        }
+
+        #timer {
+            background: rgba(231, 29, 54, 0.2);
+            color: #ff9faf;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(231, 29, 54, 0.2);
+        }
+
+        .progress-wrapper {
+            width: 100%;
+            height: 12px;
+            background: rgba(43, 58, 103, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--mint-teal), var(--success-green));
+            transition: width 0.4s ease;
+        }
+
+        .question-text {
+            font-size: clamp(16px, 3.5vw, 18px);
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            width: 100%;
+            background: #ffffff;
+            border: 2.5px solid #e2e8f0;
+            border-radius: var(--elem-radius);
+            padding: 16px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            line-height: 1.4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            border-color: var(--slate-blue);
+            background: rgba(43, 58, 103, 0.02);
+            transform: translateY(-2px);
+        }
+
+        .option-btn:active:not(.disabled) {
+            transform: translateY(1px);
+        }
+
+        .option-btn.disabled {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .option-btn.correct-state {
+            background: #e6f9f7 !important;
+            border-color: var(--success-green) !important;
+            color: var(--success-green) !important;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(46, 196, 182, 0.4);
+        }
+        .option-btn.correct-state::after {
+            content: "✔";
+            font-size: 18px;
+            color: var(--success-green);
+        }
+
+        .option-btn.wrong-state {
+            background: #ffebee !important;
+            border-color: var(--danger-red) !important;
+            color: var(--danger-red) !important;
+            font-weight: 700;
+        }
+        .option-btn.wrong-state::after {
+            content: "✖";
+            font-size: 18px;
+            color: var(--danger-red);
+        }
+
+        #feedback-banner {
+            margin-top: 15px;
+            font-size: 20px;
+            font-weight: 800;
+            display: none;
+            text-align: center;
+        }
+
+        #explanation-panel {
+            margin-top: 20px;
+            padding: 16px 20px;
+            border-radius: var(--elem-radius);
+            background: #f8fafc;
+            border-left: 5px solid var(--slate-blue);
+            font-size: 14px;
+            line-height: 1.6;
+            color: #4a5568;
+            text-align: left;
+            display: none;
+        }
+
+        .audio-dashboard {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 2px solid #f1f5f9;
+        }
+
+        .vol-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            transition: transform 0.2s;
+        }
+        .vol-btn:hover { transform: scale(1.15); }
+
+        .slider-control {
+            width: 100px;
+            accent-color: var(--amber-gold);
+            cursor: pointer;
+        }
+
+        .btn-action {
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--elem-radius);
+            background: var(--amber-gold);
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            margin: 8px;
+            display: inline-block;
+        }
+
+        .btn-action:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-action:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .star-confetti {
+            position: fixed;
+            width: 16px;
+            height: 16px;
+            background: gold;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            pointer-events: none;
+            z-index: 9999;
+            animation: starFallEffect 1.5s linear forwards;
+        }
+        @keyframes starFallEffect {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+
+        .review-box {
+            max-height: 55vh;
+            overflow-y: auto;
+            text-align: left;
+            margin: 20px 0;
+            padding-right: 6px;
+        }
+
+        .review-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--elem-radius);
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+        .review-card.correct-log { border-left: 6px solid var(--success-green); }
+        .review-card.wrong-log { border-left: 6px solid var(--danger-red); }
+    </style>
+</head>
+<body>
+
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="clappingSound" src="assets/clapping.mp3" preload="auto"></audio>
+
+    <div id="splash">
+        <img id="logoNode" src="assets/innovine-logo.png" alt="Innovine Logo" onerror="handleLogoFailure(this)">
+    </div>
+
+    <div id="home" class="container">
+        <div class="card">
+            <h1>Chapter 9 – Conjunctions</h1>
+            <div class="subtitle">Grade 7 English Language Arts</div>
+            <p style="color: #4a5568; font-size: 16px; margin-bottom: 30px; font-weight: 500; line-height: 1.5;">
+                Test your mastery of conjunctions with these 14 competency-based application scenarios.<br>
+                Total Questions: <strong>14</strong>
+            </p>
+            <button class="btn-action" onclick="initializeQuizEngine()">Start Quiz</button>
+        </div>
+    </div>
+
+    <div id="quiz" class="container">
+        <div class="topbar">
+            <div id="progressText">Question 1 of 14</div>
+            <div>Score: <span id="scoreCounter">0</span></div>
+            <div id="timer">⏱️ 45s</div>
+        </div>
+        <div class="progress-wrapper">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <div class="card">
+            <div id="questionContainer" class="question-text"></div>
+            <div id="optionsGrid" class="options-container"></div>
+            <div id="feedback-banner"></div>
+            <div id="explanation-panel"></div>
+
+            <div class="audio-dashboard">
+                <button class="vol-btn" onclick="setVolumeState('mute')">🔇</button>
+                <button class="vol-btn" onclick="setVolumeState('med')">🔉</button>
+                <button class="vol-btn" onclick="setVolumeState('max')">🔊</button>
+                <input type="range" id="volumeSlider" class="slider-control" min="0" max="1" step="0.1" value="0.5" oninput="handleSliderMovement(this.value)">
+            </div>
+        </div>
+    </div>
+
+    <div id="result" class="container">
+        <div class="card">
+            <h2>🎉 Quiz Completed!</h2>
+            <div class="subtitle">Performance Output</div>
+            <div id="finalScoreDisplay" style="font-size: 32px; font-weight: 800; color: var(--slate-blue); margin-bottom: 8px;">0 / 14</div>
+            <div id="percentageDisplay" style="font-size: 18px; font-weight: 700; color: var(--mint-teal); margin-bottom: 20px;">0%</div>
+            <p id="performanceFeedback" style="font-size: 16px; color: #4a5568; margin-bottom: 30px; font-weight: 600;"></p>
+            
+            <button class="btn-action" onclick="initializeQuizEngine()">Play Again</button>
+            <button class="btn-action btn-secondary" onclick="generateReviewBreakdown()">Review Answers</button>
+        </div>
+    </div>
+
+    <div id="review" class="container">
+        <div class="card">
+            <h2>Performance Review</h2>
+            <div class="subtitle">Detailed Breakdown</div>
+            <div id="reviewBox" class="review-box"></div>
+            <button class="btn-action" onclick="switchViewport('home')">Back To Home</button>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================
+        UNMODIFIED RIGID DATABANK - CHAPTER 9 MCQS
+        ========================================================== */
+        const originalDataset = [
+            {
+                q: `Q1. Riya is writing instructions for a younger student: "Take notes ___ the teacher is explaining — you will remember more that way." She wants to show that both actions happen at the same time. Which conjunction is correct?`,
+                options: ["a) after", "b) while", "c) until", "d) so that"],
+                answer: "b) while",
+                reason: "'While' = two actions happening simultaneously → Subordinating conjunction of time"
+            },
+            {
+                q: `Q2. Aarav writes in his story: "She carried an umbrella ___ it rained on the way home." He wants to express that she carried the umbrella as a precaution — just in case it rained. Which conjunction is correct?`,
+                options: ["a) although", "b) as soon as", "c) in case", "d) even if"],
+                answer: "c) in case",
+                reason: "'In case' = precaution against a possible event → Purpose conjunction (negative precaution)"
+            },
+            {
+                q: `Q3. Meera's science teacher says: "The experiment will work ___ you follow every step carefully." The teacher is setting a condition — the result depends entirely on following the steps. Which conjunction is correct?`,
+                options: ["a) though", "b) wherever", "c) since", "d) if"],
+                answer: "d) if",
+                reason: "'If' sets a condition — result depends entirely on whether the condition is met"
+            },
+            {
+                q: `Q4. A student writes: "He behaved ___ he owned the entire school." The student wants to show that his behaviour gave the impression of something that was not actually true. Which conjunction is correct?`,
+                options: ["a) as soon as", "b) even though", "c) as if", "d) so that"],
+                answer: "c) as if",
+                reason: "'As if' introduces an unreal comparison — he behaved like something that wasn't true"
+            },
+            {
+                q: `Q5. Rohan is writing a comparison in his essay: "This year's monsoon was far heavier ___ last year's." Which conjunction correctly completes the comparison?`,
+                options: ["a) as…as", "b) than", "c) though", "d) as if"],
+                answer: "b) than",
+                reason: "'Than' used in comparative clause — comparing two unequal things"
+            },
+            {
+                q: `Q6. A student's grammar worksheet showing four sentences with blanks and the conjunction type required in brackets — 1. "She studied hard ___ she could top the exam." (purpose) 2. "___ it was freezing outside, he wore only a t-shirt." (concessive) 3. "Call me ___ you reach home." (time — immediately after) 4. "She is ___ talented ___ her sister." (comparative — equal)\nWhich set of conjunctions correctly fills all four blanks in order?`,
+                options: [
+                    "a) in case / Although / as soon as / as…as",
+                    "b) so that / Even if / when / than",
+                    "c) so that / Although / as soon as / as…as",
+                    "d) in case / Even though / till / than"
+                ],
+                answer: "c) so that / Although / as soon as / as…as",
+                reason: "so that=purpose; Although=concessive; as soon as=time(immediately after); as…as=equal comparison"
+            },
+            {
+                q: `Q7. A classroom error chart showing four sentences — two correct and two wrong: Sentence A: "Neither the captain nor the players were informed." ✓ Sentence B: "She will wait until he will come." ✗ Sentence C: "Though it was difficult, he completed the task." ✓ Sentence D: "He spoke as though he knows everything." ✗\nWhy are Sentences B and D marked wrong?`,
+                options: [
+                    "a) B — 'until' should be 'unless'; D — 'knows' should be 'knew' because 'as though' introduces an unreal/imaginary situation requiring past tense",
+                    "b) B — 'will come' should be 'comes' because time clauses use Simple Present not Future; D — 'knows' should be 'knew'",
+                    "c) B — 'until' should be 'when'; D — 'as though' should be 'as if'",
+                    "d) Both B and D are actually correct — they were wrongly marked"
+                ],
+                answer: "b) B — 'will come' should be 'comes' because time clauses use Simple Present not Future; D — 'knows' should be 'knew'",
+                reason: "Time clauses never use 'will' → 'comes'; 'as though' introduces unreal situation → past tense 'knew'"
+            },
+            {
+                q: `Q8. Which sentence uses a Concessive Conjunction correctly?`,
+                options: [
+                    "a) She passed the exam so that she studied hard.",
+                    "b) She passed the exam even though she had very little time to prepare.",
+                    "c) She passed the exam wherever she studied.",
+                    "d) She passed the exam as soon as she studied."
+                ],
+                answer: "b) She passed the exam even though she had very little time to prepare.",
+                reason: "'Even though' correctly introduces a fact that contrasts with the expected outcome"
+            },
+            {
+                q: `Q9. What is the difference between these two sentences? Sentence A: "Study hard so that you pass the exam." Sentence B: "Study hard in case you fail the exam."`,
+                options: [
+                    "a) Both sentences express the same purpose — no difference",
+                    "b) 'So that' expresses a positive goal or desired result; 'in case' expresses a precaution against a possible negative outcome",
+                    "c) 'So that' is more formal; 'in case' is only used in spoken English",
+                    "d) Both are conditional conjunctions with identical meaning"
+                ],
+                answer: "b) 'So that' expresses a positive goal or desired result; 'in case' expresses a precaution against a possible negative outcome",
+                reason: "'So that' = aim for positive outcome; 'in case' = guard against negative possibility"
+            },
+            {
+                q: `Q10. Sort these conjunctions into two groups — Subordinating Conjunctions of Time and Subordinating Conjunctions of Condition: P: since Q: if R: as soon as S: unless`,
+                options: [
+                    "a) Time: P, Q — Condition: R, S",
+                    "b) Time: Q, S — Condition: P, R",
+                    "c) Time: P, R — Condition: Q, S",
+                    "d) Time: R, S — Condition: P, Q"
+                ],
+                answer: "c) Time: P, R — Condition: Q, S",
+                reason: "since & as soon as = when things happen → Time; if & unless = depends on condition → Condition"
+            },
+            {
+                q: `Q11. Classify the type of conjunction used in each sentence:\n1. "He ran as fast as he could to catch the bus."\n2. "She goes wherever her work takes her."\n3. "Even if it rains, we will play the match."\n4. "He left before the announcement was made."`,
+                options: [
+                    "a) 1=Concessive, 2=Purpose, 3=Comparative, 4=Conditional",
+                    "b) 1=Comparative, 2=Relative, 3=Concessive, 4=Time",
+                    "c) 1=Purpose, 2=Conditional, 3=Time, 4=Comparative",
+                    "d) 1=Relative, 2=Concessive, 3=Time, 4=Purpose"
+                ],
+                answer: "b) 1=Comparative, 2=Relative, 3=Concessive, 4=Time",
+                reason: "as fast as=comparing equal speed→Comparative; wherever=any place→Relative; even if=despite condition→Concessive; before=time sequence→Time"
+            },
+            {
+                q: `Q12. Three of the following sentences use conjunctions correctly. One does NOT. Which is the odd one out?`,
+                options: [
+                    "a) She waited until the last student had left.",
+                    "b) He spoke as though he had seen the incident himself.",
+                    "c) I will call you as soon as I will reach the station.",
+                    "d) Even though she was tired, she finished the entire project."
+                ],
+                answer: "c) I will call you as soon as I will reach the station.",
+                reason: "Time clauses use Simple Present not Future → 'as soon as I reach' not 'will reach'"
+            },
+            {
+                q: `Q13. A student changes "He practised a lot. He wanted to win the competition." into "He practised a lot so that he could win the competition." What is the effect of using 'so that'?`,
+                options: [
+                    "a) The meaning changes — he no longer wants to win",
+                    "b) 'So that' joins the two separate sentences and clearly shows that the practice was done with the specific purpose of winning — making the relationship between the two ideas explicit",
+                    "c) The sentence becomes a conditional statement",
+                    "d) 'So that' makes the sentence a concessive clause"
+                ],
+                answer: "b) 'So that' joins the two separate sentences and clearly shows that the practice was done with the specific purpose of winning — making the relationship between the two ideas explicit",
+                reason: "'So that' explicitly links cause (practice) to purpose (winning) — makes the intention clear"
+            },
+            {
+                q: `Q14. Assertion: In time clauses, we use Simple Present tense after conjunctions like 'when', 'before', 'after', 'as soon as' and 'until' — even when referring to future events.\nReason: These subordinating conjunctions already indicate that the action is future — adding 'will' inside the time clause creates a grammatical error by doubling the future reference.`,
+                options: [
+                    "a) Both are correct; the reason correctly explains the assertion.",
+                    "b) Both are correct; but the reason does NOT explain the assertion.",
+                    "c) The assertion is correct; the reason is wrong.",
+                    "d) Both are wrong — 'will' is always required in time clauses."
+                ],
+                answer: "a) Both are correct; the reason correctly explains the assertion.",
+                reason: "Time conjunctions carry the future meaning — 'will' inside the clause is redundant and grammatically wrong"
+            }
+        ];
+
+        let quizBank = [];
+        let activeQuestionIndex = 0;
+        let scoreTracker = 0;
+        let timerId = null;
+        let countdown = 45; 
+        let runningResponseLogs = [];
+        let trackingVolumeLevel = 0.5;
+        let isProcessingAdvance = false;
+
+        function buildVisualAtmosphere() {
+            try {
+                for (let j = 0; j < 6; j++) {
+                    let streamer = document.createElement("div");
+                    streamer.className = "bg-streamer";
+                    streamer.style.left = (Math.random() * 100) + "vw";
+                    streamer.style.animationDelay = (Math.random() * 5) + "s";
+                    streamer.style.animationDuration = (Math.random() * 4 + 6) + "s";
+                    document.body.appendChild(streamer);
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            buildVisualAtmosphere();
+            handleSliderMovement(trackingVolumeLevel);
+            setTimeout(() => {
+                let splash = document.getElementById("splash");
+                if (splash) {
+                    splash.style.opacity = "0";
+                    setTimeout(() => {
+                        splash.classList.add("hidden");
+                        switchViewport("home");
+                    }, 500);
+                }
+            }, 5000); 
+        });
+
+        function handleLogoFailure(img) {
+            img.style.display = "none";
+            let fallbackIndicator = document.createElement("div");
+            fallbackIndicator.style.textAlign = "center";
+            fallbackIndicator.innerHTML = `
+                <div style="font-size: 50px; margin-bottom: 12px;">🎒</div>
+                <div style="font-weight: 800; color: var(--slate-blue); font-size: 22px;">Innovine Quiz Engine</div>
+                <p style="font-size: 12px; color: #64748b; margin-top: 6px;">Note: Save your asset logo file directly inside:<br><code>assets/innovine-logo.png</code></p>
+            `;
+            img.parentNode.appendChild(fallbackIndicator);
+        }
+
+        function switchViewport(id) {
+            document.querySelectorAll(".container").forEach(view => view.style.display = "none");
+            let targetView = document.getElementById(id);
+            if (targetView) targetView.style.display = "block";
+        }
+
+        function cloneAndShuffleDataset() {
+            let clonedArray = JSON.parse(JSON.stringify(originalDataset));
+            for (let i = clonedArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [clonedArray[i], clonedArray[j]] = [clonedArray[j], clonedArray[i]];
+            }
+            clonedArray.forEach(item => {
+                for (let x = item.options.length - 1; x > 0; x--) {
+                    const y = Math.floor(Math.random() * (x + 1));
+                    [item.options[x], item.options[y]] = [item.options[y], item.options[x]];
+                }
+            });
+            return clonedArray;
+        }
+
+        function initializeQuizEngine() {
+            quizBank = cloneAndShuffleDataset();
+            activeQuestionIndex = 0;
+            scoreTracker = 0;
+            runningResponseLogs = [];
+            isProcessingAdvance = false;
+            document.getElementById("scoreCounter").innerText = scoreTracker;
+            switchViewport("quiz");
+            renderActiveQuestion();
+        }
+
+        function renderActiveQuestion() {
+            if (activeQuestionIndex >= quizBank.length) {
+                displayFinalScoreboard();
+                return;
+            }
+
+            isProcessingAdvance = false;
+            let data = quizBank[activeQuestionIndex];
+            
+            document.getElementById("progressText").innerText = `Question ${activeQuestionIndex + 1} of ${quizBank.length}`;
+            document.getElementById("progressBar").style.width = `${(activeQuestionIndex / quizBank.length) * 100}%`;
+            document.getElementById("questionContainer").innerText = data.q;
+            
+            let feedback = document.getElementById("feedback-banner");
+            feedback.style.display = "none";
+            feedback.innerText = "";
+            
+            let panel = document.getElementById("explanation-panel");
+            panel.style.display = "none";
+            panel.innerText = "";
+            
+            let grid = document.getElementById("optionsGrid");
+            grid.innerHTML = "";
+
+            data.options.forEach(optText => {
+                let btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = optText;
+                btn.onclick = () => parseSelectionResponse(optText, btn);
+                grid.appendChild(btn);
+            });
+
+            startQuestionCountdown();
+        }
+
+        function startQuestionCountdown() {
+            clearInterval(timerId);
+            countdown = 45; 
+            document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
+
+            timerId = setInterval(() => {
+                countdown--;
+                document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
+
+                if (countdown <= 0) {
+                    clearInterval(timerId);
+                    if (!isProcessingAdvance) {
+                        isProcessingAdvance = true;
+                        lockAllOptionNodes();
+                        logHistoricalResponse("Time-out (No Choice Selected)", false);
+                        triggerAutomaticFeedback(false, null);
+                    }
+                }
+            }, 1000);
+        }
+
+        function lockAllOptionNodes() {
+            document.querySelectorAll(".option-btn").forEach(b => b.classList.add("disabled"));
+        }
+
+        function parseSelectionResponse(selectedOption, targetButton) {
+            if (isProcessingAdvance) return;
+            isProcessingAdvance = true;
+            clearInterval(timerId);
+            lockAllOptionNodes();
+
+            let data = quizBank[activeQuestionIndex];
+            let isCorrect = (selectedOption === data.answer);
+
+            logHistoricalResponse(selectedOption, isCorrect);
+
+            if (isCorrect) {
+                targetButton.classList.add("correct-state");
+                scoreTracker++;
+                document.getElementById("scoreCounter").innerText = scoreTracker;
+                playQuizAudio("correctSound");
+                triggerStarConfettiBurst();
+                triggerAutomaticFeedback(true, targetButton);
+            } else {
+                targetButton.classList.add("wrong-state");
+                document.querySelectorAll(".option-btn").forEach(b => {
+                    if (b.innerText === data.answer) b.classList.add("correct-state");
+                });
+                playQuizAudio("wrongSound");
+                triggerAutomaticFeedback(false, targetButton);
+            }
+        }
+
+        function logHistoricalResponse(chosenText, isCorrect) {
+            runningResponseLogs.push({
+                q: quizBank[activeQuestionIndex].q,
+                chosen: chosenText,
+                correct: quizBank[activeQuestionIndex].answer,
+                passed: isCorrect
+            });
+        }
+
+        function triggerAutomaticFeedback(isCorrect, targetButton) {
+            let feedback = document.getElementById("feedback-banner");
+            let panel = document.getElementById("explanation-panel");
+            let data = quizBank[activeQuestionIndex];
+
+            if (isCorrect) {
+                feedback.innerText = "✅ Correct!";
+                feedback.style.color = "var(--success-green)";
+            } else {
+                feedback.innerText = "❌ Incorrect!";
+                feedback.style.color = "var(--danger-red)";
+            }
+            feedback.style.display = "block";
+
+            panel.innerHTML = `<strong>Key Reason:</strong> ${data.reason}`;
+            panel.style.display = "block";
+
+            let duration = isCorrect ? 1500 : 2000;
+            setTimeout(() => {
+                activeQuestionIndex++;
+                renderActiveQuestion();
+            }, duration);
+        }
+
+        function handleSliderMovement(val) {
+            trackingVolumeLevel = parseFloat(val);
+            document.getElementById("volumeSlider").value = trackingVolumeLevel;
+            document.getElementById("correctSound").volume = trackingVolumeLevel;
+            document.getElementById("wrongSound").volume = trackingVolumeLevel;
+            document.getElementById("clappingSound").volume = trackingVolumeLevel;
+        }
+
+        function setVolumeState(profile) {
+            if (profile === 'mute') handleSliderMovement(0);
+            else if (profile === 'med') handleSliderMovement(0.5);
+            else if (profile === 'max') handleSliderMovement(1.0);
+        }
+
+        function playQuizAudio(elementId) {
+            try {
+                let node = document.getElementById(elementId);
+                if (node) {
+                    node.currentTime = 0;
+                    node.play().catch(() => console.log("Audio pipeline muted by standard browser security context rules."));
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        function triggerStarConfettiBurst() {
+            try {
+                for (let k = 0; k < 20; k++) {
+                    let star = document.createElement("div");
+                    star.className = "star-confetti";
+                    star.style.left = (Math.random() * 100) + "vw";
+                    star.style.top = "-20px";
+                    star.style.animationDuration = (Math.random() * 0.7 + 0.9) + "s";
+                    document.body.appendChild(star);
+                    setTimeout(() => star.remove(), 1500);
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        function displayFinalScoreboard() {
+            switchViewport("result");
+            let pct = Math.round((scoreTracker / quizBank.length) * 100);
+
+            document.getElementById("finalScoreDisplay").innerText = `${scoreTracker} / ${quizBank.length}`;
+            document.getElementById("percentageDisplay").innerText = `${pct}%`;
+
+            let feedbackMsg = "";
+            if (pct >= 90) feedbackMsg = "Excellent!";
+            else if (pct >= 70) feedbackMsg = "Great Job!";
+            else if (pct >= 50) feedbackMsg = "Good Effort!";
+            else feedbackMsg = "Keep Practising!";
+
+            document.getElementById("performanceFeedback").innerText = feedbackMsg;
+            playQuizAudio("clappingSound");
+        }
+
+        function generateReviewBreakdown() {
+            switchViewport("review");
+            let container = document.getElementById("reviewBox");
+            container.innerHTML = "";
+
+            runningResponseLogs.forEach((log, index) => {
+                let itemCard = document.createElement("div");
+                itemCard.className = `review-card ${log.passed ? 'correct-log' : 'wrong-log'}`;
+                
+                itemCard.innerHTML = `
+                    <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--slate-blue);">Item Number ${index + 1}</div>
+                    <div style="font-weight: 600; margin-bottom: 12px; font-size: 15px; color:var(--deep-purple);">${log.q}</div>
+                    <div style="font-size: 14px; margin: 4px 0;"><strong>Selected Option:</strong> <span style="color: ${log.passed ? 'var(--success-green)' : 'var(--danger-red)'}">${log.passed ? '🟢' : '🔴'} ${log.chosen}</span></div>
+                    <div style="font-size: 14px; margin: 4px 0;"><strong>Correct Answer:</strong> <span style="color: var(--success-green)">🟢 ${log.correct}</span></div>
+                `;
+                container.appendChild(itemCard);
+            });
+        }
+    </script>
+</body>
+</html>
