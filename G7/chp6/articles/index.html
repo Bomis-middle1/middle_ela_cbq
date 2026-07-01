@@ -1,1 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Grade 7 ELA Quiz - Articles</title>
 
+<style>
+*{box-sizing:border-box;font-family:Arial, sans-serif;}
+body{
+margin:0;
+background:linear-gradient(135deg,#f6d365,#fda085);
+overflow-x:hidden;
+}
+
+.screen{
+display:none;
+height:100vh;
+width:100%;
+padding:20px;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+text-align:center;
+}
+
+.active{display:flex;}
+
+.card{
+background:#fff;
+padding:20px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+width:95%;
+max-width:700px;
+animation:fadeIn 0.5s ease;
+}
+
+button{
+padding:12px 18px;
+margin:8px;
+border:none;
+border-radius:12px;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{transform:scale(1.05);}
+
+.primary{background:#4CAF50;color:white;}
+.option{width:100%;text-align:left;background:#f1f1f1;}
+.option:hover{background:#ddd;}
+
+.correct{background:#4CAF50 !important;color:white;}
+.wrong{background:#e74c3c !important;color:white;}
+
+.progress{
+height:10px;
+background:#ddd;
+border-radius:10px;
+overflow:hidden;
+margin:10px 0;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:#4CAF50;
+transition:width 0.3s;
+}
+
+.top-bar{
+display:flex;
+justify-content:space-between;
+font-size:14px;
+margin-bottom:10px;
+}
+
+.fade{animation:fadeIn 0.4s ease;}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+.logo{
+width:180px;
+animation:zoom 1s ease;
+}
+
+@keyframes zoom{
+from{transform:scale(0.5);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+.volume{
+width:100%;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO SCREEN -->
+<div class="screen active" id="intro">
+    <img src="innovine logo.png" class="logo" />
+</div>
+
+<!-- HOME SCREEN -->
+<div class="screen" id="home">
+    <div class="card">
+        <h1>Chapter 6 — Articles</h1>
+        <h3>Grade 7 ELA</h3>
+        <p>Total Questions: 12</p>
+        <button class="primary" onclick="startQuiz()">Start Quiz</button>
+    </div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div class="screen" id="quiz">
+<div class="card">
+
+<div class="top-bar">
+<div id="qCount">Question 1 of 12</div>
+<div>Score: <span id="score">0</span></div>
+</div>
+
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+<h3 id="question"></h3>
+
+<div id="options"></div>
+
+<input type="range" min="0" max="1" step="0.1" value="1" class="volume" onchange="setVolume(this.value)"/>
+</div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="screen" id="result">
+<div class="card">
+<h1>🎉 Quiz Completed!</h1>
+<h2 id="finalScore"></h2>
+<p id="remark"></p>
+<button class="primary" onclick="startQuiz()">Play Again</button>
+<button onclick="review()">Review Answers</button>
+</div>
+</div>
+
+<!-- REVIEW SCREEN -->
+<div class="screen" id="review">
+<div class="card">
+<h2>Review Answers</h2>
+<div id="reviewBox"></div>
+<button class="primary" onclick="startQuiz()">Restart</button>
+</div>
+</div>
+
+<audio id="correctSound" src="correct.mp3"></audio>
+<audio id="wrongSound" src="wrong.mp3"></audio>
+
+<script>
+// AUDIO
+let correctSound = document.getElementById("correctSound");
+let wrongSound = document.getElementById("wrongSound");
+
+function setVolume(v){
+correctSound.volume = v;
+wrongSound.volume = v;
+}
+
+// QUESTIONS (UNCHANGED TEXT)
+const rawQuestions = [
+{
+q:`Q1. Riya is writing a travel journal: " We crossed ______Alps and visited _____Lake Geneva during our trip to Europe." 
+Which pair of articles correctly fills both blanks?`,
+options:["a) an / —","b) the / —","c) a / the","d) the / a"],
+answer:"b) the / —"
+},
+{
+q:`Q2. Meera's teacher reads out: "She is ___ most hardworking student I have ever taught." Meera says 'a' fits, but her friend says 'the' is correct. Who is right and why?`,
+options:["a) Meera — 'most hardworking' needs an indefinite article","b) Meera's friend — 'the' is used before superlatives because they identify a unique, specific person","c) Neither — no article is needed before superlatives","d) Both are acceptable — 'a' and 'the' work equally here"],
+answer:"b) Meera's friend — 'the' is used before superlatives because they identify a unique, specific person"
+},
+{
+q:`Q3. A student writes: "He is ___ honest man who works as ___ union leader." Which pair of articles correctly fills both blanks based on sound — not spelling?`,
+options:["a) a / a","b) a / an","c) an / a","d) an / an"],
+answer:"c) an / a"
+},
+{
+q:`Q4. Rohan writes: "___ gold is a precious metal. ___ gold in this necklace is from Rajasthan." His teacher says the first blank needs no article but the second needs 'the'. Why?`,
+options:["a) The first 'gold' refers to gold in general — no article needed; the second refers to specific gold in a specific necklace → 'the'","b) Both blanks need 'the' — gold is always specific","c) Both blanks need no article — material nouns never take articles","d) The first needs 'a' and the second needs 'the'"],
+answer:"a) The first 'gold' refers to gold in general — no article needed; the second refers to specific gold in a specific necklace → 'the'"
+},
+{
+q:`Q5. A student's paragraph with four blanks highlighted — "___ Himalayas are the highest mountain range in the world. My uncle climbed ___ Mount Everest last year. He said it was ___ unforgettable experience. ___ experience changed his life completely."
+Which set of articles correctly fills all four blanks in order?`,
+options:["a) A / the / an / The","b) The / — / an / The","c) The / the / a / An","d) A / — / the / A"],
+answer:"b) The / — / an / The"
+},
+{
+q:`Q6. Which sentence correctly uses the Zero Article (no article at all)?`,
+options:["a) The life is full of surprises.","b) She goes to the school by bus every morning.","c) Honesty is the best policy.","d) The gold is found in many parts of India."],
+answer:"c) Honesty is the best policy."
+},
+{
+q:`Q7. In which sentence is 'the' used incorrectly?`,
+options:["a) The Nile is the longest river in Africa.","b) She is the best player in the team.","c) The Mount Fuji is a famous volcano in Japan.","d) The Pacific Ocean is the largest ocean in the world."],
+answer:"c) The Mount Fuji is a famous volcano in Japan."
+},
+{
+q:`Q8. Sort these nouns into two groups — nouns that need 'the' before them and nouns that need NO article (Zero Article) when used in a general sense: P: the Amazon Q: happiness R: the Sahara S: music`,
+options:["a) Needs 'the': P, Q — No article: R, S","b) Needs 'the': Q, S — No article: P, R","c) Needs 'the': P, R — No article: Q, S","d) Needs 'the': R, S — No article: P, Q"],
+answer:"c) Needs 'the': P, R — No article: Q, S"
+},
+{
+q:`Q9. Classify the article rule being applied in each sentence: 1. "He is an MLA from our constituency." 2. "She plays the violin in the school orchestra." 3. "The rich should help the poor." 4. "I have a dog and a cat at home."`,
+options:["a) 1=Sound rule (vowel sound), 2=Musical instruments, 3= Class of people, 4=First mention indefinite","b) 1=Definite article, 2=First mention, 3=Superlative rule, 4=Sound rule","c) 1=Musical instrument, 2=Abstract class, 3=Sound rule, 4=Definite article","d) 1=First mention, 2=Sound rule, 3=Musical instrument, 4=Abstract class"],
+answer:"a) 1=Sound rule (vowel sound), 2=Musical instruments, 3= Class of people, 4=First mention indefinite"
+},
+{
+q:`Q10. Three of the following sentences use articles correctly. One does NOT. Which is the odd one out?`,
+options:["a) The Sun rises in the east every morning.","b) She is learning to play the guitar.","c) He is an university professor with thirty years of experience.","d) The poor deserve equal opportunities in society."],
+answer:"c) He is an university professor with thirty years of experience."
+},
+{
+q:`Q11. A student writes two sentences: Sentence A: "I saw a dog near the park." Sentence B: "The dog was barking loudly." What causes the article to change from 'a' to 'the' between the two sentences?`,
+options:["a) 'Dog' becomes plural in the second sentence","b) The first mention uses 'a' because the dog is new/unknown to the reader; the second uses 'the' because the same dog is now known and specific to both writer and reader","c) 'The' is always used in the second sentence regardless of context","d) 'A' and 'the' can be used interchangeably — the change makes no difference"],
+answer:"b) The first mention uses 'a' because the dog is new/unknown to the reader; the second uses 'the' because the same dog is now known and specific to both writer and reader"
+},
+{
+q:`Q12. Assertion: We say "an hour" but "a university" — even though both words begin with the letter 'u'. Reason: The choice between 'a' and 'an' depends on the sound that follows — 'hour' begins with a silent 'h' giving a vowel sound, while 'university' begins with the consonant sound 'yoo'.`,
+options:["a) Both are correct; the reason correctly explains the assertion.","b) Both are correct; but the reason does NOT explain the assertion.","c) The assertion is correct; the reason is wrong.","d) Both are wrong — the choice between 'a' and 'an' depends on the spelling."],
+answer:"a) Both are correct; the reason correctly explains the assertion."
+}
+];
+
+// GAME STATE
+let questions = [];
+let index = 0;
+let score = 0;
+let userAnswers = [];
+
+function shuffle(array){
+return array.sort(()=>Math.random()-0.5);
+}
+
+function prepare(){
+questions = shuffle(rawQuestions.map(q=>{
+let opts = shuffle([...q.options]);
+return {
+q:q.q,
+options:opts,
+answer:q.answer
+};
+}));
+}
+
+function showScreen(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+setTimeout(()=>{
+showScreen("home");
+},5000);
+
+function startQuiz(){
+index=0;
+score=0;
+userAnswers=[];
+prepare();
+showScreen("quiz");
+loadQ();
+}
+
+function loadQ(){
+let q = questions[index];
+document.getElementById("question").innerText = q.q;
+document.getElementById("qCount").innerText = `Question ${index+1} of ${questions.length}`;
+document.getElementById("score").innerText = score;
+
+let progress = ((index)/questions.length)*100;
+document.getElementById("progressBar").style.width = progress+"%";
+
+let optBox = document.getElementById("options");
+optBox.innerHTML="";
+
+q.options.forEach(opt=>{
+let btn = document.createElement("button");
+btn.className="option fade";
+btn.innerText=opt;
+btn.onclick=()=>select(opt, q);
+optBox.appendChild(btn);
+});
+}
+
+function select(opt, q){
+let buttons = document.querySelectorAll(".option");
+let correct = q.answer;
+
+let chosenBtn;
+buttons.forEach(b=>{
+if(b.innerText===opt) chosenBtn=b;
+});
+
+let correctBtn;
+buttons.forEach(b=>{
+if(b.innerText===correct) correctBtn=b;
+});
+
+if(opt===correct){
+chosenBtn.classList.add("correct");
+correctSound.play();
+score++;
+}
+else{
+chosenBtn.classList.add("wrong");
+correctBtn.classList.add("correct");
+wrongSound.play();
+}
+
+userAnswers.push({
+q:q.q,
+selected:opt,
+correct:correct
+});
+
+setTimeout(()=>{
+index++;
+if(index<questions.length){
+loadQ();
+}else{
+finish();
+}
+}, opt===correct?1500:2000);
+}
+
+function finish(){
+showScreen("result");
+
+let percent = Math.round((score/questions.length)*100);
+document.getElementById("finalScore").innerText = `${score} / ${questions.length} (${percent}%)`;
+
+let msg="";
+if(percent>=90) msg="Excellent!";
+else if(percent>=70) msg="Great Job!";
+else if(percent>=50) msg="Good Effort!";
+else msg="Keep Practising!";
+
+document.getElementById("remark").innerText=msg;
+}
+
+function review(){
+showScreen("review");
+let box=document.getElementById("reviewBox");
+box.innerHTML="";
+
+userAnswers.forEach((u,i)=>{
+let div=document.createElement("div");
+div.style.padding="10px";
+div.style.margin="10px 0";
+div.style.borderRadius="10px";
+div.style.background=u.selected===u.correct?"#d4edda":"#f8d7da";
+
+div.innerHTML=`
+<b>Q${i+1}:</b> ${u.q}<br><br>
+<b>Your Answer:</b> ${u.selected}<br>
+<b>Correct Answer:</b> ${u.correct}
+`;
+box.appendChild(div);
+});
+}
+</script>
+
+</body>
+</html>
