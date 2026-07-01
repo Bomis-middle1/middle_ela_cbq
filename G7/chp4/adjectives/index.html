@@ -3,315 +3,434 @@
 <head>
 <meta charset="UTF-8">
 <title>Adjectives Pro Game - Grade 7</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:#f3f7ff;
-overflow-x:hidden;
+:root {
+    --slate-blue: #2b3a67;
+    --mint-teal: #41b3a3;
+    --amber-gold: #e27d60;
+    --gold-dark: #c36246;
+    --deep-purple: #1d1e2c;
+    --cream-bg: #f5f7fa;
+    --card-white: #ffffff;
+    --success-green: #2ec4b6;
+    --danger-red: #e71d36;
+    --panel-radius: 16px;
+    --elem-radius: 10px;
+    --classic-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--cream-bg);
+    color: var(--deep-purple);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    overflow: hidden;
 }
 
 /* SPLASH */
-#splash{
-position:fixed;
-inset:0;
-background:white;
-display:flex;
-align-items:center;
-justify-content:center;
-z-index:9999;
+#splash {
+    position: fixed;
+    inset: 0;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.4s ease;
 }
 
-#splash img{
-width:180px;
-animation:pop 1.2s ease;
+#splash img {
+    width: 200px;
+    height: auto;
+    object-fit: contain;
+    animation: pop 1.2s ease infinite alternate;
 }
 
-@keyframes pop{
-from{transform:scale(0.5);opacity:0}
-to{transform:scale(1);opacity:1}
+@keyframes pop {
+    from { transform: scale(0.95); opacity: 0.8; }
+    to { transform: scale(1.05); opacity: 1; }
 }
 
-.hidden{display:none}
+.hidden { display: none !important; }
 
-.center{
-display:flex;
-align-items:center;
-justify-content:center;
-height:100vh;
-flex-direction:column;
-text-align:center;
-padding:20px;
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    flex-direction: column;
+    text-align: center;
 }
 
-.card{
-background:white;
-padding:20px;
-border-radius:12px;
-max-width:650px;
-width:92%;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
+.card {
+    background: var(--card-white);
+    padding: clamp(20px, 5vw, 32px);
+    border-radius: var(--panel-radius);
+    max-width: 600px;
+    width: 100%;
+    box-shadow: var(--classic-shadow);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    text-align: left;
 }
 
-button{
-padding:12px 14px;
-margin:6px;
-border:none;
-border-radius:8px;
-background:#1976d2;
-color:white;
-cursor:pointer;
-font-size:15px;
+#start .card, #result .card {
+    text-align: center;
 }
 
-button:hover{transform:scale(1.05)}
-
-.topbar{
-display:flex;
-justify-content:space-between;
-font-weight:bold;
-margin-bottom:10px;
+h2 {
+    color: var(--slate-blue);
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
 }
 
-.option{
-width:100%;
-display:block;
-text-align:left;
-padding:10px;
-margin:8px 0;
-border-radius:8px;
-background:#eee;
-border:none;
-cursor:pointer;
+p {
+    color: #4a5568;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 20px;
 }
 
-.option:disabled{
-opacity:0.6;
-cursor:not-allowed;
+button.btn-action {
+    padding: 14px 32px;
+    border: none;
+    border-radius: var(--elem-radius);
+    background: var(--amber-gold);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+button.btn-action:hover {
+    background: var(--gold-dark);
+    transform: translateY(-2px);
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    margin-bottom: 20px;
+    background: var(--cream-bg);
+    padding: 8px 14px;
+    border-radius: var(--elem-radius);
+    font-size: 14px;
+    color: var(--slate-blue);
+}
+
+#timer {
+    background: rgba(231, 29, 54, 0.1);
+    color: var(--danger-red);
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+#qtext {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--deep-purple);
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option {
+    width: 100%;
+    display: block;
+    text-align: left;
+    padding: 14px 16px;
+    border-radius: var(--elem-radius);
+    background: #ffffff;
+    border: 2px solid #e1e6eb;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--deep-purple);
+    transition: all 0.2s ease;
+}
+
+.option:hover:not(:disabled) {
+    border-color: var(--slate-blue);
+    background: rgba(43, 58, 103, 0.02);
+}
+
+.option:disabled {
+    cursor: not-allowed;
+}
+
+.node-correct {
+    background: #e6f9f7 !important;
+    border-color: var(--success-green) !important;
+    color: var(--success-green) !important;
+    font-weight: 700;
+}
+
+.node-wrong {
+    background: #ffebee !important;
+    border-color: var(--danger-red) !important;
+    color: var(--danger-red) !important;
 }
 
 /* POPUP */
-#popup{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.5);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:999;
+#popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(29, 30, 44, 0.6);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 16px;
 }
 
-#popupBox{
-background:white;
-padding:20px;
-border-radius:10px;
-max-width:500px;
-text-align:center;
+#popupBox {
+    background: white;
+    padding: 24px;
+    border-radius: var(--panel-radius);
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-/* CONFETTI */
-.star{
-position:fixed;
-width:8px;
-height:8px;
-background:gold;
-clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-animation:fall 1s linear forwards;
+#popupText {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    color: #4a5568;
 }
 
-@keyframes fall{
-to{transform:translateY(200px) rotate(360deg);opacity:0}
+/* CELEBRATION STARS */
+.star {
+    position: fixed;
+    width: 14px;
+    height: 14px;
+    background: gold;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    pointer-events: none;
+    z-index: 9999;
+    animation: fall 1.5s linear forwards;
+}
+
+@keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
 <div id="splash">
-<img src="assets/innovine-logo.png">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
 </div>
 
-<!-- START -->
 <div id="start" class="center hidden">
-<div class="card">
-<h2>Chapter 4 — Adjectives</h2>
-<p>Grade 7 | English Grammar</p>
-<button onclick="startGame()">Start Game</button>
-</div>
+    <div class="card">
+        <h2>Chapter 4 — Adjectives</h2>
+        <p>Grade 7 | English Grammar</p>
+        <button class="btn-action" onclick="startGame()">Start Game</button>
+    </div>
 </div>
 
-<!-- GAME -->
 <div id="game" class="center hidden">
-<div class="card">
-
-<div class="topbar">
-<div id="qno"></div>
-<div id="score"></div>
-<div id="timer"></div>
+    <div class="card">
+        <div class="topbar">
+            <div id="qno">Q1/5</div>
+            <div id="score">Score: 0</div>
+            <div id="timer">45</div>
+        </div>
+        <h3 id="qtext"></h3>
+        <div id="options" class="options-grid"></div>
+    </div>
 </div>
 
-<h3 id="qtext"></h3>
-<div id="options"></div>
-
-</div>
-</div>
-
-<!-- POPUP -->
 <div id="popup">
-<div id="popupBox">
-<p id="popupText"></p>
-<button onclick="nextQ()">Continue</button>
-</div>
+    <div id="popupBox">
+        <p id="popupText"></p>
+        <button class="btn-action" onclick="nextQ()">Continue</button>
+    </div>
 </div>
 
-<!-- RESULT -->
 <div id="result" class="center hidden">
-<div class="card">
-<h2>Final Score</h2>
-<p id="final"></p>
-<button onclick="location.reload()">Restart</button>
-</div>
+    <div class="card">
+        <h2>Final Score</h2>
+        <p id="final" style="font-size: 18px; font-weight: 700; color: var(--slate-blue);"></p>
+        <button class="btn-action" onclick="location.reload()">Restart</button>
+    </div>
 </div>
 
 <script>
-
-/* ================= QUESTIONS ================= */
 const questions = [
-{q:"Thai cuisine comes from ___?",o:["Thailand","Thailandish","Thai","Thailandian"],a:2,e:"Thai is proper adjective."},
-{q:"Every vs Each difference?",o:["Same","Group vs Individual focus","Only people","Only objects"],a:1,e:"Each = individual focus."},
-{q:"___ documents must be submitted.",o:["Some","Many","All of","All the"],a:3,e:"All the = complete emphasis."},
-{q:"The ___ truth.",o:["complete","honest","real","actual"],a:0,e:"Complete adds emphasis."},
-{q:"___ pen is this?",o:["Who","Whom","Whose","Which"],a:2,e:"Whose shows ownership."}
+    {q:"Thai cuisine comes from ___?", o:["Thailand","Thailandish","Thai","Thailandian"], a:2, e:"'Thai' is a proper adjective derived from the proper noun Thailand."},
+    {q:"What is the primary difference between 'Every' and 'Each'?", o:["They have the same meaning","Group vs Individual focus","'Every' is only for people","'Each' is only for objects"], a:1, e:"'Each' focuses on individual members of a group one by one, while 'Every' refers to a group as a whole."},
+    {q:"___ documents must be submitted.", o:["Some","Many","All of","All the"], a:3, e:"'All the' is used here to add complete context emphasis to specific documents required."},
+    {q:"The ___ truth.", o:["complete","honest","real","actual"], a:0, e:"'Complete' serves as an emphasizing adjective directly modifying the state of truth."},
+    {q:"___ pen is this?", o:["Who","Whom","Whose","Which"], a:2, e:"'Whose' is an interrogative possessive adjective showing ownership."}
 ];
 
-let i=0;
-let score=0;
-let attempts=0;
+let i = 0;
+let score = 0;
+let attempts = 0;
 let timer;
-let time=45;
+let time = 45;
 
-/* SPLASH FIX */
-setTimeout(()=>{
-document.getElementById("splash").style.display="none";
-document.getElementById("start").classList.remove("hidden");
-},5000);
-
-function startGame(){
-document.getElementById("start").classList.add("hidden");
-document.getElementById("game").classList.remove("hidden");
-loadQ();
-}
-
-/* LOAD QUESTION */
-function loadQ(){
-
-if(i>=questions.length){
-finalScreen();
-return;
-}
-
-attempts=0;
-
-let q=questions[i];
-
-document.getElementById("qno").innerText=`Q${i+1}/${questions.length}`;
-document.getElementById("score").innerText=`Score: ${score}`;
-document.getElementById("qtext").innerText=q.q;
-
-let box=document.getElementById("options");
-box.innerHTML="";
-
-q.o.forEach((opt,idx)=>{
-let b=document.createElement("button");
-b.className="option";
-b.innerText=opt;
-b.onclick=()=>check(idx,b);
-box.appendChild(b);
+/* Fast Fade on Splash */
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        const splashNode = document.getElementById("splash");
+        splashNode.style.opacity = "0";
+        setTimeout(() => {
+            splashNode.classList.add("hidden");
+            document.getElementById("start").classList.remove("hidden");
+        }, 400);
+    }, 2500);
 });
 
-startTimer();
+function startGame() {
+    document.getElementById("start").classList.add("hidden");
+    document.getElementById("game").classList.remove("hidden");
+    loadQ();
 }
 
-/* TIMER */
-function startTimer(){
-clearInterval(timer);
-time=45;
-document.getElementById("timer").innerText=time;
+function loadQ() {
+    if (i >= questions.length) {
+        finalScreen();
+        return;
+    }
 
-timer=setInterval(()=>{
-time--;
-document.getElementById("timer").innerText=time;
+    attempts = 0;
+    let q = questions[i];
 
-if(time<=0){
-clearInterval(timer);
-showPopup(false);
-}
-},1000);
-}
+    document.getElementById("qno").innerText = `Question ${i + 1} / ${questions.length}`;
+    document.getElementById("score").innerText = `Score: ${score}`;
+    document.getElementById("qtext").innerText = q.q;
 
-/* CHECK ANSWER (2 ATTEMPTS) */
-function check(ans,btn){
-let q=questions[i];
+    let box = document.getElementById("options");
+    box.innerHTML = "";
 
-if(ans===q.a){
-score++;
-celebrate();
-showPopup(true);
-return;
-}
+    q.o.forEach((opt, idx) => {
+        let b = document.createElement("button");
+        b.className = "option";
+        b.innerText = opt;
+        b.onclick = () => check(idx, b);
+        box.appendChild(b);
+    });
 
-attempts++;
-
-btn.style.background="#ffcccc";
-
-if(attempts>=2){
-showPopup(false);
-}
+    startTimer();
 }
 
-/* POPUP */
-function showPopup(correct){
-let q=questions[i];
+function startTimer() {
+    clearInterval(timer);
+    time = 45;
+    document.getElementById("timer").innerText = `⏱️ ${time}s`;
 
-document.getElementById("popup").style.display="flex";
-document.getElementById("popupText").innerHTML=
-(correct?"✔ Correct!<br>":"✖ Answer Revealed<br>")+q.e;
+    timer = setInterval(() => {
+        time--;
+        document.getElementById("timer").innerText = `⏱️ ${time}s`;
+
+        if (time <= 0) {
+            clearInterval(timer);
+            freezeOptions();
+            showPopup(false);
+        }
+    }, 1000);
 }
 
-/* NEXT */
-function nextQ(){
-document.getElementById("popup").style.display="none";
-i++;
-loadQ();
+function freezeOptions() {
+    let optionButtons = document.querySelectorAll(".option");
+    optionButtons.forEach(btn => btn.disabled = true);
 }
 
-/* FINAL SCREEN */
-function finalScreen(){
-document.getElementById("game").classList.add("hidden");
-document.getElementById("result").classList.remove("hidden");
+function check(ans, btn) {
+    let q = questions[i];
 
-let percent=Math.round((score/questions.length)*100);
+    if (ans === q.a) {
+        clearInterval(timer);
+        score++;
+        btn.classList.add("node-correct");
+        freezeOptions();
+        celebrate();
+        setTimeout(() => showPopup(true), 600);
+        return;
+    }
 
-document.getElementById("final").innerText=
-`Score: ${score}/${questions.length} | ${percent}%`;
+    attempts++;
+    btn.classList.add("node-wrong");
+    btn.disabled = true;
+
+    if (attempts === 1) {
+        alert("❌ Incorrect! Try your second attempt.");
+    } else if (attempts >= 2) {
+        clearInterval(timer);
+        freezeOptions();
+        
+        // Auto-highlight the right option for the user
+        let optionButtons = document.querySelectorAll(".option");
+        optionButtons[q.a].classList.add("node-correct");
+        
+        setTimeout(() => showPopup(false), 1000);
+    }
 }
 
-/* CONFETTI */
-function celebrate(){
-for(let i=0;i<20;i++){
-let s=document.createElement("div");
-s.className="star";
-s.style.left=Math.random()*100+"%";
-s.style.top="20%";
-document.body.appendChild(s);
-
-setTimeout(()=>s.remove(),1000);
-}
+function showPopup(correct) {
+    let q = questions[i];
+    document.getElementById("popup").style.display = "flex";
+    
+    let heading = correct ? "<strong style='color:var(--success-green); font-size:20px;'>✔ Correct!</strong>" : "<strong style='color:var(--danger-red); font-size:20px;'>✖ Answer Revealed</strong>";
+    document.getElementById("popupText").innerHTML = `${heading}<br><br>${q.e}`;
 }
 
+function nextQ() {
+    document.getElementById("popup").style.display = "none";
+    i++;
+    loadQ();
+}
+
+function finalScreen() {
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("result").classList.remove("hidden");
+    let percent = Math.round((score / questions.length) * 100);
+    document.getElementById("final").innerText = `Final Score: ${score} / ${questions.length} (${percent}%)`;
+}
+
+function celebrate() {
+    for (let k = 0; k < 35; k++) {
+        let s = document.createElement("div");
+        s.className = "star";
+        s.style.left = Math.random() * 100 + "vw";
+        s.style.top = "-20px";
+        s.style.animationDuration = (Math.random() * 1 + 1) + "s";
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 2000);
+    }
+}
 </script>
 
 </body>
