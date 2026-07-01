@@ -1,1 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Innovine Learning - Interactive Adverbs Engine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
+<style>
+:root {
+    --slate-blue: #2b3a67;
+    --mint-teal: #41b3a3;
+    --amber-gold: #e27d60;
+    --gold-dark: #c36246;
+    --deep-purple: #1d1e2c;
+    --cream-bg: #f4f7fc;
+    --card-white: #ffffff;
+    --success-green: #2ec4b6;
+    --danger-red: #e71d36;
+    --panel-radius: 16px;
+    --elem-radius: 10px;
+    --classic-shadow: 0 8px 24px rgba(43, 58, 103, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--cream-bg);
+    color: var(--deep-purple);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Background Ambient Animation Layer */
+.bg-streamer {
+    position: absolute;
+    top: -50px;
+    width: 2px;
+    height: 120px;
+    background: linear-gradient(to bottom, rgba(65, 179, 163, 0.2), transparent);
+    animation: dropStreamer 8s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+@keyframes dropStreamer {
+    0% { transform: translateY(-100px) rotate(15deg); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% { transform: translateY(110vh) rotate(15deg); opacity: 0; }
+}
+
+/* MANDATORY SPLASH LOGO SCREEN (STRICT 5 SECONDS) */
+#splash {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#splash img {
+    width: 220px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 20px;
+    animation: pulseLogo 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulseLogo {
+    from { transform: scale(0.96); opacity: 0.9; }
+    to { transform: scale(1.04); opacity: 1; }
+}
+
+.hidden { display: none !important; }
+
+/* MAIN SHELL */
+.container {
+    width: 100%;
+    max-width: 620px;
+    position: relative;
+    z-index: 10;
+    display: none;
+}
+
+/* UNIVERSAL APP CARDS */
+.card {
+    background: var(--card-white);
+    padding: clamp(24px, 6vw, 36px);
+    border-radius: var(--panel-radius);
+    width: 100%;
+    box-shadow: var(--classic-shadow);
+    border: 1px solid rgba(43, 58, 103, 0.05);
+}
+
+.text-center { text-align: center; }
+
+h2 {
+    color: var(--slate-blue);
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.subtitle {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* HEADERS & TRACKERS */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    background: var(--slate-blue);
+    padding: 12px 16px;
+    border-radius: var(--elem-radius);
+    font-size: 14px;
+    color: white;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 10px rgba(43, 58, 103, 0.15);
+}
+
+#timer {
+    background: rgba(231, 29, 54, 0.2);
+    color: #ff9faf;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(231, 29, 54, 0.2);
+}
+
+#progress {
+    width: 100%;
+    height: 8px;
+    background: rgba(43, 58, 103, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+#bar {
+    height: 100%;
+    width: 0%;
+    background: var(--mint-teal);
+    transition: width 0.4s ease;
+}
+
+/* QUESTION CORE */
+#question {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--deep-purple);
+    margin-bottom: 20px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+/* SELECTION SYSTEM */
+.options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    padding: 14px 18px;
+    border-radius: var(--elem-radius);
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--deep-purple);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.option:hover:not(.disabled) {
+    border-color: var(--slate-blue);
+    background: rgba(43, 58, 103, 0.02);
+    transform: translateY(-1px);
+}
+
+.option.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* STATUS MICRO-LAYERS */
+.option.correct-node {
+    background: #e6f9f7 !important;
+    border-color: var(--success-green) !important;
+    color: var(--success-green) !important;
+    font-weight: 700;
+}
+.option.correct-node::after {
+    content: "✔";
+    font-size: 16px;
+    color: var(--success-green);
+}
+
+.option.wrong-node {
+    background: #ffebee !important;
+    border-color: var(--danger-red) !important;
+    color: var(--danger-red) !important;
+    font-weight: 700;
+}
+.option.wrong-node::after {
+    content: "✖";
+    font-size: 16px;
+    color: var(--danger-red);
+}
+
+/* EXPLANATION LAYER */
+#reason-panel {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: var(--elem-radius);
+    background: #f8fafc;
+    border-left: 4px solid var(--slate-blue);
+    font-size: 14px;
+    line-height: 1.5;
+    color: #4a5568;
+    display: none;
+}
+
+/* BUTTON CONTROLS */
+.btn-action {
+    padding: 14px 32px;
+    border: none;
+    border-radius: var(--elem-radius);
+    background: var(--amber-gold);
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    display: inline-block;
+    box-shadow: 0 4px 12px rgba(226, 125, 96, 0.3);
+    margin-top: 10px;
+}
+
+.btn-action:hover {
+    background: var(--gold-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(195, 98, 70, 0.4);
+}
+
+/* CONFETTI STARS */
+.star-confetti {
+    position: fixed;
+    width: 14px;
+    height: 14px;
+    background: gold;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    pointer-events: none;
+    z-index: 9999;
+    animation: fallEffect 1.5s linear forwards;
+}
+
+@keyframes fallEffect {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<audio id="sound-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+<div id="splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="handleLogoError(this)">
+</div>
+
+<div id="intro-screen" class="container">
+    <div class="card text-center">
+        <h2>Chapter 5 — Adverbs</h2>
+        <div class="subtitle">Grade 7 Grammar Engine</div>
+        <p style="color:#4a5568; font-size:15px; margin-bottom:24px; line-height:1.5;">
+            Master Relative, Comparative, Superlative, Affirmation, and Negation Adverbs.<br>
+            Each question gives you up to <strong>2 attempts</strong>.
+        </p>
+        <button class="btn-action" onclick="transitionToGame()">Start Challenge</button>
+    </div>
+</div>
+
+<div id="game-screen" class="container">
+    <div class="topbar">
+        <div id="qcount">Question 1/12</div>
+        <div id="score">Score: 0</div>
+        <div id="timer">⏱️ 45s</div>
+    </div>
+
+    <div id="progress"><div id="bar"></div></div>
+
+    <div class="card">
+        <div id="question"></div>
+        <div id="options" class="options-grid"></div>
+        <div id="reason-panel"></div>
+        <div style="text-align: right; margin-top: 12px;">
+            <button id="btn-next" class="btn-action hidden" onclick="nextQuestion()">Continue</button>
+        </div>
+    </div>
+</div>
+
+<div id="result-screen" class="container">
+    <div class="card text-center">
+        <h2>Challenge Complete</h2>
+        <div class="subtitle" style="margin-bottom:16px;">Final Performance Metrics</div>
+        <div id="final-score" style="font-size:24px; font-weight:800; color:var(--slate-blue); margin-bottom:8px;"></div>
+        <p id="final-msg" style="font-size:16px; color:#4a5568; margin-bottom:24px; font-weight:500;"></p>
+        <button class="btn-action" onclick="restartGame()">Play Again</button>
+    </div>
+</div>
+
+<script>
+/* ---------------- DATA PRESERVATION ---------------- */
+const questions = [
+    {
+        q: `Q1. Riya is writing a story and wants to show the exact place where something happened. She writes: "This is the village ___ my grandmother was born." Which relative adverb correctly fills the blank?`,
+        options: ["a) when", "b) which", "c) where", "d) that"],
+        correct: 2,
+        reason: `'Where' is a relative adverb introducing a clause of place — modifies the noun 'village'.`
+    },
+    {
+        q: `Q2. Aarav is editing his essay. He has written: "She sings beautiful." His teacher underlines 'beautiful' and says it needs to be converted into an adverb. Which formation rule applies here, and what is the correct form?`,
+        options: [
+            "a) Add -ly directly → beautifuly",
+            "b) Drop the final 'e' and add -ly → beautifuly",
+            "c) Keep the base and add -ly → beautifully",
+            "d) Change nothing — 'beautiful' works as an adverb"
+        ],
+        correct: 3,
+        correct: 2,
+        reason: `'Beautiful' preserves its base form spelling and appends the standard suffix '-ly' yielding 'beautifully'.`
+    },
+    {
+        q: `Q3. A student reads: "How gracefully she dances!" Her teacher asks in this sentence, "How gracefully she dances!", what type of adverb is the word "how"?`,
+        options: [
+            "a) Interrogative adverb — it is asking a question",
+            "b) Relative adverb — it connects two clauses",
+            "c) Exclamatory adverb — it expresses strong feeling or admiration",
+            "d) Adverb of degree — it modifies 'gracefully'"
+        ],
+        correct: 2,
+        reason: `'How' used inside an exclamation denotes expressive structural focus/admiration → Exclamatory Adverb.`
+    },
+    {
+        q: `Q4. Meera is comparing two runners after a race. She writes: "Priya runs fast, but Ananya runs ___ than Priya." Which comparative adverb correctly fills the blank?`,
+        options: ["a) more fast", "b) fastest", "c) faster", "d) most fast"],
+        correct: 2,
+        reason: `'Fast' is a single-syllable adverb utilizing the regular comparative inflection suffix '-faster'.`
+    },
+    {
+        q: `Q5. A coach writes in his report: "Among all the players, Rohan performed ___ in the final tournament." He wants to use the superlative form of 'well'. Which is correct?`,
+        options: ["a) more well", "b) better", "c) most well", "d) best"],
+        correct: 3,
+        reason: `'Well' is structurally irregular: positive = 'well', comparative = 'better', superlative = 'best'.`
+    },
+    {
+        q: `Q6. A student forms adverbs from four adjectives. Which set is entirely correct?`,
+        options: [
+            "a) lazy→lazily, true→truely, full→fully, good→goodly",
+            "b) lazy→lazily, true→truly, full→fully, good→well",
+            "c) lazy→lazyly, true→truly, full→fully, good→goodly",
+            "d) lazy→lazily, true→truly, full→fullyly, good→well"
+        ],
+        correct: 1,
+        reason: `Follows precise rules: lazy changes y→i; true drops final e (truly); full drops duplicate l formatting (-fully); good is irregular (well).`
+    },
+    {
+        q: `Q7. Which sentence uses an Adverb of Affirmation correctly?`,
+        options: [
+            "a) She will not attend the function.",
+            "b) He does not agree with the decision at all.",
+            "c) I will definitely be there for your performance.",
+            "d) They never finished the project on time."
+        ],
+        correct: 2,
+        reason: `'Definitely' asserts complete truth validity regarding the outcome state → Adverb of Affirmation.`
+    },
+    {
+        q: `Q8. Sort these adverbs into two groups — Adverbs of Affirmation and Adverbs of Negation: P: certainly Q: never R: indeed S: hardly`,
+        options: [
+            "a) Affirmation: P, Q — Negation: R, S",
+            "b) Affirmation: Q, R — Negation: P, S",
+            "c) Affirmation: P, R — Negation: Q, S",
+            "d) Affirmation: R, S — Negation: P, Q"
+        ],
+        correct: 2,
+        reason: `P (certainly) and R (indeed) denote programmatic affirmation; Q (never) and S (hardly) represent negation.`
+    },
+    {
+        q: `Q9. Classify the degree of comparison of each underlined adverb: \n1. "She sings beautifully." \n2. "He arrived earlier than expected." \n3. "Among all the students, Riya worked most diligently." \n4. "The dog ran fast across the field."`,
+        options: [
+            "a) 1=Comparative, 2=Superlative, 3=Positive, 4=Comparative",
+            "b) 1=Superlative, 2=Positive, 3=Comparative, 4=Superlative",
+            "c) 1=Positive, 2=Comparative, 3=Superlative, 4=Positive",
+            "d) 1=Positive, 2=Superlative, 3=Comparative, 4=Comparative"
+        ],
+        correct: 2,
+        reason: `Beautifully/Fast describe single actions (Positive); earlier evaluates two units (Comparative); most diligently scores supreme across global arrays (Superlative).`
+    },
+    {
+        q: `Q10. Three of the following adverbs are formed correctly from their adjectives. One is NOT. Which is the odd one out?`,
+        options: ["a) angry → angrily", "b) simple → simply", "c) true → truely", "d) heavy → heavily"],
+        correct: 2,
+        reason: `'true' modifies directly to 'truly' by omitting the final silent vowel container 'e'.`
+    },
+    {
+        q: `Q11. A student changes "She spoke in a quiet manner" to "She spoke quietly." Then changes "He is a good singer" to "He sings well." What do both changes demonstrate?`,
+        options: [
+            "a) Both changes convert nouns into adverbs",
+            "b) The first change shows regular adverb formation by adding -ly; the second shows irregular adverb formation where the adjective 'good' does not simply add -ly but changes to a completely different form 'well'",
+            "c) Both changes show irregular adverb formation",
+            "d) The first change is incorrect — 'quietly' changes the meaning"
+        ],
+        correct: 1,
+        reason: `Highlights basic adverb structural division: Regular morphology transitions (-ly) versus completely dynamic irregular transformations (good → well).`
+    },
+    {
+        q: `Q12. This is the Final Challenge! Evaluated carefully:\nAssertion: We say "He runs faster than me" (Comparative) but "He runs the fastest of all" (Superlative) — and both are correct.\nReason: Comparative adverbs compare two actions or doers; Superlative adverbs identify the highest or lowest degree among three or more.`,
+        options: [
+            "a) Both are correct; the reason correctly explains the assertion.",
+            "b) Both are correct; but the reason does NOT explain the assertion.",
+            "c) The assertion is correct; the reason is wrong.",
+            "d) Both are wrong — adverbs cannot be compared."
+        ],
+        correct: 0,
+        reason: `Both claims are entirely accurate; comparative syntax matches dual objects, while superlative modifiers govern complete grouped aggregates.`
+    }
+];
+
+/* ---------------- GAME CORE MANAGEMENT ---------------- */
+let currentIndex = 0;
+let score = 0;
+let remainingAttempts = 2;
+let timerId = null;
+let countdown = 45; // Grade 7 requirement (45 Seconds)
+
+// Generate Performance Streamers
+function buildVisualAtmosphere() {
+    for (let j = 0; j < 6; j++) {
+        let dynamicStreamer = document.createElement("div");
+        dynamicStreamer.className = "bg-streamer";
+        dynamicStreamer.style.left = (Math.random() * 100) + "vw";
+        dynamicStreamer.style.animationDelay = (Math.random() * 6) + "s";
+        dynamicStreamer.style.animationDuration = (Math.random() * 4 + 6) + "s";
+        document.body.appendChild(dynamicStreamer);
+    }
+}
+
+// Logo Missing Text Validation Handler
+function handleLogoError(imgElement) {
+    imgElement.style.display = "none";
+    let replacementMsg = document.createElement("div");
+    replacementMsg.style.textAlign = "center";
+    replacementMsg.style.padding = "20px";
+    replacementMsg.innerHTML = `<h3 style='color:var(--danger-red); margin-bottom:8px;'>⚠ Missing Logo</h3>
+    <p style='font-size:13px; color:#555;'>Please upload the <strong>Innovine Logo</strong> inside your local folder path:<br>
+    <code style='background:#eee; padding:2px 6px; border-radius:4px;'>assets/innovine-logo.png</code></p>`;
+    imgElement.parentNode.appendChild(replacementMsg);
+}
+
+// Mandatory 5 Second Splash Timer Setup
+window.addEventListener('DOMContentLoaded', () => {
+    buildVisualAtmosphere();
+    setTimeout(() => {
+        const splashScreen = document.getElementById("splash");
+        splashScreen.style.opacity = "0";
+        setTimeout(() => {
+            splashScreen.classList.add("hidden");
+            document.getElementById("intro-screen").style.display = "block";
+        }, 500);
+    }, 5000); // Enforced 5000ms delay
+});
+
+function transitionToGame() {
+    document.getElementById("intro-screen").style.display = "none";
+    document.getElementById("game-screen").style.display = "block";
+    renderQuestion();
+}
+
+function renderQuestion() {
+    if (currentIndex >= questions.length) {
+        showResults();
+        return;
+    }
+
+    remainingAttempts = 2;
+    let targetQuestion = questions[currentIndex];
+
+    document.getElementById("question").innerText = targetQuestion.q;
+    document.getElementById("reason-panel").style.display = "none";
+    document.getElementById("reason-panel").innerHTML = "";
+    document.getElementById("btn-next").classList.add("hidden");
+
+    let itemsGrid = document.getElementById("options");
+    itemsGrid.innerHTML = "";
+
+    targetQuestion.options.forEach((optText, indexKey) => {
+        let optionBtn = document.createElement("button");
+        optionBtn.className = "option";
+        optionBtn.innerText = optText;
+        optionBtn.onclick = () => processSelection(indexKey, optionBtn);
+        itemsGrid.appendChild(optionBtn);
+    });
+
+    document.getElementById("qcount").innerText = `Question ${currentIndex + 1} / ${questions.length}`;
+    document.getElementById("bar").style.width = `${(currentIndex / questions.length) * 100}%`;
+    
+    initTimer();
+}
+
+function initTimer() {
+    clearInterval(timerId);
+    countdown = 45;
+    document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
+
+    timerId = setInterval(() => {
+        countdown--;
+        document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
+
+        if (countdown <= 0) {
+            clearInterval(timerId);
+            lockOptions();
+            revealExplanation(false);
+        }
+    }, 1000);
+}
+
+function lockOptions() {
+    let nodes = document.querySelectorAll(".option");
+    nodes.forEach(item => item.classList.add("disabled"));
+}
+
+function processSelection(selectedKey, selectedElement) {
+    let activeQuestion = questions[currentIndex];
+
+    if (selectedKey === activeQuestion.correct) {
+        // Correct Action Path
+        clearInterval(timerId);
+        selectedElement.classList.add("correct-node");
+        playAudioTrack(true);
+        triggerStars();
+        if (remainingAttempts === 2) score++;
+        document.getElementById("score").innerText = `Score: ${score}`;
+        lockOptions();
+        revealExplanation(true);
+    } else {
+        // Incorrect Action Path
+        remainingAttempts--;
+        selectedElement.classList.add("wrong-node");
+        selectedElement.classList.add("disabled");
+        playAudioTrack(false);
+
+        if (remainingAttempts === 1) {
+            // First Attempt Grace Notice
+            alert("❌ Incorrect! You have one retry remaining on this question.");
+        } else {
+            // Out of attempts
+            clearInterval(timerId);
+            lockOptions();
+            
+            // Highlight actual valid node item choice
+            let optionElements = document.querySelectorAll(".option");
+            optionElements[activeQuestion.correct].classList.add("correct-node");
+            
+            revealExplanation(false);
+        }
+    }
+}
+
+function revealExplanation(isCorrectSubmission) {
+    let currentData = questions[currentIndex];
+    let reasonPanel = document.getElementById("reason-panel");
+    
+    let stateLabel = isCorrectSubmission ? 
+        `<strong style='color:var(--success-green);'>✔ Correct!</strong>` : 
+        `<strong style='color:var(--danger-red);'>✖ Answer Revealed</strong>`;
+
+    reasonPanel.innerHTML = `${stateLabel}<br><br><strong>Explanation:</strong> ${currentData.reason}`;
+    reasonPanel.style.display = "block";
+    document.getElementById("btn-next").classList.remove("hidden");
+}
+
+function nextQuestion() {
+    currentIndex++;
+    renderQuestion();
+}
+
+function playAudioTrack(isSuccessful) {
+    try {
+        const audioNode = document.getElementById(isSuccessful ? "sound-correct" : "sound-wrong");
+        audioNode.currentTime = 0;
+        audioNode.play();
+    } catch (err) {
+        console.log("Audio native element stream blocked by client environment restriction rules.");
+    }
+}
+
+function triggerStars() {
+    for (let indexI = 0; indexI < 30; indexI++) {
+        let activeStar = document.createElement("div");
+        activeStar.className = "star-confetti";
+        activeStar.style.left = (Math.random() * 100) + "vw";
+        activeStar.style.top = "-20px";
+        activeStar.style.animationDuration = (Math.random() * 0.8 + 1) + "s";
+        document.body.appendChild(activeStar);
+        setTimeout(() => activeStar.remove(), 1600);
+    }
+}
+
+function showResults() {
+    document.getElementById("game-screen").style.display = "none";
+    document.getElementById("result-screen").style.display = "block";
+
+    let absolutePercentage = Math.round((score / questions.length) * 100);
+    document.getElementById("final-score").innerText = `Result Score: ${score} / ${questions.length} (${absolutePercentage}%)`;
+
+    let performanceMessage = "";
+    if (absolutePercentage >= 85) performanceMessage = "Outstanding Achievement! Absolute Adverb Master! 🌟";
+    else if (absolutePercentage >= 65) performanceMessage = "Excellent Work! Solid command of syntax rules. 👍";
+    else if (absolutePercentage >= 40) performanceMessage = "Good Effort! Re-review custom rules and try again. 📚";
+    else performanceMessage = "Keep Practicing! Systematic refinement creates excellence. 💪";
+
+    document.getElementById("final-msg").innerText = performanceMessage;
+}
+
+function restartGame() {
+    location.reload();
+}
+</script>
+
+</body>
+</html>
