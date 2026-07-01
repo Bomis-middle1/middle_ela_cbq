@@ -494,7 +494,7 @@ const bank = [
             "d) There are no errors present."
         ],
         answer: "a) must to→must; needn't to→needn't; could speaks→could speak",
-        reason: Modals require raw, uninflected base verbs without infinitive prepositions or third-person singular suffix alterations.
+        reason: "Modals require raw, uninflected base verbs without infinitive prepositions or third-person singular suffix alterations."
     },
     {
         q: `Q14. What functional semantic change occurs when you swap 'will' for 'might' in: "It will rain tonight"?`,
@@ -605,7 +605,7 @@ function loadQuestion() {
 
 function startTimer() {
     clearInterval(timerId);
-    countdown = 45; // Enforced 45 seconds per question for grades 4+
+    countdown = 45; // 45 seconds per question
     document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
 
     timerId = setInterval(() => {
@@ -702,7 +702,7 @@ function playAudio(isCorrect) {
         snd.currentTime = 0;
         snd.play();
     } catch (e) {
-        console.log("Audio native element stream managed safely.");
+        console.log("Audio layer fallback triggered.");
     }
 }
 
@@ -736,7 +736,6 @@ function review() {
     switchView("review");
     let container = document.getElementById("reviewBox");
     if (!container) {
-        // Build review template structure dynamically if missing
         let cardNode = document.querySelector("#review .card");
         cardNode.innerHTML = `<h2>Performance Review</h2><div class="subtitle">Detailed Breakdown</div><div id="reviewBox"></div><button class="btn-action" onclick="startQuiz()">Restart Quiz</button>`;
         container = document.getElementById("reviewBox");
