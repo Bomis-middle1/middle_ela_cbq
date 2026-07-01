@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Grade 7 ELA Quiz - Articles</title>
 
 <style>
+*{box-sizing:border-box;font-family:Arial, sans-serif;}
+
 body{
 margin:0;
-font-family:Arial;
 background:linear-gradient(135deg,#f6d365,#fda085);
 }
 
 .screen{
 display:none;
 height:100vh;
+width:100%;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-text-align:center;
 padding:20px;
+text-align:center;
 }
 
 .active{display:flex;}
@@ -27,20 +29,24 @@ padding:20px;
 .card{
 background:white;
 padding:20px;
-border-radius:20px;
+border-radius:18px;
 width:95%;
 max-width:750px;
 box-shadow:0 10px 25px rgba(0,0,0,0.2);
+animation:fadeIn 0.3s ease;
 }
 
 button{
-padding:12px;
+padding:12px 14px;
 border:none;
 border-radius:10px;
 margin:6px;
 cursor:pointer;
 font-size:16px;
+transition:0.2s;
 }
+
+button:hover{transform:scale(1.03);}
 
 .primary{background:#4CAF50;color:white;}
 
@@ -50,8 +56,6 @@ text-align:left;
 background:#f2f2f2;
 }
 
-.option:hover{background:#ddd;}
-
 .correct{background:#4CAF50 !important;color:white;}
 .wrong{background:#e74c3c !important;color:white;}
 
@@ -60,22 +64,41 @@ height:10px;
 background:#ddd;
 border-radius:10px;
 overflow:hidden;
+margin:10px 0;
 }
 
 .progress-bar{
-height:10px;
+height:100%;
 width:0%;
 background:#4CAF50;
 transition:0.3s;
 }
 
-.logo{width:180px;}
+.logo{
+width:180px;
+animation:zoom 1s ease;
+}
 
-.fade{animation:fadeIn 0.3s;}
+@keyframes zoom{
+from{transform:scale(0.5);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
 
 @keyframes fadeIn{
 from{opacity:0;transform:translateY(10px);}
 to{opacity:1;transform:translateY(0);}
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+font-size:14px;
+margin-bottom:10px;
+}
+
+.volume{
+width:100%;
+margin-top:10px;
 }
 </style>
 </head>
@@ -84,7 +107,7 @@ to{opacity:1;transform:translateY(0);}
 
 <!-- INTRO -->
 <div class="screen active" id="intro">
-<img src="innovine logo.png" class="logo">
+    <img src="assets/innovine-logo.png" class="logo">
 </div>
 
 <!-- HOME -->
@@ -93,7 +116,7 @@ to{opacity:1;transform:translateY(0);}
 <h1>Chapter 6 — Articles</h1>
 <h3>Grade 7 ELA</h3>
 <p>Total Questions: 12</p>
-<button class="primary" onclick="start()">Start Quiz</button>
+<button class="primary" onclick="startQuiz()">Start Quiz</button>
 </div>
 </div>
 
@@ -101,11 +124,20 @@ to{opacity:1;transform:translateY(0);}
 <div class="screen" id="quiz">
 <div class="card">
 
-<div id="top"></div>
+<div class="topbar">
+<div id="qno"></div>
+<div>Score: <span id="score">0</span></div>
+</div>
+
 <div class="progress"><div class="progress-bar" id="bar"></div></div>
 
-<h3 id="q"></h3>
-<div id="opts"></div>
+<h3 id="question"></h3>
+<div id="options"></div>
+
+<!-- volume -->
+<div>
+🔊<input type="range" min="0" max="1" step="0.1" value="1" class="volume" onchange="setVolume(this.value)">🔇
+</div>
 
 </div>
 </div>
@@ -114,10 +146,10 @@ to{opacity:1;transform:translateY(0);}
 <div class="screen" id="result">
 <div class="card">
 <h2>🎉 Quiz Completed!</h2>
-<h3 id="score"></h3>
+<h3 id="final"></h3>
 <p id="msg"></p>
-<button class="primary" onclick="start()">Play Again</button>
-<button onclick="review()">Review</button>
+<button class="primary" onclick="startQuiz()">Play Again</button>
+<button onclick="review()">Review Answers</button>
 </div>
 </div>
 
@@ -125,89 +157,102 @@ to{opacity:1;transform:translateY(0);}
 <div class="screen" id="review">
 <div class="card">
 <h2>Review</h2>
-<div id="rev"></div>
+<div id="reviewBox"></div>
+<button class="primary" onclick="startQuiz()">Restart</button>
 </div>
 </div>
 
-<audio id="correct" src="correct.mp3"></audio>
-<audio id="wrong" src="wrong.mp3"></audio>
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
 
-/* =======================
-STRICT VERBATIM QUESTIONS
-======================= */
+/* =========================
+STRICT VERBATIM QUESTION BANK
+========================= */
 
 const bank = [
 {
 q:`Q1. Riya is writing a travel journal: " We crossed ______Alps and visited _____Lake Geneva during our trip to Europe." 
 Which pair of articles correctly fills both blanks?   `,
-options:[`a) an / —`,`b) the / —`,`c) a / the`,`d) the / a`],
+o:[`a) an / —`,`b) the / —`,`c) a / the`,`d) the / a`],
 a:`b) the / —`
 },
 {
 q:`Q2. Meera's teacher reads out: "She is ___ most hardworking student I have ever taught." Meera says 'a' fits, but her friend says 'the' is correct. Who is right and why? `,
-options:[`a) Meera — 'most hardworking' needs an indefinite article`,`b) Meera's friend — 'the' is used before superlatives because they identify a unique, specific person`,`c) Neither — no article is needed before superlatives`,`d) Both are acceptable — 'a' and 'the' work equally here`],
+o:[`a) Meera — 'most hardworking' needs an indefinite article`,`b) Meera's friend — 'the' is used before superlatives because they identify a unique, specific person`,`c) Neither — no article is needed before superlatives`,`d) Both are acceptable — 'a' and 'the' work equally here`],
 a:`b) Meera's friend — 'the' is used before superlatives because they identify a unique, specific person`
 },
 {
 q:`Q3. A student writes: "He is ___ honest man who works as ___ union leader." Which pair of articles correctly fills both blanks based on sound — not spelling? `,
-options:[`a) a / a`,`b) a / an`,`c) an / a`,`d) an / an`],
+o:[`a) a / a`,`b) a / an`,`c) an / a`,`d) an / an`],
 a:`c) an / a`
 },
 {
 q:`Q4. Rohan writes: "___ gold is a precious metal. ___ gold in this necklace is from Rajasthan." His teacher says the first blank needs no article but the second needs 'the'. Why? `,
-options:[`a) The first 'gold' refers to gold in general — no article needed; the second refers to specific gold in a specific necklace → 'the'`,`b) Both blanks need 'the' — gold is always specific`,`c) Both blanks need no article — material nouns never take articles`,`d) The first needs 'a' and the second needs 'the'`],
+o:[`a) The first 'gold' refers to gold in general — no article needed; the second refers to specific gold in a specific necklace → 'the'`,`b) Both blanks need 'the' — gold is always specific`,`c) Both blanks need no article — material nouns never take articles`,`d) The first needs 'a' and the second needs 'the'`],
 a:`a) The first 'gold' refers to gold in general — no article needed; the second refers to specific gold in a specific necklace → 'the'`
 },
 {
 q:`Q5. A student's paragraph with four blanks highlighted — "___ Himalayas are the highest mountain range in the world. My uncle climbed ___ Mount Everest last year. He said it was ___ unforgettable experience. ___ experience changed his life completely."
 Which set of articles correctly fills all four blanks in order?`,
-options:[`a) A / the / an / The`,`b) The / — / an / The`,`c) The / the / a / An`,`d) A / — / the / A`],
+o:[`a) A / the / an / The`,`b) The / — / an / The`,`c) The / the / a / An`,`d) A / — / the / A`],
 a:`b) The / — / an / The`
 },
 {
 q:`Q6. Which sentence correctly uses the Zero Article (no article at all)? `,
-options:[`a) The life is full of surprises.`,`b) She goes to the school by bus every morning.`,`c) Honesty is the best policy.`,`d) The gold is found in many parts of India.`],
+o:[`a) The life is full of surprises.`,`b) She goes to the school by bus every morning.`,`c) Honesty is the best policy.`,`d) The gold is found in many parts of India.`],
 a:`c) Honesty is the best policy.`
 },
 {
 q:`Q7. In which sentence is 'the' used incorrectly? `,
-options:[`a) The Nile is the longest river in Africa.`,`b) She is the best player in the team.`,`c) The Mount Fuji is a famous volcano in Japan.`,`d) The Pacific Ocean is the largest ocean in the world.`],
+o:[`a) The Nile is the longest river in Africa.`,`b) She is the best player in the team.`,`c) The Mount Fuji is a famous volcano in Japan.`,`d) The Pacific Ocean is the largest ocean in the world.`],
 a:`c) The Mount Fuji is a famous volcano in Japan.`
 },
 {
 q:`Q8. Sort these nouns into two groups — nouns that need 'the' before them and nouns that need NO article (Zero Article) when used in a general sense: P: the Amazon Q: happiness R: the Sahara S: music`,
-options:[`a) Needs 'the': P, Q — No article: R, S`,`b) Needs 'the': Q, S — No article: P, R`,`c) Needs 'the': P, R — No article: Q, S`,`d) Needs 'the': R, S — No article: P, Q`],
+o:[`a) Needs 'the': P, Q — No article: R, S`,`b) Needs 'the': Q, S — No article: P, R`,`c) Needs 'the': P, R — No article: Q, S`,`d) Needs 'the': R, S — No article: P, Q`],
 a:`c) Needs 'the': P, R — No article: Q, S`
 },
 {
 q:`Q9. Classify the article rule being applied in each sentence: 1. "He is an MLA from our constituency." 2. "She plays the violin in the school orchestra." 3. "The rich should help the poor." 4. "I have a dog and a cat at home."`,
-options:[`a) 1=Sound rule (vowel sound), 2=Musical instruments, 3= Class of people, 4=First mention indefinite`,`b) 1=Definite article, 2=First mention, 3=Superlative rule, 4=Sound rule`,`c) 1=Musical instrument, 2=Abstract class, 3=Sound rule, 4=Definite article`,`d) 1=First mention, 2=Sound rule, 3=Musical instrument, 4=Abstract class`],
+o:[`a) 1=Sound rule (vowel sound), 2=Musical instruments, 3= Class of people, 4=First mention indefinite`,`b) 1=Definite article, 2=First mention, 3=Superlative rule, 4=Sound rule`,`c) 1=Musical instrument, 2=Abstract class, 3=Sound rule, 4=Definite article`,`d) 1=First mention, 2=Sound rule, 3=Musical instrument, 4=Abstract class`],
 a:`a) 1=Sound rule (vowel sound), 2=Musical instruments, 3= Class of people, 4=First mention indefinite`
 },
 {
 q:`Q10. Three of the following sentences use articles correctly. One does NOT. Which is the odd one out? `,
-options:[`a) The Sun rises in the east every morning.`,`b) She is learning to play the guitar.`,`c) He is an university professor with thirty years of experience.`,`d) The poor deserve equal opportunities in society.`],
+o:[`a) The Sun rises in the east every morning.`,`b) She is learning to play the guitar.`,`c) He is an university professor with thirty years of experience.`,`d) The poor deserve equal opportunities in society.`],
 a:`c) He is an university professor with thirty years of experience.`
 },
 {
 q:`Q11. A student writes two sentences: Sentence A: "I saw a dog near the park." Sentence B: "The dog was barking loudly." What causes the article to change from 'a' to 'the' between the two sentences?`,
-options:[`a) 'Dog' becomes plural in the second sentence`,`b) The first mention uses 'a' because the dog is new/unknown to the reader; the second uses 'the' because the same dog is now known and specific to both writer and reader`,`c) 'The' is always used in the second sentence regardless of context`,`d) 'A' and 'the' can be used interchangeably — the change makes no difference`],
+o:[`a) 'Dog' becomes plural in the second sentence`,`b) The first mention uses 'a' because the dog is new/unknown to the reader; the second uses 'the' because the same dog is now known and specific to both writer and reader`,`c) 'The' is always used in the second sentence regardless of context`,`d) 'A' and 'the' can be used interchangeably — the change makes no difference`],
 a:`b) The first mention uses 'a' because the dog is new/unknown to the reader; the second uses 'the' because the same dog is now known and specific to both writer and reader`
 },
 {
 q:`Q12. Assertion: We say "an hour" but "a university" — even though both words begin with the letter 'u'. Reason: The choice between 'a' and 'an' depends on the sound that follows — 'hour' begins with a silent 'h' giving a vowel sound, while 'university' begins with the consonant sound 'yoo'.`,
-options:[`a) Both are correct; the reason correctly explains the assertion.`,`b) Both are correct; but the reason does NOT explain the assertion.`,`c) The assertion is correct; the reason is wrong.`,`d) Both are wrong — the choice between 'a' and 'an' depends on the spelling.`],
+o:[`a) Both are correct; the reason correctly explains the assertion.`,`b) Both are correct; but the reason does NOT explain the assertion.`,`c) The assertion is correct; the reason is wrong.`,`d) Both are wrong — the choice between 'a' and 'an' depends on the spelling.`],
 a:`a) Both are correct; the reason correctly explains the assertion.`
 }
 ];
 
 let i=0,score=0,answers=[];
 
-function shuffle(arr){return arr.sort(()=>Math.random()-0.5)}
+/* shuffle */
+function shuffle(a){return a.sort(()=>Math.random()-0.5);}
 
-function start(){
+function setVolume(v){
+document.getElementById("correctSound").volume=v;
+document.getElementById("wrongSound").volume=v;
+}
+
+/* intro fix */
+setTimeout(()=> {
+document.getElementById("intro").classList.remove("active");
+document.getElementById("home").classList.add("active");
+},5000);
+
+function startQuiz(){
 i=0;score=0;answers=[];
 show("quiz");
 load();
@@ -220,63 +265,68 @@ document.getElementById(id).classList.add("active");
 
 function load(){
 let q=bank[i];
-document.getElementById("top").innerHTML=`Q${i+1} of ${bank.length} | Score: ${score}`;
 
-document.getElementById("q").innerText=q.q;
+document.getElementById("qno").innerText=`Question ${i+1} of ${bank.length}`;
+document.getElementById("score").innerText=score;
 
-document.getElementById("bar").style.width=((i)/bank.length*100)+"%";
+document.getElementById("bar").style.width=(i/bank.length)*100+"%";
 
-let opts=shuffle([...q.options]);
+document.getElementById("question").innerText=q.q;
 
-let box=document.getElementById("opts");
+let opts=shuffle([...q.o]);
+let box=document.getElementById("options");
 box.innerHTML="";
 
-opts.forEach(o=>{
+opts.forEach(opt=>{
 let b=document.createElement("button");
-b.className="option fade";
-b.innerText=o;
-b.onclick=()=>check(o,q);
+b.className="option";
+b.innerText=opt;
+b.onclick=()=>check(opt,q);
 box.appendChild(b);
 });
 }
 
 function check(opt,q){
+
 let buttons=document.querySelectorAll(".option");
 
-let correct=q.a;
-
-let chosenBtn,correctBtn;
+let correctBtn,chosenBtn;
 
 buttons.forEach(b=>{
 if(b.innerText===opt)chosenBtn=b;
-if(b.innerText===correct)correctBtn=b;
+if(b.innerText===q.a)correctBtn=b;
 });
 
-if(opt===correct){
+if(opt===q.a){
 chosenBtn.classList.add("correct");
-document.getElementById("correct").play();
+document.getElementById("correctSound").play();
 score++;
 }
 else{
 chosenBtn.classList.add("wrong");
 correctBtn.classList.add("correct");
-document.getElementById("wrong").play();
+document.getElementById("wrongSound").play();
 }
 
-answers.push({q:q.q,opt,opt,correct});
+answers.push({
+q:q.q,
+selected:opt,
+correct:q.a
+});
 
 setTimeout(()=>{
 i++;
 if(i<bank.length)load();
 else finish();
-}, opt===correct?1500:2000);
+}, opt===q.a?1500:2000);
 }
 
 function finish(){
 show("result");
-let p=Math.round(score/bank.length*100);
 
-document.getElementById("score").innerText=`${score}/${bank.length} (${p}%)`;
+let p=Math.round((score/bank.length)*100);
+
+document.getElementById("final").innerText=`${score}/${bank.length} (${p}%)`;
 
 let msg="";
 if(p>=90)msg="Excellent!";
@@ -289,18 +339,23 @@ document.getElementById("msg").innerText=msg;
 
 function review(){
 show("review");
-let r=document.getElementById("rev");
-r.innerHTML="";
+let box=document.getElementById("reviewBox");
+box.innerHTML="";
 
-answers.forEach((x,i)=>{
+answers.forEach((x,idx)=>{
 let d=document.createElement("div");
 d.style.padding="10px";
 d.style.margin="10px 0";
 d.style.borderRadius="10px";
-d.style.background=x.opt===x.correct?"#d4edda":"#f8d7da";
+d.style.background=(x.selected===x.correct)?"#d4edda":"#f8d7da";
 
-d.innerHTML=`<b>Q${i+1}</b><br>${x.q}<br><br><b>Your:</b> ${x.opt}<br><b>Correct:</b> ${x.correct}`;
-r.appendChild(d);
+d.innerHTML=`
+<b>Q${idx+1}</b><br>
+${x.q}<br><br>
+<b>Your Answer:</b> ${x.selected}<br>
+<b>Correct Answer:</b> ${x.correct}
+`;
+box.appendChild(d);
 });
 }
 </script>
