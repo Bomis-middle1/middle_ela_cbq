@@ -80,7 +80,7 @@ body {
     background: var(--card-white);
     padding: clamp(20px, 5vw, 32px);
     border-radius: var(--panel-radius);
-    max-width: 600px;
+    max-width: 650px;
     width: 100%;
     box-shadow: var(--classic-shadow);
     border: 1px solid rgba(0, 0, 0, 0.05);
@@ -93,7 +93,7 @@ body {
 
 h2 {
     color: var(--slate-blue);
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 800;
     margin-bottom: 8px;
 }
@@ -146,11 +146,12 @@ button.btn-action:hover {
 }
 
 #qtext {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 600;
     color: var(--deep-purple);
     margin-bottom: 20px;
-    line-height: 1.4;
+    line-height: 1.5;
+    white-space: pre-line;
 }
 
 .options-grid {
@@ -213,17 +214,18 @@ button.btn-action:hover {
     background: white;
     padding: 24px;
     border-radius: var(--panel-radius);
-    max-width: 450px;
+    max-width: 500px;
     width: 100%;
     text-align: center;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
 #popupText {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.5;
     margin-bottom: 20px;
     color: #4a5568;
+    text-align: left;
 }
 
 /* CELEBRATION STARS */
@@ -254,7 +256,7 @@ button.btn-action:hover {
 <div id="start" class="center hidden">
     <div class="card">
         <h2>Chapter 4 — Adjectives</h2>
-        <p>Grade 7 | English Grammar</p>
+        <p>Quality · Quantity · Number · Demonstrative · Interrogative · Possessive · Proper · Distributive · Emphasising</p>
         <button class="btn-action" onclick="startGame()">Start Game</button>
     </div>
 </div>
@@ -262,9 +264,9 @@ button.btn-action:hover {
 <div id="game" class="center hidden">
     <div class="card">
         <div class="topbar">
-            <div id="qno">Q1/5</div>
+            <div id="qno">Question 1 / 10</div>
             <div id="score">Score: 0</div>
-            <div id="timer">45</div>
+            <div id="timer">⏱️ 45s</div>
         </div>
         <h3 id="qtext"></h3>
         <div id="options" class="options-grid"></div>
@@ -281,18 +283,99 @@ button.btn-action:hover {
 <div id="result" class="center hidden">
     <div class="card">
         <h2>Final Score</h2>
-        <p id="final" style="font-size: 18px; font-weight: 700; color: var(--slate-blue);"></p>
+        <p id="final" style="font-size: 18px; font-weight: 700; color: var(--slate-blue); margin-bottom: 24px;"></p>
         <button class="btn-action" onclick="location.reload()">Restart</button>
     </div>
 </div>
 
 <script>
 const questions = [
-    {q:"Thai cuisine comes from ___?", o:["Thailand","Thailandish","Thai","Thailandian"], a:2, e:"'Thai' is a proper adjective derived from the proper noun Thailand."},
-    {q:"What is the primary difference between 'Every' and 'Each'?", o:["They have the same meaning","Group vs Individual focus","'Every' is only for people","'Each' is only for objects"], a:1, e:"'Each' focuses on individual members of a group one by one, while 'Every' refers to a group as a whole."},
-    {q:"___ documents must be submitted.", o:["Some","Many","All of","All the"], a:3, e:"'All the' is used here to add complete context emphasis to specific documents required."},
-    {q:"The ___ truth.", o:["complete","honest","real","actual"], a:0, e:"'Complete' serves as an emphasizing adjective directly modifying the state of truth."},
-    {q:"___ pen is this?", o:["Who","Whom","Whose","Which"], a:2, e:"'Whose' is an interrogative possessive adjective showing ownership."}
+    {
+        q: "Riya is describing the food of Thailand in her travel blog. She wants to use the correct Proper Adjective. Which word should she use?\n\"The ___ cuisine is known worldwide for its bold flavours.\"", 
+        o: ["Thailand", "Thailandish", "Thai", "Thailandian"], 
+        a: 2, 
+        e: "Proper adjective derived from proper noun 'Thailand' → 'Thai'."
+    },
+    {
+        q: "A teacher reads out two sentences to the class:\nSentence A: \"Every student must submit the assignment by Friday.\"\nSentence B: \"Each student will receive a separate feedback form.\"\nShe asks: both use Distributive Adjectives — but is there a difference in emphasis?", 
+        o: [
+            "No difference — 'every' and 'each' mean exactly the same thing in all contexts", 
+            "'Every' emphasises the group as a whole; 'each' focuses more on individuals one by one", 
+            "'Every' is for people; 'each' is only for objects", 
+            "'Each' is more formal than 'every' — they cannot be used interchangeably"
+        ], 
+        a: 1, 
+        e: "'Every' looks at the whole group collectively; 'each' highlights individuals one by one — a subtle but important distinction."
+    },
+    {
+        q: "Aarav is filling in an online application form. It states:\n\"______ required documents must be submitted along with the application.\"\nWhich phrase best emphasises that every required document must be included?", 
+        o: ["Some", "Many", "All", "All the"], 
+        a: 3, 
+        e: "'All the' emphasises every single item without exception — strongest form for documents."
+    },
+    {
+        q: "Meera's mother says: \"I have told you the ___ truth about what happened.\"\nThe word in the blank adds strong emphasis to the noun 'truth' — it stresses that the whole truth has been told, with nothing left out. Which emphasising adjective fits?", 
+        o: ["complete", "honest", "real", "actual"], 
+        a: 0, 
+        e: "'Complete' adds emphasis/force to 'truth' — stresses totality → Emphasising Adjective."
+    },
+    {
+        q: "A student reads: \"___ pen is this lying on my desk?\"\nHe wants to ask about the ownership of the pen using an adjective that modifies the noun pen. Which word correctly fills the blank?", 
+        o: ["Who", "Whom", "Whose", "Which"], 
+        a: 2, 
+        e: "'Whose' modifies the noun 'pen' to ask about ownership → Interrogative Adjective."
+    },
+    {
+        q: "In which sentence is the adjective used as an Emphasising Adjective — one that adds stress or force to the noun rather than simply describing it?", 
+        o: [
+            "She wore a beautiful red dress to the ceremony.", 
+            "He is a very tall boy for his age.", 
+            "The very idea of cheating in an exam is wrong.", 
+            "They live in a small, quiet neighbourhood."
+        ], 
+        a: 3, 
+        a: 2, 
+        e: "'The very idea' — 'very' adds force/stress to the noun 'idea' → Emphasising Adjective."
+    },
+    {
+        q: "A student writes: \"My both sisters are doctors.\"\nThe teacher marks it wrong. Which is the correct version?", 
+        o: [
+            "Both my sisters are doctors.", 
+            "My both the sisters are doctors.", 
+            "Both of my the sisters are doctors.", 
+            "My sisters both are doctors."
+        ], 
+        a: 0, 
+        e: "'Both' must precede the possessive determiner — 'Both my sisters' is the correct structural word order."
+    },
+    {
+        q: "Sort these adjectives into two groups — Adjectives of Number and Adjectives of Quantity:\nP: several\nQ: enough\nR: numerous\nS: sufficient", 
+        o: [
+            "Number: P, Q — Quantity: R, S", 
+            "Number: Q, S — Quantity: P, R", 
+            "Number: P, R — Quantity: Q, S", 
+            "Number: R, S — Quantity: P, Q"
+        ], 
+        a: 2, 
+        e: "'several' & 'numerous' apply to countable items → Number; 'enough' & 'sufficient' apply to uncountable amounts → Quantity."
+    },
+    {
+        q: "Classify the type of adjective underlined in each sentence:\n1. \"Whose notebook is lying on the floor?\"\n2. \"The utter chaos in the hall surprised everyone.\"\n3. \"Neither team played well in the first half.\"\n4. \"She lost her favourite pen during the exam.\"", 
+        o: [
+            "1=Possessive, 2=Quality, 3=Distributive, 4=Demonstrative", 
+            "1=Interrogative, 2=Emphasising, 3=Distributive, 4=Possessive", 
+            "1=Demonstrative, 2=Possessive, 3=Quality, 4=Interrogative", 
+            "1=Interrogative, 2=Distributive, 3=Possessive, 4=Emphasising"
+        ], 
+        a: 1, 
+        e: "Whose = Interrogative (ownership question); utter = Emphasising (adds force); neither = Distributive (negates each option); her = Possessive (belonging)."
+    },
+    {
+        q: "Three of the following are Emphasising Adjectives. One is NOT. Which is the odd one out?", 
+        o: ["the very mistake", "the utter nonsense", "the complete disaster", "the Italian restaurant"], 
+        a: 3, 
+        e: "'Italian restaurant' — 'Italian' is a Proper Adjective, not an Emphasising Adjective."
+    }
 ];
 
 let i = 0;
@@ -301,7 +384,7 @@ let attempts = 0;
 let timer;
 let time = 45;
 
-/* Fast Fade on Splash */
+/* Fast Fade on Splash Screen */
 window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         const splashNode = document.getElementById("splash");
@@ -403,8 +486,8 @@ function showPopup(correct) {
     let q = questions[i];
     document.getElementById("popup").style.display = "flex";
     
-    let heading = correct ? "<strong style='color:var(--success-green); font-size:20px;'>✔ Correct!</strong>" : "<strong style='color:var(--danger-red); font-size:20px;'>✖ Answer Revealed</strong>";
-    document.getElementById("popupText").innerHTML = `${heading}<br><br>${q.e}`;
+    let heading = correct ? "<strong style='color:var(--success-green); font-size:18px;'>✔ Correct!</strong>" : "<strong style='color:var(--danger-red); font-size:18px;'>✖ Answer Revealed</strong>";
+    document.getElementById("popupText").innerHTML = `${heading}<br><br><strong>Explanation:</strong> ${q.e}`;
 }
 
 function nextQ() {
