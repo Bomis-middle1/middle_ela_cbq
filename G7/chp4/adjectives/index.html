@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Adjectives Game - Grade 7</title>
+<title>Adjectives Pro Game - Grade 7</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:linear-gradient(135deg,#e3f2fd,#ffffff);
+background:#f3f7ff;
 overflow-x:hidden;
 }
 
@@ -34,7 +34,6 @@ from{transform:scale(0.5);opacity:0}
 to{transform:scale(1);opacity:1}
 }
 
-/* SCREENS */
 .hidden{display:none}
 
 .center{
@@ -51,47 +50,49 @@ padding:20px;
 background:white;
 padding:20px;
 border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.15);
-max-width:600px;
-width:90%;
+max-width:650px;
+width:92%;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
 }
 
-/* BUTTON */
 button{
-padding:12px 16px;
-margin-top:10px;
+padding:12px 14px;
+margin:6px;
 border:none;
 border-radius:8px;
 background:#1976d2;
 color:white;
 cursor:pointer;
-font-size:16px;
+font-size:15px;
 }
 
 button:hover{transform:scale(1.05)}
 
-/* TOP BAR */
 .topbar{
 display:flex;
 justify-content:space-between;
-margin-bottom:10px;
 font-weight:bold;
+margin-bottom:10px;
 }
 
-/* OPTIONS */
 .option{
-display:block;
 width:100%;
-margin:8px 0;
-padding:10px;
-background:#f1f1f1;
-border:none;
-border-radius:8px;
-cursor:pointer;
+display:block;
 text-align:left;
+padding:10px;
+margin:8px 0;
+border-radius:8px;
+background:#eee;
+border:none;
+cursor:pointer;
 }
 
-/* FEEDBACK POPUP */
+.option:disabled{
+opacity:0.6;
+cursor:not-allowed;
+}
+
+/* POPUP */
 #popup{
 position:fixed;
 inset:0;
@@ -99,7 +100,7 @@ background:rgba(0,0,0,0.5);
 display:none;
 align-items:center;
 justify-content:center;
-z-index:9999;
+z-index:999;
 }
 
 #popupBox{
@@ -110,20 +111,18 @@ max-width:500px;
 text-align:center;
 }
 
-/* FLOAT */
-.dot{
+/* CONFETTI */
+.star{
 position:fixed;
-width:6px;
-height:6px;
-background:#90caf9;
-border-radius:50%;
-animation:float 10s linear infinite;
-opacity:0.3;
+width:8px;
+height:8px;
+background:gold;
+clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+animation:fall 1s linear forwards;
 }
 
-@keyframes float{
-from{transform:translateY(100vh)}
-to{transform:translateY(-100vh)}
+@keyframes fall{
+to{transform:translateY(200px) rotate(360deg);opacity:0}
 }
 </style>
 </head>
@@ -132,14 +131,14 @@ to{transform:translateY(-100vh)}
 
 <!-- SPLASH -->
 <div id="splash">
-<img src="/mnt/data/1f3d2159-b4ad-46a5-bfa1-39742a592e68.png">
+<img src="assets/innovine-logo.png">
 </div>
 
 <!-- START -->
 <div id="start" class="center hidden">
 <div class="card">
 <h2>Chapter 4 — Adjectives</h2>
-<p>Grade 7 | English</p>
+<p>Grade 7 | English Grammar</p>
 <button onclick="startGame()">Start Game</button>
 </div>
 </div>
@@ -178,31 +177,21 @@ to{transform:translateY(-100vh)}
 </div>
 
 <script>
-/* QUESTIONS */
+
+/* ================= QUESTIONS ================= */
 const questions = [
-{q:"Thai cuisine comes from ___?",o:["Thailand","Thailandish","Thai","Thailandian"],a:2,e:"Thai is correct proper adjective."},
-{q:"Every vs Each difference?",o:["Same","Group vs Individual","Only people","Only objects"],a:1,e:"Each = individuals, Every = group."},
+{q:"Thai cuisine comes from ___?",o:["Thailand","Thailandish","Thai","Thailandian"],a:2,e:"Thai is proper adjective."},
+{q:"Every vs Each difference?",o:["Same","Group vs Individual focus","Only people","Only objects"],a:1,e:"Each = individual focus."},
 {q:"___ documents must be submitted.",o:["Some","Many","All of","All the"],a:3,e:"All the = complete emphasis."},
 {q:"The ___ truth.",o:["complete","honest","real","actual"],a:0,e:"Complete adds emphasis."},
-{q:"___ pen is this?",o:["Who","Whom","Whose","Which"],a:2,e:"Whose shows ownership."},
-{q:"Emphasising adjective?",o:["Beautiful","Very idea","Tall boy","Small house"],a:1,e:"Very adds emphasis."},
-{q:"Correct sentence:",o:["My both sisters","Both my sisters","Both of sisters","My sisters both"],a:1,e:"Correct order is Both my sisters."},
-{q:"Number vs Quantity:",o:["P,Q vs R,S","Q,S vs P,R","P,R vs Q,S","R,S vs P,Q"],a:2,e:"Correct classification."},
-{q:"Classification question:",o:["A","B","C","D"],a:1,e:"Correct mapping."},
-{q:"Odd one out:",o:["very mistake","utter nonsense","complete disaster","Italian restaurant"],a:3,e:"Italian is proper adjective."}
+{q:"___ pen is this?",o:["Who","Whom","Whose","Which"],a:2,e:"Whose shows ownership."}
 ];
 
-let i=0,score=0,timer;
+let i=0;
+let score=0;
+let attempts=0;
+let timer;
 let time=45;
-
-/* FLOAT DOTS */
-for(let k=0;k<20;k++){
-let d=document.createElement("div");
-d.className="dot";
-d.style.left=Math.random()*100+"%";
-d.style.animationDuration=(5+Math.random()*5)+"s";
-document.body.appendChild(d);
-}
 
 /* SPLASH FIX */
 setTimeout(()=>{
@@ -213,36 +202,42 @@ document.getElementById("start").classList.remove("hidden");
 function startGame(){
 document.getElementById("start").classList.add("hidden");
 document.getElementById("game").classList.remove("hidden");
-load();
+loadQ();
 }
 
-function load(){
+/* LOAD QUESTION */
+function loadQ(){
+
 if(i>=questions.length){
-finalChallenge();
+finalScreen();
 return;
 }
 
+attempts=0;
+
 let q=questions[i];
 
-document.getElementById("qno").innerText=`Q ${i+1}/${questions.length}`;
+document.getElementById("qno").innerText=`Q${i+1}/${questions.length}`;
 document.getElementById("score").innerText=`Score: ${score}`;
 document.getElementById("qtext").innerText=q.q;
 
 let box=document.getElementById("options");
 box.innerHTML="";
 
-q.o.forEach((op,idx)=>{
+q.o.forEach((opt,idx)=>{
 let b=document.createElement("button");
 b.className="option";
-b.innerText=op;
-b.onclick=()=>check(idx);
+b.innerText=opt;
+b.onclick=()=>check(idx,b);
 box.appendChild(b);
 });
 
 startTimer();
 }
 
+/* TIMER */
 function startTimer(){
+clearInterval(timer);
 time=45;
 document.getElementById("timer").innerText=time;
 
@@ -252,50 +247,71 @@ document.getElementById("timer").innerText=time;
 
 if(time<=0){
 clearInterval(timer);
-show(false);
+showPopup(false);
 }
 },1000);
 }
 
-function check(ans){
-clearInterval(timer);
+/* CHECK ANSWER (2 ATTEMPTS) */
+function check(ans,btn){
+let q=questions[i];
 
-if(ans===questions[i].a){
+if(ans===q.a){
 score++;
-show(true);
-}else{
-show(false);
+celebrate();
+showPopup(true);
+return;
+}
+
+attempts++;
+
+btn.style.background="#ffcccc";
+
+if(attempts>=2){
+showPopup(false);
 }
 }
 
-function show(correct){
+/* POPUP */
+function showPopup(correct){
 let q=questions[i];
 
 document.getElementById("popup").style.display="flex";
-
 document.getElementById("popupText").innerHTML=
-(correct?"✔ Correct!<br>":"✖ Wrong!<br>") + q.e;
-
-if(correct) score++;
-
+(correct?"✔ Correct!<br>":"✖ Answer Revealed<br>")+q.e;
 }
 
+/* NEXT */
 function nextQ(){
 document.getElementById("popup").style.display="none";
 i++;
-load();
+loadQ();
 }
 
-/* FINAL CHALLENGE */
-function finalChallenge(){
+/* FINAL SCREEN */
+function finalScreen(){
 document.getElementById("game").classList.add("hidden");
 document.getElementById("result").classList.remove("hidden");
 
-let percent=Math.round(score/questions.length*100);
+let percent=Math.round((score/questions.length)*100);
 
 document.getElementById("final").innerText=
-`Score: ${score}/${questions.length}\nPercentage: ${percent}%`;
+`Score: ${score}/${questions.length} | ${percent}%`;
 }
+
+/* CONFETTI */
+function celebrate(){
+for(let i=0;i<20;i++){
+let s=document.createElement("div");
+s.className="star";
+s.style.left=Math.random()*100+"%";
+s.style.top="20%";
+document.body.appendChild(s);
+
+setTimeout(()=>s.remove(),1000);
+}
+}
+
 </script>
 
 </body>
