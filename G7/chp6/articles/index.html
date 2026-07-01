@@ -1,362 +1,733 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Grade 7 ELA Quiz - Articles</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Grade 7 ELA Quiz - Articles Engine</title>
 
 <style>
-*{box-sizing:border-box;font-family:Arial, sans-serif;}
-
-body{
-margin:0;
-background:linear-gradient(135deg,#f6d365,#fda085);
+:root {
+    --slate-blue: #2b3a67;
+    --mint-teal: #41b3a3;
+    --amber-gold: #e27d60;
+    --gold-dark: #c36246;
+    --deep-purple: #1d1e2c;
+    --cream-bg: #f4f7fc;
+    --card-white: #ffffff;
+    --success-green: #2ec4b6;
+    --danger-red: #e71d36;
+    --panel-radius: 16px;
+    --elem-radius: 10px;
+    --classic-shadow: 0 8px 24px rgba(43, 58, 103, 0.08);
 }
 
-.screen{
-display:none;
-height:100vh;
-width:100%;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-padding:20px;
-text-align:center;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.active{display:flex;}
-
-.card{
-background:white;
-padding:20px;
-border-radius:18px;
-width:95%;
-max-width:750px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-animation:fadeIn 0.3s ease;
+body {
+    background-color: var(--cream-bg);
+    color: var(--deep-purple);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    overflow: hidden;
+    position: relative;
 }
 
-button{
-padding:12px 14px;
-border:none;
-border-radius:10px;
-margin:6px;
-cursor:pointer;
-font-size:16px;
-transition:0.2s;
+/* Background Ambient Animation Layer */
+.bg-streamer {
+    position: absolute;
+    top: -50px;
+    width: 2px;
+    height: 120px;
+    background: linear-gradient(to bottom, rgba(65, 179, 163, 0.15), transparent);
+    animation: dropStreamer 8s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+@keyframes dropStreamer {
+    0% { transform: translateY(-100px) rotate(15deg); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% { transform: translateY(110vh) rotate(15deg); opacity: 0; }
 }
 
-button:hover{transform:scale(1.03);}
-
-.primary{background:#4CAF50;color:white;}
-
-.option{
-width:100%;
-text-align:left;
-background:#f2f2f2;
+/* MANDATORY SPLASH LOGO SCREEN (STRICT 5 SECONDS) */
+#splash {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-.correct{background:#4CAF50 !important;color:white;}
-.wrong{background:#e74c3c !important;color:white;}
-
-.progress{
-height:10px;
-background:#ddd;
-border-radius:10px;
-overflow:hidden;
-margin:10px 0;
+#splash img {
+    width: 220px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 20px;
 }
 
-.progress-bar{
-height:100%;
-width:0%;
-background:#4CAF50;
-transition:0.3s;
+.hidden { display: none !important; }
+
+/* MAIN SHELL */
+.container {
+    width: 100%;
+    max-width: 620px;
+    position: relative;
+    z-index: 10;
+    display: none;
 }
 
-.logo{
-width:180px;
-animation:zoom 1s ease;
+/* UNIVERSAL APP CARDS */
+.card {
+    background: var(--card-white);
+    padding: clamp(24px, 6vw, 36px);
+    border-radius: var(--panel-radius);
+    width: 100%;
+    box-shadow: var(--classic-shadow);
+    border: 1px solid rgba(43, 58, 103, 0.05);
 }
 
-@keyframes zoom{
-from{transform:scale(0.5);opacity:0;}
-to{transform:scale(1);opacity:1;}
+.text-center { text-align: center; }
+
+h1, h2 {
+    color: var(--slate-blue);
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    line-height: 1.2;
 }
 
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(10px);}
-to{opacity:1;transform:translateY(0);}
+.subtitle {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.topbar{
-display:flex;
-justify-content:space-between;
-font-size:14px;
-margin-bottom:10px;
+/* HEADERS & TRACKERS */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    background: var(--slate-blue);
+    padding: 12px 16px;
+    border-radius: var(--elem-radius);
+    font-size: 14px;
+    color: white;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 10px rgba(43, 58, 103, 0.15);
 }
 
-.volume{
-width:100%;
-margin-top:10px;
+#timer {
+    background: rgba(231, 29, 54, 0.2);
+    color: #ff9faf;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(231, 29, 54, 0.2);
+}
+
+.progress {
+    width: 100%;
+    height: 8px;
+    background: rgba(43, 58, 103, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--mint-teal);
+    transition: width 0.4s ease;
+}
+
+/* QUESTION CORE */
+#question {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--deep-purple);
+    margin-bottom: 20px;
+    line-height: 1.5;
+    text-align: left;
+}
+
+/* SELECTION SYSTEM */
+.options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    padding: 14px 18px;
+    border-radius: var(--elem-radius);
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--deep-purple);
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.option:hover:not(.disabled) {
+    border-color: var(--slate-blue);
+    background: rgba(43, 58, 103, 0.02);
+}
+
+.option.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* STATUS CHIPS */
+.option.correct {
+    background: #e6f9f7 !important;
+    border-color: var(--success-green) !important;
+    color: var(--success-green) !important;
+    font-weight: 700;
+}
+.option.correct::after {
+    content: "✔";
+    font-size: 16px;
+    color: var(--success-green);
+}
+
+.option.wrong {
+    background: #ffebee !important;
+    border-color: var(--danger-red) !important;
+    color: var(--danger-red) !important;
+    font-weight: 700;
+}
+.option.wrong::after {
+    content: "✖";
+    font-size: 16px;
+    color: var(--danger-red);
+}
+
+/* EXPLANATION AND REVIEW LAYERS */
+#explanation-panel {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: var(--elem-radius);
+    background: #f8fafc;
+    border-left: 4px solid var(--slate-blue);
+    font-size: 14px;
+    line-height: 1.5;
+    color: #4a5568;
+    text-align: left;
+    display: none;
+}
+
+.review-card {
+    padding: 14px;
+    margin: 12px 0;
+    border-radius: var(--elem-radius);
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.5;
+    border: 1px solid #e2e8f0;
+}
+
+/* BUTTONS */
+.btn-action {
+    padding: 12px 28px;
+    border: none;
+    border-radius: var(--elem-radius);
+    background: var(--amber-gold);
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    display: inline-block;
+    margin: 6px;
+}
+
+.btn-action:hover {
+    background: var(--gold-dark);
+}
+
+.btn-secondary {
+    background: #64748b;
+}
+.btn-secondary:hover {
+    background: #475569;
+}
+
+/* CONFETTI STARS */
+.star-confetti {
+    position: fixed;
+    width: 14px;
+    height: 14px;
+    background: gold;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    pointer-events: none;
+    z-index: 9999;
+    animation: fallEffect 1.5s linear forwards;
+}
+
+@keyframes fallEffect {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+}
+
+#reviewBox {
+    max-height: 60vh;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    padding-right: 4px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- INTRO -->
-<div class="screen active" id="intro">
-    <img src="assets/innovine-logo.png" class="logo">
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+
+<div id="splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="handleLogoError(this)">
 </div>
 
-<!-- HOME -->
-<div class="screen" id="home">
-<div class="card">
-<h1>Chapter 6 — Articles</h1>
-<h3>Grade 7 ELA</h3>
-<p>Total Questions: 12</p>
-<button class="primary" onclick="startQuiz()">Start Quiz</button>
-</div>
-</div>
-
-<!-- QUIZ -->
-<div class="screen" id="quiz">
-<div class="card">
-
-<div class="topbar">
-<div id="qno"></div>
-<div>Score: <span id="score">0</span></div>
+<div id="home" class="container">
+    <div class="card text-center">
+        <h1>Chapter 6 — Articles</h1>
+        <div class="subtitle">Grade 7 ELA Grammar</div>
+        <p style="color:#4a5568; font-size:15px; margin-bottom:24px; line-height:1.5;">
+            Challenge your mastery of Definite, Indefinite, and Zero Articles.<br>
+            Each question gives you up to <strong>2 attempts</strong>.
+        </p>
+        <button class="btn-action" onclick="startQuiz()">Start Quiz</button>
+    </div>
 </div>
 
-<div class="progress"><div class="progress-bar" id="bar"></div></div>
+<div id="quiz" class="container">
+    <div class="topbar">
+        <div id="qno">Question 1 of 12</div>
+        <div>Score: <span id="score">0</span></div>
+        <div id="timer">⏱️ 45s</div>
+    </div>
 
-<h3 id="question"></h3>
-<div id="options"></div>
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
 
-<!-- volume -->
-<div>
-🔊<input type="range" min="0" max="1" step="0.1" value="1" class="volume" onchange="setVolume(this.value)">🔇
-</div>
-
-</div>
-</div>
-
-<!-- RESULT -->
-<div class="screen" id="result">
-<div class="card">
-<h2>🎉 Quiz Completed!</h2>
-<h3 id="final"></h3>
-<p id="msg"></p>
-<button class="primary" onclick="startQuiz()">Play Again</button>
-<button onclick="review()">Review Answers</button>
-</div>
+    <div class="card">
+        <h3 id="question"></h3>
+        <div id="options" class="options-grid"></div>
+        <div id="explanation-panel"></div>
+        <div style="text-align: right; margin-top: 14px;">
+            <button id="btn-next" class="btn-action hidden" onclick="nextQuestion()">Continue</button>
+        </div>
+    </div>
 </div>
 
-<!-- REVIEW -->
-<div class="screen" id="review">
-<div class="card">
-<h2>Review</h2>
-<div id="reviewBox"></div>
-<button class="primary" onclick="startQuiz()">Restart</button>
-</div>
+<div id="result" class="container">
+    <div class="card text-center">
+        <h2>🎉 Quiz Completed!</h2>
+        <div class="subtitle" style="margin-bottom:16px;">Final Performance Metrics</div>
+        <div id="final" style="font-size:24px; font-weight:800; color:var(--slate-blue); margin-bottom:8px;"></div>
+        <p id="msg" style="font-size:16px; color:#4a5568; margin-bottom:24px; font-weight:500;"></p>
+        <button class="btn-action" onclick="startQuiz()">Play Again</button>
+        <button class="btn-action btn-secondary" onclick="review()">Review Answers</button>
+    </div>
 </div>
 
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<div id="review" class="container">
+    <div class="card text-center">
+        <h2>Performance Review</h2>
+        <div class="subtitle">Detailed Breakdown</div>
+        <div id="reviewBox"></div>
+        <button class="btn-action" onclick="startQuiz()">Restart Quiz</button>
+    </div>
+</div>
 
 <script>
-
 /* =========================
-STRICT VERBATIM QUESTION BANK
+DATA RECORD SETUP
 ========================= */
-
 const bank = [
-{
-q:`Q1. Riya is writing a travel journal: " We crossed ______Alps and visited _____Lake Geneva during our trip to Europe." 
-Which pair of articles correctly fills both blanks?   `,
-o:[`a) an / —`,`b) the / —`,`c) a / the`,`d) the / a`],
-a:`b) the / —`
-},
-{
-q:`Q2. Meera's teacher reads out: "She is ___ most hardworking student I have ever taught." Meera says 'a' fits, but her friend says 'the' is correct. Who is right and why? `,
-o:[`a) Meera — 'most hardworking' needs an indefinite article`,`b) Meera's friend — 'the' is used before superlatives because they identify a unique, specific person`,`c) Neither — no article is needed before superlatives`,`d) Both are acceptable — 'a' and 'the' work equally here`],
-a:`b) Meera's friend — 'the' is used before superlatives because they identify a unique, specific person`
-},
-{
-q:`Q3. A student writes: "He is ___ honest man who works as ___ union leader." Which pair of articles correctly fills both blanks based on sound — not spelling? `,
-o:[`a) a / a`,`b) a / an`,`c) an / a`,`d) an / an`],
-a:`c) an / a`
-},
-{
-q:`Q4. Rohan writes: "___ gold is a precious metal. ___ gold in this necklace is from Rajasthan." His teacher says the first blank needs no article but the second needs 'the'. Why? `,
-o:[`a) The first 'gold' refers to gold in general — no article needed; the second refers to specific gold in a specific necklace → 'the'`,`b) Both blanks need 'the' — gold is always specific`,`c) Both blanks need no article — material nouns never take articles`,`d) The first needs 'a' and the second needs 'the'`],
-a:`a) The first 'gold' refers to gold in general — no article needed; the second refers to specific gold in a specific necklace → 'the'`
-},
-{
-q:`Q5. A student's paragraph with four blanks highlighted — "___ Himalayas are the highest mountain range in the world. My uncle climbed ___ Mount Everest last year. He said it was ___ unforgettable experience. ___ experience changed his life completely."
-Which set of articles correctly fills all four blanks in order?`,
-o:[`a) A / the / an / The`,`b) The / — / an / The`,`c) The / the / a / An`,`d) A / — / the / A`],
-a:`b) The / — / an / The`
-},
-{
-q:`Q6. Which sentence correctly uses the Zero Article (no article at all)? `,
-o:[`a) The life is full of surprises.`,`b) She goes to the school by bus every morning.`,`c) Honesty is the best policy.`,`d) The gold is found in many parts of India.`],
-a:`c) Honesty is the best policy.`
-},
-{
-q:`Q7. In which sentence is 'the' used incorrectly? `,
-o:[`a) The Nile is the longest river in Africa.`,`b) She is the best player in the team.`,`c) The Mount Fuji is a famous volcano in Japan.`,`d) The Pacific Ocean is the largest ocean in the world.`],
-a:`c) The Mount Fuji is a famous volcano in Japan.`
-},
-{
-q:`Q8. Sort these nouns into two groups — nouns that need 'the' before them and nouns that need NO article (Zero Article) when used in a general sense: P: the Amazon Q: happiness R: the Sahara S: music`,
-o:[`a) Needs 'the': P, Q — No article: R, S`,`b) Needs 'the': Q, S — No article: P, R`,`c) Needs 'the': P, R — No article: Q, S`,`d) Needs 'the': R, S — No article: P, Q`],
-a:`c) Needs 'the': P, R — No article: Q, S`
-},
-{
-q:`Q9. Classify the article rule being applied in each sentence: 1. "He is an MLA from our constituency." 2. "She plays the violin in the school orchestra." 3. "The rich should help the poor." 4. "I have a dog and a cat at home."`,
-o:[`a) 1=Sound rule (vowel sound), 2=Musical instruments, 3= Class of people, 4=First mention indefinite`,`b) 1=Definite article, 2=First mention, 3=Superlative rule, 4=Sound rule`,`c) 1=Musical instrument, 2=Abstract class, 3=Sound rule, 4=Definite article`,`d) 1=First mention, 2=Sound rule, 3=Musical instrument, 4=Abstract class`],
-a:`a) 1=Sound rule (vowel sound), 2=Musical instruments, 3= Class of people, 4=First mention indefinite`
-},
-{
-q:`Q10. Three of the following sentences use articles correctly. One does NOT. Which is the odd one out? `,
-o:[`a) The Sun rises in the east every morning.`,`b) She is learning to play the guitar.`,`c) He is an university professor with thirty years of experience.`,`d) The poor deserve equal opportunities in society.`],
-a:`c) He is an university professor with thirty years of experience.`
-},
-{
-q:`Q11. A student writes two sentences: Sentence A: "I saw a dog near the park." Sentence B: "The dog was barking loudly." What causes the article to change from 'a' to 'the' between the two sentences?`,
-o:[`a) 'Dog' becomes plural in the second sentence`,`b) The first mention uses 'a' because the dog is new/unknown to the reader; the second uses 'the' because the same dog is now known and specific to both writer and reader`,`c) 'The' is always used in the second sentence regardless of context`,`d) 'A' and 'the' can be used interchangeably — the change makes no difference`],
-a:`b) The first mention uses 'a' because the dog is new/unknown to the reader; the second uses 'the' because the same dog is now known and specific to both writer and reader`
-},
-{
-q:`Q12. Assertion: We say "an hour" but "a university" — even though both words begin with the letter 'u'. Reason: The choice between 'a' and 'an' depends on the sound that follows — 'hour' begins with a silent 'h' giving a vowel sound, while 'university' begins with the consonant sound 'yoo'.`,
-o:[`a) Both are correct; the reason correctly explains the assertion.`,`b) Both are correct; but the reason does NOT explain the assertion.`,`c) The assertion is correct; the reason is wrong.`,`d) Both are wrong — the choice between 'a' and 'an' depends on the spelling.`],
-a:`a) Both are correct; the reason correctly explains the assertion.`
-}
+    {
+        q: `Q1. Riya is writing a travel journal: "We crossed ______Alps and visited _____Lake Geneva during our trip to Europe." \nWhich pair of articles correctly fills both blanks?`,
+        o: [`a) an / —`, `b) the / —`, `c) a / the`, `d) the / a`],
+        a: `b) the / —`,
+        reason: `Use 'the' before mountain ranges ('the Alps') but use Zero Article (—) before individual bodies of fresh water named with the word 'Lake' ('Lake Geneva').`
+    },
+    {
+        q: `Q2. Meera's teacher reads out: "She is ___ most hardworking student I have ever taught." Meera says 'a' fits, but her friend says 'the' is correct. Who is right and why?`,
+        o: [
+            `a) Meera — 'most hardworking' needs an indefinite article`,
+            `b) Meera's friend — 'the' is used before superlatives because they identify a unique, specific person`,
+            `c) Neither — no article is needed before superlatives`,
+            `d) Both are acceptable — 'a' and 'the' work equally here`
+        ],
+        a: `b) Meera's friend — 'the' is used before superlatives because they identify a unique, specific person`,
+        reason: `Superlative adjectives require the definite article 'the' because they identify a unique item holding the top relative rank.`
+    },
+    {
+        q: `Q3. A student writes: "He is ___ honest man who works as ___ union leader." Which pair of articles correctly fills both blanks based on sound — not spelling?`,
+        o: [`a) a / a`, `b) a / an`, `c) an / a`, `d) an / an`],
+        a: `c) an / a`,
+        reason: `'Honest' starts with a silent 'h' creating a vowel sound ('an honest'), whereas 'union' starts with a consonant 'yoo' sound ('a union').`
+    },
+    {
+        q: `Q4. Rohan writes: "___ gold is a precious metal. ___ gold in this necklace is from Rajasthan." His teacher says the first blank needs no article but the second needs 'the'. Why?`,
+        o: [
+            `a) The first 'gold' refers to gold in general — no article needed; the second refers to specific gold in a specific necklace → 'the'`,
+            `b) Both blanks need 'the' — gold is always specific`,
+            `c) Both blanks need no article — material nouns never take articles`,
+            `d) The first needs 'a' and the second needs 'the'`
+        ],
+        a: `a) The first 'gold' refers to gold in general — no article needed; the second refers to specific gold in a specific necklace → 'the'`,
+        reason: `Material nouns used generally take the Zero Article, but take 'the' when context modifies them into a specific single item.`
+    },
+    {
+        q: `Q5. A student's paragraph with four blanks highlighted — "___ Himalayas are the highest mountain range in the world. My uncle climbed ___ Mount Everest last year. He said it was ___ unforgettable experience. ___ experience changed his life completely."\nWhich set of articles correctly fills all four blanks in order?`,
+        o: [`a) A / the / an / The`, `b) The / — / an / The`, `c) The / the / a / An`, `d) A / — / the / A`],
+        a: `b) The / — / an / The`,
+        reason: `Mountain ranges take 'the'; single peaks take zero article; singular vowel-starting words take 'an'; subsequent references to the same noun become definite and take 'the'.`
+    },
+    {
+        q: `Q6. Which sentence correctly uses the Zero Article (no article at all)?`,
+        o: [
+            `a) The life is full of surprises.`,
+            `b) She goes to the school by bus every morning.`,
+            `c) Honesty is the best policy.`,
+            `d) The gold is found in many parts of India.`
+        ],
+        a: `c) Honesty is the best policy.`,
+        reason: `Abstract nouns like 'honesty' used in a general sense correctly take the Zero Article.`
+    },
+    {
+        q: `Q7. In which sentence is 'the' used incorrectly?`,
+        o: [
+            `a) The Nile is the longest river in Africa.`,
+            `b) She is the best player in the team.`,
+            `c) The Mount Fuji is a famous volcano in Japan.`,
+            `d) The Pacific Ocean is the largest ocean in the world.`
+        ],
+        a: `c) The Mount Fuji is a famous volcano in Japan.`,
+        reason: `'The' is used incorrectly before individual mountain peaks like 'Mount Fuji'.`
+    },
+    {
+        q: `Q8. Sort these nouns into two groups — nouns that need 'the' before them and nouns that need NO article (Zero Article) when used in a general sense: P: the Amazon Q: happiness R: the Sahara S: music`,
+        o: [
+            `a) Needs 'the': P, Q — No article: R, S`,
+            `b) Needs 'the': Q, S — No article: P, R`,
+            `c) Needs 'the': P, R — No article: Q, S`,
+            `d) Needs 'the': R, S — No article: P, Q`
+        ],
+        a: `c) Needs 'the': P, R — No article: Q, S`,
+        reason: `Geographical features (rivers/deserts) require 'the', while abstract nouns or general concept expressions take the Zero Article.`
+    },
+    {
+        q: `Q9. Classify the article rule being applied in each sentence: 1. "He is an MLA from our constituency." 2. "She plays the violin in the school orchestra." 3. "The rich should help the poor." 4. "I have a dog and a cat at home."`,
+        o: [
+            `a) 1=Sound rule (vowel sound), 2=Musical instruments, 3= Class of people, 4=First mention indefinite`,
+            `b) 1=Definite article, 2=First mention, 3=Superlative rule, 4=Sound rule`,
+            `c) 1=Musical instrument, 2=Abstract class, 3=Sound rule, 4=Definite article`,
+            `d) 1=First mention, 2=Sound rule, 3=Musical instrument, 4=Abstract class`
+        ],
+        a: `a) 1=Sound rule (vowel sound), 2=Musical instruments, 3= Class of people, 4=First mention indefinite`,
+        reason: `Accurately maps core article usage: phonetic sound triggers, musical instrumentation descriptors, grouped social classes, and introductory indefinite nouns.`
+    },
+    {
+        q: `Q10. Three of the following sentences use articles correctly. One does NOT. Which is the odd one out?`,
+        o: [
+            `a) The Sun rises in the east every morning.`,
+            `b) She is learning to play the guitar.`,
+            `c) He is an university professor with thirty years of experience.`,
+            `d) The poor deserve equal opportunities in society.`
+        ],
+        a: `c) He is an university professor with thirty years of experience.`,
+        reason: `'University' begins with a consonant sound ('yoo'), meaning it must be preceded by 'a', not 'an'.`
+    },
+    {
+        q: `Q11. A student writes two sentences: Sentence A: "I saw a dog near the park." Sentence B: "The dog was barking loudly." What causes the article to change from 'a' to 'the' between the two sentences?`,
+        o: [
+            `a) 'Dog' becomes plural in the second sentence`,
+            `b) The first mention uses 'a' because the dog is new/unknown to the reader; the second uses 'the' because the same dog is now known and specific to both writer and reader`,
+            `c) 'The' is always used in the second sentence regardless of context`,
+            `d) 'A' and 'the' can be used interchangeably — the change makes no difference`
+        ],
+        a: `b) The first mention uses 'a' because the dog is new/unknown to the reader; the second uses 'the' because the same dog is now known and specific to both writer and reader`,
+        reason: `Indefinite modifiers mark introductory entities, whereas definite modifiers mark items already shared or known in the conversation.`
+    },
+    {
+        q: `Q12. Assertion: We say "an hour" but "a university" — even though both words begin with the letter 'u'. Reason: The choice between 'a' and 'an' depends on the sound that follows — 'hour' begins with a silent 'h' giving a vowel sound, while 'university' begins with the consonant sound 'yoo'.`,
+        o: [
+            `a) Both are correct; the reason correctly explains the assertion.`,
+            `b) Both are correct; but the reason does NOT explain the assertion.`,
+            `c) The assertion is correct; the reason is wrong.`,
+            `d) Both are wrong — the choice between 'a' and 'an' depends on the spelling.`
+        ],
+        a: `a) Both are correct; the reason correctly explains the assertion.`,
+        reason: `The choice between 'a' and 'an' is entirely determined by phonetics (sounds) rather than orthographic spelling letters.`
+    }
 ];
 
-let i=0,score=0,answers=[];
+let currentIndex = 0;
+let score = 0;
+let remainingAttempts = 2;
+let timerId = null;
+let countdown = 45; 
+let chosenLog = [];
 
-/* shuffle */
-function shuffle(a){return a.sort(()=>Math.random()-0.5);}
-
-function setVolume(v){
-document.getElementById("correctSound").volume=v;
-document.getElementById("wrongSound").volume=v;
+function buildVisualAtmosphere() {
+    for (let j = 0; j < 6; j++) {
+        let streamer = document.createElement("div");
+        streamer.className = "bg-streamer";
+        streamer.style.left = (Math.random() * 100) + "vw";
+        streamer.style.animationDelay = (Math.random() * 5) + "s";
+        streamer.style.animationDuration = (Math.random() * 4 + 6) + "s";
+        document.body.appendChild(streamer);
+    }
 }
 
-/* intro fix */
-setTimeout(()=> {
-document.getElementById("intro").classList.remove("active");
-document.getElementById("home").classList.add("active");
-},5000);
-
-function startQuiz(){
-i=0;score=0;answers=[];
-show("quiz");
-load();
+function handleLogoError(img) {
+    img.style.display = "none";
+    let errorBox = document.createElement("div");
+    errorBox.style.padding = "16px";
+    errorBox.innerHTML = `<h3 style='color:var(--danger-red); margin-bottom:6px;'>⚠ Logo Asset Note</h3>
+    <p style='font-size:13px; color:#555;'>Ensure your asset is saved at:<br><code>assets/innovine-logo.png</code></p>`;
+    img.parentNode.appendChild(errorBox);
 }
 
-function show(id){
-document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-}
-
-function load(){
-let q=bank[i];
-
-document.getElementById("qno").innerText=`Question ${i+1} of ${bank.length}`;
-document.getElementById("score").innerText=score;
-
-document.getElementById("bar").style.width=(i/bank.length)*100+"%";
-
-document.getElementById("question").innerText=q.q;
-
-let opts=shuffle([...q.o]);
-let box=document.getElementById("options");
-box.innerHTML="";
-
-opts.forEach(opt=>{
-let b=document.createElement("button");
-b.className="option";
-b.innerText=opt;
-b.onclick=()=>check(opt,q);
-box.appendChild(b);
-});
-}
-
-function check(opt,q){
-
-let buttons=document.querySelectorAll(".option");
-
-let correctBtn,chosenBtn;
-
-buttons.forEach(b=>{
-if(b.innerText===opt)chosenBtn=b;
-if(b.innerText===q.a)correctBtn=b;
+window.addEventListener('DOMContentLoaded', () => {
+    buildVisualAtmosphere();
+    setTimeout(() => {
+        document.getElementById("splash").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("splash").classList.add("hidden");
+            switchView("home");
+        }, 500);
+    }, 5000); // 5-second splash screen requirement
 });
 
-if(opt===q.a){
-chosenBtn.classList.add("correct");
-document.getElementById("correctSound").play();
-score++;
-}
-else{
-chosenBtn.classList.add("wrong");
-correctBtn.classList.add("correct");
-document.getElementById("wrongSound").play();
+function switchView(id) {
+    document.querySelectorAll(".container").forEach(s => s.style.display = "none");
+    document.getElementById(id).style.display = "block";
 }
 
-answers.push({
-q:q.q,
-selected:opt,
-correct:q.a
-});
-
-setTimeout(()=>{
-i++;
-if(i<bank.length)load();
-else finish();
-}, opt===q.a?1500:2000);
+function startQuiz() {
+    currentIndex = 0;
+    score = 0;
+    chosenLog = [];
+    switchView("quiz");
+    loadQuestion();
 }
 
-function finish(){
-show("result");
+function loadQuestion() {
+    if (currentIndex >= bank.length) {
+        showFinalResults();
+        return;
+    }
 
-let p=Math.round((score/bank.length)*100);
+    remainingAttempts = 2;
+    let currentData = bank[currentIndex];
 
-document.getElementById("final").innerText=`${score}/${bank.length} (${p}%)`;
+    document.getElementById("question").innerText = currentData.q;
+    document.getElementById("explanation-panel").style.display = "none";
+    document.getElementById("explanation-panel").innerHTML = "";
+    document.getElementById("btn-next").classList.add("hidden");
 
-let msg="";
-if(p>=90)msg="Excellent!";
-else if(p>=70)msg="Great Job!";
-else if(p>=50)msg="Good Effort!";
-else msg="Keep Practising!";
+    let grid = document.getElementById("options");
+    grid.innerHTML = "";
 
-document.getElementById("msg").innerText=msg;
+    currentData.o.forEach(optionText => {
+        let btn = document.createElement("button");
+        btn.className = "option";
+        btn.innerText = optionText;
+        btn.onclick = () => handleSelection(optionText, btn);
+        grid.appendChild(btn);
+    });
+
+    document.getElementById("qno").innerText = `Question ${currentIndex + 1} of ${bank.length}`;
+    document.getElementById("score").innerText = score;
+    document.getElementById("bar").style.width = `${(currentIndex / bank.length) * 100}%`;
+
+    startTimer();
 }
 
-function review(){
-show("review");
-let box=document.getElementById("reviewBox");
-box.innerHTML="";
+function startTimer() {
+    clearInterval(timerId);
+    countdown = 45; // Enforced 45 seconds per question for grades 4+
+    document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
 
-answers.forEach((x,idx)=>{
-let d=document.createElement("div");
-d.style.padding="10px";
-d.style.margin="10px 0";
-d.style.borderRadius="10px";
-d.style.background=(x.selected===x.correct)?"#d4edda":"#f8d7da";
+    timerId = setInterval(() => {
+        countdown--;
+        document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
 
-d.innerHTML=`
-<b>Q${idx+1}</b><br>
-${x.q}<br><br>
-<b>Your Answer:</b> ${x.selected}<br>
-<b>Correct Answer:</b> ${x.correct}
-`;
-box.appendChild(d);
-});
+        if (countdown <= 0) {
+            clearInterval(timerId);
+            lockAllOptions();
+            revealExplanation(false);
+        }
+    }, 1000);
+}
+
+function lockAllOptions() {
+    document.querySelectorAll(".option").forEach(b => b.classList.add("disabled"));
+}
+
+function handleSelection(selectedText, element) {
+    let currentQuestion = bank[currentIndex];
+
+    if (selectedText === currentQuestion.a) {
+        // Correct Action Path
+        clearInterval(timerId);
+        element.classList.add("correct");
+        playAudio(true);
+        triggerStars();
+        
+        if (remainingAttempts === 2) {
+            score++;
+        }
+        document.getElementById("score").innerText = score;
+        
+        logResult(selectedText, true);
+        lockAllOptions();
+        revealExplanation(true);
+    } else {
+        // Incorrect Action Path
+        remainingAttempts--;
+        element.classList.add("wrong");
+        element.classList.add("disabled");
+        playAudio(false);
+
+        if (remainingAttempts === 1) {
+            alert("❌ Incorrect choice! You have one retry remaining for this question.");
+        } else {
+            // Out of attempts
+            clearInterval(timerId);
+            lockAllOptions();
+            
+            // Highlight the correct option
+            document.querySelectorAll(".option").forEach(b => {
+                if (b.innerText === currentQuestion.a) b.classList.add("correct");
+            });
+
+            logResult(selectedText, false);
+            revealExplanation(false);
+        }
+    }
+}
+
+function logResult(chosenText, isCorrect) {
+    // Prevent duplicate entries from multiple attempts
+    if (chosenLog.length <= currentIndex) {
+        chosenLog.push({
+            q: bank[currentIndex].q,
+            selected: chosenText,
+            correct: bank[currentIndex].a,
+            status: isCorrect
+        });
+    }
+}
+
+function revealExplanation(isCorrect) {
+    let currentQuestion = bank[currentIndex];
+    let panel = document.getElementById("explanation-panel");
+    
+    // Fallback log entry if the timer runs out without a selection
+    if (chosenLog.length <= currentIndex) {
+        logResult("No answer chosen (Time-out)", false);
+    }
+
+    let banner = isCorrect ? 
+        `<strong style='color:var(--success-green);'>✔ Correct!</strong>` : 
+        `<strong style='color:var(--danger-red);'>✖ Answer Revealed</strong>`;
+
+    panel.innerHTML = `${banner}<br><br><strong>Explanation:</strong> ${currentQuestion.reason}`;
+    panel.style.display = "block";
+    document.getElementById("btn-next").classList.remove("hidden");
+}
+
+function nextQuestion() {
+    currentIndex++;
+    loadQuestion();
+}
+
+function playAudio(isCorrect) {
+    try {
+        let snd = document.getElementById(isCorrect ? "correctSound" : "wrongSound");
+        snd.currentTime = 0;
+        snd.play();
+    } catch (e) {
+        console.log("Audio playback managed safely.");
+    }
+}
+
+function triggerStars() {
+    for (let k = 0; k < 20; k++) {
+        let star = document.createElement("div");
+        star.className = "star-confetti";
+        star.style.left = (Math.random() * 100) + "vw";
+        star.style.top = "-20px";
+        star.style.animationDuration = (Math.random() * 0.8 + 1) + "s";
+        document.body.appendChild(star);
+        setTimeout(() => star.remove(), 1500);
+    }
+}
+
+function showFinalResults() {
+    switchView("result");
+    let percentage = Math.round((score / bank.length) * 100);
+    document.getElementById("final").innerText = `${score} / ${bank.length} (${percentage}%)`;
+
+    let feedback = "";
+    if (percentage >= 90) feedback = "Excellent! You are an Articles Master! 🌟";
+    else if (percentage >= 70) feedback = "Great Job! Terrific command of grammar rules. 👍";
+    else if (percentage >= 50) feedback = "Good Effort! Keep practicing to sharpen your skills. 📚";
+    else feedback = "Keep Practicing! Review the explanations to build your skills. 💪";
+
+    document.getElementById("msg").innerText = feedback;
+}
+
+function review() {
+    switchView("review");
+    let container = document.getElementById("reviewBox");
+    container.innerHTML = "";
+
+    chosenLog.forEach((item, index) => {
+        let div = document.createElement("div");
+        div.className = "review-card";
+        div.style.background = item.status ? "#e6f9f7" : "#ffebee";
+        div.style.borderColor = item.status ? "var(--success-green)" : "var(--danger-red)";
+
+        div.innerHTML = `
+            <strong>Question ${index + 1}</strong><br>
+            <p style='margin: 4px 0 8px 0;'>${item.q}</p>
+            <strong>Your Selection:</strong> <span style='color:${item.status ? "var(--success-green)":"var(--danger-red)"}'>${item.selected}</span><br>
+            <strong>Correct Answer:</strong> <span style='color:var(--success-green)'>${item.correct}</span>
+        `;
+        container.appendChild(div);
+    });
 }
 </script>
 
