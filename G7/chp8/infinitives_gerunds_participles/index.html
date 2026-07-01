@@ -340,7 +340,7 @@
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
     <div id="splash">
-        <img src="assets/innovine logo.png" alt="Innovine Logo" onerror="handleLogoFallback(this)">
+        <img id="logoNode" src="assets/innovine logo.png" alt="Innovine Logo" onerror="handleLogoFailure(this)">
     </div>
 
     <div id="home" class="container">
@@ -553,7 +553,7 @@
         let runningResponseLogs = [];
         let trackingVolumeLevel = 0.5;
 
-        // VISUAL LAYER INITIALIZATION
+        // VISUAL ATMOSPHERE ENGINE
         function buildVisualAtmosphere() {
             try {
                 for (let j = 0; j < 6; j++) {
@@ -579,18 +579,25 @@
                         switchViewport("home");
                     }, 500);
                 }
-            }, 5000); // 5 seconds mandatory wait layer
+            }, 5000); 
         });
 
-        function handleLogoFallback(img) {
-            img.style.display = "none";
-            let fallbackIndicator = document.createElement("div");
-            fallbackIndicator.style.textAlign = "center";
-            fallbackIndicator.innerHTML = `
-                <div style="font-size: 40px; margin-bottom: 10px;">🎒</div>
-                <div style="font-weight: 800; color: var(--slate-blue); font-size: 20px;">Innovine Quiz Game</div>
-            `;
-            img.parentNode.appendChild(fallbackIndicator);
+        // HYBRID LOGO FALLBACK ENGINE
+        function handleLogoFailure(img) {
+            if (img.getAttribute('src') === 'assets/innovine logo.png') {
+                // Secondary validation path check
+                img.setAttribute('src', 'assets/innovine-logo.png');
+            } else {
+                img.style.display = "none";
+                let fallbackIndicator = document.createElement("div");
+                fallbackIndicator.style.textAlign = "center";
+                fallbackIndicator.innerHTML = `
+                    <div style="font-size: 50px; margin-bottom: 12px;">🎒</div>
+                    <div style="font-weight: 800; color: var(--slate-blue); font-size: 22px;">Innovine Quiz Engine</div>
+                    <p style="font-size: 12px; color: #64748b; margin-top: 6px;">Note: Save your asset logo file directly inside:<br><code>assets/innovine logo.png</code></p>
+                `;
+                img.parentNode.appendChild(fallbackIndicator);
+            }
         }
 
         function switchViewport(id) {
@@ -599,7 +606,6 @@
             if (targetView) targetView.style.display = "block";
         }
 
-        // BALANCED SELECTION GENERATION
         function cloneAndShuffleDataset() {
             let clonedArray = JSON.parse(JSON.stringify(originalDataset));
             for (let i = clonedArray.length - 1; i > 0; i--) {
@@ -656,7 +662,7 @@
 
         function startQuestionCountdown() {
             clearInterval(timerId);
-            countdown = 45; // Grade 4 and above configuration requirement
+            countdown = 45; 
             document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
 
             timerId = setInterval(() => {
@@ -745,7 +751,6 @@
             renderActiveQuestion();
         }
 
-        // AUDIO SYSTEM MANAGEMENT ROUTINES
         function handleSliderMovement(val) {
             trackingVolumeLevel = parseFloat(val);
             document.getElementById("volumeSlider").value = trackingVolumeLevel;
@@ -764,12 +769,11 @@
                 let node = document.getElementById(isCorrect ? "correctSound" : "wrongSound");
                 if (node) {
                     node.currentTime = 0;
-                    node.play().catch(() => console.log("Audio block bypass handled safely."));
+                    node.play().catch(() => console.log("Audio pipeline active."));
                 }
             } catch(e) { console.log(e); }
         }
 
-        // ANIMATION STAR PARTICLES GENERATOR
         function triggerStarConfettiBurst() {
             try {
                 for (let k = 0; k < 20; k++) {
