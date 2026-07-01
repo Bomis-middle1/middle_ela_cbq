@@ -2,366 +2,762 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Grade 7 ELA Quiz - Modals</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Grade 7 ELA Quiz - Modals Engine</title>
 
 <style>
-*{box-sizing:border-box;font-family:Arial;margin:0;padding:0}
-body{background:linear-gradient(135deg,#e3f2ff,#fff3e6);min-height:100vh;overflow-x:hidden}
-
-.screen{display:none;padding:18px}
-.active{display:block}
-
-.logo-screen{
-display:flex;align-items:center;justify-content:center;height:100vh;background:white;
+:root {
+    --slate-blue: #2b3a67;
+    --mint-teal: #41b3a3;
+    --amber-gold: #e27d60;
+    --gold-dark: #c36246;
+    --deep-purple: #1d1e2c;
+    --cream-bg: #f4f7fc;
+    --card-white: #ffffff;
+    --success-green: #2ec4b6;
+    --danger-red: #e71d36;
+    --panel-radius: 16px;
+    --elem-radius: 10px;
+    --classic-shadow: 0 8px 24px rgba(43, 58, 103, 0.08);
 }
 
-.logo-screen img{width:180px}
-
-.card{
-background:white;border-radius:18px;padding:18px;margin:12px 0;
-box-shadow:0 6px 18px rgba(0,0,0,0.1);
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
-button{
-padding:12px 16px;border:none;border-radius:12px;
-background:linear-gradient(135deg,#4facfe,#00f2fe);
-color:white;font-size:15px;cursor:pointer;margin:6px;
+body {
+    background-color: var(--cream-bg);
+    color: var(--deep-purple);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    overflow: hidden;
+    position: relative;
 }
 
-button:hover{transform:scale(1.03)}
-
-.option{
-display:block;width:100%;text-align:left;
-background:#f4f8ff;margin:10px 0;padding:14px;border-radius:12px;
-cursor:pointer;
+/* Background Ambient Animation Layer */
+.bg-streamer {
+    position: absolute;
+    top: -50px;
+    width: 2px;
+    height: 120px;
+    background: linear-gradient(to bottom, rgba(65, 179, 163, 0.15), transparent);
+    animation: dropStreamer 8s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+@keyframes dropStreamer {
+    0% { transform: translateY(-100px) rotate(15deg); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% { transform: translateY(110vh) rotate(15deg); opacity: 0; }
 }
 
-.option:hover{background:#e6f0ff}
-
-.correct{background:#bff5c3 !important}
-.wrong{background:#ffcccc !important}
-
-.topbar{display:flex;justify-content:space-between;align-items:center}
-
-.progress{
-height:10px;background:#ddd;border-radius:10px;overflow:hidden;margin:10px 0;
+/* MANDATORY SPLASH LOGO SCREEN (STRICT 5 SECONDS) */
+#splash {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-.bar{
-height:100%;width:0;background:linear-gradient(90deg,#4facfe,#00f2fe);
-transition:0.3s;
+#splash img {
+    width: 220px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 20px;
 }
 
-.center{text-align:center}
+.hidden { display: none !important; }
 
-.fade{animation:fade 0.3s ease}
+/* MAIN SHELL */
+.container {
+    width: 100%;
+    max-width: 620px;
+    position: relative;
+    z-index: 10;
+    display: none;
+}
 
-@keyframes fade{
-from{opacity:0;transform:translateY(10px)}
-to{opacity:1;transform:translateY(0)}
+/* UNIVERSAL APP CARDS */
+.card {
+    background: var(--card-white);
+    padding: clamp(24px, 6vw, 36px);
+    border-radius: var(--panel-radius);
+    width: 100%;
+    box-shadow: var(--classic-shadow);
+    border: 1px solid rgba(43, 58, 103, 0.05);
+}
+
+.text-center { text-align: center; }
+
+h1, h2 {
+    color: var(--slate-blue);
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.subtitle {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* HEADERS & TRACKERS */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    background: var(--slate-blue);
+    padding: 12px 16px;
+    border-radius: var(--elem-radius);
+    font-size: 14px;
+    color: white;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 10px rgba(43, 58, 103, 0.15);
+}
+
+#timer {
+    background: rgba(231, 29, 54, 0.2);
+    color: #ff9faf;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(231, 29, 54, 0.2);
+}
+
+.progress {
+    width: 100%;
+    height: 8px;
+    background: rgba(43, 58, 103, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.bar {
+    height: 100%;
+    width: 0%;
+    background: var(--mint-teal);
+    transition: width 0.4s ease;
+}
+
+/* QUESTION CORE */
+#question {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--deep-purple);
+    margin-bottom: 20px;
+    line-height: 1.5;
+    text-align: left;
+    white-space: pre-line;
+}
+
+/* SELECTION SYSTEM */
+.options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    padding: 14px 18px;
+    border-radius: var(--elem-radius);
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--deep-purple);
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.option:hover:not(.disabled) {
+    border-color: var(--slate-blue);
+    background: rgba(43, 58, 103, 0.02);
+}
+
+.option.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* STATUS RENDERING CLASSES */
+.option.correct {
+    background: #e6f9f7 !important;
+    border-color: var(--success-green) !important;
+    color: var(--success-green) !important;
+    font-weight: 700;
+}
+.option.correct::after {
+    content: "✔";
+    font-size: 16px;
+    color: var(--success-green);
+}
+
+.option.wrong {
+    background: #ffebee !important;
+    border-color: var(--danger-red) !important;
+    color: var(--danger-red) !important;
+    font-weight: 700;
+}
+.option.wrong::after {
+    content: "✖";
+    font-size: 16px;
+    color: var(--danger-red);
+}
+
+/* EXPLANATION LAYER PANEL */
+#explanation-panel {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: var(--elem-radius);
+    background: #f8fafc;
+    border-left: 4px solid var(--slate-blue);
+    font-size: 14px;
+    line-height: 1.5;
+    color: #4a5568;
+    text-align: left;
+    display: none;
+}
+
+.review-card {
+    padding: 14px;
+    margin: 12px 0;
+    border-radius: var(--elem-radius);
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.5;
+    border: 1px solid #e2e8f0;
+}
+
+/* INTERACTIVE BUTTON SYSTEM */
+.btn-action {
+    padding: 12px 28px;
+    border: none;
+    border-radius: var(--elem-radius);
+    background: var(--amber-gold);
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    display: inline-block;
+    margin: 6px;
+}
+
+.btn-action:hover {
+    background: var(--gold-dark);
+}
+
+.btn-secondary {
+    background: #64748b;
+}
+.btn-secondary:hover {
+    background: #475569;
+}
+
+/* STAR DUST PARTICLE GENERATION */
+.star-confetti {
+    position: fixed;
+    width: 14px;
+    height: 14px;
+    background: gold;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    pointer-events: none;
+    z-index: 9999;
+    animation: fallEffect 1.5s linear forwards;
+}
+
+@keyframes fallEffect {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+}
+
+#reviewBox {
+    max-height: 60vh;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    padding-right: 4px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
-<div class="logo-screen" id="splash">
-<img src="innovine logo.png">
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+
+<div id="splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="handleLogoError(this)">
 </div>
 
-<!-- HOME -->
-<div class="screen" id="home">
-<div class="card center">
-<h1>Chapter 7 – Modals</h1>
-<p>Grade 7</p>
-<p id="totalQ"></p>
-<button onclick="startQuiz()">Start Quiz</button>
-</div>
-</div>
-
-<!-- QUIZ -->
-<div class="screen" id="quiz">
-<div class="topbar">
-<div id="progressText"></div>
-<div>Score: <span id="score">0</span></div>
+<div id="home" class="container">
+    <div class="card text-center">
+        <h1>Chapter 7 – Modals</h1>
+        <div class="subtitle">Grade 7 ELA Grammar</div>
+        <p style="color:#4a5568; font-size:15px; margin-bottom:24px; line-height:1.5;">
+            Master standard conversational rules of Permission, Habitual Obligations, and Possibilities.<br>
+            Each question gives you up to <strong>2 attempts</strong>.
+        </p>
+        <button class="btn-action" onclick="startQuiz()">Start Quiz</button>
+    </div>
 </div>
 
-<div class="progress"><div class="bar" id="bar"></div></div>
+<div id="quiz" class="container">
+    <div class="topbar">
+        <div id="progressText">Question 1 of 15</div>
+        <div>Score: <span id="score">0</span></div>
+        <div id="timer">⏱️ 45s</div>
+    </div>
 
-<div class="card fade">
-<div id="question"></div>
-<div id="options"></div>
-</div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+
+    <div class="card">
+        <h3 id="question"></h3>
+        <div id="options" class="options-grid"></div>
+        <div id="explanation-panel"></div>
+        <div style="text-align: right; margin-top: 14px;">
+            <button id="btn-next" class="btn-action hidden" onclick="nextQuestion()">Continue</button>
+        </div>
+    </div>
 </div>
 
-<!-- RESULT -->
-<div class="screen" id="result">
-<div class="card center">
-<h2>🎉 Quiz Completed!</h2>
-<p id="final"></p>
-<p id="msg"></p>
-<button onclick="restart()">Play Again</button>
-<button onclick="review()">Review</button>
-</div>
+<div id="result" class="container">
+    <div class="card text-center">
+        <h2>🎉 Quiz Completed!</h2>
+        <div class="subtitle" style="margin-bottom:16px;">Performance Tracking Output</div>
+        <div id="final" style="font-size:24px; font-weight:800; color:var(--slate-blue); margin-bottom:8px;"></div>
+        <p id="msg" style="font-size:16px; color:#4a5568; margin-bottom:24px; font-weight:500;"></p>
+        <button class="btn-action" onclick="startQuiz()">Play Again</button>
+        <button class="btn-action btn-secondary" onclick="review()">Review Answers</button>
+    </div>
 </div>
 
-<!-- REVIEW -->
-<div class="screen" id="review"></div>
-
-<audio id="correctSound" src="correct.mp3"></audio>
-<audio id="wrongSound" src="wrong.mp3"></audio>
+<div id="review" class="container">
+    <div class="card text-center">
+        <h2>Performance Review</h2>
+        <div class="subtitle">Detailed Breakdown</div>
+        <div id="reviewBox"></div>
+        <button class="btn-action" onclick="startQuiz()">Restart Quiz</button>
+    </div>
+</div>
 
 <script>
-
-let questions = [
-{
-q:`Q1. Riya wants to ask her teacher for permission to leave the classroom during a lesson. Which sentence is the most polite and appropriate? 
-a) I can leave the classroom now? 
-b) I will leave the classroom for a minute. 
-c) May I please leave the classroom for a minute?
-d) Must I leave the classroom?`,
-options:[
-"I can leave the classroom now?",
-"I will leave the classroom for a minute.",
-"May I please leave the classroom for a minute?",
-"Must I leave the classroom?"
-],
-answer:"May I please leave the classroom for a minute?"
-},
-{
-q:`Q2. Aarav looks at the dark clouds gathering outside before the school sports day. He says: It ___ rain this afternoon—the clouds look very heavy. Which modal expresses a possibility based on what he observes?
-a) shall 
-b) must 
-c) might
- d) needn't`,
-options:["shall","must","might","needn't"],
-answer:"might"
-},
-{
-q:`Q3. The school doctor examines a student and says: "You ___ rest completely for three days — your fever is very high and you have no choice." Which modal correctly expresses a strong obligation with no room for argument?`,
-options:["should","could","might","must"],
-answer:"must"
-},
-{
-q:`Q4. Meera's grandmother says: "When I was young, we ___ walk five kilometres to school every single day — there were no buses." Which modal correctly expresses a repeated habit in the past?`,
-options:["can","would","will","shall"],
-answer:"would"
-},
-{
-q:`Q5. Rohan's friend has been coughing all week. Rohan says: "You ___ see a doctor — it is not compulsory but it would be wise." Which modal expresses advice rather than a strict rule?`,
-options:["must","shall","ought to","will"],
-answer:"ought to"
-},
-{
-q:`Q6.: A classroom notice board showing four rules and requests — 
-Notice 1: "Students ___ not run in the corridors." 
-Notice 2: "You ___ bring your own stationery — pencils are available at the desk." 
-Notice 3: "___ all participants please assemble in the hall by 9 AM?" 
-Notice 4: "Late entries ___ not be accepted after Friday."`,
-options:[
-"must / needn't / Would / will",
-"must / wouldn't / Shall / can",
-"might / mustn't / Could / would",
-"ought to / needn't / May / shall"
-],
-answer:"must / needn't / Would / will"
-},
-{
-q:`Q7. A grammar worksheet:
-1. You should apologise immediately
-2. She could swim when she was five
-3. May I borrow your pencil?
-4. It might snow tonight`,
-options:[
-"Advice / Past Ability / Permission / Certainty",
-"Obligation / Past Habit / Request / Strong Possibility",
-"Advice / Past Ability / Permission / Weak Possibility",
-"Suggestion / Future / Prohibition / Certainty"
-],
-answer:"Advice / Past Ability / Permission / Weak Possibility"
-},
-{
-q:`Q8. Which sentence uses 'needn't' correctly?`,
-options:[
-"You needn't to bring an umbrella — it won't rain today.",
-"You needn't bring an umbrella — it won't rain today.",
-"You needn't bringing an umbrella — it won't rain today.",
-"You needn't brought an umbrella — it won't rain today."
-],
-answer:"You needn't bring an umbrella — it won't rain today."
-},
-{
-q:`Q9. Difference between must and should?`,
-options:[
-"Same meaning",
-"'Must' is strict rule; 'should' is advice",
-"Must is polite; should is rude",
-"Must is past; should is future"
-],
-answer:"'Must' is strict rule; 'should' is advice"
-},
-{
-q:`Q10. Permission vs Possibility classification`,
-options:[
-"Permission: P,Q Possibility: R,S",
-"Permission: Q,S Possibility: P,R",
-"Permission: P,R Possibility: Q,S",
-"Permission: R,S Possibility: P,Q"
-],
-answer:"Permission: P,R Possibility: Q,S"
-},
-{
-q:`Q11. Modal functions classification`,
-options:[
-"1=Obligation, 2=Advice, 3=Permission, 4=Request",
-"1=Suggestion/Offer, 2=Moral Duty, 3=Logical Deduction, 4=Polite Request",
-"1=Permission, 2=Logical Deduction, 3=Moral Duty, 4=Obligation",
-"1=Polite Request, 2=Permission, 3=Suggestion, 4=Moral Duty"
-],
-answer:"1=Suggestion/Offer, 2=Moral Duty, 3=Logical Deduction, 4=Polite Request"
-},
-{
-q:`Q12. Odd one out`,
-options:[
-"You ought to apologise",
-"She needn't worry",
-"He must to finish homework",
-"Could you pass salt?"
-],
-answer:"He must to finish homework"
-},
-{
-q:`Q13. Error detection`,
-options:[
-"must to→must; needn't to→needn't; could speaks→could speak",
-"must to correct",
-"needn't to correct",
-"no errors"
-],
-answer:"must to→must; needn't to→needn't; could speaks→could speak"
-},
-{
-q:`Q14. Effect of 'might'`,
-options:[
-"definitely rain",
-"concise weak possibility",
-"grammatically wrong",
-"past tense change"
-],
-answer:"concise weak possibility"
-},
-{
-q:`Q15. Assertion Reason`,
-options:[
-"Both correct reason explains",
-"Both correct but no explanation",
-"Assertion correct reason wrong",
-"Both wrong"
-],
-answer:"Both correct reason explains"
-}
+/* =========================
+RECONSTRUCTED DATA BANK ARCHIVE
+========================= */
+const bank = [
+    {
+        q: `Q1. Riya wants to ask her teacher for permission to leave the classroom during a lesson. Which sentence is the most polite and appropriate?`,
+        options: [
+            "a) I can leave the classroom now?",
+            "b) I will leave the classroom for a minute.",
+            "c) May I please leave the classroom for a minute?",
+            "d) Must I leave the classroom?"
+        ],
+        answer: "c) May I please leave the classroom for a minute?",
+        reason: `'May' is the formal and grammatically preferred auxiliary choice for requesting permission in a classroom or structured professional setting.`
+    },
+    {
+        q: `Q2. Aarav looks at the dark clouds gathering outside before the school sports day. He says: "It ___ rain this afternoon—the clouds look very heavy." Which modal expresses a possibility based on what he observes?`,
+        options: ["a) shall", "b) must", "c) might", "d) needn't"],
+        answer: "c) might",
+        reason: `'Might' is utilized to express an open external possibility or conditional outcome influenced by environmental variables.`
+    },
+    {
+        q: `Q3. The school doctor examines a student and says: "You ___ rest completely for three days — your fever is very high and you have no choice." Which modal correctly expresses a strong obligation with no room for argument?`,
+        options: ["a) should", "b) could", "c) might", "d) must"],
+        answer: "d) must",
+        reason: `'Must' represents absolute external obligation, commands, legal mandates, or essential clinical imperatives.`
+    },
+    {
+        q: `Q4. Meera's grandmother says: "When I was young, we ___ walk five kilometres to school every single day — there were no buses." Which modal correctly expresses a repeated habit in the past?`,
+        options: ["a) can", "b) would", "c) will", "d) shall"],
+        answer: "b) would",
+        reason: `'Would' describes repetitive, historical routines, actions, or structural habits performed in the past.`
+    },
+    {
+        q: `Q5. Rohan's friend has been coughing all week. Rohan says: "You ___ see a doctor — it is not compulsory but it would be wise." Which modal expresses advice rather than a strict rule?`,
+        options: ["a) must", "b) shall", "c) ought to", "d) will"],
+        answer: "c) ought to",
+        reason: `'Ought to' delivers objective guidance, general advisory commentary, or strong moral recommendations, keeping it distinct from strict mandates.`
+    },
+    {
+        q: `Q6. Analyze this classroom notice board showing four rules and requests:\nNotice 1: "Students ___ not run in the corridors."\nNotice 2: "You ___ bring your own stationery — pencils are available at the desk."\nNotice 3: "___ all participants please assemble in the hall by 9 AM?"\nNotice 4: "Late entries ___ not be accepted after Friday."`,
+        options: [
+            "a) must / needn't / Would / will",
+            "b) must / wouldn't / Shall / can",
+            "c) might / mustn't / Could / would",
+            "d) ought to / needn't / May / shall"
+        ],
+        answer: "a) must / needn't / Would / will",
+        reason: `Matches rules sequentially: Notice 1 enforces prohibition (must not); Notice 2 notes lack of obligation (needn't); Notice 3 makes a request (Would); Notice 4 asserts a future rule (will).`
+    },
+    {
+        q: `Q7. Classify the exact modal functions applied inside this grammar worksheet:\n1. "You should apologise immediately."\n2. "She could swim when she was five."\n3. "May I borrow your pencil?"\n4. "It might snow tonight."`,
+        options: [
+            "a) Advice / Past Ability / Permission / Certainty",
+            "b) Obligation / Past Habit / Request / Strong Possibility",
+            "c) Advice / Past Ability / Permission / Weak Possibility",
+            "d) Suggestion / Future / Prohibition / Certainty"
+        ],
+        answer: "c) Advice / Past Ability / Permission / Weak Possibility",
+        reason: `Sentence 1 offers advice; Sentence 2 tracks native historical talent (past ability); Sentence 3 seeks standard permission; Sentence 4 denotes a weak possibility.`
+    },
+    {
+        q: `Q8. Which sentence uses the negative modal auxiliary 'needn't' correctly?`,
+        options: [
+            "a) You needn't to bring an umbrella — it won't rain today.",
+            "b) You needn't bring an umbrella — it won't rain today.",
+            "c) You needn't bringing an umbrella — it won't rain today.",
+            "d) You needn't brought an umbrella — it won't rain today."
+        ],
+        answer: "b) You needn't bring an umbrella — it won't rain today.",
+        reason: `Modal auxiliaries are directly followed by a bare infinitive verb without using the particle preposition 'to'.`
+    },
+    {
+        q: `Q9. What is the fundamental grammatical difference between the modals 'must' and 'should'?`,
+        options: [
+            "a) They share the exact same functional semantic meaning.",
+            "b) 'Must' enforces a strict, mandatory rule; 'should' functions as conditional advice.",
+            "c) 'Must' is historically polite; 'should' signals aggressive behavior.",
+            "d) 'Must' describes the absolute past; 'should' describes the target future."
+        ],
+        answer: "b) 'Must' enforces a strict, mandatory rule; 'should' functions as conditional advice.",
+        reason: `'Must' commands an unyielding absolute mandate, while 'should' frames soft, non-mandatory advice.`
+    },
+    {
+        q: `Q10. Sort these structural statements into two proper groups:\nP: "May I check your notes?"\nQ: "The project might take an extra day."\nR: "Could we leave early?"\nS: "They may arrive late due to traffic."`,
+        options: [
+            "a) Permission: P,Q | Possibility: R,S",
+            "b) Permission: Q,S | Possibility: P,R",
+            "c) Permission: P,R | Possibility: Q,S",
+            "d) Permission: R,S | Possibility: P,Q"
+        ],
+        answer: "c) Permission: P,R | Possibility: Q,S",
+        reason: `P and R function as speech acts seeking interactive permission; Q and S map objective situational possibilities.`
+    },
+    {
+        q: `Q11. Read carefully and match the sentences to their correct function:\n1. "Shall we dance?"\n2. "We ought to protect nature."\n3. "The lights are on; they must be home."\n4. "Could you pass the salt?"`,
+        options: [
+            "a) 1=Obligation, 2=Advice, 3=Permission, 4=Request",
+            "b) 1=Suggestion/Offer, 2=Moral Duty, 3=Logical Deduction, 4=Polite Request",
+            "c) 1=Permission, 2=Logical Deduction, 3=Moral Duty, 4=Obligation",
+            "d) 1=Polite Request, 2=Permission, 3=Suggestion, 4=Moral Duty"
+        ],
+        answer: "b) 1=Suggestion/Offer, 2=Moral Duty, 3=Logical Deduction, 4=Polite Request",
+        reason: `1 makes a constructive proposal; 2 highlights an objective ethical obligation; 3 applies logical reasoning; 4 acts as a polite request.`
+    },
+    {
+        q: `Q12. Identify the odd one out among these options based on standard structural syntax rules:`,
+        options: [
+            "a) You ought to apologise.",
+            "b) She needn't worry.",
+            "c) He must to finish homework.",
+            "d) Could you pass the salt?"
+        ],
+        answer: "c) He must to finish homework.",
+        reason: `'Must' is a pure modal auxiliary and cannot be paired with the directional infinitive marker 'to'. It must be: 'He must finish'.`
+    },
+    {
+        q: `Q13. Identify the errors and locate the matching correction rule for these phrases: "must to go", "needn't to stay", "could speaks"`,
+        options: [
+            "a) must to→must; needn't to→needn't; could speaks→could speak",
+            "b) 'must to' is completely correct as a phrase.",
+            "c) 'needn't to' is a necessary construction.",
+            "d) There are no errors present."
+        ],
+        answer: "a) must to→must; needn't to→needn't; could speaks→could speak",
+        reason: Modals require raw, uninflected base verbs without infinitive prepositions or third-person singular suffix alterations.
+    },
+    {
+        q: `Q14. What functional semantic change occurs when you swap 'will' for 'might' in: "It will rain tonight"?`,
+        options: [
+            "a) It changes the event into a guaranteed certain outcome.",
+            "b) It scales the assertion down into a weak, unconfirmed possibility.",
+            "c) It introduces a critical grammatical error.",
+            "d) It forces a structural shift into the past tense."
+        ],
+        answer: "b) It scales the assertion down into a weak, unconfirmed possibility.",
+        reason: `'Might' decreases structural certainty, turning an absolute prediction into a tentative possibility.`
+    },
+    {
+        q: `Q15. Evaluate the linguistic logic of this statement:\nAssertion: "You cannot use 'can' and 'may' interchangeably in formal writing."\nReason: 'Can' denotes native structural skill or physical ability, while 'may' focuses on formal permission.`,
+        options: [
+            "a) Both correct; the reason correctly explains the assertion.",
+            "b) Both correct; but the reason does NOT explain the assertion.",
+            "c) The assertion is correct; the reason is wrong.",
+            "d) Both assertions are wrong."
+        ],
+        answer: "a) Both correct; the reason correctly explains the assertion.",
+        reason: `The statements accurately reflect standard usage guidelines; 'can' measures functional capacity, while 'may' manages interactive compliance or permission.`
+    }
 ];
 
-let current=0;
-let score=0;
-let user=[];
+let currentIndex = 0;
+let score = 0;
+let remainingAttempts = 2;
+let timerId = null;
+let countdown = 45; 
+let chosenLog = [];
 
-function shuffle(a){
-return a.sort(()=>Math.random()-0.5);
+function buildVisualAtmosphere() {
+    for (let j = 0; j < 6; j++) {
+        let streamer = document.createElement("div");
+        streamer.className = "bg-streamer";
+        streamer.style.left = (Math.random() * 100) + "vw";
+        streamer.style.animationDelay = (Math.random() * 5) + "s";
+        streamer.style.animationDuration = (Math.random() * 4 + 6) + "s";
+        document.body.appendChild(streamer);
+    }
 }
 
-questions = shuffle(questions);
-
-function show(id){
-document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-document.getElementById(id).classList.add('active');
+function handleLogoError(img) {
+    img.style.display = "none";
+    let errorBox = document.createElement("div");
+    errorBox.style.padding = "16px";
+    errorBox.innerHTML = `<h3 style='color:var(--danger-red); margin-bottom:6px;'>⚠ Logo Asset Note</h3>
+    <p style='font-size:13px; color:#555;'>Ensure your asset is saved at:<br><code>assets/innovine-logo.png</code></p>`;
+    img.parentNode.appendChild(errorBox);
 }
 
-setTimeout(()=>{
-document.getElementById('splash').style.display='none';
-show('home');
-document.getElementById('totalQ').innerText="Total Questions: 15";
-},5000);
-
-function startQuiz(){
-show('quiz');
-load();
-}
-
-function load(){
-let q=questions[current];
-
-document.getElementById('question').innerHTML=q.q.replace(/\n/g,'<br>');
-document.getElementById('progressText').innerText=`Q${current+1}/15`;
-document.getElementById('bar').style.width=(current/15*100)+"%";
-
-let opt=shuffle([...q.options]);
-let box=document.getElementById('options');
-box.innerHTML="";
-
-opt.forEach(o=>{
-let div=document.createElement('div');
-div.className='option';
-div.innerText=o;
-div.onclick=()=>ans(o,div);
-box.appendChild(div);
+window.addEventListener('DOMContentLoaded', () => {
+    buildVisualAtmosphere();
+    setTimeout(() => {
+        document.getElementById("splash").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("splash").classList.add("hidden");
+            switchView("home");
+        }, 500);
+    }, 5000); // 5-second splash screen requirement
 });
+
+function switchView(id) {
+    document.querySelectorAll(".container").forEach(s => s.style.display = "none");
+    document.getElementById(id).style.display = "block";
 }
 
-function ans(opt,div){
-let q=questions[current];
-let correct=q.answer;
-
-user.push({q:q.q,opt,correct:q.answer});
-
-if(opt===correct){
-div.classList.add('correct');
-document.getElementById('correctSound').play();
-score++;
-}else{
-div.classList.add('wrong');
-document.getElementById('wrongSound').play();
+function startQuiz() {
+    currentIndex = 0;
+    score = 0;
+    chosenLog = [];
+    switchView("quiz");
+    loadQuestion();
 }
 
-setTimeout(()=>{
-current++;
-if(current<questions.length)load();
-else finish();
-},1500);
+function loadQuestion() {
+    if (currentIndex >= bank.length) {
+        showFinalResults();
+        return;
+    }
+
+    remainingAttempts = 2;
+    let currentData = bank[currentIndex];
+
+    document.getElementById("question").innerText = currentData.q;
+    document.getElementById("explanation-panel").style.display = "none";
+    document.getElementById("explanation-panel").innerHTML = "";
+    document.getElementById("btn-next").classList.add("hidden");
+
+    let grid = document.getElementById("options");
+    grid.innerHTML = "";
+
+    currentData.options.forEach(optionText => {
+        let btn = document.createElement("button");
+        btn.className = "option";
+        btn.innerText = optionText;
+        btn.onclick = () => handleSelection(optionText, btn);
+        grid.appendChild(btn);
+    });
+
+    document.getElementById("progressText").innerText = `Question ${currentIndex + 1} of ${bank.length}`;
+    document.getElementById("score").innerText = score;
+    document.getElementById("bar").style.width = `${(currentIndex / bank.length) * 100}%`;
+
+    startTimer();
 }
 
-function finish(){
-show('result');
-document.getElementById('final').innerText=`Score ${score}/15`;
+function startTimer() {
+    clearInterval(timerId);
+    countdown = 45; // Enforced 45 seconds per question for grades 4+
+    document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
 
-let p=(score/15)*100;
-document.getElementById('msg')=
-innerText = p>=90?"Excellent!":p>=70?"Great!":p>=50?"Good!":"Keep Practising!";
+    timerId = setInterval(() => {
+        countdown--;
+        document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
+
+        if (countdown <= 0) {
+            clearInterval(timerId);
+            lockAllOptions();
+            revealExplanation(false);
+        }
+    }, 1000);
 }
 
-function restart(){
-location.reload();
+function lockAllOptions() {
+    document.querySelectorAll(".option").forEach(b => b.classList.add("disabled"));
 }
 
-function review(){
-show('review');
-let r=document.getElementById('review');
-r.innerHTML="<h2 class='center'>Review</h2>";
+function handleSelection(selectedText, element) {
+    let currentQuestion = bank[currentIndex];
 
-user.forEach(u=>{
-let d=document.createElement('div');
-d.className='card';
-d.innerHTML=`
-<p>${u.q}</p>
-<p>Your: ${u.opt}</p>
-<p>Correct: ${u.correct}</p>
-`;
-r.appendChild(d);
-});
+    if (selectedText === currentQuestion.answer) {
+        clearInterval(timerId);
+        element.classList.add("correct");
+        playAudio(true);
+        triggerStars();
+        
+        if (remainingAttempts === 2) {
+            score++;
+        }
+        document.getElementById("score").innerText = score;
+        
+        logResult(selectedText, true);
+        lockAllOptions();
+        revealExplanation(true);
+    } else {
+        remainingAttempts--;
+        element.classList.add("wrong");
+        element.classList.add("disabled");
+        playAudio(false);
+
+        if (remainingAttempts === 1) {
+            alert("❌ Incorrect choice! You have one retry remaining for this question.");
+        } else {
+            clearInterval(timerId);
+            lockAllOptions();
+            
+            document.querySelectorAll(".option").forEach(b => {
+                if (b.innerText === currentQuestion.answer) b.classList.add("correct");
+            });
+
+            logResult(selectedText, false);
+            revealExplanation(false);
+        }
+    }
 }
 
+function logResult(chosenText, isCorrect) {
+    if (chosenLog.length <= currentIndex) {
+        chosenLog.push({
+            q: bank[currentIndex].q,
+            selected: chosenText,
+            correct: bank[currentIndex].answer,
+            status: isCorrect
+        });
+    }
+}
+
+function revealExplanation(isCorrect) {
+    let currentQuestion = bank[currentIndex];
+    let panel = document.getElementById("explanation-panel");
+    
+    if (chosenLog.length <= currentIndex) {
+        logResult("No answer chosen (Time-out)", false);
+    }
+
+    let banner = isCorrect ? 
+        `<strong style='color:var(--success-green);'>✔ Correct!</strong>` : 
+        `<strong style='color:var(--danger-red);'>✖ Answer Revealed</strong>`;
+
+    panel.innerHTML = `${banner}<br><br><strong>Explanation:</strong> ${currentQuestion.reason}`;
+    panel.style.display = "block";
+    document.getElementById("btn-next").classList.remove("hidden");
+}
+
+function nextQuestion() {
+    currentIndex++;
+    loadQuestion();
+}
+
+function playAudio(isCorrect) {
+    try {
+        let snd = document.getElementById(isCorrect ? "correctSound" : "wrongSound");
+        snd.currentTime = 0;
+        snd.play();
+    } catch (e) {
+        console.log("Audio native element stream managed safely.");
+    }
+}
+
+function triggerStars() {
+    for (let k = 0; k < 20; k++) {
+        let star = document.createElement("div");
+        star.className = "star-confetti";
+        star.style.left = (Math.random() * 100) + "vw";
+        star.style.top = "-20px";
+        star.style.animationDuration = (Math.random() * 0.8 + 1) + "s";
+        document.body.appendChild(star);
+        setTimeout(() => star.remove(), 1500);
+    }
+}
+
+function showFinalResults() {
+    switchView("result");
+    let percentage = Math.round((score / bank.length) * 100);
+    document.getElementById("final").innerText = `${score} / ${bank.length} (${percentage}%)`;
+
+    let feedback = "";
+    if (percentage >= 90) feedback = "Excellent! You are a Modals Master! 🌟";
+    else if (percentage >= 70) feedback = "Great Job! Terrific command of auxiliary verbs. 👍";
+    else if (percentage >= 50) feedback = "Good Effort! Keep practicing to sharpen your skills. 📚";
+    else feedback = "Keep Practicing! Review the explanations to build your skills. 💪";
+
+    document.getElementById("msg").innerText = feedback;
+}
+
+function review() {
+    switchView("review");
+    let container = document.getElementById("reviewBox");
+    if (!container) {
+        // Build review template structure dynamically if missing
+        let cardNode = document.querySelector("#review .card");
+        cardNode.innerHTML = `<h2>Performance Review</h2><div class="subtitle">Detailed Breakdown</div><div id="reviewBox"></div><button class="btn-action" onclick="startQuiz()">Restart Quiz</button>`;
+        container = document.getElementById("reviewBox");
+    }
+    container.innerHTML = "";
+
+    chosenLog.forEach((item, index) => {
+        let div = document.createElement("div");
+        div.className = "review-card";
+        div.style.background = item.status ? "#e6f9f7" : "#ffebee";
+        div.style.borderColor = item.status ? "var(--success-green)" : "var(--danger-red)";
+
+        div.innerHTML = `
+            <strong>Question ${index + 1}</strong><br>
+            <p style='margin: 4px 0 8px 0;'>${item.q}</p>
+            <strong>Your Selection:</strong> <span style='color:${item.status ? "var(--success-green)":"var(--danger-red)"}'>${item.selected}</span><br>
+            <strong>Correct Answer:</strong> <span style='color:var(--success-green)'>${item.correct}</span>
+        `;
+        container.appendChild(div);
+    });
+}
 </script>
 
 </body>
