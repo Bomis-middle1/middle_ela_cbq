@@ -1,1 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Grade 7 ELA Quiz - Modals</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<style>
+*{box-sizing:border-box;font-family:Arial;margin:0;padding:0}
+body{background:linear-gradient(135deg,#e3f2ff,#fff3e6);min-height:100vh;overflow-x:hidden}
+
+.screen{display:none;padding:18px}
+.active{display:block}
+
+.logo-screen{
+display:flex;align-items:center;justify-content:center;height:100vh;background:white;
+}
+
+.logo-screen img{width:180px}
+
+.card{
+background:white;border-radius:18px;padding:18px;margin:12px 0;
+box-shadow:0 6px 18px rgba(0,0,0,0.1);
+}
+
+button{
+padding:12px 16px;border:none;border-radius:12px;
+background:linear-gradient(135deg,#4facfe,#00f2fe);
+color:white;font-size:15px;cursor:pointer;margin:6px;
+}
+
+button:hover{transform:scale(1.03)}
+
+.option{
+display:block;width:100%;text-align:left;
+background:#f4f8ff;margin:10px 0;padding:14px;border-radius:12px;
+cursor:pointer;
+}
+
+.option:hover{background:#e6f0ff}
+
+.correct{background:#bff5c3 !important}
+.wrong{background:#ffcccc !important}
+
+.topbar{display:flex;justify-content:space-between;align-items:center}
+
+.progress{
+height:10px;background:#ddd;border-radius:10px;overflow:hidden;margin:10px 0;
+}
+
+.bar{
+height:100%;width:0;background:linear-gradient(90deg,#4facfe,#00f2fe);
+transition:0.3s;
+}
+
+.center{text-align:center}
+
+.fade{animation:fade 0.3s ease}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(10px)}
+to{opacity:1;transform:translateY(0)}
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div class="logo-screen" id="splash">
+<img src="innovine logo.png">
+</div>
+
+<!-- HOME -->
+<div class="screen" id="home">
+<div class="card center">
+<h1>Chapter 7 – Modals</h1>
+<p>Grade 7</p>
+<p id="totalQ"></p>
+<button onclick="startQuiz()">Start Quiz</button>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="quiz">
+<div class="topbar">
+<div id="progressText"></div>
+<div>Score: <span id="score">0</span></div>
+</div>
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<div class="card fade">
+<div id="question"></div>
+<div id="options"></div>
+</div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="result">
+<div class="card center">
+<h2>🎉 Quiz Completed!</h2>
+<p id="final"></p>
+<p id="msg"></p>
+<button onclick="restart()">Play Again</button>
+<button onclick="review()">Review</button>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div class="screen" id="review"></div>
+
+<audio id="correctSound" src="correct.mp3"></audio>
+<audio id="wrongSound" src="wrong.mp3"></audio>
+
+<script>
+
+let questions = [
+{
+q:`Q1. Riya wants to ask her teacher for permission to leave the classroom during a lesson. Which sentence is the most polite and appropriate? 
+a) I can leave the classroom now? 
+b) I will leave the classroom for a minute. 
+c) May I please leave the classroom for a minute?
+d) Must I leave the classroom?`,
+options:[
+"I can leave the classroom now?",
+"I will leave the classroom for a minute.",
+"May I please leave the classroom for a minute?",
+"Must I leave the classroom?"
+],
+answer:"May I please leave the classroom for a minute?"
+},
+{
+q:`Q2. Aarav looks at the dark clouds gathering outside before the school sports day. He says: It ___ rain this afternoon—the clouds look very heavy. Which modal expresses a possibility based on what he observes?
+a) shall 
+b) must 
+c) might
+ d) needn't`,
+options:["shall","must","might","needn't"],
+answer:"might"
+},
+{
+q:`Q3. The school doctor examines a student and says: "You ___ rest completely for three days — your fever is very high and you have no choice." Which modal correctly expresses a strong obligation with no room for argument?`,
+options:["should","could","might","must"],
+answer:"must"
+},
+{
+q:`Q4. Meera's grandmother says: "When I was young, we ___ walk five kilometres to school every single day — there were no buses." Which modal correctly expresses a repeated habit in the past?`,
+options:["can","would","will","shall"],
+answer:"would"
+},
+{
+q:`Q5. Rohan's friend has been coughing all week. Rohan says: "You ___ see a doctor — it is not compulsory but it would be wise." Which modal expresses advice rather than a strict rule?`,
+options:["must","shall","ought to","will"],
+answer:"ought to"
+},
+{
+q:`Q6.: A classroom notice board showing four rules and requests — 
+Notice 1: "Students ___ not run in the corridors." 
+Notice 2: "You ___ bring your own stationery — pencils are available at the desk." 
+Notice 3: "___ all participants please assemble in the hall by 9 AM?" 
+Notice 4: "Late entries ___ not be accepted after Friday."`,
+options:[
+"must / needn't / Would / will",
+"must / wouldn't / Shall / can",
+"might / mustn't / Could / would",
+"ought to / needn't / May / shall"
+],
+answer:"must / needn't / Would / will"
+},
+{
+q:`Q7. A grammar worksheet:
+1. You should apologise immediately
+2. She could swim when she was five
+3. May I borrow your pencil?
+4. It might snow tonight`,
+options:[
+"Advice / Past Ability / Permission / Certainty",
+"Obligation / Past Habit / Request / Strong Possibility",
+"Advice / Past Ability / Permission / Weak Possibility",
+"Suggestion / Future / Prohibition / Certainty"
+],
+answer:"Advice / Past Ability / Permission / Weak Possibility"
+},
+{
+q:`Q8. Which sentence uses 'needn't' correctly?`,
+options:[
+"You needn't to bring an umbrella — it won't rain today.",
+"You needn't bring an umbrella — it won't rain today.",
+"You needn't bringing an umbrella — it won't rain today.",
+"You needn't brought an umbrella — it won't rain today."
+],
+answer:"You needn't bring an umbrella — it won't rain today."
+},
+{
+q:`Q9. Difference between must and should?`,
+options:[
+"Same meaning",
+"'Must' is strict rule; 'should' is advice",
+"Must is polite; should is rude",
+"Must is past; should is future"
+],
+answer:"'Must' is strict rule; 'should' is advice"
+},
+{
+q:`Q10. Permission vs Possibility classification`,
+options:[
+"Permission: P,Q Possibility: R,S",
+"Permission: Q,S Possibility: P,R",
+"Permission: P,R Possibility: Q,S",
+"Permission: R,S Possibility: P,Q"
+],
+answer:"Permission: P,R Possibility: Q,S"
+},
+{
+q:`Q11. Modal functions classification`,
+options:[
+"1=Obligation, 2=Advice, 3=Permission, 4=Request",
+"1=Suggestion/Offer, 2=Moral Duty, 3=Logical Deduction, 4=Polite Request",
+"1=Permission, 2=Logical Deduction, 3=Moral Duty, 4=Obligation",
+"1=Polite Request, 2=Permission, 3=Suggestion, 4=Moral Duty"
+],
+answer:"1=Suggestion/Offer, 2=Moral Duty, 3=Logical Deduction, 4=Polite Request"
+},
+{
+q:`Q12. Odd one out`,
+options:[
+"You ought to apologise",
+"She needn't worry",
+"He must to finish homework",
+"Could you pass salt?"
+],
+answer:"He must to finish homework"
+},
+{
+q:`Q13. Error detection`,
+options:[
+"must to→must; needn't to→needn't; could speaks→could speak",
+"must to correct",
+"needn't to correct",
+"no errors"
+],
+answer:"must to→must; needn't to→needn't; could speaks→could speak"
+},
+{
+q:`Q14. Effect of 'might'`,
+options:[
+"definitely rain",
+"concise weak possibility",
+"grammatically wrong",
+"past tense change"
+],
+answer:"concise weak possibility"
+},
+{
+q:`Q15. Assertion Reason`,
+options:[
+"Both correct reason explains",
+"Both correct but no explanation",
+"Assertion correct reason wrong",
+"Both wrong"
+],
+answer:"Both correct reason explains"
+}
+];
+
+let current=0;
+let score=0;
+let user=[];
+
+function shuffle(a){
+return a.sort(()=>Math.random()-0.5);
+}
+
+questions = shuffle(questions);
+
+function show(id){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+setTimeout(()=>{
+document.getElementById('splash').style.display='none';
+show('home');
+document.getElementById('totalQ').innerText="Total Questions: 15";
+},5000);
+
+function startQuiz(){
+show('quiz');
+load();
+}
+
+function load(){
+let q=questions[current];
+
+document.getElementById('question').innerHTML=q.q.replace(/\n/g,'<br>');
+document.getElementById('progressText').innerText=`Q${current+1}/15`;
+document.getElementById('bar').style.width=(current/15*100)+"%";
+
+let opt=shuffle([...q.options]);
+let box=document.getElementById('options');
+box.innerHTML="";
+
+opt.forEach(o=>{
+let div=document.createElement('div');
+div.className='option';
+div.innerText=o;
+div.onclick=()=>ans(o,div);
+box.appendChild(div);
+});
+}
+
+function ans(opt,div){
+let q=questions[current];
+let correct=q.answer;
+
+user.push({q:q.q,opt,correct:q.answer});
+
+if(opt===correct){
+div.classList.add('correct');
+document.getElementById('correctSound').play();
+score++;
+}else{
+div.classList.add('wrong');
+document.getElementById('wrongSound').play();
+}
+
+setTimeout(()=>{
+current++;
+if(current<questions.length)load();
+else finish();
+},1500);
+}
+
+function finish(){
+show('result');
+document.getElementById('final').innerText=`Score ${score}/15`;
+
+let p=(score/15)*100;
+document.getElementById('msg')=
+innerText = p>=90?"Excellent!":p>=70?"Great!":p>=50?"Good!":"Keep Practising!";
+}
+
+function restart(){
+location.reload();
+}
+
+function review(){
+show('review');
+let r=document.getElementById('review');
+r.innerHTML="<h2 class='center'>Review</h2>";
+
+user.forEach(u=>{
+let d=document.createElement('div');
+d.className='card';
+d.innerHTML=`
+<p>${u.q}</p>
+<p>Your: ${u.opt}</p>
+<p>Correct: ${u.correct}</p>
+`;
+r.appendChild(d);
+});
+}
+
+</script>
+
+</body>
+</html>
