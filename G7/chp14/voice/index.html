@@ -40,7 +40,6 @@
             position: relative;
         }
 
-        /* Ambient Dynamic Background Decorations */
         .ambient-decorations-container {
             position: fixed;
             inset: 0;
@@ -54,7 +53,7 @@
             top: -50px;
             width: 10px;
             height: 10px;
-            background: rgba(65, 179, 163, 0.25);
+            background: rgba(65, 179, 163, 0.15);
             clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
             animation: floatDownStream 12s linear infinite;
         }
@@ -63,7 +62,7 @@
             position: absolute;
             width: 2px;
             height: 80px;
-            background: linear-gradient(to bottom, rgba(226, 125, 96, 0.15), transparent);
+            background: linear-gradient(to bottom, rgba(226, 125, 96, 0.1), transparent);
             animation: floatDownStream 15s linear infinite;
         }
 
@@ -88,7 +87,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Screen 1: Splash Screen Styles */
         #splash-screen {
             position: fixed;
             inset: 0;
@@ -98,10 +96,10 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            opacity: 0;
-            animation: runSplashFade 5s linear forwards;
+            opacity: 1;
             padding: 24px;
             text-align: center;
+            transition: opacity 0.5s ease;
         }
 
         #splash-screen img {
@@ -140,14 +138,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        @keyframes runSplashFade {
-            0% { opacity: 0; }
-            8% { opacity: 1; }
-            92% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
-        /* Common Card Elements */
         .quiz-card {
             background: var(--card-white);
             padding: clamp(22px, 5vw, 36px);
@@ -196,9 +186,9 @@
 
         .meta-info-box p:last-child { margin-bottom: 0; }
 
-        /* Audio Dashboard strip */
         .audio-ctrl-strip {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: center;
             gap: 16px;
@@ -223,7 +213,12 @@
             gap: 4px;
         }
 
-        /* Game Play HUD Interface */
+        .audio-ctrl-strip input[type="range"] {
+            width: 75px;
+            accent-color: var(--mint-teal);
+            cursor: pointer;
+        }
+
         .hud-wrapper {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -319,7 +314,7 @@
 
         .option-node.locked-state {
             cursor: not-allowed;
-            pointer-events: none;
+            opacity: 0.8;
         }
 
         .option-node.correct-look {
@@ -328,6 +323,7 @@
             color: var(--success-green) !important;
             font-weight: 700;
             box-shadow: 0 0 10px rgba(46, 196, 182, 0.15);
+            pointer-events: none;
         }
         .option-node.correct-look::after {
             content: "✔";
@@ -342,6 +338,7 @@
             color: var(--danger-red) !important;
             font-weight: 700;
             animation: shakeWidget 0.4s ease-in-out;
+            pointer-events: none;
         }
         .option-node.wrong-look::after {
             content: "❌";
@@ -400,7 +397,6 @@
             transform: translateY(-2px);
         }
 
-        /* Star Confetti Particles */
         .star-particle {
             position: fixed;
             width: 12px;
@@ -416,7 +412,6 @@
             100% { transform: translateY(140px) scale(0.3) rotate(240deg); opacity: 0; }
         }
 
-        /* Review Mode Styling */
         .review-scroll-container {
             max-height: 380px;
             overflow-y: auto;
@@ -479,7 +474,7 @@
     <audio id="soundWin" src="assets/clapping.mp3" preload="auto"></audio>
 
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
         <div class="splash-title">Chapter 14 — Voice: Active and Passive</div>
         <div class="splash-sub">Grade 7 &bull; Powered by Innovine</div>
         <div class="spinner"></div>
@@ -488,7 +483,7 @@
     <div id="intro-screen" class="container">
         <div class="quiz-card">
             <div style="text-align: center;">
-                <img src="assets/innovine-logo.png" class="main-logo-display" alt="Innovine Logo" onerror="this.style.display='none';">
+                <img src="assets/logo.png" class="main-logo-display" alt="Innovine Logo" onerror="this.style.display='none';">
             </div>
             <h1>Chapter 14 — Voice: Active and Passive</h1>
             <div class="subtitle">Grade 7 English Interactive Learning Game</div>
@@ -496,12 +491,12 @@
             <div class="meta-info-box">
                 <p>📝 <strong>Content Focus:</strong> Active to Passive conversions, tense modifications, and syntactic structures.</p>
                 <p>📋 <strong>Structure:</strong> 13 Core Curriculum Questions + 1 Custom Final Application Challenge.</p>
-                <p>⏱️ <strong>Timer Constraints:</strong> 45 seconds per standard round (30 seconds during Final Challenge).</p>
+                <p>⏱️ <strong>Timer Constraints:</strong> 45 seconds per standard round (45 seconds during Final Challenge).</p>
                 <p>🔄 <strong>Retry Allowances:</strong> 2 attempts per regular question item.</p>
             </div>
             
             <div class="audio-ctrl-strip">
-                <button onclick="toggleSoundEffects()" id="sfx-toggle-btn">🔊 Audio: Enabled</button>
+                <button onclick="toggleSoundEffects()" id="sfx-toggle-btn">🔊 Sound: ON</button>
             </div>
 
             <button class="btn-ui-action" onclick="initializeQuizEngine()">Start Game</button>
@@ -510,7 +505,7 @@
 
     <div id="question-screen" class="container">
         <div class="audio-ctrl-strip" style="padding: 6px 16px; margin-bottom: 12px; scale: 0.95;">
-            <button onclick="toggleSoundEffects()" id="sfx-toggle-game-btn">🔊 Audio: Enabled</button>
+            <button onclick="toggleSoundEffects()" id="sfx-toggle-game-btn">🔊 Sound: ON</button>
         </div>
         
         <div class="hud-wrapper">
@@ -556,7 +551,7 @@
             <div style="font-size: 24px; margin-bottom: 16px;" id="star-rewards-slot">⭐⭐⭐</div>
 
             <div style="background: #f8fafc; padding: 20px; border-radius: var(--elem-radius); margin-bottom: 20px; text-align: left; line-height: 1.8;">
-                <p style="font-size: 16px;"><strong>Final Total Score:</strong> <span id="res-score" style="font-weight:800; color:var(--slate-blue);">0</span></p>
+                <p style="font-size: 16px;"><strong>Final Total Score:</strong> <span id="res-score" style="font-weight:800; color:var(--slate-blue);">0</span> / 14</p>
                 <p style="font-size: 16px;"><strong>Success Accuracy Rate:</strong> <span id="res-percent" style="font-weight:700; color:var(--mint-teal);">0%</span></p>
                 <hr style="margin: 10px 0; border: none; border-top: 1px dashed #cbd5e1;">
                 <p style="font-size: 14px;"><strong>Questions Answered:</strong> <span id="res-attempted">0</span></p>
@@ -572,167 +567,94 @@
     </div>
 
     <script>
-        // MASTER CURRICULUM QUESTIONS DATABASE (EXACT UNMODIFIED TEXT COPIES)
         const curriculumQuestionsSource = [
             {
-                q: `Q1. Riya is writing a news report about a new school library. She wants to focus on the library being built rather than the workers who built it. She writes: "The workers built the new library last month." Which passive version correctly shifts the focus?`,
-                options: [
-                    "a) The new library is built by the workers last month.",
-                    "b) The new library was built by the workers last month.",
-                    "c) The new library has been built by the workers last month.",
-                    "d) The new library will be built by the workers last month."
-                ],
-                answer: "b) The new library was built by the workers last month.",
-                reason: "Key Reason: Simple Past Active → Simple Past Passive = was/were + Past Participle"
+                q: `Q1. Riya is writing a news report about a new school library. She wants to focus on the library being built rather than the workers who built it. She writes: "The workers built the new library last month." Which passive version correctly shifts the focus?\na) The new library is built by the workers last month.\nb) The new library was built by the workers last month.\nc) The new library has been built by the workers last month.\nd) The new library will be built by the workers last month.`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "Simple Past Active → Simple Past Passive = was/were + Past Participle"
             },
             {
-                q: `Q2. Aarav is describing his school's daily routine: "The students clean the classrooms every day." His teacher asks him to rewrite this in Passive Voice. Which version is correct?`,
-                options: [
-                    "a) The classrooms were cleaned by the students every day.",
-                    "b) The classrooms will be cleaned by the students every day.",
-                    "c) The classrooms are cleaned by the students every day.",
-                    "d) The classrooms cleaned by the students every day."
-                ],
-                answer: "c) The classrooms are cleaned by the students every day.",
-                reason: "Key Reason: Simple Present Active → Simple Present Passive = is/are + Past Participle"
+                q: `Q2. Aarav is describing his school's daily routine: "The students clean the classrooms every day." His teacher asks him to rewrite this in Passive Voice. Which version is correct?\na) The classrooms were cleaned by the students every day.\nb) The classrooms will be cleaned by the students every day.\nc) The classrooms are cleaned by the students every day.\nd) The classrooms cleaned by the students every day.`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "Simple Present Active → Simple Present Passive = is/are + Past Participle"
             },
             {
-                q: `Q3. Meera reads a school announcement: "The principal will distribute prizes at the annual day next week." She needs to rewrite this in Passive Voice for the notice board. Which version is correct?`,
-                options: [
-                    "a) Prizes are distributed by the principal at the annual day.",
-                    "b) Prizes were distributed by the principal at the annual day.",
-                    "c) Prizes will be distributed by the principal at the annual day.",
-                    "d) Prizes have been distributed by the principal at the annual day."
-                ],
-                answer: "c) Prizes will be distributed by the principal at the annual day.",
-                reason: "Key Reason: Simple Future Active → Simple Future Passive = will be + Past Participle"
+                q: `Q3. Meera reads a school announcement: "The principal will distribute prizes at the annual day next week." She needs to rewrite this in Passive Voice for the notice board. Which version is correct?\na) Prizes are distributed by the principal at the annual day.\nb) Prizes were distributed by the principal at the annual day.\nc) Prizes will be distributed by the principal at the annual day.\nd) Prizes have been distributed by the principal at the annual day.`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "Simple Future Active → Simple Future Passive = will be + Past Participle"
             },
             {
-                q: `Q4. Rohan finds a broken window in the classroom. Nobody knows who broke it. He tells his teacher: "Someone broke the window." His teacher asks him to report it formally using Passive Voice without mentioning who did it. Which version is correct?`,
-                options: [
-                    "a) The window is broken.",
-                    "b) The window was broken.",
-                    "c) The window will be broken.",
-                    "d) The window has broken."
-                ],
-                answer: "b) The window was broken.",
-                reason: "Key Reason: Agent unknown → Passive without 'by' phrase; was + broken = Simple Past Passive"
+                q: `Q4. Rohan finds a broken window in the classroom. Nobody knows who broke it. He tells his teacher: "Someone broke the window." His teacher asks him to report it formally using Passive Voice without mentioning who did it. Which version is correct?\na) The window is broken.\nb) The window was broken.\nc) The window will be broken.\nd) The window has broken.`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "Agent unknown → Passive without 'by' phrase; was + broken = Simple Past Passive"
             },
             {
-                q: `Q5. A student reads: "The gardener waters the plants every morning." His friend says the passive form is "The plants are watered by the gardener every morning." Is the friend correct and why?`,
-                options: [
-                    "a) No — it should be 'The plants were watered'",
-                    "b) No — it should be 'The plants will be watered'",
-                    "c) Yes — Simple Present Active becomes Simple Present Passive using is/are + Past Participle",
-                    "d) No — the agent 'by the gardener' should be removed"
-                ],
-                answer: "c) Yes — Simple Present Active becomes Simple Present Passive using is/are + Past Participle",
-                reason: "Key Reason: Simple Present → are + Past Participle → 'are watered' is correct"
+                q: `Q5. A student reads: "The gardener waters the plants every morning." His friend says the passive form is "The plants are watered by the gardener every morning." Is the friend correct and why?\na) No — it should be 'The plants were watered'\nb) No — it should be 'The plants will be watered'\nc) Yes — Simple Present Active becomes Simple Present Passive using is/are + Past Participle\nd) No — the agent 'by the gardener' should be removed`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "Simple Present → are + Past Participle → 'are watered' is correct"
             },
             {
-                q: `Q6. Which sentence correctly converts "The doctor examined the patient" into Passive Voice?`,
-                options: [
-                    "a) The patient is examined by the doctor.",
-                    "b) The patient was examined by the doctor.",
-                    "c) The patient will be examined by the doctor.",
-                    "d) The patient has been examined by the doctor."
-                ],
-                answer: "b) The patient was examined by the doctor.",
-                reason: "Key Reason: Past tense passive = was/were + Past Participle → 'was examined'"
+                q: `Q6. Which sentence correctly converts "The doctor examined the patient" into Passive Voice?\na) The patient is examined by the doctor.\nb) The patient was examined by the doctor.\nc) The patient will be examined by the doctor.\nd) The patient has been examined by the doctor.`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "Past tense passive = was/were + Past Participle → 'was examined'"
             },
             {
-                q: `Q7. A student converts "The team will win the trophy" to "The trophy will be win by the team." What is wrong and what is the correct form?`,
-                options: [
-                    "a) 'win' should be 'won' — Past tense needed after 'will be'",
-                    "b) 'win' should be 'winning' — Present Participle needed",
-                    "c) 'win' should be 'won' is wrong — it should be 'winning'",
-                    "d) 'win' should be the Past Participle 'won' — Passive Voice always requires is/are/was/were/will be + Past Participle → \"The trophy will be won by the team.\""
-                ],
-                answer: "d) 'win' should be the Past Participle 'won' — Passive Voice always requires is/are/was/were/will be + Past Participle → \"The trophy will be won by the team.\"",
-                reason: "Key Reason: Passive always needs Past Participle — 'win' must become 'won'; 'will be won' is correct"
+                q: `Q7. A student converts "The team will win the trophy" to "The trophy will be win by the team." What is wrong and what is the correct form?\na) 'win' should be 'won' — Past tense needed after 'will be'\nb) 'win' should be 'winning' — Present Participle needed\nc) 'win' should be 'won' is wrong — it should be 'winning'\nd) 'win' should be the Past Participle 'won' — Passive Voice always requires is/are/was/were/will be + Past Participle → "The trophy will be won by the team."`,
+                options: ["a", "b", "c", "d"],
+                answer: "d",
+                reason: "Passive always needs Past Participle — 'win' must become 'won'; 'will be won' is correct"
             },
             {
-                q: `Q8. Sort these sentences into two groups — Active Voice and Passive Voice:\nP: "The students completed the assignment."\nQ: "The trophy was won by our school."\nR: "The teacher explains the lesson clearly."\nS: "The windows are cleaned every Friday."`,
-                options: [
-                    "a) Active: P, Q — Passive: R, S",
-                    "b) Active: Q, S — Passive: P, R",
-                    "c) Active: P, R — Passive: Q, S",
-                    "d) Active: R, S — Passive: P, Q"
-                ],
-                answer: "c) Active: P, R — Passive: Q, S",
-                reason: "Key Reason: P & R have subject performing action → Active; Q & S have subject receiving action → Passive"
+                q: `Q8. Sort these sentences into two groups — Active Voice and Passive Voice:\nP: "The students completed the assignment."\nQ: "The trophy was won by our school."\nR: "The teacher explains the lesson clearly."\nS: "The windows are cleaned every Friday."\na) Active: P, Q — Passive: R, S\nb) Active: Q, S — Passive: P, R\nc) Active: P, R — Passive: Q, S\nd) Active: R, S — Passive: P, Q`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "P & R have subject performing action → Active; Q & S have subject receiving action → Passive"
             },
             {
-                q: `Q9. Classify the tense and voice of each sentence:\n1. "The report is submitted every Monday."\n2. "The thieves were caught by the police."\n3. "A new bridge will be constructed next year."\n4. "The children planted trees in the school garden."`,
-                options: [
-                    "a) 1=Present Active, 2=Past Passive, 3=Future Active, 4=Past Active",
-                    "b) 1=Present Passive, 2=Past Passive, 3=Future Passive, 4=Past Active",
-                    "c) 1=Past Passive, 2=Present Passive, 3=Past Active, 4=Future Passive",
-                    "d) 1=Future Passive, 2=Present Active, 3=Past Passive, 4=Present Active"
-                ],
-                answer: "b) 1=Present Passive, 2=Past Passive, 3=Future Passive, 4=Past Active",
-                reason: "Key Reason: is submitted=Present Passive; were caught=Past Passive; will be constructed=Future Passive; planted=Past Active"
+                q: `Q9. Classify the tense and voice of each sentence:\n1. "The report is submitted every Monday."\n2. "The thieves were caught by the police."\n3. "A new bridge will be constructed next year."\n4. "The children planted trees in the school garden."\na) 1=Present Active, 2=Past Passive, 3=Future Active, 4=Past Active\nb) 1=Present Passive, 2=Past Passive, 3=Future Passive, 4=Past Active\nc) 1=Past Passive, 2=Present Passive, 3=Past Active, 4=Future Passive\nd) 1=Future Passive, 2=Present Active, 3=Past Passive, 4=Present Active`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "is submitted=Present Passive; were caught=Past Passive; will be constructed=Future Passive; planted=Past Active"
             },
             {
-                q: `Q10. Three of the following sentences are correctly formed in Passive Voice. One is NOT. Which is the odd one out?`,
-                options: [
-                    "a) The letter was written by Meera.",
-                    "b) The prizes will be distributed on Friday.",
-                    "c) The vegetables are buyed from the market daily.",
-                    "d) The project was completed by the students on time."
-                ],
-                answer: "c) The vegetables are buyed from the market daily.",
-                reason: "Key Reason: 'buyed' is not a word — Past Participle of 'buy' is 'bought' → 'are bought'"
+                q: `Q10. Three of the following sentences are correctly formed in Passive Voice. One is NOT. Which is the odd one out?\na) The letter was written by Meera.\nb) The prizes will be distributed on Friday.\nc) The vegetables are buyed from the market daily.\nd) The project was completed by the students on time.`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "'buyed' is not a word — Past Participle of 'buy' is 'bought' → 'are bought'"
             },
             {
-                q: `Q11. A student wrote these passive sentences:\n"The cake was bake by my mother. The match is played every Saturday by our team. The new road will built next year. The books were gived to the students."\nIdentify ALL the errors:`,
-                options: [
-                    "a) was bake→was baked; is played is correct; will built→will be built; were gived→were given",
-                    "b) was bake→was baked; is played→was played; will built is correct; were gived→were given",
-                    "c) was bake is correct; is played→will be played; will built→will be built; were gived→were given",
-                    "d) There are no errors — all sentences are correct"
-                ],
-                answer: "a) was bake→was baked; is played is correct; will built→will be built; were gived→were given",
-                reason: "Key Reason: was baked=PP needed; is played=correct; will be built='be' missing; were given=irregular PP of 'give'"
+                q: `Q11. A student wrote these passive sentences:\n"The cake was bake by my mother. The match is played every Saturday by our team. The new road will built next year. The books were gived to the students."\nIdentify ALL the errors:\na) was bake→was baked; is played is correct; will built→will be built; were gived→were given\nb) was bake→was baked; is played→was played; will built is correct; were gived→were given\nc) was bake is correct; is played→will be played; will built→will be built; were gived→were given\nd) There are no errors — all sentences are correct`,
+                options: ["a", "b", "c", "d"],
+                answer: "a",
+                reason: "was baked=PP needed; is played=correct; will be built='be' missing; were given=irregular PP of 'give'"
             },
             {
-                q: `Q12. A student changes "Scientists discovered a new planet" (Active) to "A new planet was discovered by scientists" (Passive). What TWO effects does this change create?`,
-                options: [
-                    "a) The meaning changes and the sentence becomes longer unnecessarily",
-                    "b) The subject shifts from 'scientists' (doer) to 'a new planet' (receiver) — changing the focus; and the verb changes from Simple Past Active to Simple Past Passive (was + Past Participle)",
-                    "c) Only the verb changes — the subject stays the same",
-                    "d) The sentence becomes incorrect because 'by scientists' should be removed"
-                ],
-                answer: "b) The subject shifts from 'scientists' (doer) to 'a new planet' (receiver) — changing the focus; and the verb changes from Simple Past Active to Simple Past Passive (was + Past Participle)",
-                reason: "Key Reason: Focus shifts from doer to receiver; verb structure changes from V2 to was/were+PP"
+                q: `Q12. A student changes "Scientists discovered a new planet" (Active) to "A new planet was discovered by scientists" (Passive). What TWO effects does this change create?\na) The meaning changes and the sentence becomes longer unnecessarily\nb) The subject shifts from 'scientists' (doer) to 'a new planet' (receiver) — changing the focus; and the verb changes from Simple Past Active to Simple Past Passive (was + Past Participle)\nc) Only the verb changes — the subject stays the same\nd) The sentence becomes incorrect because 'by scientists' should be removed`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "Focus shifts from doer to receiver; verb structure changes from V2 to was/were+PP"
             },
             {
-                q: `Q13. Assertion: In all passive sentences — regardless of tense — the verb is always formed using a form of 'be' followed by the Past Participle.\nReason: The Past Participle is the fixed element in passive constructions; only the form of 'be' changes to show the tense — is/are for Present, was/were for Past and will be for Future.`,
-                options: [
-                    "a) Both are correct; the reason correctly explains the assertion.",
-                    "b) Both are correct; but the reason does NOT explain the assertion.",
-                    "c) The assertion is correct; the reason is wrong.",
-                    "d) Both are wrong — passive sentences do not always use Past Participle."
-                ],
-                answer: "a) Both are correct; the reason correctly explains the assertion.",
-                reason: "Key Reason: be(tense-marker) + Past Participle(fixed) = universal passive formula across all tenses"
+                q: `Q13. Assertion: In all passive sentences — regardless of tense — the verb is always formed using a form of 'be' followed by the Past Participle.\nReason: The Past Participle is the fixed element in passive constructions; only the form of 'be' changes to show the tense — is/are for Present, was/were for Past and will be for Future.\na) Both are correct; the reason correctly explains the assertion.\nb) Both are correct; but the reason does NOT explain the assertion.\nc) The assertion is correct; the reason is wrong.\nd) Both are wrong — passive sentences do not always use Past Participle.`,
+                options: ["a", "b", "c", "d"],
+                answer: "a",
+                reason: "be(tense-marker) + Past Participle(fixed) = universal passive formula across all tenses"
             }
         ];
 
-        // DISTINCT APPLICATION BONUS CHALLENGE ITEM
         const exclusiveFinalChallengeItem = {
-            q: `⭐ Final Challenge ⭐\n\nAnalyze this dynamic architectural schedule scenario:\n"Architects present structural blueprints in the morning, contractors secure state permits by noon, and engineers will run system assessments next week."\n\nWhich option perfectly transposes all three coordinate clauses into accurate systemic Passive Voice?`,
-            options: [
-                "a) Structural blueprints are presented in the morning, state permits are secured by noon, and system assessments will be run next week.",
-                "b) Structural blueprints were presented in the morning, state permits are secured by noon, and system assessments are run next week.",
-                "c) Structural blueprints are presented in the morning, state permits will be secured by noon, and system assessments have run next week.",
-                "d) Structural blueprints are presenting in the morning, state permits are securing by noon, and system assessments run next week."
-            ],
-            answer: "a) Structural blueprints are presented in the morning, state permits are secured by noon, and system assessments will be run next week.",
-            reason: "Final Challenge Explanation: Translates Simple Present ('are presented'), Simple Present ('are secured'), and Simple Future ('will be run') tracking agents correctly into passive sequence."
+            q: `⭐ Final Challenge ⭐\n\nAnalyze this dynamic architectural schedule scenario:\n"Architects present structural blueprints in the morning, contractors secure state permits by noon, and engineers will run system assessments next week."\n\nWhich option perfectly transposes all three coordinate clauses into accurate systemic Passive Voice?\na) Structural blueprints are presented in the morning, state permits are secured by noon, and system assessments will be run next week.\nb) Structural blueprints were presented in the morning, state permits are secured by noon, and system assessments are run next week.\nc) Structural blueprints are presented in the morning, state permits will be secured by noon, and system assessments have run next week.\nd) Structural blueprints are presenting in the morning, state permits are securing by noon, and system assessments run next week.`,
+            options: ["a", "b", "c", "d"],
+            answer: "a",
+            reason: "Translates Simple Present ('are presented'), Simple Present ('are secured'), and Simple Future ('will be run') tracking agents correctly into passive sequence."
         };
 
-        // SYSTEM SESSION ARCHITECTURE STATE
         let activePool = [];
         let currentQuestionIndex = 0;
         let runningTotalScore = 0;
@@ -749,7 +671,6 @@
         let isFinalChallengeActive = false;
         let evaluationSummaryLog = [];
 
-        // BUILD VISUAL BACKGROUND EFFECTS
         function generateAmbientDecorations() {
             const layer = document.getElementById("ambient-container");
             if (!layer) return;
@@ -772,14 +693,16 @@
             }
         }
 
-        // ENTRY & INITIAL VIEWPORTS FADE TRANSITION ROUTINES
         window.addEventListener('DOMContentLoaded', () => {
             generateAmbientDecorations();
             setTimeout(() => {
                 const splash = document.getElementById("splash-screen");
-                if (splash) splash.style.display = "none";
-                navigateToTargetViewport("intro-screen");
-            }, 5000); // Strict 5-second branding lock
+                if (splash) splash.style.opacity = "0";
+                setTimeout(() => {
+                    if (splash) splash.style.display = "none";
+                    navigateToTargetViewport("intro-screen");
+                }, 500);
+            }, 5000);
         });
 
         function navigateToTargetViewport(targetId) {
@@ -788,10 +711,9 @@
             if (target) target.style.display = "block";
         }
 
-        // SFX SWITCHBOARD CONTROLS
         function toggleSoundEffects() {
             isAudioMuted = !isAudioMuted;
-            const text = isAudioMuted ? "🔇 Audio: Muted" : "🔊 Audio: Enabled";
+            const text = isAudioMuted ? "🔇 Sound: OFF" : "🔊 Sound: ON";
             document.getElementById("sfx-toggle-btn").innerText = text;
             document.getElementById("sfx-toggle-game-btn").innerText = text;
         }
@@ -807,7 +729,6 @@
             } catch(e) {}
         }
 
-        // FISCHER-YATES SHUFFLE COMPONENT
         function shuffleArrayData(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -816,14 +737,9 @@
             return arr;
         }
 
-        // INITIALIZE CORE ROUND LIFE CYCLE MANAGER
         function initializeQuizEngine() {
             let curatedPool = JSON.parse(JSON.stringify(curriculumQuestionsSource));
             curatedPool = shuffleArrayData(curatedPool);
-            
-            curatedPool.forEach(node => {
-                node.options = shuffleArrayData(node.options);
-            });
 
             activePool = curatedPool;
             currentQuestionIndex = 0;
@@ -850,11 +766,10 @@
             if (displayIndexValue > maximumQuestionsLimit) displayIndexValue = maximumQuestionsLimit;
 
             document.getElementById("hud-index-val").innerText = `${displayIndexValue} / ${maximumQuestionsLimit}`;
-            document.getElementById("hud-score-val").innerText = runningTotalScore;
+            document.getElementById("hud-score-val").innerText = `${runningTotalScore} / 14`;
             document.getElementById("hud-streak-val").innerText = `${currentStreakCount} 🔥`;
         }
 
-        // UI RENDER FOR CURRENT QUESTION
         function renderActiveQuestionState() {
             processingSelectionLock = false;
             
@@ -876,13 +791,8 @@
 
             let currentItemObj = isFinalChallengeActive ? exclusiveFinalChallengeItem : activePool[currentQuestionIndex];
 
-            if (isFinalChallengeActive) {
-                attemptsRemaining = 1;
-                secondsLeftValue = 30; 
-            } else {
-                attemptsRemaining = 2;
-                secondsLeftValue = 45; 
-            }
+            attemptsRemaining = isFinalChallengeActive ? 1 : 2;
+            secondsLeftValue = 45; 
 
             synchronizeHUDMetricsView();
 
@@ -894,18 +804,17 @@
             const containerStack = document.getElementById("activeOptionsStack");
             containerStack.innerHTML = "";
 
-            currentItemObj.options.forEach(optStr => {
+            currentItemObj.options.forEach(optKey => {
                 let nodeButton = document.createElement("button");
                 nodeButton.className = "option-node";
-                nodeButton.innerText = optStr;
-                nodeButton.onclick = () => processSelectedAnswerOption(optStr, nodeButton);
+                nodeButton.innerText = optKey.toUpperCase();
+                nodeButton.onclick = () => processSelectedAnswerOption(optKey, nodeButton);
                 containerStack.appendChild(nodeButton);
             });
 
             startCountdownProcess();
         }
 
-        // CLOCK COUNTDOWN CONTROLLER
         function startCountdownProcess() {
             clearInterval(activeTimerObject);
             document.getElementById("timer-display").innerText = `${secondsLeftValue}s`;
@@ -927,7 +836,6 @@
             document.querySelectorAll(".option-node").forEach(n => n.classList.add("locked-state"));
         }
 
-        // SCENARIO WORKFLOW FOR TIMER EXPIRATION
         function handleClockTimeoutScenario() {
             processingSelectionLock = true;
             disableInteractiveOptionNodes();
@@ -956,7 +864,7 @@
 
                 evaluationSummaryLog.push({
                     q: currentItemObj.q,
-                    userAns: "Time Expired (No Option Selected)",
+                    userAns: "Expired (No Option Selected)",
                     correctAns: currentItemObj.answer,
                     reason: currentItemObj.reason
                 });
@@ -965,12 +873,11 @@
             }
         }
 
-        // INTERACTION INTERPRETER AND LOGIC PACKAGER
-        function processSelectedAnswerOption(chosenOptionText, targetNodeButton) {
-            if (processingSelectionLock) return;
+        function processSelectedAnswerOption(chosenOptionKey, targetNodeButton) {
+            if (processingSelectionLock || targetNodeButton.classList.contains("locked-state")) return;
 
             let currentItemObj = isFinalChallengeActive ? exclusiveFinalChallengeItem : activePool[currentQuestionIndex];
-            let isExactMatch = (chosenOptionText === currentItemObj.answer);
+            let isExactMatch = (chosenOptionKey.toLowerCase() === currentItemObj.answer.toLowerCase());
 
             if (isExactMatch) {
                 processingSelectionLock = true;
@@ -981,13 +888,13 @@
                 countCorrectItems++;
                 currentStreakCount++;
                 
-                runningTotalScore += isFinalChallengeActive ? 2 : 1;
+                runningTotalScore++;
                 totalItemsAttempted++;
 
                 evaluationSummaryLog.push({
                     q: currentItemObj.q,
-                    userAns: chosenOptionText,
-                    correctAns: currentItemObj.answer,
+                    userAns: chosenOptionKey.toUpperCase(),
+                    correctAns: currentItemObj.answer.toUpperCase(),
                     reason: currentItemObj.reason
                 });
 
@@ -1027,8 +934,8 @@
 
                     evaluationSummaryLog.push({
                         q: currentItemObj.q,
-                        userAns: chosenOptionText,
-                        correctAns: currentItemObj.answer,
+                        userAns: chosenOptionKey.toUpperCase(),
+                        correctAns: currentItemObj.answer.toUpperCase(),
                         reason: currentItemObj.reason
                     });
 
@@ -1037,24 +944,22 @@
             }
         }
 
-        // PANEL REVEAL FOR SOLUTION AND EXPLANATION
         function revealSolutionMetricsPanel() {
             let currentItemObj = isFinalChallengeActive ? exclusiveFinalChallengeItem : activePool[currentQuestionIndex];
             
             document.querySelectorAll(".option-node").forEach(btn => {
-                if (btn.innerText === currentItemObj.answer) {
+                if (btn.innerText.toLowerCase() === currentItemObj.answer.toLowerCase()) {
                     btn.classList.add("correct-look");
                 }
             });
 
             let explanationBox = document.getElementById("explanation-card");
-            explanationBox.innerHTML = `<strong>✅ Correct Answer:</strong> ${currentItemObj.answer}<br><br>📘 ${currentItemObj.reason}`;
+            explanationBox.innerHTML = `<strong>✅ Correct Answer: ${currentItemObj.answer.toUpperCase()}</strong><br><br>📘 ${currentItemObj.reason}`;
             explanationBox.style.display = "block";
 
             document.getElementById("action-bar").style.display = "block";
         }
 
-        // NEXT BUTTON STEP CONTROLLER
         function advanceNextQuestionCard() {
             if (!isFinalChallengeActive) {
                 currentQuestionIndex++;
@@ -1064,14 +969,12 @@
             renderActiveQuestionState();
         }
 
-        // START FINAL CHALLENGE ENVIRONMENT
         function initiateFinalChallengeLifecycle() {
             isFinalChallengeActive = true;
             document.getElementById("final-mode-indicator").style.display = "inline-block";
             renderActiveQuestionState();
         }
 
-        // CONFETTI EFFECT GENERATOR
         function triggerConfettiSplineEffect() {
             try {
                 for (let i = 0; i < 16; i++) {
@@ -1086,7 +989,6 @@
             } catch(e) {}
         }
 
-        // METRICS SCOREBOARD COMPILER
         function renderFinalMetricsScoreboard() {
             clearInterval(activeTimerObject);
             playSoundClip("soundWin");
@@ -1119,7 +1021,6 @@
             }
         }
 
-        // SCROLLABLE RESPONSE LOGGER
         function toggleReviewLogsDisplay() {
             let container = document.getElementById("reviewSectionBlock");
             if (container.style.display === "block") {
@@ -1135,9 +1036,9 @@
 
                 card.innerHTML = `
                     <div class="review-q">${index + 1}. ${item.q}</div>
-                    <div class="review-ans-row" style="color: ${verifiedColor};"><strong>Your Pick:</strong> ${item.userAns}</div>
-                    <div class="review-ans-row" style="color: var(--success-green);"><strong>Correct Structural Format:</strong> ${item.correctAns}</div>
-                    <div class="review-explanation">${item.reason}</div>
+                    <div class="review-ans-row" style="color: ${verifiedColor};"><strong>Your Pick:</strong> Option ${item.userAns}</div>
+                    <div class="review-ans-row" style="color: var(--success-green);"><strong>Correct Structural Format:</strong> Option ${item.correctAns}</div>
+                    <div class="review-explanation">📘 ${item.reason}</div>
                 `;
                 container.appendChild(card);
             });
