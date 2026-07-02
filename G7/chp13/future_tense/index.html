@@ -1,1 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Grade 7 English Quiz - Chapter 13: Future Tense</title>
+    <style>
+        :root {
+            --slate-blue: #2b3a67;
+            --mint-teal: #41b3a3;
+            --amber-gold: #e27d60;
+            --gold-dark: #c36246;
+            --deep-purple: #1d1e2c;
+            --cream-bg: #f4f7fc;
+            --card-white: #ffffff;
+            --success-green: #2ec4b6;
+            --danger-red: #e71d36;
+            --panel-radius: 20px;
+            --elem-radius: 12px;
+            --classic-shadow: 0 10px 30px rgba(43, 58, 103, 0.08);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--cream-bg);
+            color: var(--deep-purple);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Dynamic Background Decorations */
+        .bg-element {
+            position: absolute;
+            top: -50px;
+            width: 8px;
+            height: 8px;
+            background: rgba(65, 179, 163, 0.2);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: floatDownStream 10s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes floatDownStream {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            display: none;
+            position: relative;
+            z-index: 10;
+            animation: panelFadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes panelFadeIn {
+            0% { transform: scale(0.96); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Screen 1: Splash Screen Styles */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            animation: runSplashFade 5s linear forwards;
+        }
+
+        #splash-screen img {
+            width: 250px;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        .splash-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes runSplashFade {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Common Card Elements */
+        .quiz-card {
+            background: var(--card-white);
+            padding: clamp(24px, 5vw, 40px);
+            border-radius: var(--panel-radius);
+            width: 100%;
+            box-shadow: var(--classic-shadow);
+            border: 1px solid rgba(43, 58, 103, 0.04);
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: var(--slate-blue);
+            font-size: clamp(22px, 4.5vw, 28px);
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: var(--mint-teal);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .meta-info-box {
+            background: #f8fafc;
+            border-radius: var(--elem-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            border: 1px dashed var(--mint-teal);
+        }
+
+        .meta-info-box p {
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .meta-info-box p:last-child { margin-bottom: 0; }
+
+        /* Game Play HUD Interface */
+        .hud-wrapper {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: var(--slate-blue);
+            padding: 14px;
+            border-radius: var(--elem-radius);
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .hud-block {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .hud-val {
+            font-size: 16px;
+            color: var(--mint-teal);
+        }
+
+        #timer-display {
+            color: #ff9faf;
+        }
+
+        .audio-ctrl-strip {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(43, 58, 103, 0.05);
+            padding: 8px 16px;
+            border-radius: 30px;
+            margin-bottom: 16px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .audio-ctrl-strip button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--slate-blue);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(43, 58, 103, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--mint-teal), var(--success-green));
+            transition: width 0.3s ease;
+        }
+
+        .question-statement {
+            font-size: clamp(16px, 3.8vw, 18px);
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            margin-bottom: 24px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        .options-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-node {
+            width: 100%;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--elem-radius);
+            padding: 16px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            line-height: 1.4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option-node:hover:not(.locked-state) {
+            border-color: var(--slate-blue);
+            background: rgba(43, 58, 103, 0.01);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(43, 58, 103, 0.04);
+        }
+        
+        .option-node:active:not(.locked-state) {
+            transform: translateY(1px);
+        }
+
+        .option-node.locked-state {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .option-node.correct-look {
+            background: #e6f9f7 !important;
+            border-color: var(--success-green) !important;
+            color: var(--success-green) !important;
+            font-weight: 700;
+            box-shadow: 0 0 12px rgba(46, 196, 182, 0.2);
+        }
+        .option-node.correct-look::after {
+            content: "✔";
+            font-size: 16px;
+            color: var(--success-green);
+        }
+
+        .option-node.wrong-look {
+            background: #ffebee !important;
+            border-color: var(--danger-red) !important;
+            color: var(--danger-red) !important;
+            font-weight: 700;
+            animation: crossShake 0.4s ease-in-out;
+        }
+        .option-node.wrong-look::after {
+            content: "✖";
+            font-size: 16px;
+            color: var(--danger-red);
+        }
+
+        @keyframes crossShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            50% { transform: translateX(6px); }
+            75% { transform: translateX(-4px); }
+        }
+
+        #feedback-alert {
+            margin-top: 12px;
+            font-size: 18px;
+            font-weight: 800;
+            display: none;
+            text-align: center;
+        }
+
+        #explanation-card {
+            margin-top: 16px;
+            padding: 16px 20px;
+            border-radius: var(--elem-radius);
+            background: #f8fafc;
+            border-left: 5px solid var(--slate-blue);
+            font-size: 14.5px;
+            line-height: 1.6;
+            color: #4a5568;
+            text-align: left;
+            display: none;
+            animation: panelFadeIn 0.3s ease;
+        }
+
+        .btn-ui-action {
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--elem-radius);
+            background: var(--amber-gold);
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            margin: 8px;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(226, 125, 96, 0.25);
+        }
+
+        .btn-ui-action:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(226, 125, 96, 0.35);
+        }
+
+        /* Star Confetti Engine */
+        .star-particle {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: #ffd700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            pointer-events: none;
+            z-index: 9999;
+            animation: starFallEffect 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes starFallEffect {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(120px) scale(0.4) rotate(180deg); opacity: 0; }
+        }
+
+        /* Review Mode Cards Styles */
+        .review-scroll-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+            padding-right: 8px;
+            text-align: left;
+        }
+        .review-item-card {
+            background: #f8fafc;
+            border-radius: var(--elem-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .review-q {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 8px;
+            color: var(--slate-blue);
+        }
+        .review-ans-row {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .review-explanation {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 8px;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 6px;
+        }
+
+        .main-logo-display {
+            height: 65px; 
+            width: auto; 
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        /* Final Challenge Mode Overlay Effects */
+        .final-challenge-badge {
+            background: linear-gradient(135deg, #ffd700, var(--amber-gold));
+            color: white;
+            font-weight: 800;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+        @keyframes pulseGlow {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="soundCelebration" src="assets/clapping.mp3" preload="auto"></audio>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+        <div class="splash-title">Powered by Innovine</div>
+    </div>
+
+    <div id="intro-screen" class="container">
+        <div class="quiz-card">
+            <div style="text-align: center;">
+                <img src="assets/innovine-logo.png" class="main-logo-display" alt="Innovine Logo">
+            </div>
+            <h1>Chapter 13 — Future Tense</h1>
+            <div class="subtitle">Grade 7 &bull; 12 Questions + Final Challenge</div>
+            
+            <div class="meta-info-box">
+                <p>📋 <strong>Coverage:</strong> Simple Future, Future Continuous &amp; Future Perfect</p>
+                <p>⏱️ <strong>Timer Rules:</strong> 45 seconds per question (30 seconds in Final Challenge)</p>
+                <p>🔄 <strong>Attempts Allowed:</strong> 2 chances per normal round question</p>
+                <p>🎯 <strong>Final Challenge:</strong> 5 lightning questions with no retries and Double Points!</p>
+            </div>
+            
+            <div class="audio-ctrl-strip">
+                <button onclick="toggleAudioMuteState()" id="audio-toggle-btn">🔊 Audio: Enabled</button>
+            </div>
+
+            <button class="btn-ui-action" onclick="initializeQuizEngine()">Start Game</button>
+        </div>
+    </div>
+
+    <div id="question-screen" class="container">
+        <div class="audio-ctrl-strip">
+            <button onclick="toggleAudioMuteState()" id="audio-toggle-game-btn">🔊 Audio: Enabled</button>
+        </div>
+        
+        <div class="hud-wrapper">
+            <div class="hud-block">
+                <div>Progress</div>
+                <div id="hud-index-val" class="hud-val">1 / 12</div>
+            </div>
+            <div class="hud-block">
+                <div>⭐ Score</div>
+                <div id="hud-score-val" class="hud-val">0</div>
+            </div>
+            <div class="hud-block">
+                <div>Timer</div>
+                <div id="timer-display" class="hud-val">45s</div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div id="progressBarFill" class="progress-fill"></div>
+        </div>
+
+        <div class="quiz-card">
+            <div id="final-mode-indicator" class="final-challenge-badge" style="display: none;">🏆 Final Challenge! Double Points</div>
+            <div id="activeQuestionText" class="question-statement">Loading question details...</div>
+            <div id="activeOptionsStack" class="options-stack"></div>
+            <div id="feedback-alert"></div>
+            <div id="explanation-card"></div>
+        </div>
+    </div>
+
+    <div id="transition-screen" class="container">
+        <div class="quiz-card">
+            <h1 style="font-size: 32px; color: var(--slate-blue); margin-bottom: 20px;">🏆 Final Challenge Incoming!</h1>
+            <div style="font-size: 60px; margin: 20px 0; animation: pulseGlow 1s infinite alternate;">⚡⏳⭐</div>
+            <p style="font-size: 18px; color: var(--mint-teal); font-weight: 600; line-height: 1.4;">Prepare your skills! 5 randomized questions from the chapter are selected next. 30 seconds each, no retries allowed, and double point rewards!</p>
+        </div>
+    </div>
+
+    <div id="result-screen" class="container">
+        <div class="quiz-card">
+            <h2 id="performance-badge-title">🌟 Grammar Champion!</h2>
+            <div class="subtitle">Comprehensive Analysis Report</div>
+            
+            <div style="background: #f8fafc; padding: 24px; border-radius: var(--elem-radius); margin-bottom: 24px; text-align: left; line-height: 1.8;">
+                <p style="font-size: 17px;"><strong>Final Total Score:</strong> <span id="res-score" style="font-weight:800; color:var(--slate-blue);">0</span></p>
+                <p style="font-size: 17px;"><strong>Success Accuracy:</strong> <span id="res-percent" style="font-weight:700; color:var(--mint-teal);">0%</span></p>
+                <hr style="margin: 12px 0; border: none; border-top: 1px dashed #cbd5e1;">
+                <p style="font-size: 15px;"><strong>Questions Answered:</strong> <span id="res-attempted">0</span></p>
+                <p style="font-size: 15px; color: var(--success-green);"><strong>Correct Items Count:</strong> <span id="res-correct">0</span></p>
+                <p style="font-size: 15px; color: var(--danger-red);"><strong>Incorrect Items Count:</strong> <span id="res-wrong">0</span></p>
+            </div>
+
+            <button class="btn-ui-action" onclick="initializeQuizEngine()">Play Again</button>
+            <button class="btn-ui-action" style="background-color: var(--slate-blue);" onclick="toggleReviewLogsDisplay()">Review Answers</button>
+            
+            <div id="reviewSectionBlock" class="review-scroll-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // MASTER DATABASE SYSTEM
+        const sourceQuestionsDatabase = [
+            {
+                q: `Q1. Riya's mother asks her what her plans are for the weekend. At that moment, Riya makes a decision and says, "I ___ clean my room and organise my bookshelf."\n\nWhich form correctly expresses a decision made at the moment of speaking?`,
+                options: [
+                    "a) am going to clean",
+                    "b) will clean",
+                    "c) shall have cleaned",
+                    "d) will be cleaning"
+                ],
+                answer: "b) will clean",
+                reason: "Explanation: 'Will' expresses a spontaneous decision made at the moment of speaking."
+            },
+            {
+                q: `Q2. Aarav is telling his friend about his schedule for tomorrow afternoon: "At 3 PM tomorrow, I ___ cricket practice with my team — it is already on the calendar." Which tense correctly expresses an action that will be in progress at a specific future time?`,
+                options: [
+                    "a) will play",
+                    "b) will have played",
+                    "c) will be playing",
+                    "d) am playing"
+                ],
+                answer: "c) will be playing",
+                reason: "Explanation: Action in progress at a specific named future time → Future Continuous."
+            },
+            {
+                q: `Q3. Meera's teacher sets a deadline: "By the end of this month, you ___ all twelve chapters of the textbook." Which tense correctly expresses an action that will be completed before a specific future point?`,
+                options: [
+                    "a) will study",
+                    "b) will be studying",
+                    "c) are going to study",
+                    "d) will have studied"
+                ],
+                answer: "d) will have studied",
+                reason: "Explanation: Completion before the end of the month → Future Perfect with 'by'."
+            },
+            {
+                q: `Q4. Rohan is watching dark clouds gather before the school picnic. He says: "Look at those clouds — it ___ rain. We should carry umbrellas." Which form correctly expresses a prediction based on present evidence?`,
+                options: [
+                    "a) will rain",
+                    "b) is going to rain",
+                    "c) will be raining",
+                    "d) will have rained"
+                ],
+                answer: "b) is going to rain",
+                reason: "Explanation: Dark clouds represent visible present evidence → 'going to' for a prediction based on evidence."
+            },
+            {
+                q: `Q5. A student is describing what life will be like in 2050 for a school essay: "By 2050, scientists _____________ treatments and cures for many diseases that are currently untreatable." Which tense correctly expresses completion before a future deadline?`,
+                options: [
+                    "a) will discover",
+                    "b) will be discovering",
+                    "c) will have discovered",
+                    "d) are going to discover"
+                ],
+                answer: "c) will have discovered",
+                reason: "Explanation: Completion before the year 2050 → Future Perfect 'will have discovered'."
+            },
+            {
+                q: `Q6. What is the difference between these two sentences?\nSentence A: "I will call you tomorrow."\nSentence B: "I am going to call you tomorrow."`,
+                options: [
+                    "a) Both are identical — no difference in meaning or usage",
+                    "b) 'Will' expresses a spontaneous decision or promise made at the moment of speaking; 'going to' expresses a pre-planned intention decided before the moment of speaking",
+                    "c) 'Will' is used for future facts; 'going to' is used only for predictions",
+                    "d) 'Going to' is more formal than 'will' in all situations"
+                ],
+                answer: "b) 'Will' expresses a spontaneous decision or promise made at the moment of speaking; 'going to' expresses a pre-planned intention decided before the moment of speaking",
+                reason: "Explanation: 'Will' represents spontaneous/on-the-spot decisions; 'going to' represents pre-planned intentions decided before speaking."
+            },
+            {
+                q: `Q7. Which sentence uses the Future Perfect correctly?`,
+                options: [
+                    "a) By the time you arrive, I will be cooking dinner.",
+                    "b) By the time you arrive, I will have cooked dinner.",
+                    "c) By the time you arrive, I will cook dinner.",
+                    "d) By the time you arrive, I am going to cook dinner."
+                ],
+                answer: "b) By the time you arrive, I will have cooked dinner.",
+                reason: "Explanation: 'Will have cooked' indicates an action completed before another future event (your arrival) → Future Perfect with 'by the time'."
+            },
+            {
+                q: `Q8. Sort these sentences into two groups — Simple Future and Future Continuous:\nP: "She will present her project at the assembly tomorrow."\nQ: "At this time next month, he will be sitting his final exams."\nR: "They will announce the results on Friday."\nS: "This time tomorrow, we will be flying over the Arabian Sea."`,
+                options: [
+                    "a) Simple Future: P, Q — Future Continuous: R, S",
+                    "b) Simple Future: Q, S — Future Continuous: P, R",
+                    "c) Simple Future: P, R — Future Continuous: Q, S",
+                    "d) Simple Future: R, S — Future Continuous: P, Q"
+                ],
+                answer: "c) Simple Future: P, R — Future Continuous: Q, S",
+                reason: "Explanation: P & R describe single completed future events → Simple Future; Q & S describe ongoing actions at a specific future time → Future Continuous."
+            },
+            {
+                q: `Q9. Classify the function of the tense used in each sentence:\n1. "Don't call at 8 PM — I will be watching the final."\n2. "By next June, she will have lived in Paris for five years."\n3. "Look at him run — he is going to win this race!"\n4. "I will help you carry those bags." (said on the spot)`,
+                options: [
+                    "a) 1=Spontaneous decision, 2=Future plan, 3=Prediction from evidence, 4=Completed future action",
+                    "b) 1=Action in progress at future time, 2=Completed before future point, 3=Prediction from evidence, 4=Spontaneous decision",
+                    "c) 1=Completed future action, 2=Action in progress, 3=Spontaneous decision, 4=Pre-planned intention",
+                    "d) 1=Pre-planned intention, 2=Spontaneous decision, 3=Completed future action, 4=Action in progress"
+                ],
+                answer: "b) 1=Action in progress at future time, 2=Completed before future point, 3=Prediction from evidence, 4=Spontaneous decision",
+                reason: "Explanation: 1 implies action in progress at 8 PM; 2 implies completed duration before next June; 3 implies an evidence-based prediction (running fast); 4 implies a spontaneous on-the-spot offer."
+            },
+            {
+                q: `Q10. Three of the following sentences use future tenses correctly. One does NOT. Which is the odd one out?`,
+                options: [
+                    "a) By next year, she will have published her first novel.",
+                    "b) This time tomorrow, I will be sitting my science exam.",
+                    "c) Look at those clouds — it will rain soon.",
+                    "d) I will help you with your project after dinner."
+                ],
+                answer: "c) Look at those clouds — it will rain soon.",
+                reason: "Explanation: Visible present evidence (dark clouds) requires the 'is going to rain' structure rather than 'will rain'."
+            },
+            {
+                q: `Q11. A student changes "She will finish the report. Then you will arrive." to "By the time you arrive, she will have finished the report." What is the effect of using the Future Perfect?`,
+                options: [
+                    "a) The meaning changes — she will not finish the report",
+                    "b) The Future Perfect establishes a clear time sequence — it shows that one future action (finishing) will be completed before another future event (arriving) making the relationship between the two explicit",
+                    "c) The sentence becomes grammatically incorrect",
+                    "d) Both sentences mean exactly the same thing — no effect"
+                ],
+                answer: "b) The Future Perfect establishes a clear time sequence — it shows that one future action (finishing) will be completed before another future event (arriving) making the relationship between the two explicit",
+                reason: "Explanation: The Future Perfect sequences two upcoming future events, making it explicitly clear which action finishes first."
+            },
+            {
+                q: `Q12. Assertion: "It is going to rain" and "It will rain" can both express predictions but are not always interchangeable.\nReason: 'Going to' is used when there is present visible evidence for the prediction; 'will' is used for general predictions or opinions about the future without specific present evidence.`,
+                options: [
+                    "a) Both are correct; the reason correctly explains the assertion.",
+                    "b) Both are correct; but the reason does NOT explain the assertion.",
+                    "c) The assertion is correct; the reason is wrong.",
+                    "d) Both are wrong — both forms are always completely interchangeable."
+                ],
+                answer: "a) Both are correct; the reason correctly explains the assertion.",
+                reason: "Explanation: Both assertions and reasons are correct; 'going to' applies to evidence-based insights, while 'will' expresses speculative predictions or general opinions."
+            }
+        ];
+
+        // SESSION STATE VARIABLES
+        let activePool = [];
+        let currentQuestionIndex = 0;
+        let runningTotalScore = 0;
+        let totalItemsAttempted = 0;
+        let countCorrectItems = 0;
+        let countWrongItems = 0;
+        
+        let attemptsRemaining = 2;
+        let activeTimerObject = null;
+        let secondsLeftValue = 45;
+        let isAudioMuted = false;
+        let processingSelectionLock = false;
+        let isFinalChallengeActive = false;
+        let evaluationSummaryLog = [];
+
+        // AMBIENT BACKGROUND BUILDER
+        function renderAmbientBackgroundElements() {
+            try {
+                for (let k = 0; k < 8; k++) {
+                    let particle = document.createElement("div");
+                    particle.className = "bg-element";
+                    particle.style.left = (Math.random() * 100) + "vw";
+                    particle.style.animationDelay = (Math.random() * 5) + "s";
+                    particle.style.animationDuration = (Math.random() * 4 + 6) + "s";
+                    document.body.appendChild(particle);
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // FADE OUT INTRO SPLASH SCREEN
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAmbientBackgroundElements();
+            setTimeout(() => {
+                let splash = document.getElementById("splash-screen");
+                if (splash) {
+                    splash.style.display = "none";
+                    navigateToTargetViewport("intro-screen");
+                }
+            }, 5000); // Strict 5-second mandatory splash duration
+        });
+
+        function navigateToTargetViewport(targetId) {
+            document.querySelectorAll(".container").forEach(c => c.style.display = "none");
+            let target = document.getElementById(targetId);
+            if (target) target.style.display = "block";
+        }
+
+        // AUDIO TOGGLE CONTROLS
+        function toggleAudioMuteState() {
+            isAudioMuted = !isAudioMuted;
+            let labelText = isAudioMuted ? "🔇 Audio: Muted" : "🔊 Audio: Enabled";
+            document.getElementById("audio-toggle-btn").innerText = labelText;
+            document.getElementById("audio-toggle-game-btn").innerText = labelText;
+        }
+
+        function playSoundClip(elementId) {
+            if (isAudioMuted) return;
+            try {
+                let clip = document.getElementById(elementId);
+                if (clip) {
+                    clip.currentTime = 0;
+                    clip.play().catch(() => {});
+                }
+            } catch(err) {}
+        }
+
+        // INVERSION ENGINE FOR SHUFFLING ITEMS
+        function shuffleMasterArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // INIT & CORE RESTART WORKFLOW
+        function initializeQuizEngine() {
+            let baseShuffle = JSON.parse(JSON.stringify(sourceQuestionsDatabase));
+            baseShuffle = shuffleMasterArray(baseShuffle);
+            
+            baseShuffle.forEach(element => {
+                element.options = shuffleMasterArray(element.options);
+            });
+
+            activePool = baseShuffle;
+            currentQuestionIndex = 0;
+            runningTotalScore = 0;
+            totalItemsAttempted = 0;
+            countCorrectItems = 0;
+            countWrongItems = 0;
+            isFinalChallengeActive = false;
+            evaluationSummaryLog = [];
+
+            document.getElementById("final-mode-indicator").style.display = "none";
+            document.getElementById("reviewSectionBlock").style.display = "none";
+            document.getElementById("reviewSectionBlock").innerHTML = "";
+
+            updateLiveMetricsHUD();
+            navigateToTargetViewport("question-screen");
+            renderNextActiveRoundCard();
+        }
+
+        function updateLiveMetricsHUD() {
+            let totalMaxDisplay = activePool.length + 5; 
+            let currentDisplayIndex = totalItemsAttempted + 1;
+            if(currentDisplayIndex > totalMaxDisplay) currentDisplayIndex = totalMaxDisplay;
+
+            document.getElementById("hud-index-val").innerText = `${currentDisplayIndex} / ${totalMaxDisplay}`;
+            document.getElementById("hud-score-val").innerText = runningTotalScore;
+        }
+
+        // CORE ROUND ROUTER
+        function renderNextActiveRoundCard() {
+            processingSelectionLock = false;
+            
+            let alertBox = document.getElementById("feedback-alert");
+            alertBox.style.display = "none";
+            alertBox.innerText = "";
+            
+            let explanationBox = document.getElementById("explanation-card");
+            explanationBox.style.display = "none";
+            explanationBox.innerText = "";
+
+            if (!isFinalChallengeActive && currentQuestionIndex >= activePool.length) {
+                runFinalChallengeTransitionSequence();
+                return;
+            }
+
+            if (isFinalChallengeActive && totalItemsAttempted >= 17) { 
+                displayFinalEvaluationSummaryReport();
+                return;
+            }
+
+            if (isFinalChallengeActive) {
+                attemptsRemaining = 1; 
+                secondsLeftValue = 30; 
+            } else {
+                attemptsRemaining = 2; 
+                secondsLeftValue = 45; 
+            }
+
+            let currentItemData = activePool[currentQuestionIndex];
+            updateLiveMetricsHUD();
+
+            let progressPercentage = (totalItemsAttempted / 17) * 100;
+            document.getElementById("progressBarFill").style.width = `${progressPercentage}%`;
+
+            document.getElementById("activeQuestionText").innerText = currentItemData.q;
+
+            let containerStack = document.getElementById("activeOptionsStack");
+            containerStack.innerHTML = "";
+
+            currentItemData.options.forEach(optionString => {
+                let nodeButton = document.createElement("button");
+                nodeButton.className = "option-node";
+                nodeButton.innerText = optionString;
+                nodeButton.onclick = () => evaluateIncomingSelection(optionString, nodeButton);
+                containerStack.appendChild(nodeButton);
+            });
+
+            startActiveRoundTimer();
+        }
+
+        // COUNTDOWN TIMER CONTROLLER
+        function startActiveRoundTimer() {
+            clearInterval(activeTimerObject);
+            document.getElementById("timer-display").innerText = `${secondsLeftValue}s`;
+
+            activeTimerObject = setInterval(() => {
+                secondsLeftValue--;
+                document.getElementById("timer-display").innerText = `${secondsLeftValue}s`;
+
+                if (secondsLeftValue <= 0) {
+                    clearInterval(activeTimerObject);
+                    if (!processingSelectionLock) {
+                        triggerTimeoutSequence();
+                    }
+                }
+            }, 1000);
+        }
+
+        function enforceDisableAllOptionNodes() {
+            document.querySelectorAll(".option-node").forEach(n => n.classList.add("locked-state"));
+        }
+
+        // TIMEOUT EXPIRED MANAGER
+        function triggerTimeoutSequence() {
+            processingSelectionLock = true;
+            enforceDisableAllOptionNodes();
+            playSoundClip("soundWrong");
+
+            attemptsRemaining--;
+            if (!isFinalChallengeActive && attemptsRemaining > 0) {
+                let alertBox = document.getElementById("feedback-alert");
+                alertBox.innerText = "⏳ Time Expired! Try Again!";
+                alertBox.style.color = "var(--danger-red)";
+                alertBox.style.display = "block";
+                
+                setTimeout(() => {
+                    processingSelectionLock = false;
+                    document.querySelectorAll(".option-node").forEach(n => n.classList.remove("locked-state"));
+                    secondsLeftValue = 45;
+                    startActiveRoundTimer();
+                }, 2000);
+            } else {
+                countWrongItems++;
+                totalItemsAttempted++;
+                
+                let currentItemData = activePool[currentQuestionIndex];
+                evaluationSummaryLog.push({
+                    q: currentItemData.q,
+                    userAns: "No Answer (Timeout)",
+                    correctAns: currentItemData.answer,
+                    reason: currentItemData.reason
+                });
+
+                displayCorrectAnswerAndExplanation();
+            }
+        }
+
+        // EVALUATION FLOW LOGIC ENGINE
+        function evaluateIncomingSelection(chosenOptionText, targetElementNode) {
+            if (processingSelectionLock) return;
+
+            let activeItemData = activePool[currentQuestionIndex];
+            let isCorrectSelection = (chosenOptionText === activeItemData.answer);
+
+            if (isCorrectSelection) {
+                processingSelectionLock = true;
+                clearInterval(activeTimerObject);
+                enforceDisableAllOptionNodes();
+
+                targetElementNode.classList.add("correct-look");
+                countCorrectItems++;
+                
+                runningTotalScore += isFinalChallengeActive ? 2 : 1;
+                totalItemsAttempted++;
+
+                evaluationSummaryLog.push({
+                    q: activeItemData.q,
+                    userAns: chosenOptionText,
+                    correctAns: activeItemData.answer,
+                    reason: activeItemData.reason
+                });
+
+                updateLiveMetricsHUD();
+                playSoundClip("soundCorrect");
+                triggerConfettiBurstEffect();
+
+                let alertBox = document.getElementById("feedback-alert");
+                alertBox.innerText = "✅ Correct!";
+                alertBox.style.color = "var(--success-green)";
+                alertBox.style.display = "block";
+
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    renderNextActiveRoundCard();
+                }, 2000);
+
+            } else {
+                attemptsRemaining--;
+                if (attemptsRemaining > 0) {
+                    targetElementNode.classList.add("wrong-look");
+                    playSoundClip("soundWrong");
+                    
+                    let alertBox = document.getElementById("feedback-alert");
+                    alertBox.innerText = "❌ Try Again!";
+                    alertBox.style.color = "var(--danger-red)";
+                    alertBox.style.display = "block";
+                    targetElementNode.classList.add("locked-state");
+                } else {
+                    processingSelectionLock = true;
+                    clearInterval(activeTimerObject);
+                    enforceDisableAllOptionNodes();
+                    
+                    targetElementNode.classList.add("wrong-look");
+                    countWrongItems++;
+                    totalItemsAttempted++;
+
+                    evaluationSummaryLog.push({
+                        q: activeItemData.q,
+                        userAns: chosenOptionText,
+                        correctAns: activeItemData.answer,
+                        reason: activeItemData.reason
+                    });
+
+                    displayCorrectAnswerAndExplanation();
+                }
+            }
+        }
+
+        // AUTO EXPLANATION EXPANSION ENGINE
+        function displayCorrectAnswerAndExplanation() {
+            let activeItemData = activePool[currentQuestionIndex];
+            
+            document.querySelectorAll(".option-node").forEach(btn => {
+                if (btn.innerText === activeItemData.answer) {
+                    btn.classList.add("correct-look");
+                }
+            });
+
+            let explanationBox = document.getElementById("explanation-card");
+            explanationBox.innerHTML = `<strong>Correct Answer:</strong> ${activeItemData.answer}<br><br>${activeItemData.reason}`;
+            explanationBox.style.display = "block";
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                renderNextActiveRoundCard();
+            }, 4000);
+        }
+
+        // TRANSITION SYSTEM TO FINAL CHALLENGE
+        function runFinalChallengeTransitionSequence() {
+            clearInterval(activeTimerObject);
+            navigateToTargetViewport("transition-screen");
+
+            setTimeout(() => {
+                let freshDeck = shuffleMasterArray(JSON.parse(JSON.stringify(sourceQuestionsDatabase)));
+                activePool = freshDeck.slice(0, 5);
+                currentQuestionIndex = 0;
+                isFinalChallengeActive = true;
+
+                document.getElementById("final-mode-indicator").style.display = "inline-block";
+                navigateToTargetViewport("question-screen");
+                renderNextActiveRoundCard();
+            }, 5000);
+        }
+
+        // CONFETTI EMITTER
+        function triggerConfettiBurstEffect() {
+            try {
+                for (let i = 0; i < 15; i++) {
+                    let star = document.createElement("div");
+                    star.className = "star-particle";
+                    star.style.left = (Math.random() * 80 + 10) + "vw";
+                    star.style.top = (Math.random() * 40 + 20) + "vh";
+                    star.style.animationDelay = (Math.random() * 0.2) + "s";
+                    document.body.appendChild(star);
+                    setTimeout(() => star.remove(), 1200);
+                }
+            } catch(e) {}
+        }
+
+        // FINAL EVALUATION METRICS PACKAGER
+        function displayFinalEvaluationSummaryReport() {
+            clearInterval(activeTimerObject);
+            playSoundClip("soundCelebration");
+            navigateToTargetViewport("result-screen");
+            
+            let aggregatePercentage = Math.round((countCorrectItems / 17) * 100);
+
+            document.getElementById("res-score").innerText = runningTotalScore;
+            document.getElementById("res-percent").innerText = `${aggregatePercentage}%`;
+            document.getElementById("res-attempted").innerText = totalItemsAttempted;
+            document.getElementById("res-correct").innerText = countCorrectItems;
+            document.getElementById("res-wrong").innerText = countWrongItems;
+
+            let badgeHeader = document.getElementById("performance-badge-title");
+            if (aggregatePercentage >= 85) {
+                badgeHeader.innerText = "🏆 Grammar Champion!";
+                triggerConfettiBurstEffect();
+            } else if (aggregatePercentage >= 70) {
+                badgeHeader.innerText = "🌟 Excellent Work!";
+            } else if (aggregatePercentage >= 50) {
+                badgeHeader.innerText = "👍 Great Job!";
+            } else {
+                badgeHeader.innerText = "📚 Keep Practising!";
+            }
+        }
+
+        // EXPANDABLE PERFORMANCE REVIEW LOGS LOGIC
+        function toggleReviewLogsDisplay() {
+            let container = document.getElementById("reviewSectionBlock");
+            if (container.style.display === "block") {
+                container.style.display = "none";
+                return;
+            }
+
+            container.innerHTML = "";
+            evaluationSummaryLog.forEach((item, index) => {
+                let elementCard = document.createElement("div");
+                elementCard.className = "review-item-card";
+                
+                let checkStatusColor = (item.userAns === item.correctAns) ? "var(--success-green)" : "var(--danger-red)";
+
+                elementCard.innerHTML = `
+                    <div class="review-q">${index + 1}. ${item.q}</div>
+                    <div class="review-ans-row" style="color: ${checkStatusColor};"><strong>Your Pick:</strong> ${item.userAns}</div>
+                    <div class="review-ans-row" style="color: var(--success-green);"><strong>Correct Match:</strong> ${item.correctAns}</div>
+                    <div class="review-explanation">${item.reason}</div>
+                `;
+                container.appendChild(elementCard);
+            });
+
+            container.style.display = "block";
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
