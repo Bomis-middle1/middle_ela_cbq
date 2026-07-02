@@ -40,7 +40,6 @@
             position: relative;
         }
 
-        /* BACKGROUND LIGHT SCENIC AMBIENCE STREAMS & PARTICLES */
         .bg-element {
             position: absolute;
             top: -50px;
@@ -72,7 +71,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* SCREEN 1: SPLASH VIEW PANEL */
         #splash-screen {
             position: fixed;
             inset: 0;
@@ -83,7 +81,7 @@
             justify-content: center;
             z-index: 9999;
             opacity: 0;
-            animation: runSplash 5s linear forwards;
+            animation: runSplash 3.5s linear forwards;
         }
 
         #splash-screen img {
@@ -100,16 +98,7 @@
             color: var(--slate-blue);
             letter-spacing: 0.5px;
             opacity: 0;
-            animation: textFade 5s linear forwards;
-        }
-
-        #splash-fallback-text {
-            display: none;
-            font-size: 18px;
-            color: var(--danger-red);
-            font-weight: 600;
-            margin-bottom: 20px;
-            text-align: center;
+            animation: textFade 3.5s linear forwards;
         }
 
         @keyframes runSplash {
@@ -126,7 +115,6 @@
             100% { opacity: 0; }
         }
 
-        /* REUSABLE STYLING CARDS */
         .quiz-card {
             background: var(--card-white);
             padding: clamp(24px, 5vw, 40px);
@@ -175,7 +163,6 @@
 
         .meta-info-box p:last-child { margin-bottom: 0; }
 
-        /* LIVE TRACKING STATS HUD BAR */
         .hud-wrapper {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -256,7 +243,6 @@
             white-space: pre-line;
         }
 
-        /* OPTION LAYOUT MATRIX GRID */
         .options-stack {
             display: flex;
             flex-direction: column;
@@ -293,7 +279,6 @@
             pointer-events: none;
         }
 
-        /* RESPONSE SELECTION OUTCOME LOOKS */
         .option-node.correct-look {
             background: #e6f9f7 !important;
             border-color: var(--success-green) !important;
@@ -349,7 +334,6 @@
             animation: viewFadeIn 0.3s ease;
         }
 
-        /* CORE HUD BUTTON NAVIGATION CONTROL */
         .btn-ui-action {
             padding: 14px 28px;
             border: none;
@@ -371,7 +355,6 @@
             transform: translateY(-2px);
         }
 
-        /* REUSABLE FLOATING STAR CONFETTI ELEMENTS */
         .gold-star-particle {
             position: fixed;
             width: 12px;
@@ -392,24 +375,12 @@
             margin: 12px 0;
             letter-spacing: 4px;
         }
-
-        #fallback-panel-notice {
-            display: none;
-            background: #fff3cd;
-            color: #856404;
-            padding: 16px;
-            border-radius: var(--elem-radius);
-            font-size: 14px;
-            margin-bottom: 20px;
-            border: 1px solid #ffeeba;
-            text-align: left;
-        }
         
         .main-logo-display {
-            height: 70px; 
+            height: 65px; 
             width: auto; 
             object-fit: contain;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -418,24 +389,20 @@
     <audio id="soundClick" src="assets/click.mp3" preload="auto"></audio>
     <audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="soundWin" src="assets/win.mp3" preload="auto"></audio>
-    <audio id="soundGameOver" src="assets/gameover.mp3" preload="auto"></audio>
+    <audio id="soundWin" src="assets/clapping.mp3" preload="auto"></audio>
+    <audio id="soundGameOver" src="assets/wrong.mp3" preload="auto"></audio>
 
     <div id="splash-screen">
-        <div id="splash-fallback-text">Please upload:<br>assets/logo.png</div>
-        <img id="brandingLogo" src="assets/logo.png" alt="Logo" onerror="handleLogoSplashError(this)">
+        <img id="brandingLogo" src="assets/innovine-logo.png" alt="Innovine Logo">
         <div id="brandingLabel" class="splash-title">Innovine Learning</div>
     </div>
 
     <div id="intro-screen" class="container">
-        <div id="fallback-panel-notice">
-            Please upload:<br><strong>assets/logo.png</strong><br>for 5 seconds. Then continue.
-        </div>
         <div class="quiz-card">
             <div style="text-align: center;">
-                <img src="assets/logo.png" class="main-logo-display" alt="Innovine Logo" onerror="this.style.display='none';">
+                <img src="assets/innovine-logo.png" class="main-logo-display" alt="Innovine Logo">
             </div>
-            <h1>Chapter 12— Past Tense</h1>
+            <h1>Chapter 12 — Past Tense</h1>
             <div class="subtitle">Grade 7 &bull; 14 Questions</div>
             
             <div class="meta-info-box">
@@ -466,7 +433,6 @@
             <div id="progressFillBar" class="progress-fill"></div>
         </div>
         <div class="quiz-card">
-            <div id="embeddedAssetPassageBlock"></div>
             <div id="activeQuestionText" class="question-statement"></div>
             <div id="activeOptionsContainer" class="options-stack"></div>
             <div id="feedback-alert"></div>
@@ -502,9 +468,6 @@
     </div>
 
     <script>
-        /* ==========================================================
-        UNMODIFIED DATABANK SOURCE - PAST TENSE (GRADE 7)
-        ========================================================== */
         const sourceMasterDatabase = [
             {
                 q: `Q1. Riya is writing about her school trip in her diary: "We ___ the museum at 10 AM, ___ the exhibits for two hours and then ___ lunch at a nearby café." She wants to describe a sequence of completed past actions. Which set is correct?`,
@@ -696,16 +659,8 @@
                     splash.style.display = "none";
                     switchViewportPanel("intro-screen");
                 }
-            }, 5000);
+            }, 3500);
         });
-
-        function handleLogoSplashError(imgNode) {
-            imgNode.style.display = "none";
-            let fallbackLabel = document.getElementById("splash-fallback-text");
-            if (fallbackLabel) fallbackLabel.style.display = "block";
-            let introFallback = document.getElementById("fallback-panel-notice");
-            if (introFallback) introFallback.style.display = "block";
-        }
 
         function switchViewportPanel(targetId) {
             document.querySelectorAll(".container").forEach(c => c.style.display = "none");
@@ -929,7 +884,7 @@
             switchViewportPanel("challenge-complete-screen");
             setTimeout(() => {
                 renderFinalEvaluationView();
-            }, 3000); 
+            }, 2500); 
         }
 
         function renderFinalEvaluationView() {
