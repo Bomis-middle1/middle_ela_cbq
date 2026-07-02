@@ -399,18 +399,6 @@
         }
         .review-card.correct-log { border-left: 6px solid var(--success-green); }
         .review-card.wrong-log { border-left: 6px solid var(--danger-red); }
-
-        /* NOTIFICATION BANNER IF ASSETS MISSED */
-        #asset-alert-banner {
-            background: #fff3cd;
-            color: #856404;
-            padding: 12px;
-            border-radius: var(--elem-radius);
-            font-size: 13px;
-            margin-bottom: 15px;
-            text-align: left;
-            border: 1px solid #ffeeba;
-        }
     </style>
 </head>
 <body>
@@ -424,15 +412,6 @@
     </div>
 
     <div id="home" class="container">
-        <div id="asset-alert-banner">
-            <strong>Deployment Reminder:</strong> Please upload the assets folder first. Required files:
-            <ul>
-                <li>• assets/innovine-logo.png</li>
-                <li>• assets/correct.mp3</li>
-                <li>• assets/wrong.mp3</li>
-                <li>• assets/clapping.mp3</li>
-            </ul>
-        </div>
         <div class="card">
             <h1>Chapter 10 - Prepositions</h1>
             <div class="subtitle">Grade 7 English Language Arts</div>
@@ -446,15 +425,15 @@
                 </ul>
             </div>
             
-            <p style="color: #64748b; font-size: 14px; margin-bottom: 20px; font-weight: 600;">Total Questions: 15 (Including Final Bonus Challenge)</p>
+            <p style="color: #64748b; font-size: 15px; margin-bottom: 25px; font-weight: 600;">Tap Start to begin your challenge!</p>
             <button class="btn-action" onclick="initializeQuizEngine()">Start Quiz</button>
         </div>
     </div>
 
     <div id="quiz" class="container">
         <div class="topbar">
-            <div id="progressText">Question 1 of 14</div>
-            <div>⭐ Score: <span id="scoreCounter">0</span> / 14</div>
+            <div id="progressText">Question 1 of 15</div>
+            <div id="liveScoreBox">⭐ Score: <span id="scoreCounter">0</span> / 15</div>
             <div id="timer">⏱️ 45s</div>
         </div>
         <div class="progress-wrapper">
@@ -482,7 +461,7 @@
             
             <div id="starContainer" class="star-display-metric"></div>
             
-            <div id="finalScoreDisplay" style="font-size: 36px; font-weight: 800; color: var(--slate-blue); margin-bottom: 6px;">0 / 14</div>
+            <div id="finalScoreDisplay" style="font-size: 36px; font-weight: 800; color: var(--slate-blue); margin-bottom: 6px;">0 / 15</div>
             <div id="percentageDisplay" style="font-size: 20px; font-weight: 700; color: var(--mint-teal); margin-bottom: 24px;">0%</div>
             <p id="performanceFeedback" style="font-size: 18px; color: #4a5568; margin-bottom: 30px; font-weight: 700;"></p>
             
@@ -669,9 +648,8 @@
         }
 
         function cloneAndShuffleDataset() {
-            // Take questions 1 to 14 for the main run
-            let subset = originalDataset.slice(0, 14);
-            let clonedArray = JSON.parse(JSON.stringify(subset));
+            // Take standard pool questions (1 to 15)
+            let clonedArray = JSON.parse(JSON.stringify(originalDataset));
             
             for (let i = clonedArray.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -694,10 +672,9 @@
             isProcessingAdvance = false;
             isFinalChallengeActive = false;
             
-            // Randomly pull one item from the complete original dataset for the Final Challenge round
+            // Final Challenge pulls one random historical target from the pool
             let randomIdx = Math.floor(Math.random() * originalDataset.length);
             finalChallengeItem = JSON.parse(JSON.stringify(originalDataset[randomIdx]));
-            // Shuffle final challenge choices
             for (let x = finalChallengeItem.options.length - 1; x > 0; x--) {
                 const y = Math.floor(Math.random() * (x + 1));
                 [finalChallengeItem.options[x], finalChallengeItem.options[y]] = [finalChallengeItem.options[y], finalChallengeItem.options[x]];
@@ -711,7 +688,6 @@
         function renderActiveQuestion() {
             isProcessingAdvance = false;
             
-            // Checking if we finished questions 1-14 and need to present the bonus final round
             if (activeQuestionIndex >= quizBank.length) {
                 if (!isFinalChallengeActive) {
                     isFinalChallengeActive = true;
@@ -727,6 +703,7 @@
             let data = quizBank[activeQuestionIndex];
             
             document.getElementById("progressText").innerText = `Question ${activeQuestionIndex + 1} of ${quizBank.length}`;
+            document.getElementById("liveScoreBox").innerHTML = `⭐ Score: <span id="scoreCounter">${scoreTracker}</span> / 15`;
             document.getElementById("progressBar").style.width = `${(activeQuestionIndex / quizBank.length) * 100}%`;
             document.getElementById("questionContainer").innerText = data.q;
             
@@ -736,11 +713,12 @@
         }
 
         function renderFinalChallengeLayout() {
-            remainingAttempts = 1; // Only one attempt allowed in Final Challenge
+            remainingAttempts = 1; 
             
             document.getElementById("progressText").innerText = `Final Challenge Round`;
+            document.getElementById("liveScoreBox").innerHTML = `⭐ Score: <span id="scoreCounter">${scoreTracker}</span> / 15`;
             document.getElementById("progressBar").style.width = "100%";
-            document.getElementById("questionContainer").innerHTML = `<span style="color:var(--amber-gold); font-weight:800;">🔥 FINAL CHALLENGE BONUS:</span>\n${finalChallengeItem.q}`;
+            document.getElementById("questionContainer").innerHTML = `<span style="color:var(--amber-gold); font-weight:800;">🔥 FINAL CHALLENGE:</span>\n${finalChallengeItem.q}`;
             
             clearFeedbackElements();
             generateOptionButtons(finalChallengeItem);
@@ -817,7 +795,7 @@
                 targetButton.classList.add("correct-state");
                 
                 if (isFinalChallengeActive) {
-                    scoreTracker += 2; // Bonus point awarding
+                    scoreTracker += 2; 
                 } else {
                     scoreTracker++;
                 }
@@ -833,7 +811,7 @@
                 feedback.style.display = "block";
 
                 let panel = document.getElementById("explanation-panel");
-                panel.innerHTML = `<strong>Key Reason:</strong> ${currentItem.reason}`;
+                panel.innerHTML = `<strong>Explanation:</strong> ${currentItem.reason}`;
                 panel.style.display = "block";
 
                 setTimeout(() => {
@@ -856,7 +834,6 @@
                     feedback.style.color = "var(--amber-gold)";
                     feedback.style.display = "block";
                     targetButton.classList.add("disabled");
-                    // Reset single selection block state to allow secondary submission attempt
                     isProcessingAdvance = false;
                 } else {
                     isProcessingAdvance = true;
@@ -881,7 +858,7 @@
             });
 
             let panel = document.getElementById("explanation-panel");
-            panel.innerHTML = `<strong>Key Reason:</strong> ${currentItem.reason}`;
+            panel.innerHTML = `<strong>Explanation:</strong> ${currentItem.reason}`;
             panel.style.display = "block";
 
             setTimeout(() => {
@@ -924,7 +901,7 @@
                 let node = document.getElementById(elementId);
                 if (node) {
                     node.currentTime = 0;
-                    node.play().catch(() => console.log("Audio skipped due to environment limits."));
+                    node.play().catch(() => console.log("Audio skipped due to interaction policy context."));
                 }
             } catch(e) { console.log(e); }
         }
@@ -946,12 +923,11 @@
         function displayFinalScoreboard() {
             switchViewport("result");
             
-            // Calculate base metric based out of 14 standard questions
-            let evaluationScore = scoreTracker;
-            let pct = Math.round((evaluationScore / 14) * 100);
+            // Baseline out of 15 standard items
+            let pct = Math.round((scoreTracker / 15) * 100);
 
-            document.getElementById("finalScoreDisplay").innerText = `${scoreTracker}`;
-            document.getElementById("percentageDisplay").innerText = `${pct}% Calculated Baseline`;
+            document.getElementById("finalScoreDisplay").innerText = `${scoreTracker} / 15`;
+            document.getElementById("percentageDisplay").innerText = `${pct}%`;
 
             let feedbackMsg = "";
             let starsHtml = "";
@@ -959,7 +935,7 @@
             if (pct >= 90) {
                 feedbackMsg = "Excellent!";
                 starsHtml = "⭐⭐⭐⭐⭐";
-            } else if (pct >= 70) {
+            } else if (pct >= 75) {
                 feedbackMsg = "Great Job!";
                 starsHtml = "⭐⭐⭐⭐";
             } else if (pct >= 50) {
@@ -988,10 +964,10 @@
                 itemCard.className = `review-card ${log.passed ? 'correct-log' : 'wrong-log'}`;
                 
                 let statusIcon = log.passed ? "🟢 Correct" : "🔴 Incorrect";
-                let badgeText = log.isBonus ? " <span style='background:var(--amber-gold);color:white;font-size:10px;padding:2px 6px;border-radius:4px;'>BONUS ROUND</span>" : "";
+                let badgeText = log.isBonus ? " <span style='background:var(--amber-gold);color:white;font-size:10px;padding:2px 6px;border-radius:4px;'>BONUS CHALLENGE</span>" : "";
 
                 itemCard.innerHTML = `
-                    <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--slate-blue);">Item Matrix ${index + 1}${badgeText}</div>
+                    <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--slate-blue);">Question Matrix ${index + 1}${badgeText}</div>
                     <div style="font-weight: 600; margin-bottom: 12px; font-size: 15px; color:var(--deep-purple);">${log.q}</div>
                     <div style="font-size: 14px; margin: 4px 0;"><strong>Status Evaluation:</strong> ${statusIcon}</div>
                     <div style="font-size: 14px; margin: 4px 0;"><strong>Your Selected Answer:</strong> <span style="color: ${log.passed ? 'var(--success-green)' : 'var(--danger-red)'}">${log.chosen}</span></div>
