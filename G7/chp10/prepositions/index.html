@@ -1,1 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Grade 7 ELA Quiz - Chapter 10: Prepositions</title>
+    <style>
+        :root {
+            --slate-blue: #2b3a67;
+            --mint-teal: #41b3a3;
+            --amber-gold: #e27d60;
+            --gold-dark: #c36246;
+            --deep-purple: #1d1e2c;
+            --cream-bg: #f4f7fc;
+            --card-white: #ffffff;
+            --success-green: #2ec4b6;
+            --danger-red: #e71d36;
+            --panel-radius: 20px;
+            --elem-radius: 12px;
+            --classic-shadow: 0 10px 30px rgba(43, 58, 103, 0.08);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--cream-bg);
+            color: var(--deep-purple);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* BACKGROUND FLOATING EFFECTS */
+        .bg-streamer {
+            position: absolute;
+            top: -50px;
+            width: 3px;
+            height: 100px;
+            background: linear-gradient(to bottom, rgba(65, 179, 163, 0.12), transparent);
+            animation: dropStreamer 9s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes dropStreamer {
+            0% { transform: translateY(-100px) rotate(20deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(110vh) rotate(20deg); opacity: 0; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            display: none;
+            position: relative;
+            z-index: 10;
+            animation: cardFadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes cardFadeIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* INTRO / BRANDING SPLASH SCREEN (EXACTLY 5 SECONDS) */
+        #splash {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            animation: splashSequence 5s linear forwards;
+        }
+
+        #splash img {
+            width: 260px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        @keyframes splashSequence {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .hidden { display: none !important; }
+
+        /* PLAYFUL EDUCATIONAL THEME CARDS */
+        .card {
+            background: var(--card-white);
+            padding: clamp(24px, 5vw, 40px);
+            border-radius: var(--panel-radius);
+            width: 100%;
+            box-shadow: var(--classic-shadow);
+            border: 1px solid rgba(43, 58, 103, 0.04);
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: var(--slate-blue);
+            font-size: clamp(24px, 4.5vw, 32px);
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: var(--mint-teal);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        .instruction-box {
+            background: #f8fafc;
+            border-radius: var(--elem-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            border: 1px dashed var(--mint-teal);
+        }
+
+        .instruction-box ul {
+            list-style-type: none;
+        }
+
+        .instruction-box li {
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #4a5568;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* LIVE SCORING HUD BAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--slate-blue);
+            padding: 14px 20px;
+            border-radius: var(--elem-radius);
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(43, 58, 103, 0.1);
+        }
+
+        #timer {
+            background: rgba(231, 29, 54, 0.2);
+            color: #ff9faf;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(231, 29, 54, 0.2);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-wrapper {
+            width: 100%;
+            height: 12px;
+            background: rgba(43, 58, 103, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--mint-teal), var(--success-green));
+            transition: width 0.4s ease;
+        }
+
+        /* LIVE QUESTION CONTAINER */
+        .question-text {
+            font-size: clamp(16px, 3.8vw, 19px);
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        /* OPTION LAYOUT MATRIX */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            width: 100%;
+            background: #ffffff;
+            border: 2.5px solid #e2e8f0;
+            border-radius: var(--elem-radius);
+            padding: 16px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            line-height: 1.4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            border-color: var(--slate-blue);
+            background: rgba(43, 58, 103, 0.02);
+            transform: translateY(-2px);
+        }
+
+        .option-btn:active:not(.disabled) {
+            transform: translateY(1px);
+        }
+
+        .option-btn.disabled {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* RESPONSE LOOK AND FEEL STATES */
+        .option-btn.correct-state {
+            background: #e6f9f7 !important;
+            border-color: var(--success-green) !important;
+            color: var(--success-green) !important;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(46, 196, 182, 0.4);
+        }
+        .option-btn.correct-state::after {
+            content: "✔";
+            font-size: 18px;
+            color: var(--success-green);
+        }
+
+        .option-btn.wrong-state {
+            background: #ffebee !important;
+            border-color: var(--danger-red) !important;
+            color: var(--danger-red) !important;
+            font-weight: 700;
+        }
+        .option-btn.wrong-state::after {
+            content: "✖";
+            font-size: 18px;
+            color: var(--danger-red);
+            animation: crossShake 0.3s ease-in-out;
+        }
+
+        @keyframes crossShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        #feedback-banner {
+            margin-top: 15px;
+            font-size: 22px;
+            font-weight: 800;
+            display: none;
+            text-align: center;
+        }
+
+        #explanation-panel {
+            margin-top: 20px;
+            padding: 16px 20px;
+            border-radius: var(--elem-radius);
+            background: #f8fafc;
+            border-left: 5px solid var(--slate-blue);
+            font-size: 14px;
+            line-height: 1.6;
+            color: #4a5568;
+            text-align: left;
+            display: none;
+            animation: cardFadeIn 0.3s ease;
+        }
+
+        /* SOUND DASHBOARD WIDGET */
+        .audio-dashboard {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 2px solid #f1f5f9;
+        }
+
+        .vol-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            transition: transform 0.2s;
+        }
+        .vol-btn:hover { transform: scale(1.15); }
+
+        .slider-control {
+            width: 100px;
+            accent-color: var(--amber-gold);
+            cursor: pointer;
+        }
+
+        /* CORE HUB CONTROLS */
+        .btn-action {
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--elem-radius);
+            background: var(--amber-gold);
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            margin: 8px;
+            display: inline-block;
+        }
+
+        .btn-action:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-action:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        /* DECORATIVE STAR PARTY SHATTER CONFETTI */
+        .star-confetti {
+            position: fixed;
+            width: 16px;
+            height: 16px;
+            background: gold;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            pointer-events: none;
+            z-index: 9999;
+            animation: starFallEffect 1.5s linear forwards;
+        }
+        @keyframes starFallEffect {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg) scale(0.6); opacity: 0; }
+        }
+
+        .star-display-metric {
+            font-size: 32px;
+            margin: 15px 0;
+            letter-spacing: 4px;
+        }
+
+        .review-box {
+            max-height: 50vh;
+            overflow-y: auto;
+            text-align: left;
+            margin: 20px 0;
+            padding-right: 6px;
+        }
+
+        .review-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--elem-radius);
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+        .review-card.correct-log { border-left: 6px solid var(--success-green); }
+        .review-card.wrong-log { border-left: 6px solid var(--danger-red); }
+
+        /* NOTIFICATION BANNER IF ASSETS MISSED */
+        #asset-alert-banner {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: var(--elem-radius);
+            font-size: 13px;
+            margin-bottom: 15px;
+            text-align: left;
+            border: 1px solid #ffeeba;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="clappingSound" src="assets/clapping.mp3" preload="auto"></audio>
+
+    <div id="splash">
+        <img id="logoNode" src="assets/innovine-logo.png" alt="Innovine Logo" onerror="handleLogoFailure(this)">
+    </div>
+
+    <div id="home" class="container">
+        <div id="asset-alert-banner">
+            <strong>Deployment Reminder:</strong> Please upload the assets folder first. Required files:
+            <ul>
+                <li>• assets/innovine-logo.png</li>
+                <li>• assets/correct.mp3</li>
+                <li>• assets/wrong.mp3</li>
+                <li>• assets/clapping.mp3</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h1>Chapter 10 - Prepositions</h1>
+            <div class="subtitle">Grade 7 English Language Arts</div>
+            
+            <div class="instruction-box">
+                <ul>
+                    <li>⏱️ <strong>45 seconds</strong> allocated per question challenge</li>
+                    <li>🔄 <strong>Two attempts</strong> allowed for each scenario context</li>
+                    <li>⭐ Continuous live <strong>score tracking</strong> enabled</li>
+                    <li>🏆 <strong>Final Challenge</strong> round evaluated at completion end</li>
+                </ul>
+            </div>
+            
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 20px; font-weight: 600;">Total Questions: 15 (Including Final Bonus Challenge)</p>
+            <button class="btn-action" onclick="initializeQuizEngine()">Start Quiz</button>
+        </div>
+    </div>
+
+    <div id="quiz" class="container">
+        <div class="topbar">
+            <div id="progressText">Question 1 of 14</div>
+            <div>⭐ Score: <span id="scoreCounter">0</span> / 14</div>
+            <div id="timer">⏱️ 45s</div>
+        </div>
+        <div class="progress-wrapper">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <div class="card">
+            <div id="questionContainer" class="question-text"></div>
+            <div id="optionsGrid" class="options-container"></div>
+            <div id="feedback-banner"></div>
+            <div id="explanation-panel"></div>
+
+            <div class="audio-dashboard">
+                <button class="vol-btn" onclick="setVolumeState('mute')">🔇</button>
+                <button class="vol-btn" onclick="setVolumeState('med')">🔉</button>
+                <button class="vol-btn" onclick="setVolumeState('max')">🔊</button>
+                <input type="range" id="volumeSlider" class="slider-control" min="0" max="1" step="0.1" value="0.5" oninput="handleSliderMovement(this.value)">
+            </div>
+        </div>
+    </div>
+
+    <div id="result" class="container">
+        <div class="card">
+            <h2>🎉 Quiz Completed!</h2>
+            <div class="subtitle">Final Performance Profile</div>
+            
+            <div id="starContainer" class="star-display-metric"></div>
+            
+            <div id="finalScoreDisplay" style="font-size: 36px; font-weight: 800; color: var(--slate-blue); margin-bottom: 6px;">0 / 14</div>
+            <div id="percentageDisplay" style="font-size: 20px; font-weight: 700; color: var(--mint-teal); margin-bottom: 24px;">0%</div>
+            <p id="performanceFeedback" style="font-size: 18px; color: #4a5568; margin-bottom: 30px; font-weight: 700;"></p>
+            
+            <button class="btn-action" onclick="initializeQuizEngine()">Play Again</button>
+            <button class="btn-action btn-secondary" onclick="generateReviewBreakdown()">Review Answers</button>
+        </div>
+    </div>
+
+    <div id="review" class="container">
+        <div class="card">
+            <h2>Performance Review</h2>
+            <div class="subtitle">Played Sequence Breakdown</div>
+            <div id="reviewBox" class="review-box"></div>
+            <button class="btn-action" onclick="switchViewport('home')">Back To Home</button>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================
+        UNMODIFIED DATABANK SOURCE - PREPOSITIONS (GRADE 7)
+        ========================================================== */
+        const originalDataset = [
+            {
+                q: `Q1. Riya is filling in her school diary: "Our annual day celebration is ___ Friday, ___ the evening, and the prize distribution will begin ___ 5:00 PM." Which set of prepositions correctly fills all three blanks?`,
+                options: ["a) in / on / at", "b) on / in / at", "c) at / in / on", "d) on / at / in"],
+                answer: "b) on / in / at",
+                reason: "on=days; in=parts of day; at=exact times"
+            },
+            {
+                q: `Q2. Aarav is describing his classroom to a new student: "The principal's office is ___ the main entrance. When you walk in, you will see a trophy cabinet ___ the reception desk." Which pair of complex prepositions correctly fills both blanks?`,
+                options: ["a) on top of / instead of", "b) in front of / on top of", "c) according to / in front of", "d) because of / instead of"],
+                answer: "b) in front of / on top of",
+                reason: "in front of=position before something; on top of=position above something"
+            },
+            {
+                q: `Q3. Meera writes in her travel journal: "We travelled ___ bus from Mumbai ___ Pune. ___ the journey, we stopped at a small roadside café for tea." Which set of prepositions correctly fills all three blanks?`,
+                options: ["a) by / to / During", "b) on / at / While", "c) in / towards / Between", "d) by / at / Through"],
+                answer: "a) by / to / During",
+                reason: "by=mode of transport; to=destination; During=throughout a period"
+            },
+            {
+                q: `Q4. Rohan's teacher gives instructions: "___ the schedule, all students must report ___ the auditorium ___ 8:30 AM tomorrow." Which set correctly fills all three blanks?`,
+                options: ["a) Because of / at / in", "b) Instead of / to / at", "c) According to / at / at", "d) In front of / in / on"],
+                answer: "c) According to / at / at",
+                reason: "According to=based on a source; at=specific location; at=exact time"
+            },
+            {
+                q: `Q5. A student writes about a cancelled match: "The match was cancelled ___ the heavy rain. ___ playing outside, the teams practised ___ the gymnasium." Which set correctly fills all three blanks?`,
+                options: ["a) instead of / Because of / at", "b) because of / Instead of / in", "c) on top of / According to / at", "d) in front of / instead of / on"],
+                answer: "b) because of / Instead of / in",
+                reason: "because of=reason for cancellation; Instead of=in place of; in=enclosed space"
+            },
+            {
+                q: `Q6. A classroom seating chart description showing four sentences with blanks — 1. "Riya sits ___ the front row." 2. "The teacher's desk is ___ the blackboard." 3. "The clock is ___ the wall, ___ the door." 4. "Two students are standing ___ the classroom."] Which set of prepositions correctly fills all blanks in order?`,
+                options: ["a) in / in front of / on / above / outside", "b) at / behind / at / on / in", "c) on / next to / in / below / at", "d) in / on top of / at / beside / inside"],
+                answer: "a) in / in front of / on / above / outside",
+                reason: "in the front row=position in group; in front of=before the blackboard; on the wall=surface; above the door=higher position; outside=beyond boundary"
+            },
+            {
+                q: `Q7. A student's travel diary showing four sentences with blanks — 1. "We arrived ___ the airport ___ midnight." 2. "The hotel was ___ the beach." 3. "We travelled ___ train ___ the mountains." 4. "We stayed there ___ Monday ___ Friday."] Which set correctly fills all blanks in order?`,
+                options: ["a) at / at / by / through / from / till", "b) in / on / on / across / between / at", "c) on / in / by / towards / on / to", "d) at / in / in / over / at / by"],
+                answer: "a) at / at / by / through / from / till",
+                reason: "at the airport=specific point; at midnight=exact time; by train=mode of transport; through=passing within; from Monday=start point; till Friday=end point"
+            },
+            {
+                q: `Q8. Which sentence uses a complex preposition correctly?`,
+                options: ["a) She sat instead of the teacher's chair during the activity.", "b) He kept his phone on top of his bag so he could hear it ring.", "c) According to the rain, the match was cancelled.", "d) They stood in front of they could see the stage clearly."],
+                answer: "b) He kept his phone on top of his bag so he could hear it ring.",
+                reason: "'on top of' correctly shows position — phone placed above the bag"
+            },
+            {
+                q: `Q9. Which sentence correctly uses prepositions of travel?`,
+                options: ["a) We went to London in plane last summer.", "b) She travels on her car to school every day.", "c) They crossed the river by boat to reach the village.", "d) He came at bicycle from the market."],
+                answer: "c) They crossed the river by boat to reach the village.",
+                reason: "'by boat' = correct mode of travel; 'in plane'→by plane; 'on her car'→in her car; 'at bicycle'→by bicycle"
+            },
+            {
+                q: `Q10. Sort these phrases into two groups — Prepositions of Time and Prepositions of Place: P: at noon Q: on the shelf R: in December S: at the station`,
+                options: ["a) Time: P, Q — Place: R, S", "b) Time: Q, S — Place: P, R", "c) Time: P, R — Place: Q, S", "d) Time: R, S — Place: P, Q"],
+                answer: "c) Time: P, R — Place: Q, S",
+                reason: "at noon & in December = when → Time; on the shelf & at the station = where → Place"
+            },
+            {
+                q: `Q11. Classify the complex preposition used in each sentence by its meaning: 1. "She chose tea instead of coffee." 2. "The trophy is on top of the cabinet." 3. "The event was cancelled because of the storm." 4. "According to the doctor, he needs complete rest."`,
+                options: ["a) 1=Position, 2=Substitution, 3=Source, 4=Reason", "b) 1=Substitution, 2=Position, 3=Reason, 4=Source", "c) 1=Reason, 2=Source, 3=Position, 4=Substitution", "d) 1=Source, 2=Reason, 3=Substitution, 4=Position"],
+                answer: "b) 1=Substitution, 2=Position, 3=Reason, 4=Source",
+                reason: "instead of=one replacing another→Substitution; on top of=above→Position; because of=reason→Reason; according to=based on source→Source"
+            },
+            {
+                q: `Q12. Three of the following sentences use prepositions correctly. One does NOT. Which is the odd one out?`,
+                options: ["a) The match is on Sunday at 4:00 PM.", "b) She was born in July 2010.", "c) We arrived at the station in time for the train.", "d) He will meet us in Monday morning."],
+                answer: "d) He will meet us in Monday morning.",
+                reason: "Days of the week use 'on' not 'in' → 'on Monday morning'"
+            },
+            {
+                q: `Q13. A student wrote: "The function is in Friday at evening. We will travel on bus. The principal said the event is because of the sports committee. Please stand in front the stage." Identify ALL the errors:`,
+                options: [
+                    "a) in Friday→on Friday; at evening→in the evening; on bus→by bus; because of→according to; in front→in front of",
+                    "b) in Friday→on Friday; at evening is correct; on bus→by bus; because of is correct; in front→in front of",
+                    "c) in Friday→at Friday; at evening→on evening; on bus is correct; because of→instead of; in front of is correct",
+                    "d) There are no errors — all prepositions are used correctly"
+                ],
+                answer: "a) in Friday→on Friday; at evening→in the evening; on bus→by bus; because of→according to; in front→in front of",
+                reason: "in Friday→on Friday (day); at evening→in the evening (part of day); on bus→by bus (transport); because of→according to (attribution not reason); in front→in front of (complete complex preposition)"
+            },
+            {
+                q: `Q14. A student changes "The picnic was cancelled. The reason was the heavy rain." to "The picnic was cancelled because of the heavy rain." What is the effect of using the complex preposition 'because of'?`,
+                options: [
+                    "a) The meaning changes — the picnic is no longer cancelled",
+                    "b) Two separate sentences are joined into one; 'because of' clearly links the event to its reason — making the writing more concise and connected",
+                    "c) 'Because of' makes the sentence a question",
+                    "d) The sentence becomes grammatically incorrect — 'because of' cannot begin a clause"
+                ],
+                answer: "b) Two separate sentences are joined into one; 'because of' clearly links the event to its reason — making the writing more concise and connected",
+                reason: "'Because of' merges two sentences and explicitly signals the cause-effect relationship"
+            },
+            {
+                q: `Q15. Assertion: We say "at Christmas", "on Christmas Day" and "in December" — three different prepositions for what seems like the same event. Reason: 'At' is used for festivals, holiday periods and points of celebration; 'on' is used for specific named days; 'in' is used for months, years and longer periods—the preposition changes based on how specific the time reference is.`,
+                options: [
+                    "a) Both are correct; the reason correctly explains the assertion.",
+                    "b) Both are correct; but the reason does NOT explain the assertion.",
+                    "c) The assertion is correct; the reason is wrong.",
+                    "d) Both are wrong — the same preposition should be used for all time references."
+                ],
+                answer: "a) Both are correct; the reason correctly explains the assertion.",
+                reason: "Specificity determines preposition — festival period=at; named day=on; month/year=in"
+            }
+        ];
+
+        let quizBank = [];
+        let activeQuestionIndex = 0;
+        let scoreTracker = 0;
+        let remainingAttempts = 2;
+        let timerId = null;
+        let countdown = 45; 
+        let runningResponseLogs = [];
+        let trackingVolumeLevel = 0.5;
+        let isProcessingAdvance = false;
+        let finalChallengeItem = null;
+        let isFinalChallengeActive = false;
+
+        function buildVisualAtmosphere() {
+            try {
+                for (let j = 0; j < 6; j++) {
+                    let streamer = document.createElement("div");
+                    streamer.className = "bg-streamer";
+                    streamer.style.left = (Math.random() * 100) + "vw";
+                    streamer.style.animationDelay = (Math.random() * 4) + "s";
+                    streamer.style.animationDuration = (Math.random() * 3 + 7) + "s";
+                    document.body.appendChild(streamer);
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            buildVisualAtmosphere();
+            handleSliderMovement(trackingVolumeLevel);
+            setTimeout(() => {
+                let splash = document.getElementById("splash");
+                if (splash) {
+                    setTimeout(() => {
+                        splash.classList.add("hidden");
+                        switchViewport("home");
+                    }, 500);
+                }
+            }, 4500); 
+        });
+
+        function handleLogoFailure(img) {
+            img.style.display = "none";
+            let fallbackIndicator = document.createElement("div");
+            fallbackIndicator.style.textAlign = "center";
+            fallbackIndicator.innerHTML = `
+                <div style="font-size: 55px; margin-bottom: 12px;">📚</div>
+                <div style="font-weight: 800; color: var(--slate-blue); font-size: 24px;">Innovine Educational System</div>
+            `;
+            img.parentNode.appendChild(fallbackIndicator);
+        }
+
+        function switchViewport(id) {
+            document.querySelectorAll(".container").forEach(view => view.style.display = "none");
+            let targetView = document.getElementById(id);
+            if (targetView) targetView.style.display = "block";
+        }
+
+        function cloneAndShuffleDataset() {
+            // Take questions 1 to 14 for the main run
+            let subset = originalDataset.slice(0, 14);
+            let clonedArray = JSON.parse(JSON.stringify(subset));
+            
+            for (let i = clonedArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [clonedArray[i], clonedArray[j]] = [clonedArray[j], clonedArray[i]];
+            }
+            clonedArray.forEach(item => {
+                for (let x = item.options.length - 1; x > 0; x--) {
+                    const y = Math.floor(Math.random() * (x + 1));
+                    [item.options[x], item.options[y]] = [item.options[y], item.options[x]];
+                }
+            });
+            return clonedArray;
+        }
+
+        function initializeQuizEngine() {
+            quizBank = cloneAndShuffleDataset();
+            activeQuestionIndex = 0;
+            scoreTracker = 0;
+            runningResponseLogs = [];
+            isProcessingAdvance = false;
+            isFinalChallengeActive = false;
+            
+            // Randomly pull one item from the complete original dataset for the Final Challenge round
+            let randomIdx = Math.floor(Math.random() * originalDataset.length);
+            finalChallengeItem = JSON.parse(JSON.stringify(originalDataset[randomIdx]));
+            // Shuffle final challenge choices
+            for (let x = finalChallengeItem.options.length - 1; x > 0; x--) {
+                const y = Math.floor(Math.random() * (x + 1));
+                [finalChallengeItem.options[x], finalChallengeItem.options[y]] = [finalChallengeItem.options[y], finalChallengeItem.options[x]];
+            }
+
+            document.getElementById("scoreCounter").innerText = scoreTracker;
+            switchViewport("quiz");
+            renderActiveQuestion();
+        }
+
+        function renderActiveQuestion() {
+            isProcessingAdvance = false;
+            
+            // Checking if we finished questions 1-14 and need to present the bonus final round
+            if (activeQuestionIndex >= quizBank.length) {
+                if (!isFinalChallengeActive) {
+                    isFinalChallengeActive = true;
+                    renderFinalChallengeLayout();
+                    return;
+                } else {
+                    displayFinalScoreboard();
+                    return;
+                }
+            }
+
+            remainingAttempts = 2;
+            let data = quizBank[activeQuestionIndex];
+            
+            document.getElementById("progressText").innerText = `Question ${activeQuestionIndex + 1} of ${quizBank.length}`;
+            document.getElementById("progressBar").style.width = `${(activeQuestionIndex / quizBank.length) * 100}%`;
+            document.getElementById("questionContainer").innerText = data.q;
+            
+            clearFeedbackElements();
+            generateOptionButtons(data);
+            startQuestionCountdown();
+        }
+
+        function renderFinalChallengeLayout() {
+            remainingAttempts = 1; // Only one attempt allowed in Final Challenge
+            
+            document.getElementById("progressText").innerText = `Final Challenge Round`;
+            document.getElementById("progressBar").style.width = "100%";
+            document.getElementById("questionContainer").innerHTML = `<span style="color:var(--amber-gold); font-weight:800;">🔥 FINAL CHALLENGE BONUS:</span>\n${finalChallengeItem.q}`;
+            
+            clearFeedbackElements();
+            generateOptionButtons(finalChallengeItem);
+            startQuestionCountdown();
+        }
+
+        function clearFeedbackElements() {
+            let feedback = document.getElementById("feedback-banner");
+            feedback.style.display = "none";
+            feedback.innerText = "";
+            
+            let panel = document.getElementById("explanation-panel");
+            panel.style.display = "none";
+            panel.innerText = "";
+        }
+
+        function generateOptionButtons(data) {
+            let grid = document.getElementById("optionsGrid");
+            grid.innerHTML = "";
+
+            data.options.forEach(optText => {
+                let btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = optText;
+                btn.onclick = () => parseSelectionResponse(optText, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function startQuestionCountdown() {
+            clearInterval(timerId);
+            countdown = 45; 
+            document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
+
+            timerId = setInterval(() => {
+                countdown--;
+                document.getElementById("timer").innerText = `⏱️ ${countdown}s`;
+
+                if (countdown <= 0) {
+                    clearInterval(timerId);
+                    if (!isProcessingAdvance) {
+                        handleTimeoutOutcome();
+                    }
+                }
+            }, 1000);
+        }
+
+        function lockAllOptionNodes() {
+            document.querySelectorAll(".option-btn").forEach(b => b.classList.add("disabled"));
+        }
+
+        function handleTimeoutOutcome() {
+            isProcessingAdvance = true;
+            lockAllOptionNodes();
+            
+            let currentItem = isFinalChallengeActive ? finalChallengeItem : quizBank[activeQuestionIndex];
+            logHistoricalResponse("Time-out (No choice made)", false);
+            
+            playQuizAudio("wrongSound");
+            revealCorrectAnswersAndContinue(currentItem, false);
+        }
+
+        function parseSelectionResponse(selectedOption, targetButton) {
+            if (isProcessingAdvance) return;
+            
+            let currentItem = isFinalChallengeActive ? finalChallengeItem : quizBank[activeQuestionIndex];
+            let isCorrect = (selectedOption === currentItem.answer);
+
+            if (isCorrect) {
+                isProcessingAdvance = true;
+                clearInterval(timerId);
+                lockAllOptionNodes();
+                
+                targetButton.classList.add("correct-state");
+                
+                if (isFinalChallengeActive) {
+                    scoreTracker += 2; // Bonus point awarding
+                } else {
+                    scoreTracker++;
+                }
+                document.getElementById("scoreCounter").innerText = scoreTracker;
+                
+                logHistoricalResponse(selectedOption, true);
+                playQuizAudio("correctSound");
+                triggerStarConfettiBurst();
+                
+                let feedback = document.getElementById("feedback-banner");
+                feedback.innerText = "✅ Correct!";
+                feedback.style.color = "var(--success-green)";
+                feedback.style.display = "block";
+
+                let panel = document.getElementById("explanation-panel");
+                panel.innerHTML = `<strong>Key Reason:</strong> ${currentItem.reason}`;
+                panel.style.display = "block";
+
+                setTimeout(() => {
+                    if (isFinalChallengeActive) {
+                        displayFinalScoreboard();
+                    } else {
+                        activeQuestionIndex++;
+                        renderActiveQuestion();
+                    }
+                }, 2500);
+
+            } else {
+                remainingAttempts--;
+                targetButton.classList.add("wrong-state");
+                playQuizAudio("wrongSound");
+
+                if (remainingAttempts > 0) {
+                    let feedback = document.getElementById("feedback-banner");
+                    feedback.innerText = "Try Again!";
+                    feedback.style.color = "var(--amber-gold)";
+                    feedback.style.display = "block";
+                    targetButton.classList.add("disabled");
+                    // Reset single selection block state to allow secondary submission attempt
+                    isProcessingAdvance = false;
+                } else {
+                    isProcessingAdvance = true;
+                    clearInterval(timerId);
+                    lockAllOptionNodes();
+                    logHistoricalResponse(selectedOption, false);
+                    revealCorrectAnswersAndContinue(currentItem, true);
+                }
+            }
+        }
+
+        function revealCorrectAnswersAndContinue(currentItem, wasActionSelected) {
+            let feedback = document.getElementById("feedback-banner");
+            feedback.innerText = "❌ Incorrect!";
+            feedback.style.color = "var(--danger-red)";
+            feedback.style.display = "block";
+
+            document.querySelectorAll(".option-btn").forEach(b => {
+                if (b.innerText === currentItem.answer) {
+                    b.classList.add("correct-state");
+                }
+            });
+
+            let panel = document.getElementById("explanation-panel");
+            panel.innerHTML = `<strong>Key Reason:</strong> ${currentItem.reason}`;
+            panel.style.display = "block";
+
+            setTimeout(() => {
+                if (isFinalChallengeActive) {
+                    displayFinalScoreboard();
+                } else {
+                    activeQuestionIndex++;
+                    renderActiveQuestion();
+                }
+            }, 3000);
+        }
+
+        function logHistoricalResponse(chosenText, isCorrect) {
+            let currentItem = isFinalChallengeActive ? finalChallengeItem : quizBank[activeQuestionIndex];
+            runningResponseLogs.push({
+                q: currentItem.q,
+                chosen: chosenText,
+                correct: currentItem.answer,
+                passed: isCorrect,
+                isBonus: isFinalChallengeActive
+            });
+        }
+
+        function handleSliderMovement(val) {
+            trackingVolumeLevel = parseFloat(val);
+            document.getElementById("volumeSlider").value = trackingVolumeLevel;
+            document.getElementById("correctSound").volume = trackingVolumeLevel;
+            document.getElementById("wrongSound").volume = trackingVolumeLevel;
+            document.getElementById("clappingSound").volume = trackingVolumeLevel;
+        }
+
+        function setVolumeState(profile) {
+            if (profile === 'mute') handleSliderMovement(0);
+            else if (profile === 'med') handleSliderMovement(0.5);
+            else if (profile === 'max') handleSliderMovement(1.0);
+        }
+
+        function playQuizAudio(elementId) {
+            try {
+                let node = document.getElementById(elementId);
+                if (node) {
+                    node.currentTime = 0;
+                    node.play().catch(() => console.log("Audio skipped due to environment limits."));
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        function triggerStarConfettiBurst() {
+            try {
+                for (let k = 0; k < 20; k++) {
+                    let star = document.createElement("div");
+                    star.className = "star-confetti";
+                    star.style.left = (Math.random() * 100) + "vw";
+                    star.style.top = "-20px";
+                    star.style.animationDuration = (Math.random() * 0.6 + 0.9) + "s";
+                    document.body.appendChild(star);
+                    setTimeout(() => star.remove(), 1600);
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        function displayFinalScoreboard() {
+            switchViewport("result");
+            
+            // Calculate base metric based out of 14 standard questions
+            let evaluationScore = scoreTracker;
+            let pct = Math.round((evaluationScore / 14) * 100);
+
+            document.getElementById("finalScoreDisplay").innerText = `${scoreTracker}`;
+            document.getElementById("percentageDisplay").innerText = `${pct}% Calculated Baseline`;
+
+            let feedbackMsg = "";
+            let starsHtml = "";
+
+            if (pct >= 90) {
+                feedbackMsg = "Excellent!";
+                starsHtml = "⭐⭐⭐⭐⭐";
+            } else if (pct >= 70) {
+                feedbackMsg = "Great Job!";
+                starsHtml = "⭐⭐⭐⭐";
+            } else if (pct >= 50) {
+                feedbackMsg = "Good Effort!";
+                starsHtml = "⭐⭐⭐";
+            } else {
+                feedbackMsg = "Keep Practising!";
+                starsHtml = "⭐⭐";
+            }
+
+            document.getElementById("performanceFeedback").innerText = feedbackMsg;
+            document.getElementById("starContainer").innerText = starsHtml;
+
+            if (pct >= 80) {
+                playQuizAudio("clappingSound");
+            }
+        }
+
+        function generateReviewBreakdown() {
+            switchViewport("review");
+            let container = document.getElementById("reviewBox");
+            container.innerHTML = "";
+
+            runningResponseLogs.forEach((log, index) => {
+                let itemCard = document.createElement("div");
+                itemCard.className = `review-card ${log.passed ? 'correct-log' : 'wrong-log'}`;
+                
+                let statusIcon = log.passed ? "🟢 Correct" : "🔴 Incorrect";
+                let badgeText = log.isBonus ? " <span style='background:var(--amber-gold);color:white;font-size:10px;padding:2px 6px;border-radius:4px;'>BONUS ROUND</span>" : "";
+
+                itemCard.innerHTML = `
+                    <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--slate-blue);">Item Matrix ${index + 1}${badgeText}</div>
+                    <div style="font-weight: 600; margin-bottom: 12px; font-size: 15px; color:var(--deep-purple);">${log.q}</div>
+                    <div style="font-size: 14px; margin: 4px 0;"><strong>Status Evaluation:</strong> ${statusIcon}</div>
+                    <div style="font-size: 14px; margin: 4px 0;"><strong>Your Selected Answer:</strong> <span style="color: ${log.passed ? 'var(--success-green)' : 'var(--danger-red)'}">${log.chosen}</span></div>
+                    <div style="font-size: 14px; margin: 4px 0;"><strong>Correct Structured Key:</strong> <span style="color: var(--success-green)">${log.correct}</span></div>
+                `;
+                container.appendChild(itemCard);
+            });
+        }
+    </script>
+</body>
+</html>
