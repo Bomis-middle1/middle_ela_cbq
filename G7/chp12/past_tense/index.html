@@ -1,1 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Grade 7 English Quiz - Chapter 12: Past Tense</title>
+    <style>
+        :root {
+            --slate-blue: #2b3a67;
+            --mint-teal: #41b3a3;
+            --amber-gold: #e27d60;
+            --gold-dark: #c36246;
+            --deep-purple: #1d1e2c;
+            --cream-bg: #f4f7fc;
+            --card-white: #ffffff;
+            --success-green: #2ec4b6;
+            --danger-red: #e71d36;
+            --panel-radius: 20px;
+            --elem-radius: 12px;
+            --classic-shadow: 0 10px 30px rgba(43, 58, 103, 0.08);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--cream-bg);
+            color: var(--deep-purple);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* BACKGROUND LIGHT SCENIC AMBIENCE STREAMS & PARTICLES */
+        .bg-element {
+            position: absolute;
+            top: -50px;
+            width: 3px;
+            height: 100px;
+            background: linear-gradient(to bottom, rgba(65, 179, 163, 0.15), transparent);
+            animation: dropFloat 8s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        @keyframes dropFloat {
+            0% { transform: translateY(-100px) rotate(15deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(110vh) rotate(15deg); opacity: 0; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            display: none;
+            position: relative;
+            z-index: 10;
+            animation: viewFadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes viewFadeIn {
+            0% { transform: scale(0.96); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* SCREEN 1: SPLASH VIEW PANEL */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            animation: runSplash 5s linear forwards;
+        }
+
+        #splash-screen img {
+            width: 250px;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        .splash-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--slate-blue);
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes runSplash {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* REUSABLE STYLING CARDS */
+        .quiz-card {
+            background: var(--card-white);
+            padding: clamp(24px, 5vw, 40px);
+            border-radius: var(--panel-radius);
+            width: 100%;
+            box-shadow: var(--classic-shadow);
+            border: 1px solid rgba(43, 58, 103, 0.04);
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: var(--slate-blue);
+            font-size: clamp(22px, 4.5vw, 28px);
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: var(--mint-teal);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .meta-info-box {
+            background: #f8fafc;
+            border-radius: var(--elem-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            border: 1px dashed var(--mint-teal);
+        }
+
+        .meta-info-box p {
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #4a5568;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meta-info-box p:last-child { margin-bottom: 0; }
+
+        /* LIVE TRACKING STATS HUD BAR */
+        .hud-wrapper {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: var(--slate-blue);
+            padding: 14px;
+            border-radius: var(--elem-radius);
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(43, 58, 103, 0.1);
+            align-items: center;
+        }
+
+        .hud-block {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .hud-val {
+            font-size: 16px;
+            color: var(--mint-teal);
+        }
+
+        #timer-display {
+            color: #ff9faf;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .audio-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 4px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(43, 58, 103, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--mint-teal), var(--success-green));
+            transition: width 0.3s ease;
+        }
+
+        /* CONTENT STYLING CARDS FOR PASSAGES/SENTENCES */
+        .highlighted-passage-card {
+            background: #fffdf6;
+            border: 2px solid #eedda9;
+            border-radius: var(--elem-radius);
+            padding: 16px;
+            margin: 14px 0;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        .question-statement {
+            font-size: clamp(16px, 3.8vw, 18px);
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        /* OPTION LAYOUT MATRIX GRID */
+        .options-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-node {
+            width: 100%;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--elem-radius);
+            padding: 16px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1.4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option-node:hover:not(.locked-state) {
+            border-color: var(--slate-blue);
+            background: rgba(43, 58, 103, 0.01);
+            transform: translateY(-1.5px);
+        }
+
+        .option-node.locked-state {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* RESPONSE SELECTION OUTCOME LOOKS */
+        .option-node.correct-look {
+            background: #e6f9f7 !important;
+            border-color: var(--success-green) !important;
+            color: var(--success-green) !important;
+            font-weight: 700;
+            box-shadow: 0 0 12px rgba(46, 196, 182, 0.25);
+        }
+        .option-node.correct-look::after {
+            content: "✔";
+            font-size: 16px;
+            color: var(--success-green);
+        }
+
+        .option-node.wrong-look {
+            background: #ffebee !important;
+            border-color: var(--danger-red) !important;
+            color: var(--danger-red) !important;
+            font-weight: 700;
+            animation: redCrossShake 0.4s ease-in-out;
+        }
+        .option-node.wrong-look::after {
+            content: "✖";
+            font-size: 16px;
+            color: var(--danger-red);
+        }
+
+        @keyframes redCrossShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            50% { transform: translateX(6px); }
+            75% { transform: translateX(-4px); }
+        }
+
+        #feedback-alert {
+            margin-top: 12px;
+            font-size: 18px;
+            font-weight: 800;
+            display: none;
+            text-align: center;
+        }
+
+        #explanation-card {
+            margin-top: 16px;
+            padding: 16px 20px;
+            border-radius: var(--elem-radius);
+            background: #f8fafc;
+            border-left: 5px solid var(--slate-blue);
+            font-size: 14.5px;
+            line-height: 1.6;
+            color: #4a5568;
+            text-align: left;
+            display: none;
+            animation: viewFadeIn 0.3s ease;
+        }
+
+        /* CORE HUD BUTTON NAVIGATION CONTROL */
+        .btn-ui-action {
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--elem-radius);
+            background: var(--amber-gold);
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            margin: 8px;
+            display: inline-block;
+        }
+
+        .btn-ui-action:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+        }
+
+        /* REUSABLE FLOATING STAR CONFETTI ELEMENTS */
+        .gold-star-particle {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: #ffd700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            pointer-events: none;
+            z-index: 9999;
+            animation: goldStarFall 1.2s linear forwards;
+        }
+        @keyframes goldStarFall {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg) scale(0.5); opacity: 0; }
+        }
+
+        .badge-star-row {
+            font-size: 30px;
+            margin: 12px 0;
+            letter-spacing: 4px;
+        }
+
+        #fallback-panel-notice {
+            display: none;
+            background: #fff3cd;
+            color: #856404;
+            padding: 16px;
+            border-radius: var(--elem-radius);
+            font-size: 14px;
+            margin-bottom: 20px;
+            border: 1px solid #ffeeba;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="soundClick" src="assets/click.mp3" preload="auto"></audio>
+    <audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="soundWin" src="assets/win.mp3" preload="auto"></audio>
+    <audio id="soundGameOver" src="assets/gameover.mp3" preload="auto"></audio>
+
+    <div id="splash-screen">
+        <img id="brandingLogo" src="assets/logo.png" alt="Logo" onerror="handleLogoError(this)">
+        <div id="brandingLabel" class="splash-title">Innovine Learning</div>
+    </div>
+
+    <div id="intro-screen" class="container">
+        <div id="fallback-panel-notice">
+            Please upload:<br><strong>assets/logo.png</strong><br>before running this quiz to proceed properly.
+        </div>
+        <div class="quiz-card">
+            <div style="margin-bottom: 16px;"><img src="assets/logo.png" alt="Innovine Logo" style="height: 60px; width: auto;" onerror="this.style.display='none'"></div>
+            <h1>Chapter 12— Past Tense</h1>
+            <div class="subtitle">Grade 7 English Language Arts</div>
+            
+            <div class="meta-info-box">
+                <p>📋 <strong>Scope:</strong> Simple Past · Past Continuous · Past Perfect</p>
+                <p>⏱️ <strong>Time Frame:</strong> 45 seconds allocated per question challenge</p>
+                <p>🔄 <strong>Rule Check:</strong> Two attempts allowed for each scenario context</p>
+                <p>⭐ Continuous live score tracking enabled</p>
+            </div>
+            
+            <div class="control-row" style="justify-content: center; margin-bottom: 20px;">
+                <button class="audio-toggle-btn" onclick="toggleMuteState()" id="mute-btn-intro">🔊 Audio Enabled</button>
+            </div>
+
+            <button class="btn-ui-action" onclick="fireQuizSystemInit()">Start Quiz</button>
+        </div>
+    </div>
+
+    <div id="question-screen" class="container">
+        <div class="control-row">
+            <button class="audio-toggle-btn" onclick="toggleMuteState()" id="mute-btn-game">🔊</button>
+        </div>
+        <div class="hud-wrapper">
+            <div class="hud-block"><div>Question</div><div id="hud-index-val" class="hud-val">-</div></div>
+            <div class="hud-block"><div>⭐ Score</div><div id="hud-score-val" class="hud-val">0</div></div>
+            <div class="hud-block"><div>Timer</div><div id="timer-display" class="hud-val">45s</div></div>
+        </div>
+        <div class="progress-container">
+            <div id="progressFillBar" class="progress-fill"></div>
+        </div>
+        <div class="quiz-card">
+            <div id="embeddedAssetPassageBlock"></div>
+            <div id="activeQuestionText" class="question-statement"></div>
+            <div id="activeOptionsContainer" class="options-stack"></div>
+            <div id="feedback-alert"></div>
+            <div id="explanation-card"></div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="container">
+        <div class="quiz-card">
+            <h2>🎯 Final Challenge Complete!</h2>
+            <div class="subtitle">Chapter evaluation complete</div>
+            
+            <div id="badgeStarField" class="badge-star-row"></div>
+            <h3 id="badgeTitleText" style="color: var(--slate-blue); font-size: 22px; margin-bottom: 24px;">-</h3>
+            
+            <div style="background: #f8fafc; padding: 20px; border-radius: var(--elem-radius); margin-bottom: 25px; text-align: left; line-height: 1.8;">
+                <p style="font-size: 16px;"><strong>Final Total Score:</strong> <span id="res-score" style="font-weight:800; color:var(--slate-blue);">0</span></p>
+                <p style="font-size: 16px;"><strong>Accuracy Performance Percentage:</strong> <span id="res-percent" style="font-weight:700; color:var(--mint-teal);">0%</span></p>
+                <p style="font-size: 16px;"><strong>Correct Main Answers:</strong> <span id="res-correct" style="font-weight:700; color:var(--success-green);">0</span></p>
+                <p style="font-size: 16px;"><strong>Incorrect Main Answers:</strong> <span id="res-wrong" style="font-weight:700; color:var(--danger-red);">0</span></p>
+            </div>
+
+            <button class="btn-ui-action" onclick="fireQuizSystemInit()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================
+        UNMODIFIED DATABANK SOURCE - PAST TENSE (GRADE 7)
+        ========================================================== */
+        const sourceMasterDatabase = [
+            {
+                q: `Q1. Riya is writing about her school trip in her diary: "We ___ the museum at 10 AM, ___ the exhibits for two hours and then ___ lunch at a nearby café." She wants to describe a sequence of completed past actions. Which set is correct?`,
+                options: [
+                    "a) were visiting / looked / were having",
+                    "b) visited / looked / had",
+                    "c) had visited / were looking / had",
+                    "d) visited / looked / had lunch"
+                ],
+                answer: "b) visited / looked / had",
+                reason: "Series of completed past actions in sequence → Simple Past for all three"
+            },
+            {
+                q: `Q2. Aarav is describing a scene from his story: "The children ___ in the park when suddenly the sky turned dark and it began to pour." Which tense correctly shows the background action that was already in progress when the sudden event happened?`,
+                options: [
+                    "a) played",
+                    "b) had played",
+                    "c) were playing",
+                    "d) have played"
+                ],
+                answer: "c) were playing",
+                reason: "Ongoing background action interrupted by sudden event → Past Continuous"
+            },
+            {
+                q: `Q3. Meera writes in her history essay: "By the time the rescue team arrived at the site, the villagers _________ the police." Which tense correctly shows an action that was completed before another past event?`,
+                options: [
+                    "a) informed",
+                    "b) had informed",
+                    "c) were informing",
+                    "d) have informed"
+                ],
+                answer: "b) had informed",
+                reason: "Past Perfect ('had informed') shows that informing the police happened before another past event ('the rescue team arrived'). It clearly establishes the sequence of two past actions."
+            },
+            {
+                q: `Q4. A student describes what happened during a power cut: "When the lights went out, I ___ my homework at the dining table." Which tense correctly shows what was happening at the moment the lights went out?`,
+                options: [
+                    "a) did",
+                    "b) had done",
+                    "c) was doing",
+                    "d) have done"
+                ],
+                answer: "c) was doing",
+                reason: "Action in progress at the exact moment lights went out → Past Continuous"
+            },
+            {
+                q: `Q5. Rohan writes about a race: "Ananya won the gold medal. She ___ harder than anyone else for the entire year before the competition." Which tense correctly shows the action that happened over a period before the winning moment?`,
+                options: [
+                    "a) trained",
+                    "b) was training",
+                    "c) had trained",
+                    "d) has trained"
+                ],
+                answer: "c) had trained",
+                reason: "Sustained action completed before winning moment → Past Perfect"
+            },
+            {
+                q: `Q6. A student's story showing four sentences with blanks — Sentence 1: "At 7 PM yesterday, she ___ (cook) dinner when her friend called."Sentence 2: "By the time we reached the cinema, the film ___ (already / start)." Sentence 3: "He ___ (fall) asleep as soon as his head hit the pillow." Sentence 4: "The students ___ (discuss) the project when the teacher walked in."] Which set correctly fills all four blanks in order?`,
+                options: [
+                    "a) cooked / had already started / fell / discussed",
+                    "b) was cooking / had already started / fell / were discussing",
+                    "c) was cooking / already started / had fallen / discussed",
+                    "d) cooked / was already starting / fell / were discussing"
+                ],
+                answer: "b) was cooking / had already started / fell / were discussing",
+                reason: "was cooking=ongoing when interrupted; had already started=completed before arrival; fell=sudden completed action; were discussing=ongoing when teacher arrived",
+                visualMarkup: `<strong>Story Segment Workspace:</strong><br>
+                • Sentence 1: "At 7 PM yesterday, she ___ (cook) dinner when her friend called."<br>
+                • Sentence 2: "By the time we reached the cinema, the film ___ (already / start)."<br>
+                • Sentence 3: "He ___ (fall) asleep as soon as his head hit the pillow."<br>
+                • Sentence 4: "The students ___ (discuss) the project when the teacher walked in."`
+            },
+            {
+                q: `Q7. A grammar worksheet showing four sentences — each labelled with a tense — but two are labelled incorrectly: Sentence A: "She was reading when I called." — labelled Simple Past ✗ Sentence B: "He had left before I arrived." — labelled Past Perfect ✓ Sentence C: "They played cricket yesterday." — labelled Past Continuous ✗ Sentence D: "I was walking to school when it started raining." — labelled Past Continuous ✓] Why are Sentences A and C labelled incorrectly?`,
+                options: [
+                    "a) Sentence A is Past Continuous (ongoing background action interrupted by 'called'); Sentence C is Simple Past (completed action — 'yesterday' confirms it)",
+                    "b) Sentence A is Past Perfect; Sentence C is Simple Past",
+                    "c) Sentence A is Simple Past; Sentence C is Past Perfect",
+                    "d) Both are correctly labelled — no change needed"
+                ],
+                answer: "a) Sentence A is Past Continuous (ongoing background action interrupted by 'called'); Sentence C is Simple Past (completed action — 'yesterday' confirms it)",
+                reason: "'was reading' = ongoing background → Past Continuous; 'played yesterday' = completed fact → Simple Past",
+                visualMarkup: `<strong>Worksheet Analysis View:</strong><br>
+                • <em>Sentence A:</em> "She was reading when I called." — <span style="color:var(--danger-red)">labelled Simple Past ✗</span><br>
+                • <em>Sentence B:</em> "He had left before I arrived." — <span style="color:var(--success-green)">labelled Past Perfect ✓</span><br>
+                • <em>Sentence C:</em> "They played cricket yesterday." — <span style="color:var(--danger-red)">labelled Past Continuous ✗</span><br>
+                • <em>Sentence D:</em> "I was walking to school when it started raining." — <span style="color:var(--success-green)">labelled Past Continuous ✓</span>`
+            },
+            {
+                q: `Q8. Which sentence correctly uses the Past Perfect to show which action happened first?`,
+                options: [
+                    "a) Before I reached the station, the train left.",
+                    "b) Before I reached the station, the train had left.",
+                    "c) Before I reached the station, the train was leaving.",
+                    "d) Before I reached the station, the train has left."
+                ],
+                answer: "b) Before I reached the station, the train had left.",
+                reason: "Past Perfect marks the earlier of two past actions — 'had left' happened before 'reached'"
+            },
+            {
+                q: `Q9. Sort these sentences into two groups — Past Continuous and Past Perfect: P: "She had finished her assignment before dinner." Q: "The dog was barking loudly all evening." R: "He had already packed his bags when the taxi arrived." S: "They were arguing about the rules when the referee stepped in."`,
+                options: [
+                    "a) Past Continuous: P, R — Past Perfect: Q, S",
+                    "b) Past Continuous: P, Q — Past Perfect: R, S",
+                    "c) Past Continuous: Q, S — Past Perfect: P, R",
+                    "d) Past Continuous: R, S — Past Perfect: P, Q"
+                ],
+                answer: "c) Past Continuous: Q, S — Past Perfect: P, R",
+                reason: "Q & S = ongoing actions in the past → Past Continuous; P & R = completed before another past point → Past Perfect"
+            },
+            {
+                q: `Q10. Classify the function of the tense used in each sentence: 1. "She wrote three letters yesterday." 2. "He was listening to music when his phone rang." 3. "By the time the guests arrived, she had cooked a full meal." 4. "They were still waiting at midnight."`,
+                options: [
+                    "a) 1=Background action, 2=Completed sequence, 3=Ongoing past action, 4=Earlier past action",
+                    "b) 1=Completed past action, 2=Background action interrupted, 3=Earlier completed past action, 4=Ongoing past action at a specific time",
+                    "c) 1=Earlier past action, 2=Ongoing past action, 3=Completed past action, 4=Background action",
+                    "d) 1=Ongoing action, 2=Earlier past action, 3=Background action, 4=Completed action"
+                ],
+                answer: "b) 1=Completed past action, 2=Background action interrupted, 3=Earlier completed past action, 4=Ongoing past action at a specific time",
+                reason: "wrote=finished fact; was listening=background interrupted; had cooked=earlier completed; were waiting=ongoing at midnight"
+            },
+            {
+                q: `Q11. Three of the following sentences use past tenses correctly. One does NOT. Which is the odd one out?`,
+                options: [
+                    "a) The match had already started when we reached the ground.",
+                    "b) She was sleeping when the alarm went off.",
+                    "c) By the time he arrived, everyone has left the hall.",
+                    "d) I fell asleep during the film last night."
+                ],
+                answer: "c) By the time he arrived, everyone has left the hall.",
+                reason: "'Has left' is Present Perfect — cannot be used with a past time context; should be 'had left'"
+            },
+            {
+                q: `Q12. A student wrote: "Yesterday, I was going to the market and I buyed some vegetables. When I came home, my mother already cooked dinner. While I ate, my brother was doing his homework." Identify ALL the errors:`,
+                options: [
+                    "a) was going→went; buyed→bought; already cooked→had already cooked; While I ate→While I was eating",
+                    "b) was going is correct; buyed→bought; already cooked→had already cooked; while I ate is correct",
+                    "c) was going→went; buyed→bought; already cooked is correct; while I ate→while I was eating",
+                    "d) There are no errors — all tenses are used correctly"
+                ],
+                answer: "a) was going→went; buyed→bought; already cooked→had already cooked; While I ate→While I was eating",
+                reason: "went=simple completed action; bought=irregular past; had already cooked=earlier past action; was eating=ongoing action during which other action happened"
+            },
+            {
+                q: `Q13. A student writes two sentences: "The thief escaped. The police arrived." Then combines them as: "By the time the police arrived, the thief had escaped." What is the effect of using the Past Perfect?`,
+                options: [
+                    "a) The meaning changes — the police caught the thief",
+                    "b) The Past Perfect clearly shows which event happened first (escape) and which happened second (arrival) — without it both events would seem to happen at the same time",
+                    "c) The sentence becomes more informal",
+                    "d) 'Had escaped' changes the meaning to an incomplete action"
+                ],
+                answer: "b) The Past Perfect clearly shows which event happened first (escape) and which happened second (arrival) — without it both events would seem to happen at the same time",
+                reason: "Past Perfect establishes time sequence — without it both actions appear simultaneous"
+            },
+            {
+                q: `Q14. Assertion: "I was doing my homework when she called" uses two different past tenses in one sentence. Reason: Past Continuous describes the longer background action already in progress; Simple Past describes the shorter action that interrupts it — using both together shows the relationship between the two events clearly.`,
+                options: [
+                    "a) Both are correct; the reason correctly explains the assertion.",
+                    "b) Both are correct; but the reason does NOT explain the assertion.",
+                    "c) The assertion is correct; the reason is wrong.",
+                    "d) Both are wrong — only one past tense should be used per sentence."
+                ],
+                answer: "a) Both are correct; the reason correctly explains the assertion.",
+                reason: "Past Continuous=long background; Simple Past=short interruption — together they show temporal relationship"
+            }
+        ];
+
+        let playActivePool = [];
+        let runningIndex = 0;
+        let scoreCounter = 0;
+        let correctTally = 0;
+        let wrongTally = 0;
+        
+        let attemptsCount = 2;
+        let activeTimer = null;
+        let timerCountdownValue = 45; 
+        let globalMuteState = false;
+        let lockSequenceProcessing = false;
+
+        function buildScenicParticles() {
+            try {
+                for (let k = 0; k < 6; k++) {
+                    let particleNode = document.createElement("div");
+                    particleNode.className = "bg-element";
+                    particleNode.style.left = (Math.random() * 100) + "vw";
+                    particleNode.style.animationDelay = (Math.random() * 4) + "s";
+                    particleNode.style.animationDuration = (Math.random() * 3 + 6) + "s";
+                    document.body.appendChild(particleNode);
+                }
+            } catch(err) { console.error(err); }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            buildScenicParticles();
+            setTimeout(() => {
+                let splash = document.getElementById("splash-screen");
+                if (splash) {
+                    splash.style.display = "none";
+                    switchViewportPanel("intro-screen");
+                }
+            }, 5000); // Rigid 5 second layout sequence loop
+        });
+
+        function handleLogoError(imgNode) {
+            imgNode.style.display = "none";
+            let fallbackLabel = document.getElementById("fallback-panel-notice");
+            if (fallbackLabel) fallbackLabel.style.display = "block";
+        }
+
+        function switchViewportPanel(targetId) {
+            document.querySelectorAll(".container").forEach(c => c.style.display = "none");
+            let view = document.getElementById(targetId);
+            if (view) view.style.display = "block";
+        }
+
+        function toggleMuteState() {
+            globalMuteState = !globalMuteState;
+            let introBtn = document.getElementById("mute-btn-intro");
+            let gameBtn = document.getElementById("mute-btn-game");
+            
+            let label = globalMuteState ? "🔇 Muted" : "🔊 Audio Enabled";
+            if(introBtn) introBtn.innerText = label;
+            if(gameBtn) gameBtn.innerText = globalMuteState ? "🔇" : "🔊";
+        }
+
+        function dispatchAudioTrack(elementId) {
+            if (globalMuteState) return;
+            try {
+                let sound = document.getElementById(elementId);
+                if (sound) {
+                    sound.currentTime = 0;
+                    sound.play().catch(() => {});
+                }
+            } catch(e) {}
+        }
+
+        function fireQuizSystemInit() {
+            // Shuffle question cards cleanly while retaining explicit configurations
+            let cloned = JSON.parse(JSON.stringify(sourceMasterDatabase));
+            for (let i = cloned.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cloned[i], cloned[j]] = [cloned[j], cloned[i]];
+            }
+            
+            // Randomize specific item choices cleanly mapping correct strings
+            cloned.forEach(item => {
+                for (let a = item.options.length - 1; a > 0; a--) {
+                    const b = Math.floor(Math.random() * (a + 1));
+                    [item.options[a], item.options[b]] = [item.options[b], item.options[a]];
+                }
+            });
+
+            playActivePool = cloned;
+            runningIndex = 0;
+            scoreCounter = 0;
+            correctTally = 0;
+            wrongTally = 0;
+            lockSequenceProcessing = false;
+
+            refreshLiveHUD();
+            switchViewportPanel("question-screen");
+            drawActiveQuestionCard();
+        }
+
+        function refreshLiveHUD() {
+            document.getElementById("hud-index-val").innerText = `${runningIndex + 1} of ${playActivePool.length}`;
+            document.getElementById("hud-score-val").innerText = scoreCounter;
+        }
+
+        function drawActiveQuestionCard() {
+            lockSequenceProcessing = false;
+            attemptsCount = 2;
+            
+            let feedback = document.getElementById("feedback-alert");
+            feedback.style.display = "none";
+            feedback.innerText = "";
+            
+            let explanation = document.getElementById("explanation-card");
+            explanation.style.display = "none";
+            explanation.innerText = "";
+
+            if (runningIndex >= playActivePool.length) {
+                renderFinalEvaluationView();
+                return;
+            }
+
+            let data = playActivePool[runningIndex];
+            
+            // Render interactive progression tracking metrics
+            let percentDone = (runningIndex / playActivePool.length) * 100;
+            document.getElementById("progressFillBar").style.width = `${percentDone}%`;
+
+            let graphicBox = document.getElementById("embeddedAssetPassageBlock");
+            if (data.visualMarkup) {
+                graphicBox.innerHTML = `<div class="highlighted-passage-card">${data.visualMarkup}</div>`;
+            } else {
+                graphicBox.innerHTML = "";
+            }
+
+            document.getElementById("activeQuestionText").innerText = data.q;
+            refreshLiveHUD();
+
+            let optionsGrid = document.getElementById("activeOptionsContainer");
+            optionsGrid.innerHTML = "";
+
+            data.options.forEach(optString => {
+                let btn = document.createElement("button");
+                btn.className = "option-node";
+                btn.innerText = optString;
+                btn.onclick = () => processUserSelection(optString, btn);
+                optionsGrid.appendChild(btn);
+            });
+
+            beginCountdownSequence();
+        }
+
+        function beginCountdownSequence() {
+            clearInterval(activeTimer);
+            timerCountdownValue = 45; // Fixed 45 seconds targeting Grade 7 metrics
+            document.getElementById("timer-display").innerText = `${timerCountdownValue}s`;
+
+            activeTimer = setInterval(() => {
+                timerCountdownValue--;
+                document.getElementById("timer-display").innerText = `${timerCountdownValue}s`;
+
+                if (timerCountdownValue <= 0) {
+                    clearInterval(activeTimer);
+                    if (!lockSequenceProcessing) {
+                        handleTimeoutExpiration();
+                    }
+                }
+            }, 1000);
+        }
+
+        function disableAllOptionNodes() {
+            document.querySelectorAll(".option-node").forEach(n => n.classList.add("locked-state"));
+        }
+
+        function handleTimeoutExpiration() {
+            lockSequenceProcessing = true;
+            disableAllOptionNodes();
+            wrongTally++;
+            dispatchAudioTrack("soundWrong");
+            autoRevealCorrectFlow();
+        }
+
+        function processUserSelection(chosenText, targetButton) {
+            if (lockSequenceProcessing) return;
+            dispatchAudioTrack("soundClick");
+
+            let currentItem = playActivePool[runningIndex];
+            let isCorrect = (chosenText === currentItem.answer);
+
+            if (isCorrect) {
+                lockSequenceProcessing = true;
+                clearInterval(activeTimer);
+                disableAllOptionNodes();
+
+                targetButton.classList.add("correct-look");
+                correctTally++;
+                
+                // Allocation logic awards standard weight increment on first/residual checks
+                scoreCounter++;
+                refreshLiveHUD();
+
+                dispatchAudioTrack("soundCorrect");
+                fireConfettiGlowBurst();
+
+                let feedback = document.getElementById("feedback-alert");
+                feedback.innerText = "✅ Correct!";
+                feedback.style.color = "var(--success-green)";
+                feedback.style.display = "block";
+
+                setTimeout(() => {
+                    runningIndex++;
+                    drawActiveQuestionCard();
+                }, 2000);
+
+            } else {
+                attemptsCount--;
+                if (attemptsCount > 0) {
+                    targetButton.classList.add("wrong-look");
+                    dispatchAudioTrack("soundWrong");
+                    
+                    let feedback = document.getElementById("feedback-alert");
+                    feedback.innerText = "❌ Try Again!";
+                    feedback.style.color = "var(--danger-red)";
+                    feedback.style.display = "block";
+                    targetButton.classList.add("locked-state");
+                } else {
+                    lockSequenceProcessing = true;
+                    clearInterval(activeTimer);
+                    disableAllOptionNodes();
+                    targetButton.classList.add("wrong-look");
+                    wrongTally++;
+                    dispatchAudioTrack("soundWrong");
+                    autoRevealCorrectFlow();
+                }
+            }
+        }
+
+        function autoRevealCorrectFlow() {
+            let currentItem = playActivePool[runningIndex];
+            
+            document.querySelectorAll(".option-node").forEach(b => {
+                if (b.innerText === currentItem.answer) {
+                    b.classList.add("correct-look");
+                }
+            });
+
+            let explanation = document.getElementById("explanation-card");
+            explanation.innerHTML = `<strong>Explanation:</strong> ${currentItem.reason}`;
+            explanation.style.display = "block";
+
+            setTimeout(() => {
+                runningIndex++;
+                drawActiveQuestionCard();
+            }, 3000);
+        }
+
+        function fireConfettiGlowBurst() {
+            try {
+                for (let idx = 0; idx < 12; idx++) {
+                    let star = document.createElement("div");
+                    star.className = "gold-star-particle";
+                    star.style.left = (Math.random() * 100) + "vw";
+                    star.style.top = "-15px";
+                    star.style.animationDuration = (Math.random() * 0.4 + 0.8) + "s";
+                    document.body.appendChild(star);
+                    setTimeout(() => star.remove(), 1200);
+                }
+            } catch(e) {}
+        }
+
+        function renderFinalEvaluationView() {
+            switchViewportPanel("result-screen");
+            
+            let pct = Math.round((correctTally / playActivePool.length) * 100);
+
+            document.getElementById("res-score").innerText = scoreCounter;
+            document.getElementById("res-percent").innerText = `${pct}%`;
+            document.getElementById("res-correct").innerText = correctTally;
+            document.getElementById("res-wrong").innerText = wrongTally;
+
+            let badgeTitle = document.getElementById("badgeTitleText");
+            let starDisplay = document.getElementById("badgeStarField");
+            
+            if (pct >= 85) {
+                badgeTitle.innerText = "🏆 Grammar Champion";
+                starDisplay.innerText = "⭐⭐⭐⭐⭐";
+                dispatchAudioTrack("soundWin");
+                fireConfettiGlowBurst();
+            } else if (pct >= 70) {
+                badgeTitle.innerText = "🌟 Excellent";
+                starDisplay.innerText = "⭐⭐⭐⭐";
+                dispatchAudioTrack("soundWin");
+            } else if (pct >= 50) {
+                badgeTitle.innerText = "👍 Great Job";
+                starDisplay.innerText = "⭐⭐⭐";
+                dispatchAudioTrack("soundWin");
+            } else {
+                badgeTitle.innerText = "📚 Keep Practising";
+                starDisplay.innerText = "⭐⭐";
+                dispatchAudioTrack("soundGameOver");
+            }
+        }
+    </script>
+</body>
+</html>
