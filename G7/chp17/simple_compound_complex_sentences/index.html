@@ -452,7 +452,6 @@
             box-shadow: 0 4px 10px rgba(255, 215, 0, 0.25);
         }
 
-        /* Challenge styles */
         .challenge-zone {
             background: rgba(43, 58, 103, 0.03);
             border: 2px dashed var(--slate-blue);
@@ -611,155 +610,87 @@
     </div>
 
     <script>
-        // STRICTLY MANDATORY CURRICULUM QUESTIONS SOURCE
         const curriculumQuestionsSource = [
             {
-                q: `Q1. Riya is writing a paragraph about her favourite sport. Her teacher asks her to identify which of the following is a Simple Sentence — one that has only one Main Clause and no subordinate clauses.
-a) She plays basketball and she also enjoys swimming.
-b) She plays basketball because it keeps her fit.
-c) She plays basketball every evening after school.
-d) Although she is tired, she plays basketball.`,
+                q: `Q1. Riya is writing a paragraph about her favourite sport. Her teacher asks her to identify which of the following is a Simple Sentence — one that has only one Main Clause and no subordinate clauses.\na) She plays basketball and she also enjoys swimming.\nb) She plays basketball because it keeps her fit.\nc) She plays basketball every evening after school.\nd) Although she is tired, she plays basketball.`,
                 options: ["a", "b", "c", "d"],
                 answer: "c",
                 reason: "One subject + one predicate + no subordinate clause → Simple Sentence"
             },
             {
-                q: `Q2. Aarav combines two equal ideas in his essay: "The weather was perfect. The match was exciting." He joins them using a coordinating conjunction. Which correctly forms a Compound Sentence?
-a) The weather was perfect because the match was exciting.
-b) The weather was perfect although the match was exciting.
-c) The weather was perfect and the match was exciting.
-d) When the weather was perfect, the match was exciting.`,
+                q: `Q2. Aarav combines two equal ideas in his essay: "The weather was perfect. The match was exciting." He joins them using a coordinating conjunction. Which correctly forms a Compound Sentence?\na) The weather was perfect because the match was exciting.\nb) The weather was perfect although the match was exciting.\nc) The weather was perfect and the match was exciting.\nd) When the weather was perfect, the match was exciting.`,
                 options: ["a", "b", "c", "d"],
                 answer: "c",
                 reason: "Two Main Clauses joined by coordinating conjunction 'and' → Compound Sentence"
             },
             {
-                q: `Q3. Meera writes for her school magazine: "She practised every day because she wanted to win the championship." Her teacher says this is a Complex Sentence. Why?
-a) It has two Main Clauses joined by 'and'
-b) It has one Main Clause ('She practised every day') and one Subordinate Clause ('because she wanted to win') joined by a subordinating conjunction
-c) It has three clauses making it complex
-d) It is complex because it is a long sentence`,
+                q: `Q3. Meera writes for her school magazine: "She practised every day because she wanted to win the championship." Her teacher says this is a Complex Sentence. Why?\na) It has two Main Clauses joined by 'and'\nb) It has one Main Clause ('She practised every day') and one Subordinate Clause ('because she wanted to win') joined by a subordinating conjunction\nc) It has three clauses making it complex\nd) It is complex because it is a long sentence`,
                 options: ["a", "b", "c", "d"],
                 answer: "b",
                 reason: "Main Clause + Subordinate Clause joined by subordinating conjunction 'because' → Complex"
             },
             {
-                q: `Q4. Rohan's teacher writes four sentences on the board and asks which one is Compound. Which is it?
-a) The old lighthouse stood at the edge of the rocky cliff.
-b) She studied hard yet she could not clear the test.
-c) He left early so that he could catch the first train.
-d) Although it was cold, they went for a morning walk.`,
+                q: `Q4. Rohan's teacher writes four sentences on the board and asks which one is Compound. Which is it?\na) The old lighthouse stood at the edge of the rocky cliff.\nb) She studied hard yet she could not clear the test.\nc) He left early so that he could catch the first train.\nd) Although it was cold, they went for a morning walk.`,
                 options: ["a", "b", "c", "d"],
                 answer: "b",
                 reason: "Two Main Clauses joined by coordinating conjunction 'yet' → Compound Sentence"
             },
             {
-                q: `Q5. A student writes: "I will help you if you ask me politely." His friend says this is a Simple Sentence. Is the friend correct?
-a) Yes — it has only one verb so it is Simple
-b) Yes — all short sentences are Simple
-c) No — it is a Complex Sentence because 'if you ask me politely' is a Subordinate Clause dependent on the Main Clause
-d) No — it is a Compound Sentence because it has two subjects`,
+                q: `Q5. A student writes: "I will help you if you ask me politely." His friend says this is a Simple Sentence. Is the friend correct?\na) Yes — it has only one verb so it is Simple\nb) Yes — all short sentences are Simple\nc) No — it is a Complex Sentence because 'if you ask me politely' is a Subordinate Clause dependent on the Main Clause\nd) No — it is a Compound Sentence because it has two subjects`,
                 options: ["a", "b", "c", "d"],
                 answer: "c",
                 reason: "'If you ask me politely' is a dependent Subordinate Clause → Complex Sentence"
             },
             {
-                q: `Q6. Which set correctly classifies all four sentences in order?
-1. "The sun set behind the mountains."
-2. "She was tired but she kept walking."
-3. "He stayed indoors because it was raining."
-4. "The tall boy with the blue bag won the race."
-a) Simple / Compound / Complex / Simple
-b) Complex / Simple / Compound / Complex
-c) Compound / Simple / Complex / Compound
-d) Simple / Complex / Simple / Compound`,
+                q: `Q6. Which set correctly classifies all four sentences in order?\n1. "The sun set behind the mountains."\n2. "She was tired but she kept walking."\n3. "He stayed indoors because it was raining."\n4. "The tall boy with the blue bag won the race."\n\na) Simple / Compound / Complex / Simple\nb) Complex / Simple / Compound / Complex\nc) Compound / Simple / Complex / Compound\nd) Simple / Complex / Simple / Compound`,
                 options: ["a", "b", "c", "d"],
                 answer: "a",
                 reason: "Simple(one clause); Compound(but joins two main clauses); Complex(because=subordinating); Simple(one clause with phrases)"
             },
             {
-                q: `Q7. Which sentence is a Complex Sentence?
-a) The dog barked and the cat ran away.
-b) She opened the door but no one was there.
-c) He works hard yet he never complains.
-d) We cancelled the trip because the roads were flooded.`,
+                q: `Q7. Which sentence is a Complex Sentence?\na) The dog barked and the cat ran away.\nb) She opened the door but no one was there.\nc) He works hard yet he never complains.\nd) We cancelled the trip because the roads were flooded.`,
                 options: ["a", "b", "c", "d"],
                 answer: "d",
                 reason: "'Because the roads were flooded' is a Subordinate Clause → Complex Sentence"
             },
             {
-                q: `Q8. A student wants to combine these two Simple Sentences into a Compound Sentence: "She was hungry. She did not eat." Which correctly forms a Compound Sentence?
-a) She was hungry because she did not eat.
-b) Although she was hungry, she did not eat.
-c) She was hungry but she did not eat.
-d) She was so hungry that she did not eat.`,
+                q: `Q8. A student wants to combine these two Simple Sentences into a Compound Sentence: "She was hungry. She did not eat." Which correctly forms a Compound Sentence?\na) She was hungry because she did not eat.\nb) Although she was hungry, she did not eat.\nc) She was hungry but she did not eat.\nd) She was so hungry that she did not eat.`,
                 options: ["a", "b", "c", "d"],
                 answer: "c",
                 reason: "'But' is a coordinating conjunction joining two equal Main Clauses → Compound"
             },
             {
-                q: `Q9. Sort these sentences into two groups — Compound Sentences and Complex Sentences:
-P: "She finished her work and then she went to sleep." Q: "He could not attend school as he was unwell."
-R: "The results were announced and everyone cheered." S: "She waited until the last student had left."
-a) Compound: P, Q — Complex: R, S
-b) Compound: Q, S — Complex: P, R
-c) Compound: P, R — Complex: Q, S
-d) Compound: R, S — Complex: P, Q`,
+                q: `Q9. Sort these sentences into two groups — Compound Sentences and Complex Sentences:\nP: "She finished her work and then she went to sleep." Q: "He could not attend school as he was unwell."\nR: "The results were announced and everyone cheered." S: "She waited until the last student had left."\na) Compound: P, Q — Complex: R, S\nb) Compound: Q, S — Complex: P, R\nc) Compound: P, R — Complex: Q, S\nd) Compound: R, S — Complex: P, Q`,
                 options: ["a", "b", "c", "d"],
                 answer: "c",
                 reason: "P & R use coordinating conjunctions (and) → Compound; Q & S use subordinating (as/until) → Complex"
             },
             {
-                q: `Q10. Classify each sentence as Simple, Compound or Complex:
-1. "The hardworking student from Class 7 won the science quiz yesterday."
-2. "She sang beautifully and the audience applauded."
-3. "Although he was tired, he completed the assignment."
-4. "I will go to the market if it stops raining."
-a) 1=Compound, 2=Simple, 3=Complex, 4=Compound
-b) 1=Simple, 2=Compound, 3=Complex, 4=Complex
-c) 1=Complex, 2=Compound, 3=Simple, 4=Complex
-d) 1=Simple, 2=Complex, 3=Compound, 4=Simple`,
+                q: `Q10. Classify each sentence as Simple, Compound or Complex:\n1. "The hardworking student from Class 7 won the science quiz yesterday."\n2. "She sang beautifully and the audience applauded."\n3. "Although he was tired, he completed the assignment."\n4. "I will go to the market if it stops raining."\na) 1=Compound, 2=Simple, 3=Complex, 4=Compound\nb) 1=Simple, 2=Compound, 3=Complex, 4=Complex\nc) 1=Complex, 2=Compound, 3=Simple, 4=Complex\nd) 1=Simple, 2=Complex, 3=Compound, 4=Simple`,
                 options: ["a", "b", "c", "d"],
                 answer: "b",
                 reason: "one clause=Simple; and joins two main clauses=Compound; although=subordinating=Complex; if=subordinating=Complex"
             },
             {
-                q: `Q11. Three of the following are Complex Sentences. One is NOT. Which is the odd one out?
-a) She cried when she heard the news.
-b) He will go wherever the work takes him.
-c) The match was intense and the crowd was on their feet.
-d) I will wait here until you return.`,
+                q: `Q11. Three of the following are Complex Sentences. One is NOT. Which is the odd one out?\na) She cried when she heard the news.\nb) He will go wherever the work takes him.\nc) The match was intense and the crowd was on their feet.\nd) I will wait here until you return.`,
                 options: ["a", "b", "c", "d"],
                 answer: "c",
                 reason: "'And' joins two Main Clauses → Compound Sentence not Complex"
             },
             {
-                q: `Q12. A student labelled four sentences. Find ALL the labelling errors:
-1. "Birds fly." — labelled Compound
-2. "She was late and she missed the bus." — labelled Complex
-3. "He studied hard although he found the subject difficult." — labelled Simple
-4. "The match began and the crowd cheered loudly." — labelled Compound
-a) 1=should be Simple; 2=should be Compound; 3=should be Complex; 4=Compound is correct
-b) 1=should be Complex; 2=should be Simple; 3=should be Compound; 4=should be Simple
-c) 1=should be Simple; 2=correct; 3=should be Compound; 4=should be Complex
-d) All labels are correct — no errors`,
+                q: `Q12. A student labelled four sentences. Find ALL the labelling errors:\n1. "Birds fly." — labelled Compound\n2. "She was late and she missed the bus." — labelled Complex\n3. "He studied hard although he found the subject difficult." — labelled Simple\n4. "The match began and the crowd cheered loudly." — labelled Compound\na) 1=should be Simple; 2=should be Compound; 3=should be Complex; 4=Compound is correct\nb) 1=should be Complex; 2=should be Simple; 3=should be Compound; 4=should be Simple\nc) 1=should be Simple; 2=correct; 3=should be Compound; 4=should be Complex\nd) All labels are correct — no errors`,
                 options: ["a", "b", "c", "d"],
                 answer: "a",
                 reason: "one clause=Simple; 'and'=Compound; 'although'=subordinating=Complex; 'and'=Compound(correct)"
             },
             {
-                q: `Q13. Assertion: A Compound Sentence and a Complex Sentence both contain more than one clause — but they are different types of sentences. Reason: In a Compound Sentence both clauses are equally important (Main + Main); in a Complex Sentence one clause is the Main Clause and the other is a Subordinate Clause that depends on it.
-a) Both are correct; the reason correctly explains the assertion.
-b) Both are correct; but the reason does NOT explain the assertion.
-c) The assertion is correct; the reason is wrong.
-d) Both are wrong — Compound and Complex sentences are exactly the same.`,
+                q: `Q13. Assertion: A Compound Sentence and a Complex Sentence both contain more than one clause — but they are different types of sentences.\nReason: In a Compound Sentence both clauses are equally important (Main + Main); in a Complex Sentence one clause is the Main Clause and the other is a Subordinate Clause that depends on it.\na) Both are correct; the reason correctly explains the assertion.\nb) Both are correct; but the reason does NOT explain the assertion.\nc) The assertion is correct; the reason is wrong.\nd) Both are wrong — Compound and Complex sentences are exactly the same.`,
                 options: ["a", "b", "c", "d"],
                 answer: "a",
                 reason: "Compound=Main+Main(equal); Complex=Main+Subordinate(unequal/dependent) — fundamental structural difference"
             }
         ];
 
-        // Global Game States
         let activePool = [];
         let currentQuestionIndex = 0;
         let runningTotalScore = 0;
@@ -776,7 +707,6 @@ d) Both are wrong — Compound and Complex sentences are exactly the same.`,
         let isFinalChallengeActive = false;
         let evaluationSummaryLog = [];
         
-        // Final Challenge variables
         let selectedChallengeChips = [];
         const challengeCorrectSequence = ["The bell rang", "and", "the students left"];
 
@@ -804,7 +734,6 @@ d) Both are wrong — Compound and Complex sentences are exactly the same.`,
 
         window.addEventListener('DOMContentLoaded', () => {
             generateAmbientDecorations();
-            // Splash Screen timing restriction: exactly 5000ms
             setTimeout(() => {
                 const splash = document.getElementById("splash-screen");
                 if (splash) splash.style.opacity = "0";
@@ -901,13 +830,11 @@ d) Both are wrong — Compound and Complex sentences are exactly the same.`,
             document.getElementById("explanation-card").innerText = "";
             document.getElementById("action-bar").style.display = "none";
 
-            // If we have completed all 13 standard questions, load the bonus level
             if (!isFinalChallengeActive && currentQuestionIndex >= activePool.length) {
                 initiateFinalChallengeLifecycle();
                 return;
             }
 
-            // End game after final challenge
             if (isFinalChallengeActive && totalItemsAttempted >= 14) {
                 renderFinalMetricsScoreboard();
                 return;
@@ -932,12 +859,11 @@ d) Both are wrong — Compound and Complex sentences are exactly the same.`,
                     let nodeButton = document.createElement("button");
                     nodeButton.className = "option-node";
                     
-                    // Match the text options with correct formatting based on the key
                     let optionContent = optKey;
-                    if (optKey === "a") optionContent = "a) " + currentItemObj.q.split("a) ")[1].split("\nb)")[0];
-                    if (optKey === "b") optionContent = "b) " + currentItemObj.q.split("b) ")[1].split("\nc)")[0];
-                    if (optKey === "c") optionContent = "c) " + currentItemObj.q.split("c) ")[1].split("\nd)")[0];
-                    if (optKey === "d") optionContent = "d) " + currentItemObj.q.split("d) ")[1].split("\n")[0];
+                    const splits = currentItemObj.q.split(optKey + ") ");
+                    if (splits.length > 1) {
+                        optionContent = optKey + ") " + splits[1].split("\n")[0];
+                    }
                     
                     nodeButton.innerText = optionContent;
                     nodeButton.onclick = () => processSelectedAnswerOption(optKey, nodeButton);
@@ -1052,7 +978,7 @@ d) Both are wrong — Compound and Complex sentences are exactly the same.`,
                     synchronizeHUDMetricsView();
 
                     let alertBox = document.getElementById("feedback-alert");
-                    alertBox.innerText = "❌ Animation Triggered! Try Again.";
+                    alertBox.innerText = "❌ Incorrect Attempt! Try Again.";
                     alertBox.style.color = "var(--danger-red)";
                     alertBox.style.display = "block";
                     targetNodeButton.classList.add("locked-state");
@@ -1103,7 +1029,6 @@ d) Both are wrong — Compound and Complex sentences are exactly the same.`,
             renderActiveQuestionState();
         }
 
-        // STAGE 3.5: CLAUSE CHALLENGE BONUS LEVEL INTERACTIVE CYCLE
         function initiateFinalChallengeLifecycle() {
             isFinalChallengeActive = true;
             clearInterval(activeTimerObject);
@@ -1188,7 +1113,6 @@ d) Both are wrong — Compound and Complex sentences are exactly the same.`,
             } catch(e) {}
         }
 
-        // STAGE 4: RESULT SCOREBOARD GENERATION
         function renderFinalMetricsScoreboard() {
             clearInterval(activeTimerObject);
             playSoundClip("soundWin");
