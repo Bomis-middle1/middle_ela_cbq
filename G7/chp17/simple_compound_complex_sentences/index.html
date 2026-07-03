@@ -1,1 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Grade 7 English Game - Simple, Compound and Complex Sentences</title>
+    <style>
+        :root {
+            --slate-blue: #2b3a67;
+            --mint-teal: #41b3a3;
+            --amber-gold: #e27d60;
+            --gold-dark: #c36246;
+            --deep-purple: #1d1e2c;
+            --cream-bg: #f4f7fc;
+            --card-white: #ffffff;
+            --success-green: #2ec4b6;
+            --danger-red: #e71d36;
+            --panel-radius: 20px;
+            --elem-radius: 12px;
+            --classic-shadow: 0 10px 30px rgba(43, 58, 103, 0.08);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--cream-bg);
+            color: var(--deep-purple);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .ambient-decorations-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .bg-element {
+            position: absolute;
+            top: -50px;
+            width: 10px;
+            height: 10px;
+            background: rgba(65, 179, 163, 0.15);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: floatDownStream 12s linear infinite;
+        }
+
+        .bg-streamer {
+            position: absolute;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(226, 125, 96, 0.1), transparent);
+            animation: floatDownStream 15s linear infinite;
+        }
+
+        @keyframes floatDownStream {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(115vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+            display: none;
+            position: relative;
+            z-index: 10;
+            animation: panelFadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes panelFadeIn {
+            0% { transform: scale(0.97); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            padding: 24px;
+            text-align: center;
+            transition: opacity 0.5s ease;
+        }
+
+        #splash-screen img {
+            width: 240px;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 24px;
+        }
+
+        .splash-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--slate-blue);
+            margin-bottom: 8px;
+        }
+
+        .splash-sub {
+            font-size: 15px;
+            font-weight: 600;
+            color: #64748b;
+            letter-spacing: 0.5px;
+            margin-bottom: 30px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(65, 179, 163, 0.1);
+            border-top-color: var(--mint-teal);
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .quiz-card {
+            background: var(--card-white);
+            padding: clamp(22px, 5vw, 36px);
+            border-radius: var(--panel-radius);
+            width: 100%;
+            box-shadow: var(--classic-shadow);
+            border: 1px solid rgba(43, 58, 103, 0.04);
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: var(--slate-blue);
+            font-size: clamp(22px, 4.5vw, 28px);
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--mint-teal);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .audio-ctrl-strip {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: rgba(43, 58, 103, 0.05);
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-bottom: 24px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .audio-ctrl-strip button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--slate-blue);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .audio-slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--slate-blue);
+        }
+
+        .audio-slider-wrap input {
+            cursor: pointer;
+            accent-color: var(--mint-teal);
+            width: 80px;
+        }
+
+        .hud-wrapper {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            background: var(--slate-blue);
+            padding: 12px;
+            border-radius: var(--elem-radius);
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .hud-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            justify-content: center;
+        }
+
+        .hud-val {
+            font-size: 15px;
+            color: var(--mint-teal);
+        }
+
+        #timer-display {
+            color: #ff9faf;
+            font-weight: 800;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(43, 58, 103, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--mint-teal), var(--success-green));
+            transition: width 0.3s ease;
+        }
+
+        .question-statement {
+            font-size: clamp(16px, 3.8vw, 17px);
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        .options-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .option-node {
+            width: 100%;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--elem-radius);
+            padding: 14px 18px;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            line-height: 1.4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-node:hover:not(.locked-state) {
+            border-color: var(--slate-blue);
+            background: rgba(43, 58, 103, 0.01);
+            transform: translateY(-1px);
+        }
+        
+        .option-node:active:not(.locked-state) {
+            transform: translateY(1px);
+        }
+
+        .option-node.locked-state {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .option-node.correct-look {
+            background: #e6f9f7 !important;
+            border-color: var(--success-green) !important;
+            color: var(--success-green) !important;
+            font-weight: 700;
+            box-shadow: 0 0 10px rgba(46, 196, 182, 0.15);
+            pointer-events: none;
+        }
+        .option-node.correct-look::after {
+            content: "✔";
+            font-size: 16px;
+            color: var(--success-green);
+            flex-shrink: 0;
+        }
+
+        .option-node.wrong-look {
+            background: #ffebee !important;
+            border-color: var(--danger-red) !important;
+            color: var(--danger-red) !important;
+            font-weight: 700;
+            animation: shakeWidget 0.4s ease-in-out;
+            pointer-events: none;
+        }
+        .option-node.wrong-look::after {
+            content: "❌";
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        @keyframes shakeWidget {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-3px); }
+        }
+
+        #feedback-alert {
+            margin-top: 8px;
+            font-size: 18px;
+            font-weight: 800;
+            display: none;
+            text-align: center;
+        }
+
+        #explanation-card {
+            margin-top: 16px;
+            padding: 16px 20px;
+            border-radius: var(--elem-radius);
+            background: #f8fafc;
+            border-left: 5px solid var(--slate-blue);
+            font-size: 14.5px;
+            line-height: 1.6;
+            color: #4a5568;
+            text-align: left;
+            display: none;
+            animation: panelFadeIn 0.3s ease;
+        }
+
+        .btn-ui-action {
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--elem-radius);
+            background: var(--amber-gold);
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            margin: 8px;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(226, 125, 96, 0.25);
+        }
+
+        .btn-ui-action:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+        }
+
+        .star-particle {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: #ffd700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            pointer-events: none;
+            z-index: 9999;
+            animation: starFallEffect 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes starFallEffect {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(140px) scale(0.3) rotate(240deg); opacity: 0; }
+        }
+
+        .review-scroll-container {
+            max-height: 380px;
+            overflow-y: auto;
+            margin-top: 20px;
+            padding-right: 6px;
+            text-align: left;
+        }
+        .review-item-card {
+            background: #f8fafc;
+            border-radius: var(--elem-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .review-q {
+            font-weight: 700;
+            font-size: 14.5px;
+            margin-bottom: 8px;
+            color: var(--slate-blue);
+            white-space: pre-line;
+        }
+        .review-ans-row {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .review-explanation {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 8px;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 6px;
+        }
+
+        .main-logo-display {
+            height: 60px; 
+            width: auto; 
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+
+        .final-challenge-badge {
+            background: linear-gradient(135deg, #ffd700, var(--amber-gold));
+            color: white;
+            font-weight: 800;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.25);
+        }
+
+        /* Challenge styles */
+        .challenge-zone {
+            background: rgba(43, 58, 103, 0.03);
+            border: 2px dashed var(--slate-blue);
+            padding: 16px;
+            border-radius: var(--elem-radius);
+            margin: 16px 0;
+            min-height: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pill-chip {
+            background: var(--slate-blue);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .pill-chip:hover {
+            transform: scale(1.05);
+            background: var(--mint-teal);
+        }
+
+        .pill-chip.selected-chip {
+            background: var(--mint-teal);
+            border-color: var(--slate-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-decorations-container" id="ambient-container"></div>
+
+    <audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="soundWin" src="assets/clapping.mp3" preload="auto"></audio>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <div class="splash-title">Simple, Compound and Complex Sentences</div>
+        <div class="splash-sub">Grade 7 &bull; Powered by Innovine</div>
+        <div class="spinner"></div>
+    </div>
+
+    <div id="intro-screen" class="container">
+        <div class="quiz-card">
+            <div style="text-align: center;">
+                <img src="assets/innovine-logo.png" class="main-logo-display" alt="Innovine Logo" onerror="this.style.display='none';">
+            </div>
+            <h1>Simple, Compound and Complex Sentences</h1>
+            <div class="subtitle">Grade 7 Grammar Arena</div>
+            
+            <p style="margin-bottom: 20px; font-size: 15px; color: #4a5568; line-height: 1.5;">
+                Master the architecture of clauses! Practice identifying main and subordinate clauses, sorting coordination strategies, and troubleshooting structural classifications.
+            </p>
+
+            <div class="audio-ctrl-strip">
+                <button onclick="toggleSoundEffects()" id="sfx-toggle-btn">🔊 Sound: ON</button>
+                <div class="audio-slider-wrap">
+                    <span>Vol:</span>
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.8" oninput="adjustGlobalVolume(this.value)">
+                </div>
+            </div>
+
+            <button class="btn-ui-action" onclick="initializeQuizEngine()">Start Game</button>
+        </div>
+    </div>
+
+    <div id="question-screen" class="container">
+        <div class="audio-ctrl-strip" style="padding: 6px 16px; margin-bottom: 12px; scale: 0.95;">
+            <button onclick="toggleSoundEffects()" id="sfx-toggle-game-btn">🔊 Sound: ON</button>
+        </div>
+        
+        <div class="hud-wrapper">
+            <div class="hud-block">
+                <div>Progress</div>
+                <div id="hud-index-val" class="hud-val">Question 1 of 14</div>
+            </div>
+            <div class="hud-block">
+                <div>⭐ Score</div>
+                <div id="hud-score-val" class="hud-val">Score: 0 / 13</div>
+            </div>
+            <div class="hud-block">
+                <div>Streak</div>
+                <div id="hud-streak-val" class="hud-val">0 🔥</div>
+            </div>
+            <div class="hud-block">
+                <div>Timer</div>
+                <div id="timer-display" class="hud-val">45s</div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div id="progressBarFill" class="progress-fill"></div>
+        </div>
+
+        <div class="quiz-card">
+            <div id="final-mode-indicator" class="final-challenge-badge" style="display: none;">⚡ Clause Challenge Level ⚡</div>
+            <div id="activeQuestionText" class="question-statement">Loading sentence criteria details...</div>
+            
+            <div id="activeOptionsStack" class="options-stack"></div>
+
+            <div id="interactive-challenge-block" style="display: none; margin: 16px 0;">
+                <p style="font-weight:700; margin-bottom: 8px; color: var(--slate-blue);">Select elements in order to assemble a valid <strong>Compound Sentence</strong>:</p>
+                <div class="challenge-zone" id="assembly-bin">
+                    <span style="color: #94a3b8; font-style: italic;" id="placeholder-msg">Click clauses below to sort them here...</span>
+                </div>
+                <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 16px;">
+                    <button class="btn-ui-action" style="padding: 6px 14px; font-size:12px; background:#94a3b8;" onclick="resetChallengeAssembly()">Clear Pick</button>
+                    <button class="btn-ui-action" style="padding: 6px 14px; font-size:12px; background:var(--success-green);" onclick="evaluateChallengeAssembly()">Verify Sentence Structure</button>
+                </div>
+                <div id="pool-bin" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;"></div>
+            </div>
+
+            <div id="feedback-alert"></div>
+            <div id="explanation-card"></div>
+            
+            <div id="action-bar" style="margin-top:12px; display:none;">
+                <button class="btn-ui-action" id="next-card-trigger" onclick="advanceNextQuestionCard()">Next Question</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="container">
+        <div class="quiz-card">
+            <div style="text-align: center;">
+                <img src="assets/innovine-logo.png" class="main-logo-display" alt="Innovine Logo" onerror="this.style.display='none';">
+            </div>
+            <h2 id="performance-badge-title">Grammar Champion!</h2>
+            <div class="subtitle">Chapter Performance Metrics Summary</div>
+            
+            <div style="font-size: 32px; margin-bottom: 16px;" id="star-rewards-slot">⭐⭐⭐⭐⭐</div>
+
+            <div style="background: #f8fafc; padding: 20px; border-radius: var(--elem-radius); margin-bottom: 20px; text-align: left; line-height: 1.8;">
+                <p style="font-size: 16px;"><strong>Final Total Score:</strong> <span id="res-score" style="font-weight:800; color:var(--slate-blue);">Score: 0 / 13</span></p>
+                <p style="font-size: 16px;"><strong>Success Accuracy Rate:</strong> <span id="res-percent" style="font-weight:700; color:var(--mint-teal);">0%</span></p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px dashed #cbd5e1;">
+                <p style="font-size: 14px; color: var(--success-green);"><strong>Correct Answers:</strong> <span id="res-correct">0</span></p>
+                <p style="font-size: 14px; color: var(--danger-red);"><strong>Wrong Answers:</strong> <span id="res-wrong">0</span></p>
+            </div>
+
+            <button class="btn-ui-action" onclick="initializeQuizEngine()">Play Again</button>
+            <button class="btn-ui-action" style="background-color: var(--slate-blue);" onclick="toggleReviewLogsDisplay()">Review Answers</button>
+            
+            <div id="reviewSectionBlock" class="review-scroll-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // STRICTLY MANDATORY CURRICULUM QUESTIONS SOURCE
+        const curriculumQuestionsSource = [
+            {
+                q: `Q1. Riya is writing a paragraph about her favourite sport. Her teacher asks her to identify which of the following is a Simple Sentence — one that has only one Main Clause and no subordinate clauses.
+a) She plays basketball and she also enjoys swimming.
+b) She plays basketball because it keeps her fit.
+c) She plays basketball every evening after school.
+d) Although she is tired, she plays basketball.`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "One subject + one predicate + no subordinate clause → Simple Sentence"
+            },
+            {
+                q: `Q2. Aarav combines two equal ideas in his essay: "The weather was perfect. The match was exciting." He joins them using a coordinating conjunction. Which correctly forms a Compound Sentence?
+a) The weather was perfect because the match was exciting.
+b) The weather was perfect although the match was exciting.
+c) The weather was perfect and the match was exciting.
+d) When the weather was perfect, the match was exciting.`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "Two Main Clauses joined by coordinating conjunction 'and' → Compound Sentence"
+            },
+            {
+                q: `Q3. Meera writes for her school magazine: "She practised every day because she wanted to win the championship." Her teacher says this is a Complex Sentence. Why?
+a) It has two Main Clauses joined by 'and'
+b) It has one Main Clause ('She practised every day') and one Subordinate Clause ('because she wanted to win') joined by a subordinating conjunction
+c) It has three clauses making it complex
+d) It is complex because it is a long sentence`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "Main Clause + Subordinate Clause joined by subordinating conjunction 'because' → Complex"
+            },
+            {
+                q: `Q4. Rohan's teacher writes four sentences on the board and asks which one is Compound. Which is it?
+a) The old lighthouse stood at the edge of the rocky cliff.
+b) She studied hard yet she could not clear the test.
+c) He left early so that he could catch the first train.
+d) Although it was cold, they went for a morning walk.`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "Two Main Clauses joined by coordinating conjunction 'yet' → Compound Sentence"
+            },
+            {
+                q: `Q5. A student writes: "I will help you if you ask me politely." His friend says this is a Simple Sentence. Is the friend correct?
+a) Yes — it has only one verb so it is Simple
+b) Yes — all short sentences are Simple
+c) No — it is a Complex Sentence because 'if you ask me politely' is a Subordinate Clause dependent on the Main Clause
+d) No — it is a Compound Sentence because it has two subjects`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "'If you ask me politely' is a dependent Subordinate Clause → Complex Sentence"
+            },
+            {
+                q: `Q6. Which set correctly classifies all four sentences in order?
+1. "The sun set behind the mountains."
+2. "She was tired but she kept walking."
+3. "He stayed indoors because it was raining."
+4. "The tall boy with the blue bag won the race."
+a) Simple / Compound / Complex / Simple
+b) Complex / Simple / Compound / Complex
+c) Compound / Simple / Complex / Compound
+d) Simple / Complex / Simple / Compound`,
+                options: ["a", "b", "c", "d"],
+                answer: "a",
+                reason: "Simple(one clause); Compound(but joins two main clauses); Complex(because=subordinating); Simple(one clause with phrases)"
+            },
+            {
+                q: `Q7. Which sentence is a Complex Sentence?
+a) The dog barked and the cat ran away.
+b) She opened the door but no one was there.
+c) He works hard yet he never complains.
+d) We cancelled the trip because the roads were flooded.`,
+                options: ["a", "b", "c", "d"],
+                answer: "d",
+                reason: "'Because the roads were flooded' is a Subordinate Clause → Complex Sentence"
+            },
+            {
+                q: `Q8. A student wants to combine these two Simple Sentences into a Compound Sentence: "She was hungry. She did not eat." Which correctly forms a Compound Sentence?
+a) She was hungry because she did not eat.
+b) Although she was hungry, she did not eat.
+c) She was hungry but she did not eat.
+d) She was so hungry that she did not eat.`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "'But' is a coordinating conjunction joining two equal Main Clauses → Compound"
+            },
+            {
+                q: `Q9. Sort these sentences into two groups — Compound Sentences and Complex Sentences:
+P: "She finished her work and then she went to sleep." Q: "He could not attend school as he was unwell."
+R: "The results were announced and everyone cheered." S: "She waited until the last student had left."
+a) Compound: P, Q — Complex: R, S
+b) Compound: Q, S — Complex: P, R
+c) Compound: P, R — Complex: Q, S
+d) Compound: R, S — Complex: P, Q`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "P & R use coordinating conjunctions (and) → Compound; Q & S use subordinating (as/until) → Complex"
+            },
+            {
+                q: `Q10. Classify each sentence as Simple, Compound or Complex:
+1. "The hardworking student from Class 7 won the science quiz yesterday."
+2. "She sang beautifully and the audience applauded."
+3. "Although he was tired, he completed the assignment."
+4. "I will go to the market if it stops raining."
+a) 1=Compound, 2=Simple, 3=Complex, 4=Compound
+b) 1=Simple, 2=Compound, 3=Complex, 4=Complex
+c) 1=Complex, 2=Compound, 3=Simple, 4=Complex
+d) 1=Simple, 2=Complex, 3=Compound, 4=Simple`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "one clause=Simple; and joins two main clauses=Compound; although=subordinating=Complex; if=subordinating=Complex"
+            },
+            {
+                q: `Q11. Three of the following are Complex Sentences. One is NOT. Which is the odd one out?
+a) She cried when she heard the news.
+b) He will go wherever the work takes him.
+c) The match was intense and the crowd was on their feet.
+d) I will wait here until you return.`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "'And' joins two Main Clauses → Compound Sentence not Complex"
+            },
+            {
+                q: `Q12. A student labelled four sentences. Find ALL the labelling errors:
+1. "Birds fly." — labelled Compound
+2. "She was late and she missed the bus." — labelled Complex
+3. "He studied hard although he found the subject difficult." — labelled Simple
+4. "The match began and the crowd cheered loudly." — labelled Compound
+a) 1=should be Simple; 2=should be Compound; 3=should be Complex; 4=Compound is correct
+b) 1=should be Complex; 2=should be Simple; 3=should be Compound; 4=should be Simple
+c) 1=should be Simple; 2=correct; 3=should be Compound; 4=should be Complex
+d) All labels are correct — no errors`,
+                options: ["a", "b", "c", "d"],
+                answer: "a",
+                reason: "one clause=Simple; 'and'=Compound; 'although'=subordinating=Complex; 'and'=Compound(correct)"
+            },
+            {
+                q: `Q13. Assertion: A Compound Sentence and a Complex Sentence both contain more than one clause — but they are different types of sentences. Reason: In a Compound Sentence both clauses are equally important (Main + Main); in a Complex Sentence one clause is the Main Clause and the other is a Subordinate Clause that depends on it.
+a) Both are correct; the reason correctly explains the assertion.
+b) Both are correct; but the reason does NOT explain the assertion.
+c) The assertion is correct; the reason is wrong.
+d) Both are wrong — Compound and Complex sentences are exactly the same.`,
+                options: ["a", "b", "c", "d"],
+                answer: "a",
+                reason: "Compound=Main+Main(equal); Complex=Main+Subordinate(unequal/dependent) — fundamental structural difference"
+            }
+        ];
+
+        // Global Game States
+        let activePool = [];
+        let currentQuestionIndex = 0;
+        let runningTotalScore = 0;
+        let currentStreakCount = 0;
+        let totalItemsAttempted = 0;
+        let countCorrectItems = 0;
+        let countWrongItems = 0;
+        
+        let attemptsRemaining = 2;
+        let activeTimerObject = null;
+        let secondsLeftValue = 45;
+        let isAudioMuted = false;
+        let processingSelectionLock = false;
+        let isFinalChallengeActive = false;
+        let evaluationSummaryLog = [];
+        
+        // Final Challenge variables
+        let selectedChallengeChips = [];
+        const challengeCorrectSequence = ["The bell rang", "and", "the students left"];
+
+        function generateAmbientDecorations() {
+            const layer = document.getElementById("ambient-container");
+            if (!layer) return;
+            layer.innerHTML = "";
+            for (let i = 0; i < 8; i++) {
+                let star = document.createElement("div");
+                star.className = "bg-element";
+                star.style.left = (Math.random() * 100) + "vw";
+                star.style.animationDelay = (Math.random() * 6) + "s";
+                star.style.animationDuration = (Math.random() * 5 + 8) + "s";
+                layer.appendChild(star);
+            }
+            for (let j = 0; j < 4; j++) {
+                let ribbon = document.createElement("div");
+                ribbon.className = "bg-streamer";
+                ribbon.style.left = (Math.random() * 100) + "vw";
+                ribbon.style.animationDelay = (Math.random() * 4) + "s";
+                ribbon.style.animationDuration = (Math.random() * 6 + 10) + "s";
+                layer.appendChild(ribbon);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateAmbientDecorations();
+            // Splash Screen timing restriction: exactly 5000ms
+            setTimeout(() => {
+                const splash = document.getElementById("splash-screen");
+                if (splash) splash.style.opacity = "0";
+                setTimeout(() => {
+                    if (splash) splash.style.display = "none";
+                    navigateToTargetViewport("intro-screen");
+                }, 500);
+            }, 5000);
+        });
+
+        function navigateToTargetViewport(targetId) {
+            document.querySelectorAll(".container").forEach(c => c.style.display = "none");
+            const target = document.getElementById(targetId);
+            if (target) target.style.display = "block";
+        }
+
+        function toggleSoundEffects() {
+            isAudioMuted = !isAudioMuted;
+            const text = isAudioMuted ? "🔇 Sound: OFF" : "🔊 Sound: ON";
+            document.getElementById("sfx-toggle-btn").innerText = text;
+            document.getElementById("sfx-toggle-game-btn").innerText = text;
+        }
+
+        function adjustGlobalVolume(val) {
+            document.getElementById("soundCorrect").volume = val;
+            document.getElementById("soundWrong").volume = val;
+            document.getElementById("soundWin").volume = val;
+        }
+
+        function playSoundClip(elementId) {
+            if (isAudioMuted) return;
+            try {
+                const clip = document.getElementById(elementId);
+                if (clip) {
+                    clip.currentTime = 0;
+                    clip.play().catch(() => {});
+                }
+            } catch(e) {}
+        }
+
+        function shuffleArrayData(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function initializeQuizEngine() {
+            let curatedPool = JSON.parse(JSON.stringify(curriculumQuestionsSource));
+            curatedPool = shuffleArrayData(curatedPool);
+
+            curatedPool.forEach(item => {
+                item.options = shuffleArrayData([...item.options]);
+            });
+
+            activePool = curatedPool;
+            currentQuestionIndex = 0;
+            runningTotalScore = 0;
+            currentStreakCount = 0;
+            totalItemsAttempted = 0;
+            countCorrectItems = 0;
+            countWrongItems = 0;
+            isFinalChallengeActive = false;
+            evaluationSummaryLog = [];
+
+            document.getElementById("final-mode-indicator").style.display = "none";
+            document.getElementById("interactive-challenge-block").style.display = "none";
+            document.getElementById("activeOptionsStack").style.display = "flex";
+            document.getElementById("reviewSectionBlock").style.display = "none";
+            document.getElementById("reviewSectionBlock").innerHTML = "";
+
+            synchronizeHUDMetricsView();
+            navigateToTargetViewport("question-screen");
+            renderActiveQuestionState();
+        }
+
+        function synchronizeHUDMetricsView() {
+            const maximumQuestionsLimit = 14; 
+            let displayIndexValue = totalItemsAttempted + 1;
+            if (displayIndexValue > maximumQuestionsLimit) displayIndexValue = maximumQuestionsLimit;
+
+            document.getElementById("hud-index-val").innerText = `Question ${displayIndexValue} of ${maximumQuestionsLimit}`;
+            document.getElementById("hud-score-val").innerText = `Score: ${runningTotalScore} / 13`;
+            document.getElementById("hud-streak-val").innerText = `${currentStreakCount} 🔥`;
+        }
+
+        function renderActiveQuestionState() {
+            processingSelectionLock = false;
+            
+            document.getElementById("feedback-alert").style.display = "none";
+            document.getElementById("feedback-alert").innerText = "";
+            document.getElementById("explanation-card").style.display = "none";
+            document.getElementById("explanation-card").innerText = "";
+            document.getElementById("action-bar").style.display = "none";
+
+            // If we have completed all 13 standard questions, load the bonus level
+            if (!isFinalChallengeActive && currentQuestionIndex >= activePool.length) {
+                initiateFinalChallengeLifecycle();
+                return;
+            }
+
+            // End game after final challenge
+            if (isFinalChallengeActive && totalItemsAttempted >= 14) {
+                renderFinalMetricsScoreboard();
+                return;
+            }
+
+            synchronizeHUDMetricsView();
+
+            let percentageRatio = (totalItemsAttempted / 14) * 100;
+            document.getElementById("progressBarFill").style.width = `${percentageRatio}%`;
+
+            if (!isFinalChallengeActive) {
+                let currentItemObj = activePool[currentQuestionIndex];
+                attemptsRemaining = 2;
+                secondsLeftValue = 45;
+
+                document.getElementById("activeQuestionText").innerText = currentItemObj.q;
+
+                const containerStack = document.getElementById("activeOptionsStack");
+                containerStack.innerHTML = "";
+
+                currentItemObj.options.forEach(optKey => {
+                    let nodeButton = document.createElement("button");
+                    nodeButton.className = "option-node";
+                    
+                    // Match the text options with correct formatting based on the key
+                    let optionContent = optKey;
+                    if (optKey === "a") optionContent = "a) " + currentItemObj.q.split("a) ")[1].split("\nb)")[0];
+                    if (optKey === "b") optionContent = "b) " + currentItemObj.q.split("b) ")[1].split("\nc)")[0];
+                    if (optKey === "c") optionContent = "c) " + currentItemObj.q.split("c) ")[1].split("\nd)")[0];
+                    if (optKey === "d") optionContent = "d) " + currentItemObj.q.split("d) ")[1].split("\n")[0];
+                    
+                    nodeButton.innerText = optionContent;
+                    nodeButton.onclick = () => processSelectedAnswerOption(optKey, nodeButton);
+                    containerStack.appendChild(nodeButton);
+                });
+
+                startCountdownProcess();
+            }
+        }
+
+        function startCountdownProcess() {
+            clearInterval(activeTimerObject);
+            document.getElementById("timer-display").innerText = `${secondsLeftValue}s`;
+
+            activeTimerObject = setInterval(() => {
+                secondsLeftValue--;
+                document.getElementById("timer-display").innerText = `${secondsLeftValue}s`;
+
+                if (secondsLeftValue <= 0) {
+                    clearInterval(activeTimerObject);
+                    if (!processingSelectionLock) {
+                        handleClockTimeoutScenario();
+                    }
+                }
+            }, 1000);
+        }
+
+        function disableInteractiveOptionNodes() {
+            document.querySelectorAll(".option-node").forEach(n => n.classList.add("locked-state"));
+        }
+
+        function handleClockTimeoutScenario() {
+            processingSelectionLock = true;
+            disableInteractiveOptionNodes();
+            playSoundClip("soundWrong");
+            
+            let currentItemObj = activePool[currentQuestionIndex];
+            attemptsRemaining--;
+
+            if (attemptsRemaining > 0) {
+                currentStreakCount = 0;
+                let alertBox = document.getElementById("feedback-alert");
+                alertBox.innerText = "❌ Time Expired! One Attempt Left.";
+                alertBox.style.color = "var(--danger-red)";
+                alertBox.style.display = "block";
+                
+                setTimeout(() => {
+                    processingSelectionLock = false;
+                    document.querySelectorAll(".option-node").forEach(n => n.classList.remove("locked-state"));
+                    secondsLeftValue = 45;
+                    startCountdownProcess();
+                }, 2000);
+            } else {
+                currentStreakCount = 0;
+                countWrongItems++;
+                totalItemsAttempted++;
+
+                evaluationSummaryLog.push({
+                    q: currentItemObj.q,
+                    userAns: "Expired (No Option Selected)",
+                    correctAns: currentItemObj.answer,
+                    reason: currentItemObj.reason
+                });
+
+                revealSolutionMetricsPanel();
+            }
+        }
+
+        function processSelectedAnswerOption(chosenOptionKey, targetNodeButton) {
+            if (processingSelectionLock || targetNodeButton.classList.contains("locked-state")) return;
+
+            let currentItemObj = activePool[currentQuestionIndex];
+            let isExactMatch = (chosenOptionKey.toLowerCase() === currentItemObj.answer.toLowerCase());
+
+            if (isExactMatch) {
+                processingSelectionLock = true;
+                clearInterval(activeTimerObject);
+                disableInteractiveOptionNodes();
+
+                targetNodeButton.classList.add("correct-look");
+                runningTotalScore++;
+                countCorrectItems++;
+                currentStreakCount++;
+                totalItemsAttempted++;
+
+                evaluationSummaryLog.push({
+                    q: currentItemObj.q,
+                    userAns: chosenOptionKey.toUpperCase(),
+                    correctAns: currentItemObj.answer.toUpperCase(),
+                    reason: currentItemObj.reason
+                });
+
+                synchronizeHUDMetricsView();
+                playSoundClip("soundCorrect");
+                triggerConfettiSplineEffect();
+
+                let alertBox = document.getElementById("feedback-alert");
+                alertBox.innerText = "⭐ Correct Answer!";
+                alertBox.style.color = "var(--success-green)";
+                alertBox.style.display = "block";
+
+                setTimeout(() => {
+                    advanceNextQuestionCard();
+                }, 1500);
+
+            } else {
+                attemptsRemaining--;
+                if (attemptsRemaining > 0) {
+                    targetNodeButton.classList.add("wrong-look");
+                    playSoundClip("soundWrong");
+                    currentStreakCount = 0;
+                    synchronizeHUDMetricsView();
+
+                    let alertBox = document.getElementById("feedback-alert");
+                    alertBox.innerText = "❌ Animation Triggered! Try Again.";
+                    alertBox.style.color = "var(--danger-red)";
+                    alertBox.style.display = "block";
+                    targetNodeButton.classList.add("locked-state");
+                } else {
+                    processingSelectionLock = true;
+                    clearInterval(activeTimerObject);
+                    disableInteractiveOptionNodes();
+
+                    targetNodeButton.classList.add("wrong-look");
+                    currentStreakCount = 0;
+                    countWrongItems++;
+                    totalItemsAttempted++;
+
+                    evaluationSummaryLog.push({
+                        q: currentItemObj.q,
+                        userAns: chosenOptionKey.toUpperCase(),
+                        correctAns: currentItemObj.answer.toUpperCase(),
+                        reason: currentItemObj.reason
+                    });
+
+                    revealSolutionMetricsPanel();
+                }
+            }
+        }
+
+        function revealSolutionMetricsPanel() {
+            let currentItemObj = activePool[currentQuestionIndex];
+            
+            document.querySelectorAll(".option-node").forEach(btn => {
+                if (btn.innerText.trim().startsWith(currentItemObj.answer.toLowerCase() + ")")) {
+                    btn.classList.add("correct-look");
+                }
+            });
+
+            let explanationBox = document.getElementById("explanation-card");
+            explanationBox.innerHTML = `<strong>Correct Answer: ${currentItemObj.answer.toUpperCase()}</strong><br><br>Brief Explanation: ${currentItemObj.reason}`;
+            explanationBox.style.display = "block";
+
+            document.getElementById("action-bar").style.display = "block";
+        }
+
+        function advanceNextQuestionCard() {
+            if (!isFinalChallengeActive) {
+                currentQuestionIndex++;
+            } else {
+                totalItemsAttempted = 14;
+            }
+            renderActiveQuestionState();
+        }
+
+        // STAGE 3.5: CLAUSE CHALLENGE BONUS LEVEL INTERACTIVE CYCLE
+        function initiateFinalChallengeLifecycle() {
+            isFinalChallengeActive = true;
+            clearInterval(activeTimerObject);
+            
+            document.getElementById("final-mode-indicator").style.display = "inline-block";
+            document.getElementById("activeOptionsStack").style.display = "none";
+            document.getElementById("interactive-challenge-block").style.display = "block";
+            
+            document.getElementById("activeQuestionText").innerText = "Bonus Level: Construct a Compound Sentence out of the structural elements below by clicking them in sequence.";
+
+            let chipsPool = ["and", "The bell rang", "because", "the students left"];
+            const poolBin = document.getElementById("pool-bin");
+            poolBin.innerHTML = "";
+            selectedChallengeChips = [];
+            document.getElementById("assembly-bin").innerHTML = `<span style="color: #94a3b8; font-style: italic;" id="placeholder-msg">Click clauses below to sort them here...</span>`;
+
+            chipsPool.forEach(txt => {
+                let chip = document.createElement("div");
+                chip.className = "pill-chip";
+                chip.innerText = txt;
+                chip.onclick = () => selectChallengeChipElement(chip, txt);
+                poolBin.appendChild(chip);
+            });
+        }
+
+        function selectChallengeChipElement(domElement, textValue) {
+            if (domElement.classList.contains("selected-chip")) return;
+            domElement.classList.add("selected-chip");
+
+            const placeholder = document.getElementById("placeholder-msg");
+            if (placeholder) placeholder.remove();
+
+            selectedChallengeChips.push(textValue);
+            let displayElement = document.createElement("div");
+            displayElement.className = "pill-chip";
+            displayElement.style.background = "var(--mint-teal)";
+            displayElement.innerText = textValue;
+            document.getElementById("assembly-bin").appendChild(displayElement);
+        }
+
+        function resetChallengeAssembly() {
+            selectedChallengeChips = [];
+            document.getElementById("assembly-bin").innerHTML = `<span style="color: #94a3b8; font-style: italic;" id="placeholder-msg">Click clauses below to sort them here...</span>`;
+            document.querySelectorAll(".pill-chip").forEach(c => c.classList.remove("selected-chip"));
+        }
+
+        function evaluateChallengeAssembly() {
+            let isPerfectSequence = (selectedChallengeChips.length === challengeCorrectSequence.length) &&
+                                     selectedChallengeChips.every((val, index) => val === challengeCorrectSequence[index]);
+
+            let alertBox = document.getElementById("feedback-alert");
+            alertBox.style.display = "block";
+
+            if (isPerfectSequence) {
+                playSoundClip("soundCorrect");
+                triggerConfettiSplineEffect();
+                alertBox.innerText = "🏆 Perfect! Compound sentence matches correctly!";
+                alertBox.style.color = "var(--success-green)";
+            } else {
+                playSoundClip("soundWrong");
+                alertBox.innerText = "❌ Incorrect arrangement. A Compound Sentence requires two coordinate Main Clauses connected by a coordinating conjunction (FANBOYS).";
+                alertBox.style.color = "var(--danger-red)";
+            }
+            
+            totalItemsAttempted++;
+            setTimeout(() => {
+                renderFinalMetricsScoreboard();
+            }, 3000);
+        }
+
+        function triggerConfettiSplineEffect() {
+            try {
+                for (let i = 0; i < 16; i++) {
+                    let particle = document.createElement("div");
+                    particle.className = "star-particle";
+                    particle.style.left = (Math.random() * 80 + 10) + "vw";
+                    particle.style.top = (Math.random() * 40 + 20) + "vh";
+                    particle.style.animationDelay = (Math.random() * 0.15) + "s";
+                    document.body.appendChild(particle);
+                    setTimeout(() => particle.remove(), 1200);
+                }
+            } catch(e) {}
+        }
+
+        // STAGE 4: RESULT SCOREBOARD GENERATION
+        function renderFinalMetricsScoreboard() {
+            clearInterval(activeTimerObject);
+            playSoundClip("soundWin");
+            navigateToTargetViewport("result-screen");
+
+            let ratioPercentage = Math.round((countCorrectItems / 13) * 100);
+
+            document.getElementById("res-score").innerText = `Score: ${runningTotalScore} / 13`;
+            document.getElementById("res-percent").innerText = `${ratioPercentage}%`;
+            document.getElementById("res-correct").innerText = countCorrectItems;
+            document.getElementById("res-wrong").innerText = countWrongItems;
+
+            let badgeHeader = document.getElementById("performance-badge-title");
+            let starsSlot = document.getElementById("star-rewards-slot");
+
+            if (ratioPercentage >= 85) {
+                badgeHeader.innerText = "🏆 Grammar Champion!";
+                starsSlot.innerText = "⭐⭐⭐⭐⭐";
+                triggerConfettiSplineEffect();
+            } else if (ratioPercentage >= 70) {
+                badgeHeader.innerText = "🌟 Excellent!";
+                starsSlot.innerText = "⭐⭐⭐⭐";
+            } else if (ratioPercentage >= 50) {
+                badgeHeader.innerText = "🎉 Great Job!";
+                starsSlot.innerText = "⭐⭐⭐";
+            } else {
+                badgeHeader.innerText = "📘 Keep Practising!";
+                starsSlot.innerText = "⭐⭐";
+            }
+        }
+
+        function toggleReviewLogsDisplay() {
+            let container = document.getElementById("reviewSectionBlock");
+            if (container.style.display === "block") {
+                container.style.display = "none";
+                return;
+            }
+
+            container.innerHTML = "";
+            evaluationSummaryLog.forEach((item, index) => {
+                let card = document.createElement("div");
+                card.className = "review-item-card";
+                let verifiedColor = (item.userAns === item.correctAns) ? "var(--success-green)" : "var(--danger-red)";
+
+                card.innerHTML = `
+                    <div class="review-q">${index + 1}. ${item.q.split('\na)')[0]}</div>
+                    <div class="review-ans-row" style="color: ${verifiedColor};"><strong>Your Pick:</strong> Option ${item.userAns}</div>
+                    <div class="review-ans-row" style="color: var(--success-green);"><strong>Correct Answer:</strong> Option ${item.correctAns}</div>
+                    <div class="review-explanation">Brief Explanation: ${item.reason}</div>
+                `;
+                container.appendChild(card);
+            });
+
+            container.style.display = "block";
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
