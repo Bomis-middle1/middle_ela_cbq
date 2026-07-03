@@ -1,1 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 English Interactive Learning Game - Figures of Speech</title>
+    <style>
+        :root {
+            --primary: #2e1065;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --background: #faf5ff;
+            --surface: #ffffff;
+            --text: #1e1b4b;
+            --text-light: #4c1d95;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #ddd6fe;
+            --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
+        body.high-contrast {
+            --primary: #000000;
+            --secondary: #312e81;
+            --accent: #d97706;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-light: #1e1b4b;
+            --success: #047857;
+            --error: #b91c1c;
+            --border: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Ambient background animations - Literary Theme */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .literary-particle {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.08;
+            animation: floatUp 15s infinite linear;
+            color: var(--secondary);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(105vh) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.15; }
+            90% { opacity: 0.15; }
+            100% { transform: translateY(-5vh) translateX(60px) rotate(360deg); opacity: 0; }
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.08);
+            border: 2px solid var(--border);
+            z-index: 10;
+            position: relative;
+            text-align: center;
+        }
+
+        /* Mandatory Branding - Clean 5-Second Splash Display Layer */
+        #splash-screen {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #splash-screen img {
+            max-width: 80%;
+            width: 420px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        h1 { color: var(--primary); font-size: 2.6rem; margin-bottom: 12px; font-weight: 800; }
+        p { color: var(--text-light); font-size: 1.15rem; line-height: 1.6; margin-bottom: 25px; }
+        
+        .badge {
+            background-color: rgba(124, 58, 237, 0.1);
+            color: var(--secondary);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 16px 36px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .btn:hover { background-color: #d97706; transform: translateY(-2px); }
+        .btn:active { transform: translateY(1px); }
+
+        /* Scoring and Core HUD elements */
+        .hud-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+            background-color: rgba(124, 58, 237, 0.04);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-item { display: flex; flex-direction: column; align-items: center; }
+        .hud-label { font-size: 0.85rem; color: var(--text-light); text-transform: uppercase; font-weight: 700; }
+        .hud-val { font-size: 1.3rem; color: var(--primary); font-weight: 800; margin-top: 4px; }
+
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background-color: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--secondary);
+            transition: width 0.4s ease;
+        }
+
+        .question-box {
+            text-align: left;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 14px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--secondary);
+            background-color: rgba(124, 58, 237, 0.02);
+            transform: translateX(4px);
+        }
+
+        .option-btn:disabled { cursor: not-allowed; }
+
+        .option-btn.correct-highlight {
+            background-color: #ecfdf5 !important;
+            border-color: var(--success) !important;
+            color: var(--success) !important;
+            font-weight: 700;
+            animation: popCheck 0.4s ease;
+        }
+
+        .option-btn.wrong-highlight {
+            background-color: #fef2f2 !important;
+            border-color: var(--error) !important;
+            color: var(--error) !important;
+            font-weight: 700;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        @keyframes popCheck {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .explanation-card {
+            margin-top: 25px;
+            background-color: #f3f4f6;
+            border-left: 6px solid var(--secondary);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+            display: none;
+        }
+
+        .explanation-card.visible { display: block; animation: fadeIn 0.3s ease; }
+
+        .controls-header {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 800px;
+            z-index: 20;
+        }
+
+        .control-btn {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Figure Detective Master Reward Component */
+        .challenge-zone {
+            background: rgba(124, 58, 237, 0.03);
+            border: 2px dashed var(--secondary);
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 20px;
+        }
+
+        .slots-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .challenge-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+        }
+
+        .challenge-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .drop-slot {
+            background-color: #f3f4f6;
+            border: 2px solid var(--border);
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            color: #6b7280;
+            text-align: center;
+            min-height: 52px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .drop-slot.filled {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 25px;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .chip {
+            background-color: var(--surface);
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chip:hover {
+            background-color: var(--secondary);
+            color: #ffffff;
+        }
+
+        .chip.used {
+            opacity: 0.25;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .confetti-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 999;
+        }
+
+        .star-confetti {
+            position: absolute;
+            width: 14px; height: 14px;
+            background: #f59e0b;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: fallAnimation 2.2s linear forwards;
+        }
+
+        @keyframes fallAnimation {
+            0% { transform: translateY(-20px) rotate(0deg) scale(0); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(720deg) scale(1.1); opacity: 0; }
+        }
+
+        @media(max-width: 650px) {
+            .screen { padding: 20px; }
+            h1 { font-size: 1.9rem; }
+            .hud-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .slots-container { grid-template-columns: 1fr; }
+            .option-btn { padding: 14px 16px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg" id="ambient-particles"></div>
+    <div class="confetti-layer" id="confetti-layer"></div>
+
+    <audio id="audio-click" src="assets/click.mp3" preload="auto"></audio>
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audio-clapping" src="assets/clapping.mp3" preload="auto"></audio>
+
+    <div class="controls-header" id="global-controls" style="display:none;">
+        <div class="slider-container">
+            <label for="volume-slider">Vol:</label>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.7">
+        </div>
+        <button class="control-btn" id="mute-btn" onclick="toggleMute()">🔊 Mute</button>
+        <button class="control-btn" onclick="toggleContrast()">🌓 Contrast</button>
+    </div>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo">
+    </div>
+
+    <div id="intro-screen" class="screen">
+        <div class="badge">Grade 7 English</div>
+        <h1>Figures of Speech Arena</h1>
+        <p>Explore language mastery, identify intricate ironies, and decode linguistic paradoxes. Complete the primary text evaluation and claim your place in the Figure Detective Master challenge.</p>
+        
+        <div style="background: rgba(124,58,237,0.03); padding: 20px; border-radius: 12px; margin-bottom: 30px; text-align: left;">
+            <strong style="color: var(--primary);">Quick Rules:</strong>
+            <ul style="margin-left: 20px; margin-top: 8px; color: var(--text-light); line-height: 1.6;">
+                <li>You have exactly <strong>45 seconds</strong> per item vector.</li>
+                <li>Each evaluation frame allows exactly <strong>one retry</strong> if missed on first attempt.</li>
+                <li>Your metric updates immediately in real-time.</li>
+            </ul>
+        </div>
+        <button class="btn" onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="question-screen" class="screen">
+        <div class="hud-grid">
+            <div class="hud-item">
+                <span class="hud-label">Question</span>
+                <span class="hud-val" id="hud-q-num">1 / 14</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Score</span>
+                <span class="hud-val" id="hud-score">0 / 14</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Attempts</span>
+                <span class="hud-val" id="hud-attempts">Try 1/2</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Timer</span>
+                <span class="hud-val" id="hud-timer" style="color: var(--accent);">45s</span>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="question-box" id="question-text">Question context viewport...</div>
+        <div class="options-grid" id="options-box"></div>
+
+        <div class="explanation-card" id="explanation-box"></div>
+    </div>
+
+    <div id="challenge-screen" class="screen">
+        <div class="badge">🎁 Bonus Level - Reward Round</div>
+        <h1>Figure Detective Challenge</h1>
+        <p>Complete the match array! Connect the literary figures to their accurate semantic mappings.</p>
+        
+        <div class="challenge-zone">
+            <div class="slots-container">
+                <div class="challenge-row">
+                    <span class="challenge-label">1. "Bitter-sweet" or "Deafening silence":</span>
+                    <div class="drop-slot" onclick="clearSlot(0)" id="slot-0">Select Concept</div>
+                </div>
+                <div class="challenge-row">
+                    <span class="challenge-label">2. "Why was the bicycle two-tired?":</span>
+                    <div class="drop-slot" onclick="clearSlot(1)" id="slot-1">Select Concept</div>
+                </div>
+                <div class="challenge-row">
+                    <span class="challenge-label">3. Audience knows what characters do not:</span>
+                    <div class="drop-slot" onclick="clearSlot(2)" id="slot-2">Select Concept</div>
+                </div>
+                <div class="challenge-row">
+                    <span class="challenge-label">4. Firefighter's house burns down:</span>
+                    <div class="drop-slot" onclick="clearSlot(3)" id="slot-3">Select Concept</div>
+                </div>
+            </div>
+
+            <div class="chips-container" id="challenge-chips"></div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <button class="btn" id="bonus-action-btn" onclick="checkBonusChallenge()" style="background-color: var(--secondary);">Verify Matches</button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <div class="badge">Matrix Complete</div>
+        <h1 id="result-title">Literary Genius!</h1>
+        <p id="result-subtitle">Excellent understanding of contextual stylistic analysis metrics.</p>
+        
+        <div style="font-size: 4rem; margin: 20px 0;">📜</div>
+
+        <div class="hud-grid" style="max-width: 500px; margin: 0 auto 30px auto;">
+            <div class="hud-item">
+                <span class="hud-label">Score</span>
+                <span class="hud-val" id="res-score">0 / 14</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Percentage</span>
+                <span class="hud-val" id="res-percent">0%</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Correct</span>
+                <span class="hud-val" id="res-correct" style="color: var(--success);">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Incorrect</span>
+                <span class="hud-val" id="res-wrong" style="color: var(--error);">0</span>
+            </div>
+        </div>
+
+        <button class="btn" onclick="restartGame()">Play Again</button>
+    </div>
+
+    <script>
+        // STRICT SOURCE CURRICULUM POOL DATA ARRAY
+        const baselineQuestionsPool = [
+            {
+                q: "Q1. Riya is writing a poem about the sea and uses this line: \"Slowly the silver sea shimmered softly in the setting sun.\" Her teacher says this line uses a specific figure of speech very effectively. What is it and what effect does it create? ",
+                options: [
+                    "a) Oxymoron — it combines two opposite ideas about the sea ",
+                    "b) Alliteration — the repeated 's' sound creates a smooth musical effect that mirrors the calmness of the sea ",
+                    "c) Pun — the word 'sea' sounds like another word ",
+                    "d) Irony — the sea is described as calm when it is actually rough"
+                ],
+                answer: "b) Alliteration — the repeated 's' sound creates a smooth musical effect that mirrors the calmness of the sea ",
+                reason: "Repeated 's' sound across multiple words → Alliteration; creates smooth flowing rhythm"
+            },
+            {
+                q: "Q2. Aarav reads this sentence in his literature book: \"The silence was deafening after the last student left the examination hall.\" He asks his teacher what figure of speech is being used. What is the correct answer? ",
+                options: [
+                    "a) Alliteration — repeated sounds at the start of words ",
+                    "b) Pun — a play on the word 'deafening' ",
+                    "c) Oxymoron — 'deafening silence' combines two completely opposite ideas",
+                    "d) Situational Irony — silence being loud is unexpected"
+                ],
+                answer: "c) Oxymoron — 'deafening silence' combines two completely opposite ideas",
+                reason: "'Deafening silence' = loud + silent = contradictory ideas together → Oxymoron"
+            },
+            {
+                q: "Q3. Meera watches a film where the audience knows that the letter the character is waiting for has already been burned — but the character keeps saying cheerfully: \"Good news is coming, I can feel it!\" What type of irony is this? ",
+                options: [
+                    "a) Verbal Irony — the character is saying the opposite of what they mean ",
+                    "b) Situational Irony — things did not turn out as expected ",
+                    "c) Dramatic Irony — the audience knows something the character does not ",
+                    "d) Pun — it is a play on the word 'feel'"
+                ],
+                answer: "c) Dramatic Irony — the audience knows something the character does not ",
+                reason: "Audience knows letter is burned; character does not → Dramatic Irony"
+            },
+            {
+                q: "Q4. Rohan tells a joke to his classmates: \"Why did the bicycle fall over? Because it was two-tired!\" His classmates groan and laugh at the same time. What figure of speech makes this joke work? ",
+                options: [
+                    "a) Oxymoron — 'two-tired' combines two opposite ideas ",
+                    "b) Alliteration — the repeated 't' sound ",
+                    "c) Pun — 'two-tired' sounds like 'too tired' creating a double meaning",
+                    "d) Verbal Irony — Rohan said the opposite of what he meant"
+                ],
+                answer: "c) Pun — 'two-tired' sounds like 'too tired' creating a double meaning",
+                reason: "'Two-tired' = sounds like 'too tired' → double meaning → Pun"
+            },
+            {
+                q: "Q5. A student scores very poorly in every subject all term. On the last day of school, his teacher hands back his report card and says with a straight face: \"Well done — you have managed to get zero in everything. Truly an outstanding achievement.\" What type of irony is the teacher using?",
+                options: [
+                    "a) Dramatic Irony — the class knows something the student does not ",
+                    "b) Situational Irony — things turned out unexpectedly ",
+                    "c) Verbal Irony — the teacher is saying the opposite of what she actually means",
+                    "d) Pun — there is a play on the word 'outstanding'"
+                ],
+                answer: "c) Verbal Irony — the teacher is saying the opposite of what she actually means",
+                reason: "Teacher says 'outstanding' but means the opposite → Verbal Irony"
+            },
+            {
+                q: "Q6. Classify the figure of speech used in each situation in order\nPanel 1: A sign outside a dentist's office reads: \"We specialise in a little pain.\" \nPanel 2: A student writes: \"clearly confused\" in his essay. \nPanel 3: A fire fighter's house burns down while he is at work. \nPanel 4: A teacher says to a student who scored 2/100: \"Brilliant work — top of the class!\"",
+                options: [
+                    "a) Verbal Irony / Oxymoron / Dramatic Irony / Situational Irony ",
+                    "b) Pun / Oxymoron / Situational Irony / Verbal Irony ",
+                    "c) Oxymoron / Pun / Verbal Irony / Situational Irony ",
+                    "d) Alliteration / Situational Irony / Verbal Irony / Pun"
+                ],
+                answer: "b) Pun / Oxymoron / Situational Irony / Verbal Irony ",
+                reason: "'a little pain'=play on words→Pun; clearly confused=contradiction→Oxymoron; firefighter's house burns=unexpected→Situational Irony; 'brilliant work' for 2/100=opposite meaning→Verbal Irony"
+            },
+            {
+                q: "Q7. Which sentence is the best example of an Oxymoron? ",
+                options: [
+                    "a) She sells seashells by the seashore. ",
+                    "b) The more he earns, the more he spends. ",
+                    "c) He was living in a deafening silence after his friends left. ",
+                    "d) The irony is that she won after everyone said she would fail."
+                ],
+                answer: "c) He was living in a deafening silence after his friends left. ",
+                reason: "'Deafening silence' = loud + quiet combined → Oxymoron"
+            },
+            {
+                q: "Q8. A student says: \"Time flies like an arrow — and fruit flies like a banana.\" What makes this an example of a Pun? ",
+                options: [
+                    "a) It uses alliteration with the letter 'f' ",
+                    "b) 'Flies' is used in two different ways — first as a verb (time passes quickly) and then as a noun (fruit flies = insects) creating a humorous double meaning ",
+                    "c) It is an oxymoron because time and fruit are opposites ",
+                    "d) It is verbal irony — the speaker does not really mean that fruit flies like a banana"
+                ],
+                answer: "b) 'Flies' is used in two different ways — first as a verb (time passes quickly) and then as a noun (fruit flies = insects) creating a humorous double meaning ",
+                reason: "'Flies' used as verb (pass quickly) and noun (insects) simultaneously → Pun"
+            },
+            {
+                q: "Q9. Sort these examples into two groups — Oxymoron and Situational Irony: \nP: A police station is robbed. Q: \"The loudest silence filled the room.\" \nR: A swimming instructor cannot swim. S: \"It was a bittersweet farewell.\"",
+                options: [
+                    "a) Oxymoron: P, R — Situational Irony: Q, S ",
+                    "b) Oxymoron: P, Q — Situational Irony: R, S ",
+                    "c) Oxymoron: Q, S — Situational Irony: P, R ",
+                    "d) Oxymoron: R, S — Situational Irony: P, Q"
+                ],
+                answer: "c) Oxymoron: Q, S — Situational Irony: P, R ",
+                reason: "Q & S = contradictory words combined → Oxymoron; P & R = unexpected real-life outcomes → Situational Irony"
+            },
+            {
+                q: "Q10. Classify the figure of speech used in each example: \n1. \"Pretty ugly\" — used to describe a confusing fashion trend. \n2. \"She has a heart of gold but feet of clay.\" (a well-known expression for someone who is good but has weaknesses) \n3. \"Why don't scientists trust atoms? Because they make up everything!\" \n4. \"Brave brave brave — the bold brave knight boldly blew his bugle.\"",
+                options: [
+                    "a) 1=Verbal Irony, 2=Pun, 3=Alliteration, 4=Oxymoron ",
+                    "b) 1=Oxymoron, 2=Idiom, 3=Pun, 4=Alliteration ",
+                    "c) 1=Pun, 2=Oxymoron, 3=Idiom, 4=Verbal Irony ",
+                    "d) 1=Alliteration, 2=Situational Irony, 3=Verbal Irony, 4=Pun"
+                ],
+                answer: "b) 1=Oxymoron, 2=Idiom, 3=Pun, 4=Alliteration ",
+                reason: "pretty ugly=contradictory→Oxymoron; heart of gold/feet of clay=fixed expressions→Idiom; atoms make up everything=double meaning→Pun; repeated 'b' sounds→Alliteration"
+            },
+            {
+                q: "Q11. Three of the following are examples of Verbal Irony. One is NOT. Which is the odd one out? ",
+                options: [
+                    "a) A student arrives two hours late and the teacher says: \"Oh wonderful — so glad you could join us!\" ",
+                    "b) It rains heavily on the one day someone forgets their umbrella. ",
+                    "c) Someone burns the dinner and says: \"Well, that smells absolutely delightful.\" ",
+                    "d) A person trips and falls and says: \"Yes, I meant to do that — very graceful.\""
+                ],
+                answer: "b) It rains heavily on the one day someone forgets their umbrella. ",
+                reason: "Raining on the day you forget your umbrella = unexpected outcome → Situational Irony not Verbal Irony"
+            },
+            {
+                q: "Q12. A student labelled four examples in his notebook. Find ALL the labelling errors: \n1. \"She was living dead\" — labelled Alliteration \n2. \"Seven silly seals sang songs\" — labelled Oxymoron \n3. \"The audience knows the hero will be betrayed but the hero does not\" — labelled Situational Irony \n4. \"I'm reading a book about anti-gravity — it's impossible to put down!\" — labelled Pun",
+                options: [
+                    "a) 1=should be Oxymoron; 2=should be Alliteration; 3=should be Dramatic Irony; 4=Pun is correct ",
+                    "b) 1=should be Pun; 2=should be Alliteration; 3=should be Verbal Irony; 4=should be Oxymoron ",
+                    "c) 1=should be Situational Irony; 2=correct; 3=should be Verbal Irony; 4=correct ",
+                    "d) All labels are correct — no errors"
+                ],
+                answer: "a) 1=should be Oxymoron; 2=should be Alliteration; 3=should be Dramatic Irony; 4=Pun is correct ",
+                reason: "living dead=contradictory→Oxymoron; seven silly seals=repeated 's'→Alliteration; audience knows/character doesn't→Dramatic Irony; put down=double meaning→Pun(correct)"
+            },
+            {
+                q: "Q13. A writer changes the sentence \"The room was very quiet\" to \"The room was wrapped in a thundering silence.\" What is the effect of using an Oxymoron? ",
+                options: [
+                    "a) The meaning changes — the room is now loud ",
+                    "b) The oxymoron creates a contradiction that makes the description more striking and memorable — it conveys that the silence was so intense it almost felt like a physical sound  ",
+                    "c) It makes the sentence shorter and simpler ",
+                    "d) 'Thundering silence' is grammatically incorrect and should be avoided"
+                ],
+                answer: "b) The oxymoron creates a contradiction that makes the description more striking and memorable — it conveys that the silence was so intense it almost felt like a physical sound  ",
+                reason: "Oxymoron intensifies description by combining contradiction — silence feels physically powerful"
+            },
+            {
+                q: "Q14. Assertion: Dramatic Irony creates more tension and engagement for an audience than Situational Irony. \nReason: In Dramatic Irony the audience knows something the character does not — this creates suspense as the audience watches the character unknowingly heading towards a consequence they can already see coming.",
+                options: [
+                    "a) Both are correct; the reason correctly explains the assertion. ",
+                    "b) Both are correct; but the reason does NOT explain the assertion. ",
+                    "c) The assertion is correct; the reason is wrong. ",
+                    "d) Both are wrong — Dramatic Irony and Situational Irony have the same effect on the audience."
+                ],
+                answer: "a) Both are correct; the reason correctly explains the assertion.",
+                reason: "Dramatic Irony = audience ahead of character → creates suspense and emotional investment"
+            }
+        ];
+
+        let activeQuestions = [];
+        let currentQuestionIdx = 0;
+        let scoreCounter = 0;
+        let attemptsLeft = 2;
+        let countdownTimer;
+        let secondsRemaining = 45;
+        let isMuted = false;
+        let bonusSlotAnswers = [null, null, null, null];
+
+        window.onload = function() {
+            generateLiteraryParticles();
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.getElementById('global-controls').style.display = 'flex';
+                    showScreen('intro-screen');
+                }, 800);
+            }, 5000);
+
+            document.getElementById('volume-slider').addEventListener('input', function(e) {
+                const vol = e.target.value;
+                document.getElementById('audio-click').volume = vol;
+                document.getElementById('audio-correct').volume = vol;
+                document.getElementById('audio-wrong').volume = vol;
+                document.getElementById('audio-clapping').volume = vol;
+            });
+        };
+
+        function generateLiteraryParticles() {
+            const container = document.getElementById('ambient-particles');
+            const items = ['📖', '📜', '✍️', '⭐', '✨'];
+            for(let i=0; i<20; i++) {
+                const div = document.createElement('div');
+                div.className = 'literary-particle';
+                div.innerText = items[Math.floor(Math.random() * items.length)];
+                div.style.left = `${Math.random() * 100}vw`;
+                div.style.animationDelay = `${Math.random() * 10}s`;
+                div.style.animationDuration = `${Math.random() * 6 + 10}s`;
+                container.appendChild(div);
+            }
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+            document.getElementById(screenId).style.display = 'block';
+        }
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startGame() {
+            playSound('audio-click');
+            activeQuestions = shuffleArray(JSON.parse(JSON.stringify(baselineQuestionsPool)));
+            activeQuestions.forEach(q => shuffleArray(q.options));
+            
+            currentQuestionIdx = 0;
+            scoreCounter = 0;
+            showScreen('question-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            attemptsLeft = 2;
+            secondsRemaining = 45;
+            document.getElementById('explanation-box').classList.remove('visible');
+            updateHUD();
+            
+            const currentQ = activeQuestions[currentQuestionIdx];
+            document.getElementById('question-text').innerText = currentQ.q;
+            
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.innerHTML = '';
+            
+            currentQ.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswerSelect(btn, opt);
+                optionsBox.appendChild(btn);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(countdownTimer);
+            document.getElementById('hud-timer').innerText = `${secondsRemaining}s`;
+            countdownTimer = setInterval(() => {
+                secondsRemaining--;
+                document.getElementById('hud-timer').innerText = `${secondsRemaining}s`;
+                if(secondsRemaining <= 0) {
+                    clearInterval(countdownTimer);
+                    handleTimeExpiry();
+                }
+            }, 1000);
+        }
+
+        function updateHUD() {
+            document.getElementById('hud-q-num').innerText = `${currentQuestionIdx + 1} / 14`;
+            document.getElementById('hud-score').innerText = `${scoreCounter} / 14`;
+            document.getElementById('hud-attempts').innerText = `Try ${3 - attemptsLeft}/2`;
+            const percent = (currentQuestionIdx / 14) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        function handleAnswerSelect(selectedBtn, selectedText) {
+            playSound('audio-click');
+            const currentQ = activeQuestions[currentQuestionIdx];
+            const isCorrect = selectedText.trim() === currentQ.answer.trim();
+
+            if (isCorrect) {
+                clearInterval(countdownTimer);
+                selectedBtn.classList.add('correct-highlight');
+                disableAllOptions();
+                scoreCounter++;
+                updateHUD();
+                triggerConfetti();
+                playSound('audio-correct');
+                
+                setTimeout(nextQuestion, 2000);
+            } else {
+                attemptsLeft--;
+                selectedBtn.classList.add('wrong-highlight');
+                selectedBtn.disabled = true;
+                playSound('audio-wrong');
+                updateHUD();
+
+                if (attemptsLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    disableAllOptions();
+                    exposeCorrectAnswer();
+                }
+            }
+        }
+
+        function handleTimeExpiry() {
+            disableAllOptions();
+            exposeCorrectAnswer();
+        }
+
+        function disableAllOptions() {
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+        }
+
+        function exposeCorrectAnswer() {
+            const currentQ = activeQuestions[currentQuestionIdx];
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                if(btn.innerText.trim() === currentQ.answer.trim()) {
+                    btn.classList.add('correct-highlight');
+                }
+            });
+
+            const expBox = document.getElementById('explanation-box');
+            expBox.innerHTML = `<strong>Correct Answer:</strong> ${currentQ.answer}<br><br><strong>Brief Explanation:</strong> ${currentQ.reason}`;
+            expBox.classList.add('visible');
+
+            setTimeout(() => {
+                nextQuestion();
+            }, 5000);
+        }
+
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if(currentQuestionIdx < 14) {
+                loadQuestion();
+            } else {
+                loadBonusChallenge();
+            }
+        }
+
+        function loadBonusChallenge() {
+            showScreen('challenge-screen');
+            bonusSlotAnswers = [null, null, null, null];
+            
+            document.getElementById('slot-0').innerText = "Select Concept";
+            document.getElementById('slot-0').classList.remove('filled');
+            document.getElementById('slot-1').innerText = "Select Concept";
+            document.getElementById('slot-1').classList.remove('filled');
+            document.getElementById('slot-2').innerText = "Select Concept";
+            document.getElementById('slot-2').classList.remove('filled');
+            document.getElementById('slot-3').innerText = "Select Concept";
+            document.getElementById('slot-3').classList.remove('filled');
+
+            const rawConcepts = ["Oxymoron", "Pun", "Dramatic Irony", "Situational Irony", "Alliteration"];
+            const shuffledConcepts = shuffleArray([...rawConcepts]);
+            const chipsContainer = document.getElementById('challenge-chips');
+            chipsContainer.innerHTML = '';
+
+            shuffledConcepts.forEach((text, i) => {
+                const chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.innerText = text;
+                chip.id = `chip-${i}`;
+                chip.onclick = () => fillNextAvailableSlot(text, chip.id);
+                chipsContainer.appendChild(chip);
+            });
+        }
+
+        function fillNextAvailableSlot(text, chipId) {
+            playSound('audio-click');
+            const availableIdx = bonusSlotAnswers.findIndex(item => item === null);
+            if(availableIdx === -1) return;
+
+            bonusSlotAnswers[availableIdx] = { text, chipId };
+            
+            const targetSlot = document.getElementById(`slot-${availableIdx}`);
+            targetSlot.innerText = text;
+            targetSlot.classList.add('filled');
+            
+            document.getElementById(chipId).classList.add('used');
+        }
+
+        function clearSlot(slotIdx) {
+            if(!bonusSlotAnswers[slotIdx]) return;
+            playSound('audio-click');
+            
+            const data = bonusSlotAnswers[slotIdx];
+            document.getElementById(data.chipId).classList.remove('used');
+            
+            const slot = document.getElementById(`slot-${slotIdx}`);
+            slot.innerText = "Select Concept";
+            slot.classList.remove('filled');
+            
+            bonusSlotAnswers[slotIdx] = null;
+        }
+
+        function checkBonusChallenge() {
+            const alignmentSchema = ["Oxymoron", "Pun", "Dramatic Irony", "Situational Irony"];
+            let verifiedCorrect = true;
+
+            for(let i=0; i<4; i++) {
+                if(!bonusSlotAnswers[i] || bonusSlotAnswers[i].text !== alignmentSchema[i]) {
+                    verifiedCorrect = false;
+                }
+            }
+
+            if(verifiedCorrect) {
+                playSound('audio-correct');
+                triggerConfetti();
+                alert("⭐ Incredible work! You've matched all figures precisely!");
+            } else {
+                playSound('audio-wrong');
+                alert("❌ Matches mismatched. Retrying is advised. Remember structural traits!");
+            }
+
+            setTimeout(showResults, 1500);
+        }
+
+        function showResults() {
+            showScreen('result-screen');
+            playSound('audio-clapping');
+
+            document.getElementById('res-score').innerText = `${scoreCounter} / 14`;
+            const percentage = Math.round((scoreCounter / 14) * 100);
+            document.getElementById('res-percent').innerText = `${percentage}%`;
+            document.getElementById('res-correct').innerText = scoreCounter;
+            document.getElementById('res-wrong').innerText = 14 - scoreCounter;
+
+            const resTitle = document.getElementById('result-title');
+            const resSub = document.getElementById('result-subtitle');
+
+            if(percentage >= 90) {
+                resTitle.innerText = "🏆 Literary Genius!";
+                resSub.innerText = "Excellent understanding of contextual stylistic analysis metrics.";
+            } else if (percentage >= 75) {
+                resTitle.innerText = "🌟 Excellent!";
+                resSub.innerText = "Great command over core expressive stylistic vectors.";
+            } else if (percentage >= 50) {
+                resTitle.innerText = "🎉 Great Job!";
+                resSub.innerText = "Solid logical execution. Minor structural gaps remain.";
+            } else {
+                resTitle.innerText = "📘 Keep Practising!";
+                resSub.innerText = "Review alignment rules to consolidate interpretive criteria.";
+            }
+        }
+
+        function restartGame() {
+            playSound('audio-click');
+            startGame();
+        }
+
+        function playSound(id) {
+            if(isMuted) return;
+            const track = document.getElementById(id);
+            if(track) {
+                track.currentTime = 0;
+                track.play().catch(()=>{});
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('mute-btn').innerText = isMuted ? "🔇 Muted" : "🔊 Mute";
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function triggerConfetti() {
+            const layer = document.getElementById('confetti-layer');
+            for(let i=0; i<30; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'star-confetti';
+                conf.style.left = `${Math.random() * 100}vw`;
+                conf.style.backgroundColor = ['#7c3aed','#f59e0b','#10b981','#ec4899'][Math.floor(Math.random()*4)];
+                conf.style.animationDelay = `${Math.random() * 0.4}s`;
+                layer.appendChild(conf);
+                setTimeout(() => conf.remove(), 2200);
+            }
+        }
+    </script>
+</body>
+</html>
