@@ -19,7 +19,6 @@
             --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* High Contrast Mode overrides */
         body.high-contrast {
             --primary: #000000;
             --secondary: #004d4d;
@@ -45,6 +44,7 @@
             color: var(--text);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
@@ -52,7 +52,6 @@
             padding: 20px;
         }
 
-        /* Ambient background animations */
         .ambient-bg {
             position: fixed;
             top: 0;
@@ -68,7 +67,7 @@
             position: absolute;
             background: rgba(13, 148, 136, 0.15);
             border-radius: 50%;
-            animation: float Up 12s infinite linear;
+            animation: floatUp 12s infinite linear;
         }
 
         @keyframes floatUp {
@@ -78,7 +77,6 @@
             100% { transform: translateY(-5vh) translateX(50px) rotate(360deg); opacity: 0; }
         }
 
-        /* Game Screen Layouts */
         .screen {
             display: none;
             width: 100%;
@@ -93,7 +91,7 @@
             text-align: center;
         }
 
-        /* Splash screen layout */
+        /* Fixed Brand Splash Layout containing only the logo */
         #splash-screen {
             display: flex;
             position: fixed;
@@ -103,7 +101,6 @@
             height: 100%;
             background: #ffffff;
             z-index: 9999;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             opacity: 1;
@@ -111,26 +108,12 @@
         }
 
         #splash-screen img {
-            max-width: 300px;
+            max-width: 85%;
+            width: 450px;
             height: auto;
-            margin-bottom: 20px;
+            object-fit: contain;
         }
 
-        .splash-loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* UI Elements and Typography */
         h1 { color: var(--primary); font-size: 2.5rem; margin-bottom: 10px; font-weight: 800; }
         h2 { color: var(--primary); font-size: 1.8rem; margin-bottom: 20px; }
         p { color: var(--text-light); font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px; }
@@ -148,7 +131,6 @@
             letter-spacing: 1px;
         }
 
-        /* Buttons styling */
         .btn {
             background-color: var(--accent);
             color: #ffffff;
@@ -167,7 +149,6 @@
         .btn:hover { background-color: #e0640b; transform: translateY(-2px); }
         .btn:active { transform: translateY(1px); }
 
-        /* HUD Bar layout */
         .hud-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -199,7 +180,6 @@
             transition: width 0.4s ease;
         }
 
-        /* Question Screen Elements */
         .question-box {
             text-align: left;
             font-size: 1.25rem;
@@ -238,7 +218,6 @@
 
         .option-btn:disabled { cursor: not-allowed; }
 
-        /* Feedback Status Layouts */
         .option-btn.correct-highlight {
             background-color: #ecfdf5 !important;
             border-color: var(--success) !important;
@@ -279,7 +258,6 @@
 
         .explanation-card.visible { display: block; animation: fadeIn 0.3s ease; }
 
-        /* Global Control Controls */
         .controls-header {
             display: flex;
             justify-content: flex-end;
@@ -309,7 +287,6 @@
             color: var(--text-light);
         }
 
-        /* Grammar Master Bonus Interactive Zone */
         .challenge-zone {
             background: rgba(13, 148, 136, 0.03);
             border: 2px dashed var(--secondary);
@@ -336,6 +313,7 @@
             color: var(--text-light);
             min-width: 120px;
             text-align: center;
+            cursor: pointer;
         }
 
         .drop-slot.filled {
@@ -374,7 +352,6 @@
             pointer-events: none;
         }
 
-        /* Confetti Effect elements */
         .confetti-layer {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -394,7 +371,6 @@
             100% { transform: translateY(105vh) rotate(720deg) scale(1); opacity: 0; }
         }
 
-        /* Responsive Utilities */
         @media(max-width: 600px) {
             .screen { padding: 20px; }
             h1 { font-size: 1.8rem; }
@@ -423,10 +399,7 @@
     </div>
 
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
-        <h2 style="color: #1e3a8a; font-weight: 800;">Innovine Learning Center</h2>
-        <p style="margin-bottom: 30px;">Preparing your digital classroom arena...</p>
-        <div class="splash-loader"></div>
+        <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo">
     </div>
 
     <div id="intro-screen" class="screen">
@@ -482,9 +455,9 @@
         
         <div class="challenge-zone">
             <div class="slots-container" id="challenge-slots">
-                <div class="drop-slot" data-expected="cancel">Slot 1</div>
-                <div class="drop-slot" data-expected="a planned">Slot 2</div>
-                <div class="drop-slot" data-expected="event">Slot 3</div>
+                <div class="drop-slot" onclick="clearSlot(0)" id="slot-0">Slot 1</div>
+                <div class="drop-slot" onclick="clearSlot(1)" id="slot-1">Slot 2</div>
+                <div class="drop-slot" onclick="clearSlot(2)" id="slot-2">Slot 3</div>
             </div>
 
             <div class="chips-container" id="challenge-chips"></div>
@@ -525,7 +498,6 @@
     </div>
 
     <script>
-        // MASTER CURRICULUM EXCLUSIVELY PRESERVED DATA ARRAYS
         const baselineQuestionsPool = [
             {
                 q: "Q1. Riya's alarm rang at 6 AM but she just opened her eyes and lay in bed. Her mother walked in and said: \"Don't just ___ — you need to ___ and get ready or you will be late for school!\" Which pair of phrasal verbs correctly fills both blanks?",
@@ -591,6 +563,7 @@
                 options: [
                     "a) Starting/Activating: P, Q — Stopping/Ending: R, S",
                     "b) Starting/Activating: Q, R — Stopping/Ending: P, S",
+                    "b) Starting/Activating: Q, R — Stopping/Ending: P, S",
                     "c) Starting/Activating: P, R — Stopping/Ending: Q, S",
                     "d) Starting/Activating: R, S — Stopping/Ending: P, Q"
                 ],
@@ -655,7 +628,6 @@
             }
         ];
 
-        // ENGINE APP STATE CONFIGURATIONS
         let activeQuestions = [];
         let currentQuestionIdx = 0;
         let scoreCounter = 0;
@@ -665,7 +637,6 @@
         let isMuted = false;
         let bonusSlotAnswers = [];
 
-        // INIT LAYERS
         window.onload = function() {
             generateParticles();
             setTimeout(() => {
@@ -833,7 +804,6 @@
             }
         }
 
-        // LOAD INTERACTIVE BONUS COMPONENT
         function loadBonusChallenge() {
             showScreen('challenge-screen');
             bonusSlotAnswers = [null, null, null];
@@ -903,16 +873,15 @@
             if(verifiedCorrect) {
                 playSound('audio-correct');
                 triggerConfetti();
-                alert("⭐ Perfect! You unlocked the absolute combination configuration!");
+                alert("Perfect! You matched the definition precisely!");
             } else {
                 playSound('audio-wrong');
-                alert("❌ Sequence unaligned. The exact definition maps to: cancel ➔ a planned ➔ event.");
+                alert("Sequence incorrect. 'To call off' means to: cancel -> a planned -> event.");
             }
 
             setTimeout(showResults, 1500);
         }
 
-        // SHOW SUMMARY SCORES
         function showResults() {
             showScreen('result-screen');
             playSound('audio-clapping');
@@ -946,7 +915,6 @@
             startGame();
         }
 
-        // UTILITY AUDIO AND CONFIG CONTROLS
         function playSound(id) {
             if(isMuted) return;
             const track = document.getElementById(id);
