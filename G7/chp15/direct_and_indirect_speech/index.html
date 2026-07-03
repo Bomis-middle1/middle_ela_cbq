@@ -1,1 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Grade 7 English Quiz - Chapter 15: Direct and Indirect Speech</title>
+    <style>
+        :root {
+            --slate-blue: #2b3a67;
+            --mint-teal: #41b3a3;
+            --amber-gold: #e27d60;
+            --gold-dark: #c36246;
+            --deep-purple: #1d1e2c;
+            --cream-bg: #f4f7fc;
+            --card-white: #ffffff;
+            --success-green: #2ec4b6;
+            --danger-red: #e71d36;
+            --panel-radius: 20px;
+            --elem-radius: 12px;
+            --classic-shadow: 0 10px 30px rgba(43, 58, 103, 0.08);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--cream-bg);
+            color: var(--deep-purple);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .ambient-decorations-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .bg-element {
+            position: absolute;
+            top: -50px;
+            width: 10px;
+            height: 10px;
+            background: rgba(65, 179, 163, 0.15);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: floatDownStream 12s linear infinite;
+        }
+
+        .bg-streamer {
+            position: absolute;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(226, 125, 96, 0.1), transparent);
+            animation: floatDownStream 15s linear infinite;
+        }
+
+        @keyframes floatDownStream {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(115vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+            display: none;
+            position: relative;
+            z-index: 10;
+            animation: panelFadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes panelFadeIn {
+            0% { transform: scale(0.97); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            padding: 24px;
+            text-align: center;
+            transition: opacity 0.5s ease;
+        }
+
+        #splash-screen img {
+            width: 240px;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 24px;
+        }
+
+        .splash-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--slate-blue);
+            margin-bottom: 8px;
+        }
+
+        .splash-sub {
+            font-size: 15px;
+            font-weight: 600;
+            color: #64748b;
+            letter-spacing: 0.5px;
+            margin-bottom: 30px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(65, 179, 163, 0.1);
+            border-top-color: var(--mint-teal);
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .quiz-card {
+            background: var(--card-white);
+            padding: clamp(22px, 5vw, 36px);
+            border-radius: var(--panel-radius);
+            width: 100%;
+            box-shadow: var(--classic-shadow);
+            border: 1px solid rgba(43, 58, 103, 0.04);
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: var(--slate-blue);
+            font-size: clamp(22px, 4.5vw, 28px);
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--mint-teal);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .meta-info-box {
+            background: #f8fafc;
+            border-radius: var(--elem-radius);
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: left;
+            border: 1px dashed var(--mint-teal);
+        }
+
+        .meta-info-box p {
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #4a5568;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-info-box p:last-child { margin-bottom: 0; }
+
+        .audio-ctrl-strip {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: rgba(43, 58, 103, 0.05);
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .audio-ctrl-strip button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--slate-blue);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .hud-wrapper {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            background: var(--slate-blue);
+            padding: 12px;
+            border-radius: var(--elem-radius);
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .hud-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            justify-content: center;
+        }
+
+        .hud-val {
+            font-size: 15px;
+            color: var(--mint-teal);
+        }
+
+        #timer-display {
+            color: #ff9faf;
+            font-weight: 800;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(43, 58, 103, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--mint-teal), var(--success-green));
+            transition: width 0.3s ease;
+        }
+
+        .question-statement {
+            font-size: clamp(16px, 3.8vw, 17px);
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        .options-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .option-node {
+            width: 100%;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--elem-radius);
+            padding: 14px 18px;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: var(--deep-purple);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            line-height: 1.4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-node:hover:not(.locked-state) {
+            border-color: var(--slate-blue);
+            background: rgba(43, 58, 103, 0.01);
+            transform: translateY(-1px);
+        }
+        
+        .option-node:active:not(.locked-state) {
+            transform: translateY(1px);
+        }
+
+        .option-node.locked-state {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .option-node.correct-look {
+            background: #e6f9f7 !important;
+            border-color: var(--success-green) !important;
+            color: var(--success-green) !important;
+            font-weight: 700;
+            box-shadow: 0 0 10px rgba(46, 196, 182, 0.15);
+            pointer-events: none;
+        }
+        .option-node.correct-look::after {
+            content: "✔";
+            font-size: 16px;
+            color: var(--success-green);
+            flex-shrink: 0;
+        }
+
+        .option-node.wrong-look {
+            background: #ffebee !important;
+            border-color: var(--danger-red) !important;
+            color: var(--danger-red) !important;
+            font-weight: 700;
+            animation: shakeWidget 0.4s ease-in-out;
+            pointer-events: none;
+        }
+        .option-node.wrong-look::after {
+            content: "❌";
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        @keyframes shakeWidget {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-3px); }
+        }
+
+        #feedback-alert {
+            margin-top: 8px;
+            font-size: 18px;
+            font-weight: 800;
+            display: none;
+            text-align: center;
+        }
+
+        #explanation-card {
+            margin-top: 16px;
+            padding: 16px 20px;
+            border-radius: var(--elem-radius);
+            background: #f8fafc;
+            border-left: 5px solid var(--slate-blue);
+            font-size: 14.5px;
+            line-height: 1.6;
+            color: #4a5568;
+            text-align: left;
+            display: none;
+            animation: panelFadeIn 0.3s ease;
+        }
+
+        .btn-ui-action {
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--elem-radius);
+            background: var(--amber-gold);
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            margin: 8px;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(226, 125, 96, 0.25);
+        }
+
+        .btn-ui-action:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+        }
+
+        .star-particle {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: #ffd700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            pointer-events: none;
+            z-index: 9999;
+            animation: starFallEffect 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes starFallEffect {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(140px) scale(0.3) rotate(240deg); opacity: 0; }
+        }
+
+        .review-scroll-container {
+            max-height: 380px;
+            overflow-y: auto;
+            margin-top: 20px;
+            padding-right: 6px;
+            text-align: left;
+        }
+        .review-item-card {
+            background: #f8fafc;
+            border-radius: var(--elem-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .review-q {
+            font-weight: 700;
+            font-size: 14.5px;
+            margin-bottom: 8px;
+            color: var(--slate-blue);
+            white-space: pre-line;
+        }
+        .review-ans-row {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .review-explanation {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 8px;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 6px;
+        }
+
+        .main-logo-display {
+            height: 60px; 
+            width: auto; 
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+
+        .final-challenge-badge {
+            background: linear-gradient(135deg, #ffd700, var(--amber-gold));
+            color: white;
+            font-weight: 800;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-decorations-container" id="ambient-container"></div>
+
+    <audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="soundWin" src="assets/clapping.mp3" preload="auto"></audio>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <div class="splash-title">Chapter 15 — Direct and Indirect Speech</div>
+        <div class="splash-sub">Grade 7 &bull; Powered by Innovine</div>
+        <div class="spinner"></div>
+    </div>
+
+    <div id="intro-screen" class="container">
+        <div class="quiz-card">
+            <div style="text-align: center;">
+                <img src="assets/innovine-logo.png" class="main-logo-display" alt="Innovine Logo" onerror="this.style.display='none';">
+            </div>
+            <h1>Chapter 15 — Direct and Indirect Speech</h1>
+            <div class="subtitle">Grade 7 English Interactive Learning Game</div>
+            
+            <div class="meta-info-box">
+                <p>📝 <strong>Content Focus:</strong> Reporting structures, Wh-questions, commands, backshifting rules, and temporal modifications.</p>
+                <p>📋 <strong>Structure:</strong> 10 Standard Curriculum Questions + 1 Custom Final Application Challenge.</p>
+                <p>⏱️ <strong>Timer Constraints:</strong> 45 seconds per standard round (45 seconds during the Final Challenge).</p>
+                <p>🔄 <strong>Retry Allowances:</strong> 2 attempts per standard question item.</p>
+            </div>
+            
+            <div class="audio-ctrl-strip">
+                <button onclick="toggleSoundEffects()" id="sfx-toggle-btn">🔊 Sound: ON</button>
+            </div>
+
+            <button class="btn-ui-action" onclick="initializeQuizEngine()">Start Game</button>
+        </div>
+    </div>
+
+    <div id="question-screen" class="container">
+        <div class="audio-ctrl-strip" style="padding: 6px 16px; margin-bottom: 12px; scale: 0.95;">
+            <button onclick="toggleSoundEffects()" id="sfx-toggle-game-btn">🔊 Sound: ON</button>
+        </div>
+        
+        <div class="hud-wrapper">
+            <div class="hud-block">
+                <div>Progress</div>
+                <div id="hud-index-val" class="hud-val">1 / 11</div>
+            </div>
+            <div class="hud-block">
+                <div>⭐ Score</div>
+                <div id="hud-score-val" class="hud-val">0</div>
+            </div>
+            <div class="hud-block">
+                <div>Streak</div>
+                <div id="hud-streak-val" class="hud-val">0 🔥</div>
+            </div>
+            <div class="hud-block">
+                <div>Timer</div>
+                <div id="timer-display" class="hud-val">45s</div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div id="progressBarFill" class="progress-fill"></div>
+        </div>
+
+        <div class="quiz-card">
+            <div id="final-mode-indicator" class="final-challenge-badge" style="display: none;">⚡ Grammar Master Challenge ⚡</div>
+            <div id="activeQuestionText" class="question-statement">Loading question statement context...</div>
+            <div id="activeOptionsStack" class="options-stack"></div>
+            <div id="feedback-alert"></div>
+            <div id="explanation-card"></div>
+            <div id="action-bar" style="margin-top:12px; display:none;">
+                <button class="btn-ui-action" id="next-card-trigger" onclick="advanceNextQuestionCard()">Next Question</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="container">
+        <div class="quiz-card">
+            <h2 id="performance-badge-title">Grammar Champion</h2>
+            <div class="subtitle">Chapter 15 Voice Metrics Summary</div>
+            
+            <div style="font-size: 24px; margin-bottom: 16px;" id="star-rewards-slot">⭐⭐⭐</div>
+
+            <div style="background: #f8fafc; padding: 20px; border-radius: var(--elem-radius); margin-bottom: 20px; text-align: left; line-height: 1.8;">
+                <p style="font-size: 16px;"><strong>Final Total Score:</strong> <span id="res-score" style="font-weight:800; color:var(--slate-blue);">0</span> / 11</p>
+                <p style="font-size: 16px;"><strong>Success Accuracy Rate:</strong> <span id="res-percent" style="font-weight:700; color:var(--mint-teal);">0%</span></p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px dashed #cbd5e1;">
+                <p style="font-size: 14px;"><strong>Questions Answered:</strong> <span id="res-attempted">0</span></p>
+                <p style="font-size: 14px; color: var(--success-green);"><strong>Correct Items Count:</strong> <span id="res-correct">0</span></p>
+                <p style="font-size: 14px; color: var(--danger-red);"><strong>Incorrect Items Count:</strong> <span id="res-wrong">0</span></p>
+            </div>
+
+            <button class="btn-ui-action" onclick="initializeQuizEngine()">Play Again</button>
+            <button class="btn-ui-action" style="background-color: var(--slate-blue);" onclick="toggleReviewLogsDisplay()">Review Answers</button>
+            
+            <div id="reviewSectionBlock" class="review-scroll-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const curriculumQuestionsSource = [
+            {
+                q: `Q1. Riya tells her friend: "I am going to the library after school." Later her friend reports this to their teacher. Which reported version is correct?\na) Riya said that she is going to the library after school.\nb) Riya said that she was going to the library after school.\nc) Riya said that I was going to the library after school.\nd) Riya says that she went to the library after school.`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "'am going' shifts back to 'was going'; 'I' shifts to 'she'"
+            },
+            {
+                q: `Q2. Aarav's father says to him: "You must finish your dinner before watching TV." Which correctly reports this command?\na) Aarav's father said that he must finish his dinner before watching TV.\nb) Aarav's father told him to finish his dinner before watching TV.\nc) Aarav's father asked him if he would finish his dinner before watching TV.\nd) Aarav's father said to finish your dinner before watching TV.`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "Commands reported with 'told + object + to + base verb'"
+            },
+            {
+                q: `Q3. The teacher asks the class: "Have you completed your assignments?" Which correctly reports this question?\na) The teacher asked if they had completed their assignments.\nb) The teacher asked if they have completed their assignments.\nc) The teacher asked that they completed their assignments.\nd) The teacher asked whether they completes their assignments.`,
+                options: ["a", "b", "c", "d"],
+                answer: "a",
+                reason: "Yes/No question uses 'if/whether'; 'have completed' shifts to 'had completed'"
+            },
+            {
+                q: `Q4. Meera's grandmother says: "I used to walk five kilometres to school every day when I was young." Which correctly reports this statement?\na) Meera's grandmother said that she used to walk five kilometres to school every day when she was young.\nb) Meera's grandmother said that she uses to walk five kilometres to school every day when she is young.\nb) Meera's grandmother told that she had used to walk five kilometres to school every day.\nd) Meera's grandmother said that I used to walk five kilometres to school every day.`,
+                options: ["a", "b", "c", "d"],
+                answer: "a",
+                reason: "'Used to' does not change in reported speech; pronoun 'I' shifts to 'she'"
+            },
+            {
+                q: `Q5. The coach shouts at the players: "Run faster! Don't give up!" Which correctly reports both commands?\na) The coach said that they run faster and don't give up.\nb) The coach told the players run faster and not give up.\nc) The coach ordered the players to run faster and not to give up.\nd) The coach asked the players if they could run faster and not give up.`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "Multiple commands reported with 'ordered + to + base verb' and 'not to + base verb'"
+            },
+            {
+                q: `Q6. A student reports: "She asked me that where I was going." The teacher marks it wrong. Which is the correct version?\na) She asked me where was I going.\nb) She asked me where I was going.\nc) She asked me that where was I going.\nd) She asked me if where I was going.`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "Reported questions use statement word order — no inversion; 'that' not used with Wh-questions"
+            },
+            {
+                q: `Q7. Which sentence correctly converts "Don't make noise in the library" into Indirect Speech?\na) She said that don't make noise in the library.\nb) She told us not to make noise in the library.\nc) She asked us that we don't make noise in the library.\nd) She said to us don't make noise in the library.`,
+                options: ["a", "b", "c", "d"],
+                answer: "b",
+                reason: "Negative command = told + not to + base verb"
+            },
+            {
+                q: `Q8. Sort these reported speech sentences into two groups — Reported Statements and Reported Questions: P: "She asked if I had eaten breakfast." Q: "He said that he would call back later." R: "They asked where the nearest hospital was." S: "She told him that the results were out."\na) Statements: P, R — Questions: Q, S\nb) Statements: P, Q — Questions: R, S\nc) Statements: Q, S — Questions: P, R\nd) Statements: R, S — Questions: P, Q`,
+                options: ["a", "b", "c", "d"],
+                answer: "c",
+                reason: "Q & S report facts/feelings → Statements; P & R use 'if/where' for questions → Questions"
+            },
+            {
+                q: `Q9. Three of the following reported speech sentences are correct. One has an error. Which is the odd one out?\na) She said that she was feeling unwell.\nb) He asked if I would help him with the project.\nc) The teacher told us to submit our work by Friday.\nd) He said me that he was very hungry.`,
+                options: ["a", "b", "c", "d"],
+                answer: "d",
+                reason: "'Said me' is incorrect — 'said' never takes a direct object person; must be 'told me'"
+            },
+            {
+                q: `Q10. Assertion: When the reporting verb is in the past tense ('said', 'told', 'asked'), the tense of the reported speech shifts back one step. Reason: This backshift happens because the reporter is conveying what was said at an earlier time — so the tense moves back to reflect that the original speech belongs to the past.\na) Both are correct; the reason correctly explains the assertion.\nb) Both are correct; but the reason does NOT explain the assertion.\nc) The assertion is correct; the reason is wrong.\nd) Both are wrong — the tense never changes in reported speech.`,
+                options: ["a", "b", "c", "d"],
+                answer: "a",
+                reason: "Past reporting verb triggers backshift — original speech is in the past so tense reflects that temporal distance"
+            }
+        ];
+
+        const exclusiveFinalChallengeItem = {
+            q: `⭐ Grammar Master Challenge ⭐\n\nConvert this multi-clause sentence into complete Indirect Speech:\nThe principal announced, "The inspection team arrives tomorrow, and we must ensure all records are fully up to date."\n\na) The principal announced that the inspection team arrives tomorrow and they must ensure all records are fully up to date.\nb) The principal announced that the inspection team would arrive the next day and we must ensure all records were fully up to date.\nc) The principal announced that the inspection team arrived the next day, and they had to ensure all records were fully up to date.\nd) The principal announced that the inspection team had arrived tomorrow and they must ensure all records are fully up to date.`,
+            options: ["a", "b", "c", "d"],
+            answer: "c",
+            reason: "Simple present 'arrives' backshifts to simple past 'arrived', modal 'must' changes to 'had to', simple present 'are' changes to 'were', and temporal adverb 'tomorrow' shifts to 'the next day'."
+        };
+
+        let activePool = [];
+        let currentQuestionIndex = 0;
+        let runningTotalScore = 0;
+        let currentStreakCount = 0;
+        let totalItemsAttempted = 0;
+        let countCorrectItems = 0;
+        let countWrongItems = 0;
+        
+        let attemptsRemaining = 2;
+        let activeTimerObject = null;
+        let secondsLeftValue = 45;
+        let isAudioMuted = false;
+        let processingSelectionLock = false;
+        let isFinalChallengeActive = false;
+        let evaluationSummaryLog = [];
+
+        function generateAmbientDecorations() {
+            const layer = document.getElementById("ambient-container");
+            if (!layer) return;
+            layer.innerHTML = "";
+            for (let i = 0; i < 8; i++) {
+                let star = document.createElement("div");
+                star.className = "bg-element";
+                star.style.left = (Math.random() * 100) + "vw";
+                star.style.animationDelay = (Math.random() * 6) + "s";
+                star.style.animationDuration = (Math.random() * 5 + 8) + "s";
+                layer.appendChild(star);
+            }
+            for (let j = 0; j < 4; j++) {
+                let ribbon = document.createElement("div");
+                ribbon.className = "bg-streamer";
+                ribbon.style.left = (Math.random() * 100) + "vw";
+                ribbon.style.animationDelay = (Math.random() * 4) + "s";
+                ribbon.style.animationDuration = (Math.random() * 6 + 10) + "s";
+                layer.appendChild(ribbon);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateAmbientDecorations();
+            setTimeout(() => {
+                const splash = document.getElementById("splash-screen");
+                if (splash) splash.style.opacity = "0";
+                setTimeout(() => {
+                    if (splash) splash.style.display = "none";
+                    navigateToTargetViewport("intro-screen");
+                }, 500);
+            }, 5000);
+        });
+
+        function navigateToTargetViewport(targetId) {
+            document.querySelectorAll(".container").forEach(c => c.style.display = "none");
+            const target = document.getElementById(targetId);
+            if (target) target.style.display = "block";
+        }
+
+        function toggleSoundEffects() {
+            isAudioMuted = !isAudioMuted;
+            const text = isAudioMuted ? "🔇 Sound: OFF" : "🔊 Sound: ON";
+            document.getElementById("sfx-toggle-btn").innerText = text;
+            document.getElementById("sfx-toggle-game-btn").innerText = text;
+        }
+
+        function playSoundClip(elementId) {
+            if (isAudioMuted) return;
+            try {
+                const clip = document.getElementById(elementId);
+                if (clip) {
+                    clip.currentTime = 0;
+                    clip.play().catch(() => {});
+                }
+            } catch(e) {}
+        }
+
+        function shuffleArrayData(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function initializeQuizEngine() {
+            let curatedPool = JSON.parse(JSON.stringify(curriculumQuestionsSource));
+            curatedPool = shuffleArrayData(curatedPool);
+
+            // Match original structure but randomize standard options internal positions
+            curatedPool.forEach(item => {
+                item.options = shuffleArrayData([...item.options]);
+            });
+
+            activePool = curatedPool;
+            currentQuestionIndex = 0;
+            runningTotalScore = 0;
+            currentStreakCount = 0;
+            totalItemsAttempted = 0;
+            countCorrectItems = 0;
+            countWrongItems = 0;
+            isFinalChallengeActive = false;
+            evaluationSummaryLog = [];
+
+            document.getElementById("final-mode-indicator").style.display = "none";
+            document.getElementById("reviewSectionBlock").style.display = "none";
+            document.getElementById("reviewSectionBlock").innerHTML = "";
+
+            synchronizeHUDMetricsView();
+            navigateToTargetViewport("question-screen");
+            renderActiveQuestionState();
+        }
+
+        function synchronizeHUDMetricsView() {
+            const maximumQuestionsLimit = 11; 
+            let displayIndexValue = totalItemsAttempted + 1;
+            if (displayIndexValue > maximumQuestionsLimit) displayIndexValue = maximumQuestionsLimit;
+
+            document.getElementById("hud-index-val").innerText = `${displayIndexValue} / ${maximumQuestionsLimit}`;
+            document.getElementById("hud-score-val").innerText = `${runningTotalScore} / 11`;
+            document.getElementById("hud-streak-val").innerText = `${currentStreakCount} 🔥`;
+        }
+
+        function renderActiveQuestionState() {
+            processingSelectionLock = false;
+            
+            document.getElementById("feedback-alert").style.display = "none";
+            document.getElementById("feedback-alert").innerText = "";
+            document.getElementById("explanation-card").style.display = "none";
+            document.getElementById("explanation-card").innerText = "";
+            document.getElementById("action-bar").style.display = "none";
+
+            if (!isFinalChallengeActive && currentQuestionIndex >= activePool.length) {
+                initiateFinalChallengeLifecycle();
+                return;
+            }
+
+            if (isFinalChallengeActive && totalItemsAttempted >= 11) {
+                renderFinalMetricsScoreboard();
+                return;
+            }
+
+            let currentItemObj = isFinalChallengeActive ? exclusiveFinalChallengeItem : activePool[currentQuestionIndex];
+
+            attemptsRemaining = isFinalChallengeActive ? 1 : 2;
+            secondsLeftValue = 45; 
+
+            synchronizeHUDMetricsView();
+
+            let percentageRatio = (totalItemsAttempted / 11) * 100;
+            document.getElementById("progressBarFill").style.width = `${percentageRatio}%`;
+
+            document.getElementById("activeQuestionText").innerText = currentItemObj.q;
+
+            const containerStack = document.getElementById("activeOptionsStack");
+            containerStack.innerHTML = "";
+
+            currentItemObj.options.forEach(optKey => {
+                let nodeButton = document.createElement("button");
+                nodeButton.className = "option-node";
+                nodeButton.innerText = optKey.toUpperCase();
+                nodeButton.onclick = () => processSelectedAnswerOption(optKey, nodeButton);
+                containerStack.appendChild(nodeButton);
+            });
+
+            startCountdownProcess();
+        }
+
+        function startCountdownProcess() {
+            clearInterval(activeTimerObject);
+            document.getElementById("timer-display").innerText = `${secondsLeftValue}s`;
+
+            activeTimerObject = setInterval(() => {
+                secondsLeftValue--;
+                document.getElementById("timer-display").innerText = `${secondsLeftValue}s`;
+
+                if (secondsLeftValue <= 0) {
+                    clearInterval(activeTimerObject);
+                    if (!processingSelectionLock) {
+                        handleClockTimeoutScenario();
+                    }
+                }
+            }, 1000);
+        }
+
+        function disableInteractiveOptionNodes() {
+            document.querySelectorAll(".option-node").forEach(n => n.classList.add("locked-state"));
+        }
+
+        function handleClockTimeoutScenario() {
+            processingSelectionLock = true;
+            disableInteractiveOptionNodes();
+            playSoundClip("soundWrong");
+            
+            let currentItemObj = isFinalChallengeActive ? exclusiveFinalChallengeItem : activePool[currentQuestionIndex];
+            attemptsRemaining--;
+
+            if (!isFinalChallengeActive && attemptsRemaining > 0) {
+                currentStreakCount = 0;
+                let alertBox = document.getElementById("feedback-alert");
+                alertBox.innerText = "Try Again!";
+                alertBox.style.color = "var(--danger-red)";
+                alertBox.style.display = "block";
+                
+                setTimeout(() => {
+                    processingSelectionLock = false;
+                    document.querySelectorAll(".option-node").forEach(n => n.classList.remove("locked-state"));
+                    secondsLeftValue = 45;
+                    startCountdownProcess();
+                }, 2000);
+            } else {
+                currentStreakCount = 0;
+                countWrongItems++;
+                totalItemsAttempted++;
+
+                evaluationSummaryLog.push({
+                    q: currentItemObj.q,
+                    userAns: "Expired (No Option Selected)",
+                    correctAns: currentItemObj.answer,
+                    reason: currentItemObj.reason
+                });
+
+                revealSolutionMetricsPanel();
+            }
+        }
+
+        function processSelectedAnswerOption(chosenOptionKey, targetNodeButton) {
+            if (processingSelectionLock || targetNodeButton.classList.contains("locked-state")) return;
+
+            let currentItemObj = isFinalChallengeActive ? exclusiveFinalChallengeItem : activePool[currentQuestionIndex];
+            let isExactMatch = (chosenOptionKey.toLowerCase() === currentItemObj.answer.toLowerCase());
+
+            if (isExactMatch) {
+                processingSelectionLock = true;
+                clearInterval(activeTimerObject);
+                disableInteractiveOptionNodes();
+
+                targetNodeButton.classList.add("correct-look");
+                countCorrectItems++;
+                currentStreakCount++;
+                
+                runningTotalScore++;
+                totalItemsAttempted++;
+
+                evaluationSummaryLog.push({
+                    q: currentItemObj.q,
+                    userAns: chosenOptionKey.toUpperCase(),
+                    correctAns: currentItemObj.answer.toUpperCase(),
+                    reason: currentItemObj.reason
+                });
+
+                synchronizeHUDMetricsView();
+                playSoundClip("soundCorrect");
+                triggerConfettiSplineEffect();
+
+                let alertBox = document.getElementById("feedback-alert");
+                alertBox.innerText = "✔ Correct Answer!";
+                alertBox.style.color = "var(--success-green)";
+                alertBox.style.display = "block";
+
+                // Automatically navigate to next question after a 1.5s delay on correct answers
+                setTimeout(() => {
+                    advanceNextQuestionCard();
+                }, 1500);
+
+            } else {
+                attemptsRemaining--;
+                if (attemptsRemaining > 0) {
+                    targetNodeButton.classList.add("wrong-look");
+                    playSoundClip("soundWrong");
+                    currentStreakCount = 0;
+                    synchronizeHUDMetricsView();
+
+                    let alertBox = document.getElementById("feedback-alert");
+                    alertBox.innerText = "Try Again!";
+                    alertBox.style.color = "var(--danger-red)";
+                    alertBox.style.display = "block";
+                    targetNodeButton.classList.add("locked-state");
+                } else {
+                    processingSelectionLock = true;
+                    clearInterval(activeTimerObject);
+                    disableInteractiveOptionNodes();
+
+                    targetNodeButton.classList.add("wrong-look");
+                    currentStreakCount = 0;
+                    countWrongItems++;
+                    totalItemsAttempted++;
+
+                    evaluationSummaryLog.push({
+                        q: currentItemObj.q,
+                        userAns: chosenOptionKey.toUpperCase(),
+                        correctAns: currentItemObj.answer.toUpperCase(),
+                        reason: currentItemObj.reason
+                    });
+
+                    revealSolutionMetricsPanel();
+                }
+            }
+        }
+
+        function revealSolutionMetricsPanel() {
+            let currentItemObj = isFinalChallengeActive ? exclusiveFinalChallengeItem : activePool[currentQuestionIndex];
+            
+            document.querySelectorAll(".option-node").forEach(btn => {
+                if (btn.innerText.toLowerCase() === currentItemObj.answer.toLowerCase()) {
+                    btn.classList.add("correct-look");
+                }
+            });
+
+            let explanationBox = document.getElementById("explanation-card");
+            explanationBox.innerHTML = `<strong>✅ Correct Answer: ${currentItemObj.answer.toUpperCase()}</strong><br><br>📘 ${currentItemObj.reason}`;
+            explanationBox.style.display = "block";
+
+            document.getElementById("action-bar").style.display = "block";
+        }
+
+        function advanceNextQuestionCard() {
+            if (!isFinalChallengeActive) {
+                currentQuestionIndex++;
+            } else {
+                totalItemsAttempted = 11; 
+            }
+            renderActiveQuestionState();
+        }
+
+        function initiateFinalChallengeLifecycle() {
+            isFinalChallengeActive = true;
+            document.getElementById("final-mode-indicator").style.display = "inline-block";
+            renderActiveQuestionState();
+        }
+
+        function triggerConfettiSplineEffect() {
+            try {
+                for (let i = 0; i < 16; i++) {
+                    let particle = document.createElement("div");
+                    particle.className = "star-particle";
+                    particle.style.left = (Math.random() * 80 + 10) + "vw";
+                    particle.style.top = (Math.random() * 40 + 20) + "vh";
+                    particle.style.animationDelay = (Math.random() * 0.15) + "s";
+                    document.body.appendChild(particle);
+                    setTimeout(() => particle.remove(), 1200);
+                }
+            } catch(e) {}
+        }
+
+        function renderFinalMetricsScoreboard() {
+            clearInterval(activeTimerObject);
+            playSoundClip("soundWin");
+            navigateToTargetViewport("result-screen");
+
+            let ratioPercentage = Math.round((countCorrectItems / 11) * 100);
+
+            document.getElementById("res-score").innerText = runningTotalScore;
+            document.getElementById("res-percent").innerText = `${ratioPercentage}%`;
+            document.getElementById("res-attempted").innerText = totalItemsAttempted;
+            document.getElementById("res-correct").innerText = countCorrectItems;
+            document.getElementById("res-wrong").innerText = countWrongItems;
+
+            let badgeHeader = document.getElementById("performance-badge-title");
+            let starsSlot = document.getElementById("star-rewards-slot");
+
+            if (ratioPercentage >= 85) {
+                badgeHeader.innerText = "Grammar Champion!";
+                starsSlot.innerText = "⭐⭐⭐⭐⭐";
+                triggerConfettiSplineEffect();
+            } else if (ratioPercentage >= 70) {
+                badgeHeader.innerText = "Excellent!";
+                starsSlot.innerText = "⭐⭐⭐⭐";
+            } else if (ratioPercentage >= 50) {
+                badgeHeader.innerText = "Great Job!";
+                starsSlot.innerText = "⭐⭐⭐";
+            } else {
+                badgeHeader.innerText = "Keep Practising!";
+                starsSlot.innerText = "⭐⭐";
+            }
+        }
+
+        function toggleReviewLogsDisplay() {
+            let container = document.getElementById("reviewSectionBlock");
+            if (container.style.display === "block") {
+                container.style.display = "none";
+                return;
+            }
+
+            container.innerHTML = "";
+            evaluationSummaryLog.forEach((item, index) => {
+                let card = document.createElement("div");
+                card.className = "review-item-card";
+                let verifiedColor = (item.userAns === item.correctAns) ? "var(--success-green)" : "var(--danger-red)";
+
+                card.innerHTML = `
+                    <div class="review-q">${index + 1}. ${item.q}</div>
+                    <div class="review-ans-row" style="color: ${verifiedColor};"><strong>Your Pick:</strong> Option ${item.userAns}</div>
+                    <div class="review-ans-row" style="color: var(--success-green);"><strong>Correct Structural Format:</strong> Option ${item.correctAns}</div>
+                    <div class="review-explanation">📘 ${item.reason}</div>
+                `;
+                container.appendChild(card);
+            });
+
+            container.style.display = "block";
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
