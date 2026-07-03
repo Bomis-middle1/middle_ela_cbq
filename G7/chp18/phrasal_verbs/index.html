@@ -1,1 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 English Interactive Learning Game - Phrasal Verbs</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #0d9488;
+            --accent: #f97316;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-light: #475569;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #e2e8f0;
+            --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
+        /* High Contrast Mode overrides */
+        body.high-contrast {
+            --primary: #000000;
+            --secondary: #004d4d;
+            --accent: #d94600;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-light: #2d3748;
+            --success: #006633;
+            --error: #cc0000;
+            --border: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Ambient background animations */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(13, 148, 136, 0.15);
+            border-radius: 50%;
+            animation: float Up 12s infinite linear;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(105vh) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-5vh) translateX(50px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Game Screen Layouts */
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.06);
+            border: 1px solid var(--border);
+            z-index: 10;
+            position: relative;
+            text-align: center;
+        }
+
+        /* Splash screen layout */
+        #splash-screen {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #splash-screen img {
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .splash-loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* UI Elements and Typography */
+        h1 { color: var(--primary); font-size: 2.5rem; margin-bottom: 10px; font-weight: 800; }
+        h2 { color: var(--primary); font-size: 1.8rem; margin-bottom: 20px; }
+        p { color: var(--text-light); font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px; }
+        
+        .badge {
+            background-color: rgba(13, 148, 136, 0.1);
+            color: var(--secondary);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Buttons styling */
+        .btn {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 16px 36px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .btn:hover { background-color: #e0640b; transform: translateY(-2px); }
+        .btn:active { transform: translateY(1px); }
+
+        /* HUD Bar layout */
+        .hud-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+            background-color: rgba(30, 58, 138, 0.04);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-item { display: flex; flex-direction: column; align-items: center; }
+        .hud-label { font-size: 0.85rem; color: var(--text-light); text-transform: uppercase; font-weight: 700; }
+        .hud-val { font-size: 1.3rem; color: var(--primary); font-weight: 800; margin-top: 4px; }
+
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background-color: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--secondary);
+            transition: width 0.4s ease;
+        }
+
+        /* Question Screen Elements */
+        .question-box {
+            text-align: left;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 14px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: rgba(30, 58, 138, 0.02);
+            transform: translateX(4px);
+        }
+
+        .option-btn:disabled { cursor: not-allowed; }
+
+        /* Feedback Status Layouts */
+        .option-btn.correct-highlight {
+            background-color: #ecfdf5 !important;
+            border-color: var(--success) !important;
+            color: var(--success) !important;
+            font-weight: 700;
+            animation: popCheck 0.4s ease;
+        }
+
+        .option-btn.wrong-highlight {
+            background-color: #fef2f2 !important;
+            border-color: var(--error) !important;
+            color: var(--error) !important;
+            font-weight: 700;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        @keyframes popCheck {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .explanation-card {
+            margin-top: 25px;
+            background-color: #f1f5f9;
+            border-left: 6px solid var(--primary);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+            display: none;
+        }
+
+        .explanation-card.visible { display: block; animation: fadeIn 0.3s ease; }
+
+        /* Global Control Controls */
+        .controls-header {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 800px;
+            z-index: 20;
+        }
+
+        .control-btn {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Grammar Master Bonus Interactive Zone */
+        .challenge-zone {
+            background: rgba(13, 148, 136, 0.03);
+            border: 2px dashed var(--secondary);
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 20px;
+        }
+
+        .slots-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+            min-height: 60px;
+        }
+
+        .drop-slot {
+            background-color: #f1f5f9;
+            border: 2px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            color: var(--text-light);
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .drop-slot.filled {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .chip {
+            background-color: var(--surface);
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chip:hover {
+            background-color: var(--secondary);
+            color: #ffffff;
+        }
+
+        .chip.used {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Confetti Effect elements */
+        .confetti-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 999;
+        }
+
+        .star-confetti {
+            position: absolute;
+            width: 15px; height: 15px;
+            background: #f59e0b;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: fall 2s linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-20px) rotate(0deg) scale(0); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(720deg) scale(1); opacity: 0; }
+        }
+
+        /* Responsive Utilities */
+        @media(max-width: 600px) {
+            .screen { padding: 20px; }
+            h1 { font-size: 1.8rem; }
+            .hud-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .option-btn { padding: 14px 18px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg" id="ambient-particles"></div>
+    <div class="confetti-layer" id="confetti-layer"></div>
+
+    <audio id="audio-click" src="assets/click.mp3" preload="auto"></audio>
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audio-clapping" src="assets/clapping.mp3" preload="auto"></audio>
+
+    <div class="controls-header" id="global-controls" style="display:none;">
+        <div class="slider-container">
+            <label for="volume-slider">Vol:</label>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.7">
+        </div>
+        <button class="control-btn" id="mute-btn" onclick="toggleMute()">🔊 Mute</button>
+        <button class="control-btn" onclick="toggleContrast()">🌓 Contrast</button>
+    </div>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <h2 style="color: #1e3a8a; font-weight: 800;">Innovine Learning Center</h2>
+        <p style="margin-bottom: 30px;">Preparing your digital classroom arena...</p>
+        <div class="splash-loader"></div>
+    </div>
+
+    <div id="intro-screen" class="screen">
+        <div class="badge">Grade 7 English</div>
+        <h1>Phrasal Verbs Arena</h1>
+        <p>Master communication and daily sentence construction! Complete the competency-based evaluation matrix and unlock the Grammar Master reward challenge.</p>
+        
+        <div style="background: rgba(30,58,138,0.03); padding: 20px; border-radius: 12px; margin-bottom: 30px; text-align: left;">
+            <strong style="color: var(--primary);">Quick Instructions:</strong>
+            <ul style="margin-left: 20px; margin-top: 8px; color: var(--text-light); line-height: 1.6;">
+                <li>You have exactly <strong>45 seconds</strong> per question.</li>
+                <li>Each challenge allows exactly <strong>one retry</strong> if missed on attempt one.</li>
+                <li>Score updates immediately in real-time.</li>
+            </ul>
+        </div>
+        <button class="btn" onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="question-screen" class="screen">
+        <div class="hud-grid">
+            <div class="hud-item">
+                <span class="hud-label">Question</span>
+                <span class="hud-val" id="hud-q-num">1 / 13</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Score</span>
+                <span class="hud-val" id="hud-score">0 / 13</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Attempts</span>
+                <span class="hud-val" id="hud-attempts">Try 1/2</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Timer</span>
+                <span class="hud-val" id="hud-timer" style="color: var(--accent);">45s</span>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="question-box" id="question-text">Question content rendering layer...</div>
+        <div class="options-grid" id="options-box"></div>
+
+        <div class="explanation-card" id="explanation-box"></div>
+    </div>
+
+    <div id="challenge-screen" class="screen">
+        <div class="badge">🎁 Bonus Level - Reward Round</div>
+        <h1>Grammar Master Challenge</h1>
+        <p>Demonstrate practical command! Correctly build the conversation usage for the phrase: <strong>"To call off"</strong> means to...</p>
+        
+        <div class="challenge-zone">
+            <div class="slots-container" id="challenge-slots">
+                <div class="drop-slot" data-expected="cancel">Slot 1</div>
+                <div class="drop-slot" data-expected="a planned">Slot 2</div>
+                <div class="drop-slot" data-expected="event">Slot 3</div>
+            </div>
+
+            <div class="chips-container" id="challenge-chips"></div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <button class="btn" id="bonus-action-btn" onclick="checkBonusChallenge()" style="background-color: var(--secondary);">Verify Definition</button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <div class="badge">Evaluation Complete</div>
+        <h1 id="result-title">Phrasal Verb Champion!</h1>
+        <p id="result-subtitle">Excellent mastery of sentence context structures.</p>
+        
+        <div style="font-size: 4rem; margin: 20px 0;">🏆</div>
+
+        <div class="hud-grid" style="max-width: 500px; margin: 0 auto 30px auto;">
+            <div class="hud-item">
+                <span class="hud-label">Score</span>
+                <span class="hud-val" id="res-score">0 / 13</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Percentage</span>
+                <span class="hud-val" id="res-percent">0%</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Correct</span>
+                <span class="hud-val" id="res-correct" style="color: var(--success);">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Incorrect</span>
+                <span class="hud-val" id="res-wrong" style="color: var(--error);">0</span>
+            </div>
+        </div>
+
+        <button class="btn" onclick="restartGame()">Play Again</button>
+    </div>
+
+    <script>
+        // MASTER CURRICULUM EXCLUSIVELY PRESERVED DATA ARRAYS
+        const baselineQuestionsPool = [
+            {
+                q: "Q1. Riya's alarm rang at 6 AM but she just opened her eyes and lay in bed. Her mother walked in and said: \"Don't just ___ — you need to ___ and get ready or you will be late for school!\" Which pair of phrasal verbs correctly fills both blanks?",
+                options: ["a) get up / wake up", "b) wake up / get up", "c) turn on / pick up", "d) put on / take off"],
+                answer: "b) wake up / get up",
+                type: "Scenario",
+                reason: "wake up=stop sleeping(eyes open); get up=physically rise from bed — two distinct actions"
+            },
+            {
+                q: "Q2. Aarav is packing for a school trip. His mother checks his bag and says: \"It is going to be very cold in Shimla — make sure you ___ your warm jacket before you board the bus.\" Which phrasal verb is correct?",
+                options: ["a) take off", "b) throw away", "c) put on", "d) pick up"],
+                answer: "c) put on",
+                type: "Scenario",
+                reason: "'put on' = to wear clothing — appropriate for cold weather preparation"
+            },
+            {
+                q: "Q3. Meera is running a marathon but she is exhausted at the halfway point. Her coach shouts from the sidelines: \"Don't ___ now — you have trained for months for this moment!\" Which phrasal verb correctly fills the blank?",
+                options: ["a) call off", "b) run out of", "c) check out", "d) give up"],
+                answer: "d) give up",
+                type: "Scenario",
+                reason: "'give up' = stop trying — coach is encouraging not to quit"
+            },
+            {
+                q: "Q4. Rohan's younger sister is going to hospital for a routine checkup. Their mother says: \"Rohan, I need you to ___ your sister while I speak to the doctor — make sure she does not wander off.\" Which phrasal verb is correct?",
+                options: ["a) look for", "b) look after", "c) bring back", "d) check out"],
+                answer: "b) look after",
+                type: "Scenario",
+                reason: "'look after' = take care of — responsible for sister's safety"
+            },
+            {
+                q: "Q5. The school trip to the science museum was planned for Thursday. However, the weather forecast predicted a severe storm. The principal announced: \"Due to safety concerns, we have decided to ___ the trip.\" Which phrasal verb is correct?",
+                options: ["a) give up", "b) run out of", "c) call off", "d) check out"],
+                answer: "c) call off",
+                type: "Scenario",
+                reason: "'call off' = cancel a planned event — trip cancelled due to storm"
+            },
+            {
+                q: "Q6. What is the difference between 'look for' and 'look after' in these two sentences? \nSentence A: \"She is looking for her lost notebook.\" \nSentence B: \"She is looking after her younger brother.\"",
+                options: [
+                    "a) Both mean the same thing — searching for someone",
+                    "b) 'Look for' means to search for something/someone; 'look after' means to take care of someone or something",
+                    "c) 'Look for' means to take care; 'look after' means to search",
+                    "d) Both phrasal verbs are interchangeable in all contexts"
+                ],
+                answer: "b) 'Look for' means to search for something/someone; 'look after' means to take care of someone or something",
+                type: "Application",
+                reason: "look for=search; look after=care for — two completely different meanings despite similar form"
+            },
+            {
+                q: "Q7. Which sentence uses 'run out of' correctly?",
+                options: [
+                    "a) She ran out of the building when the alarm went off.",
+                    "b) We ran out of milk so we could not make the pudding.",
+                    "c) He ran out of his friend at the market yesterday.",
+                    "d) They ran out of the competition after winning three rounds."
+                ],
+                answer: "b) We ran out of milk so we could not make the pudding.",
+                type: "Application",
+                reason: "'run out of' = exhaust supply of something — no milk left → correct context"
+            },
+            {
+                q: "Q8. Sort these phrasal verbs into two groups — phrasal verbs related to Starting/Activating and phrasal verbs related to Stopping/Ending: \nP: turn on Q: call off R: wake up S: throw away",
+                options: [
+                    "a) Starting/Activating: P, Q — Stopping/Ending: R, S",
+                    "b) Starting/Activating: Q, R — Stopping/Ending: P, S",
+                    "c) Starting/Activating: P, R — Stopping/Ending: Q, S",
+                    "d) Starting/Activating: R, S — Stopping/Ending: P, Q"
+                ],
+                answer: "c) Starting/Activating: P, R — Stopping/Ending: Q, S",
+                type: "Pair/Classification",
+                reason: "turn on & wake up = begin/activate; call off & throw away = end/discard"
+            },
+            {
+                q: "Q9. Classify the meaning of the phrasal verb used in each sentence: \n1. \"He finally gave up trying to fix the old radio.\" \n2. \"She brought back memories of our school days.\" \n3. \"They checked out the new science exhibit at the museum.\" \n4. \"The pilot asked passengers to take off their seatbelts after landing.\"",
+                options: [
+                    "a) 1=started, 2=removed, 3=cancelled, 4=returned",
+                    "b) 1=stopped trying, 2=caused to return, 3=explored/examined, 4=removed",
+                    "c) 1=searched for, 2=threw away, 3=turned on, 4=put on",
+                    "d) 1=cancelled, 2=explored, 3=removed, 4=stopped trying"
+                ],
+                answer: "b) 1=stopped trying, 2=caused to return, 3=explored/examined, 4=removed",
+                type: "Pair/Classification",
+                reason: "gave up=stopped trying; brought back=caused to return; checked out=explored; take off=removed"
+            },
+            {
+                q: "Q10. Three of the following phrasal verbs describe actions that people intentionally perform on people or objects. One mainly describes a situation or condition rather than an action performed on something. Which is the odd one out?",
+                options: ["a) look after", "b) pick up", "c) run out of", "d) check out"],
+                answer: "c) run out of",
+                type: "Odd One Out",
+                reason: "'run out of' = exhaust a supply — not related to managing or caring for things/people"
+            },
+            {
+                q: "Q11. A student wrote: \"Please wake up the lights when you enter. I am looking after my lost pen everywhere. She threw off all the old newspapers. Don't give out — the exam is almost over.\" Identify ALL the errors:",
+                options: [
+                    "a) wake up→turn on (lights are switched not woken); looking after→looking for (searching not caring); threw off→threw away (discard); give out→give up (stop trying)",
+                    "b) wake up is correct; looking after→looking for; threw off is correct; give out→give up",
+                    "c) wake up→turn on; looking after is correct; threw off→threw away; give out is correct",
+                    "d) There are no errors — all phrasal verbs are used correctly"
+                ],
+                answer: "a) wake up→turn on (lights are switched not woken); looking after→looking for (searching not caring); threw off→threw away (discard); give out→give up (stop trying)",
+                type: "Error Detection",
+                reason: "turn on=lights need switching; looking for=searching not caring; threw away=discard; give up=stop trying"
+            },
+            {
+                q: "Q12. A student changes \"The organisers cancelled the event because of the rain\" to \"The organisers called off the event because of the rain.\" What is the effect of using the phrasal verb?",
+                options: [
+                    "a) The meaning changes — the event was postponed not cancelled",
+                    "b) The phrasal verb 'call off' replaces the formal word 'cancelled' with a more natural conversational equivalent — same meaning, more idiomatic expression",
+                    "c) The sentence becomes grammatically incorrect",
+                    "d) 'Call off' is more formal than 'cancelled'"
+                ],
+                answer: "b) The phrasal verb 'call off' replaces the formal word 'cancelled' with a more natural conversational equivalent — same meaning, more idiomatic expression",
+                type: "Cause–Effect",
+                reason: "'Call off' = conversational equivalent of 'cancelled' — same meaning, more natural register"
+            },
+            {
+                q: "Q13. Assertion: The phrasal verb 'take off' has more than one meaning depending on the context it is used in. Reason: Phrasal verbs are idiomatic expressions — the same combination of verb and particle can carry completely different meanings in different situations, which is why context is essential for understanding them correctly.",
+                options: [
+                    "a) Both are correct; the reason correctly explains the assertion.",
+                    "b) Both are correct; but the reason does NOT explain the assertion.",
+                    "c) The assertion is correct; the reason is wrong.",
+                    "d) Both are wrong — each phrasal verb has only one fixed meaning."
+                ],
+                answer: "a) Both are correct; the reason correctly explains the assertion.",
+                type: "Assertion-Reason",
+                reason: "take off = remove clothing / plane becoming airborne / to leave suddenly — same words, different contexts = different meanings"
+            }
+        ];
+
+        // ENGINE APP STATE CONFIGURATIONS
+        let activeQuestions = [];
+        let currentQuestionIdx = 0;
+        let scoreCounter = 0;
+        let attemptsLeft = 2;
+        let countdownTimer;
+        let secondsRemaining = 45;
+        let isMuted = false;
+        let bonusSlotAnswers = [];
+
+        // INIT LAYERS
+        window.onload = function() {
+            generateParticles();
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.getElementById('global-controls').style.display = 'flex';
+                    showScreen('intro-screen');
+                }, 800);
+            }, 5000);
+
+            document.getElementById('volume-slider').addEventListener('input', function(e) {
+                const vol = e.target.value;
+                document.getElementById('audio-click').volume = vol;
+                document.getElementById('audio-correct').volume = vol;
+                document.getElementById('audio-wrong').volume = vol;
+                document.getElementById('audio-clapping').volume = vol;
+            });
+        };
+
+        function generateParticles() {
+            const container = document.getElementById('ambient-particles');
+            for(let i=0; i<15; i++) {
+                const div = document.createElement('div');
+                div.className = 'particle';
+                div.style.width = div.style.height = `${Math.random() * 25 + 10}px`;
+                div.style.left = `${Math.random() * 100}vw`;
+                div.style.animationDelay = `${Math.random() * 8}s`;
+                div.style.animationDuration = `${Math.random() * 6 + 8}s`;
+                container.appendChild(div);
+            }
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+            document.getElementById(screenId).style.display = 'block';
+        }
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startGame() {
+            playSound('audio-click');
+            activeQuestions = shuffleArray(JSON.parse(JSON.stringify(baselineQuestionsPool)));
+            activeQuestions.forEach(q => shuffleArray(q.options));
+            
+            currentQuestionIdx = 0;
+            scoreCounter = 0;
+            showScreen('question-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            attemptsLeft = 2;
+            secondsRemaining = 45;
+            document.getElementById('explanation-box').classList.remove('visible');
+            updateHUD();
+            
+            const currentQ = activeQuestions[currentQuestionIdx];
+            document.getElementById('question-text').innerText = currentQ.q;
+            
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.innerHTML = '';
+            
+            currentQ.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswerSelect(btn, opt);
+                optionsBox.appendChild(btn);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(countdownTimer);
+            document.getElementById('hud-timer').innerText = `${secondsRemaining}s`;
+            countdownTimer = setInterval(() => {
+                secondsRemaining--;
+                document.getElementById('hud-timer').innerText = `${secondsRemaining}s`;
+                if(secondsRemaining <= 0) {
+                    clearInterval(countdownTimer);
+                    handleTimeExpiry();
+                }
+            }, 1000);
+        }
+
+        function updateHUD() {
+            document.getElementById('hud-q-num').innerText = `${currentQuestionIdx + 1} / 13`;
+            document.getElementById('hud-score').innerText = `${scoreCounter} / 13`;
+            document.getElementById('hud-attempts').innerText = `Try ${3 - attemptsLeft}/2`;
+            const percent = (currentQuestionIdx / 13) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        function handleAnswerSelect(selectedBtn, selectedText) {
+            playSound('audio-click');
+            const currentQ = activeQuestions[currentQuestionIdx];
+            const isCorrect = selectedText.trim() === currentQ.answer.trim();
+
+            if (isCorrect) {
+                clearInterval(countdownTimer);
+                selectedBtn.classList.add('correct-highlight');
+                disableAllOptions();
+                scoreCounter++;
+                updateHUD();
+                triggerConfetti();
+                playSound('audio-correct');
+                
+                setTimeout(nextQuestion, 2000);
+            } else {
+                attemptsLeft--;
+                selectedBtn.classList.add('wrong-highlight');
+                selectedBtn.disabled = true;
+                playSound('audio-wrong');
+                updateHUD();
+
+                if (attemptsLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    disableAllOptions();
+                    exposeCorrectAnswer();
+                }
+            }
+        }
+
+        function handleTimeExpiry() {
+            disableAllOptions();
+            exposeCorrectAnswer();
+        }
+
+        function disableAllOptions() {
+            document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+        }
+
+        function exposeCorrectAnswer() {
+            const currentQ = activeQuestions[currentQuestionIdx];
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                if(btn.innerText.trim() === currentQ.answer.trim()) {
+                    btn.classList.add('correct-highlight');
+                }
+            });
+
+            const expBox = document.getElementById('explanation-box');
+            expBox.innerHTML = `<strong>Correct Answer:</strong> ${currentQ.answer}<br><br><strong>Brief Explanation:</strong> ${currentQ.reason}`;
+            expBox.classList.add('visible');
+
+            setTimeout(() => {
+                nextQuestion();
+            }, 5000);
+        }
+
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if(currentQuestionIdx < 13) {
+                loadQuestion();
+            } else {
+                loadBonusChallenge();
+            }
+        }
+
+        // LOAD INTERACTIVE BONUS COMPONENT
+        function loadBonusChallenge() {
+            showScreen('challenge-screen');
+            bonusSlotAnswers = [null, null, null];
+            
+            const slotsContainer = document.getElementById('challenge-slots');
+            slotsContainer.innerHTML = `
+                <div class="drop-slot" onclick="clearSlot(0)" id="slot-0">Slot 1</div>
+                <div class="drop-slot" onclick="clearSlot(1)" id="slot-1">Slot 2</div>
+                <div class="drop-slot" onclick="clearSlot(2)" id="slot-2">Slot 3</div>
+            `;
+
+            const rawChips = ["a planned", "cancel", "event", "start", "running"];
+            const shuffledChips = shuffleArray([...rawChips]);
+            const chipsContainer = document.getElementById('challenge-chips');
+            chipsContainer.innerHTML = '';
+
+            shuffledChips.forEach((text, i) => {
+                const chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.innerText = text;
+                chip.id = `chip-${i}`;
+                chip.onclick = () => fillNextAvailableSlot(text, chip.id);
+                chipsContainer.appendChild(chip);
+            });
+            
+            document.getElementById('bonus-action-btn').style.display = 'inline-block';
+        }
+
+        function fillNextAvailableSlot(text, chipId) {
+            playSound('audio-click');
+            const availableIdx = bonusSlotAnswers.findIndex(item => item === null);
+            if(availableIdx === -1) return;
+
+            bonusSlotAnswers[availableIdx] = { text, chipId };
+            
+            const targetSlot = document.getElementById(`slot-${availableIdx}`);
+            targetSlot.innerText = text;
+            targetSlot.classList.add('filled');
+            
+            document.getElementById(chipId).classList.add('used');
+        }
+
+        function clearSlot(slotIdx) {
+            if(!bonusSlotAnswers[slotIdx]) return;
+            playSound('audio-click');
+            
+            const data = bonusSlotAnswers[slotIdx];
+            document.getElementById(data.chipId).classList.remove('used');
+            
+            const slot = document.getElementById(`slot-${slotIdx}`);
+            slot.innerText = `Slot ${slotIdx + 1}`;
+            slot.classList.remove('filled');
+            
+            bonusSlotAnswers[slotIdx] = null;
+        }
+
+        function checkBonusChallenge() {
+            const definitionSequence = ["cancel", "a planned", "event"];
+            let verifiedCorrect = true;
+
+            for(let i=0; i<3; i++) {
+                if(!bonusSlotAnswers[i] || bonusSlotAnswers[i].text !== definitionSequence[i]) {
+                    verifiedCorrect = false;
+                }
+            }
+
+            if(verifiedCorrect) {
+                playSound('audio-correct');
+                triggerConfetti();
+                alert("⭐ Perfect! You unlocked the absolute combination configuration!");
+            } else {
+                playSound('audio-wrong');
+                alert("❌ Sequence unaligned. The exact definition maps to: cancel ➔ a planned ➔ event.");
+            }
+
+            setTimeout(showResults, 1500);
+        }
+
+        // SHOW SUMMARY SCORES
+        function showResults() {
+            showScreen('result-screen');
+            playSound('audio-clapping');
+
+            document.getElementById('res-score').innerText = `${scoreCounter} / 13`;
+            const percentage = Math.round((scoreCounter / 13) * 100);
+            document.getElementById('res-percent').innerText = `${percentage}%`;
+            document.getElementById('res-correct').innerText = scoreCounter;
+            document.getElementById('res-wrong').innerText = 13 - scoreCounter;
+
+            const resTitle = document.getElementById('result-title');
+            const resSub = document.getElementById('result-subtitle');
+
+            if(percentage >= 90) {
+                resTitle.innerText = "🏆 Phrasal Verb Champion!";
+                resSub.innerText = "Exceptional structural analysis capability accomplished.";
+            } else if (percentage >= 75) {
+                resTitle.innerText = "🌟 Excellent!";
+                resSub.innerText = "Great command over communicative phrasal parameters.";
+            } else if (percentage >= 50) {
+                resTitle.innerText = "🎉 Great Job!";
+                resSub.innerText = "Solid foundational logic with a few gaps left to refine.";
+            } else {
+                resTitle.innerText = "📘 Keep Practising!";
+                resSub.innerText = "Review contextual explanations to reinforce functional grammar rules.";
+            }
+        }
+
+        function restartGame() {
+            playSound('audio-click');
+            startGame();
+        }
+
+        // UTILITY AUDIO AND CONFIG CONTROLS
+        function playSound(id) {
+            if(isMuted) return;
+            const track = document.getElementById(id);
+            if(track) {
+                track.currentTime = 0;
+                track.play().catch(()=>{});
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('mute-btn').innerText = isMuted ? "🔇 Muted" : "🔊 Mute";
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function triggerConfetti() {
+            const layer = document.getElementById('confetti-layer');
+            for(let i=0; i<30; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'star-confetti';
+                conf.style.left = `${Math.random() * 100}vw`;
+                conf.style.backgroundColor = ['#f59e0b','#10b981','#3b82f6','#ec4899'][Math.floor(Math.random()*4)];
+                conf.style.animationDelay = `${Math.random() * 0.4}s`;
+                layer.appendChild(conf);
+                setTimeout(() => conf.remove(), 2000);
+            }
+        }
+    </script>
+</body>
+</html>
