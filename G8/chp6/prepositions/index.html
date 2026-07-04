@@ -322,76 +322,136 @@
     <script>
         const questionRepository = [
             {
-                q: "1. Morning routine\nRiya wakes up at 6:30 a.m. every day. She gets ready, eats breakfast, and leaves for school. Which sentence best uses a preposition of time?",
-                options: ["a) Riya wakes up in 6:30 a.m.", "b) Riya wakes up at 6:30 a.m.", "c) Riya wakes up on 6:30 a.m.", "d) Riya wakes up by 6:30 a.m."],
-                ans: "b) Riya wakes up at 6:30 a.m.",
-                exp: "'At' is used for exact times such as 6:30 a.m."
-            },
-            {
-                q: "2. School calendar\nThe annual sports day is planned in March. Which sentence is correct?",
-                options: ["a) The sports day is on March.", "b) The sports day is at March.", "c) The sports day is in March.", "d) The sports day is by March."],
-                ans: "c) The sports day is in March.",
-                exp: "'In' is used for months like March."
-            },
-            {
-                q: "3. Everyday place\nAarav keeps his lunch box inside the school bag. Which preposition best completes the sentence?",
-                options: ["a) on", "b) at", "c) in", "d) by"],
-                ans: "c) in",
-                exp: "'In' is used to show enclosed space context or inside positionings."
-            },
-            {
-                q: "4. Classroom notice\nA notice is stuck to the wall near the classroom door. Which preposition is correct for the wall?",
-                options: ["a) on", "b) in", "c) at", "d) by"],
-                ans: "a) on",
-                exp: "'On' is used to define contact with surface environments like walls."
-            },
-            {
-                q: "5. Real-life travel\nThe family is travelling from Mumbai to Delhi by train. Which sentence is correct?",
-                options: ["a) The family is travelling in Mumbai to Delhi on train.", "b) The family is travelling from Mumbai to Delhi by train.", "c) The family is travelling at Mumbai to Delhi by train.", "d) The family is travelling on Mumbai to Delhi in train."],
-                ans: "b) The family is travelling from Mumbai to Delhi by train.",
-                exp: "'By train' is the correct expression for transport."
-            },
-            {
-                q: "6. School bus\nA student says, “I go to school _ bus every day.” Which preposition fits best?",
-                options: ["a) by", "b) in", "c) on", "d) at"],
-                ans: "a) by",
-                exp: "'By' is standard convention for indicating modes of vehicular transportation."
-            },
-            {
-                q: "7. Chat-style correction\nRead the message:\n“See you in Monday morning.”\nWhat is the correct version?",
-                options: ["a) See you at Monday morning.", "b) See you on Monday morning.", "c) See you in Monday morning.", "d) See you by Monday morning."],
-                ans: "b) See you on Monday morning.",
-                exp: "'On' is used for specific days such as Monday morning."
-            },
-            {
-                q: "8. Everyday time use\nThe teacher says, “We will meet _ 5 p.m. sharp.” Which preposition is correct?",
-                options: ["a) on", "b) in", "c) at", "d) by"],
-                ans: "c) at",
-                exp: "'At' is required to mark exact hour/time specifications."
-            },
-            {
-                q: "9. Travel experience\nA student says, “We went _ a cruise during the summer holidays.” Which preposition is correct?",
-                options: ["a) on", "b) in", "c) by", "d) at"],
-                ans: "a) on",
-                exp: "We use 'on' for vacations or voyages tracking lines like cruises."
-            },
-            {
-                q: "10. Short error correction\nAarav writes: “The keys are on the drawer.”\nWhat is the best correction?",
-                options: ["a) The keys are in the drawer.", "b) The keys are at the drawer.", "c) The keys are by the drawer.", "d) The keys are on drawer."],
-                ans: "a) The keys are in the drawer.",
-                exp: "'In' is appropriate since drawers represent enclosed containing spaces."
-            },
-            {
-                q: "11. School location\nWhich sentence correctly describes students studying inside the library?",
-                options: ["a) The students are at the library.", "b) The students are in the library.", "c) The students are on the library.", "d) The students are by the library."],
-                ans: "b) The students are in the library.",
-                exp: "'In the library' highlights being physically located inside the interior room structure."
-            },
-            {
-                q: "12. Travel through a place\nThe tourists walked through the forest to reach the waterfall. Which preposition shows movement inside a space?",
-                options: ["a) through", "b) at", "c) on", "d) in"],
-                ans: "a) through",
-                exp: "'Through' shows movement inside an enclosed space."
+                q: "1. Riya wakes up at 6:30 a.m. every day. She gets ready, eats breakfast, and leaves for school. Which sentence best uses a preposition of time?",
+    options: [
+        "a) Riya wakes up in 6:30 a.m.",
+        "b) Riya wakes up at 6:30 a.m.",
+        "c) Riya wakes up on 6:30 a.m.",
+        "d) Riya wakes up by 6:30 a.m."
+    ],
+    ans: "b) Riya wakes up at 6:30 a.m.",
+    exp: "'At' is used for exact times such as 6:30 a.m."
+},
+{
+    q: "2. The annual sports day is planned in March. Which sentence is correct?",
+    options: [
+        "a) The sports day is on March.",
+        "b) The sports day is at March.",
+        "c) The sports day is in March.",
+        "d) The sports day is by March."
+    ],
+    ans: "c) The sports day is in March.",
+    exp: "'In' is used for months like March."
+},
+{
+    q: "3. Aarav keeps his lunch box inside the school bag. Which preposition best completes the sentence?",
+    options: [
+        "a) on",
+        "b) at",
+        "c) in",
+        "d) by"
+    ],
+    ans: "c) in",
+    exp: "'In' is used to show something inside an enclosed space."
+},
+{
+    q: "4. A notice is stuck to the wall near the classroom door. Which preposition is correct for the wall?",
+    options: [
+        "a) on",
+        "b) in",
+        "c) at",
+        "d) by"
+    ],
+    ans: "a) on",
+    exp: "'On' is used for something attached to a surface like a wall."
+},
+{
+    q: "5. The family is travelling from Mumbai to Delhi by train. Which sentence is correct?",
+    options: [
+        "a) The family is travelling in Mumbai to Delhi on train.",
+        "b) The family is travelling from Mumbai to Delhi by train.",
+        "c) The family is travelling at Mumbai to Delhi by train.",
+        "d) The family is travelling on Mumbai to Delhi in train."
+    ],
+    ans: "b) The family is travelling from Mumbai to Delhi by train.",
+    exp: "'By train' is the correct expression for travel."
+},
+{
+    q: "6. A student says, \"I go to school _ bus every day.\" Which preposition fits best?",
+    options: [
+        "a) by",
+        "b) in",
+        "c) on",
+        "d) at"
+    ],
+    ans: "a) by",
+    exp: "'By' is used with modes of transport."
+},
+{
+    q: "7. Read the message:\n\"See you in Monday morning.\"\nWhat is the correct version?",
+    options: [
+        "a) See you at Monday morning.",
+        "b) See you on Monday morning.",
+        "c) See you in Monday morning.",
+        "d) See you by Monday morning."
+    ],
+    ans: "b) See you on Monday morning.",
+    exp: "'On' is used for specific days such as Monday morning."
+},
+{
+    q: "8. The teacher says, \"We will meet _ 5 p.m. sharp.\" Which preposition is correct?",
+    options: [
+        "a) on",
+        "b) in",
+        "c) at",
+        "d) by"
+    ],
+    ans: "c) at",
+    exp: "'At' is used for exact times."
+},
+{
+    q: "9. A student says, \"We went _ a cruise during the summer holidays.\" Which preposition is correct?",
+    options: [
+        "a) on",
+        "b) in",
+        "c) by",
+        "d) at"
+    ],
+    ans: "a) on",
+    exp: "We say 'on a cruise'."
+},
+{
+    q: "10. Aarav writes: \"The keys are on the drawer.\"\nWhat is the best correction?",
+    options: [
+        "a) The keys are in the drawer.",
+        "b) The keys are at the drawer.",
+        "c) The keys are by the drawer.",
+        "d) The keys are on drawer."
+    ],
+    ans: "a) The keys are in the drawer.",
+    exp: "'In' is correct because the keys are inside the drawer."
+},
+{
+    q: "11. Which sentence correctly describes students studying inside the library?",
+    options: [
+        "a) The students are at the library.",
+        "b) The students are in the library.",
+        "c) The students are on the library.",
+        "d) The students are by the library."
+    ],
+    ans: "b) The students are in the library.",
+    exp: "'In the library' means inside the library."
+},
+{
+    q: "12. The tourists walked through the forest to reach the waterfall. Which preposition shows movement inside a space?",
+    options: [
+        "a) through",
+        "b) at",
+        "c) on",
+        "d) in"
+    ],
+    ans: "a) through",
+    exp: "'Through' shows movement from one side of a place to the other."
             }
         ];
 
