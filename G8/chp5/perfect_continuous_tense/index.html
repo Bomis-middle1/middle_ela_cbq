@@ -1,1 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 English - Perfect Continuous Tenses Game</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --background: #f1f5f9;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #cbd5e1;
+            --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
 
+        body.high-contrast {
+            --primary: #000000;
+            --primary-dark: #000000;
+            --secondary: #1d4ed8;
+            --accent: #c2410c;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-light: #334155;
+            --success: #047857;
+            --error: #b91c1c;
+            --border: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Ambient Animated Time-Themed Background */
+        .bg-animations {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            font-size: 2.2rem;
+            opacity: 0.08;
+            animation: floatSlow 22s infinite linear;
+            user-select: none;
+        }
+
+        @keyframes floatSlow {
+            0% { transform: translateY(105vh) translateX(0) rotate(0deg); }
+            50% { transform: translateY(50vh) translateX(60px) rotate(180deg); opacity: 0.12; }
+            100% { transform: translateY(-10vh) translateX(-60px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Mandatory Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #splash-screen img {
+            max-width: 75%;
+            max-height: 55%;
+            object-fit: contain;
+        }
+
+        /* UI Toolbar controls */
+        .controls-tray {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 850px;
+            z-index: 20;
+        }
+
+        .tray-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 10px;
+        }
+
+        .volume-slider {
+            width: 70px;
+            cursor: pointer;
+        }
+
+        /* Game Container Cards */
+        .game-card {
+            display: none;
+            width: 100%;
+            max-width: 850px;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08);
+            border: 2px solid var(--border);
+            z-index: 10;
+            position: relative;
+            text-align: center;
+        }
+
+        .badge {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 16px 36px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+            text-transform: uppercase;
+        }
+
+        .btn-primary:hover {
+            background-color: #d97706;
+            transform: translateY(-2px);
+        }
+
+        /* HUD Items */
+        .hud-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+            background: rgba(99, 102, 241, 0.03);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hud-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .hud-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-top: 4px;
+        }
+
+        /* Progress Bar */
+        .progress-track {
+            width: 100%;
+            height: 12px;
+            background-color: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        /* Question and Options Design */
+        .question-box {
+            text-align: left;
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            color: var(--text);
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 16px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: rgba(99, 102, 241, 0.02);
+            transform: translateX(4px);
+        }
+
+        .option-btn.correct {
+            background-color: #ecfdf5 !important;
+            border-color: var(--success) !important;
+            color: var(--success) !important;
+        }
+
+        .option-btn.wrong {
+            background-color: #fef2f2 !important;
+            border-color: var(--error) !important;
+            color: var(--error) !important;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* Explanation Box Component */
+        .explanation-card {
+            background-color: #f8fafc;
+            border-left: 5px solid var(--secondary);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            text-align: left;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        /* Final Bonus Challenge Styles */
+        .duration-container {
+            border: 2px dashed var(--secondary);
+            background: rgba(14, 165, 233, 0.02);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .detective-lanes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .detective-lane {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .detective-title {
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            color: var(--primary-dark);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .detective-drop {
+            background: #ffffff;
+            border: 2px dashed #cbd5e1;
+            padding: 15px;
+            min-height: 110px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detective-drop.active-target {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.02);
+        }
+
+        .challenge-vault {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .challenge-chip {
+            background: white;
+            border: 2px solid var(--secondary);
+            color: var(--text);
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .challenge-chip.assigned {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .placed-item {
+            background: var(--primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Star Confetti elements */
+        .confetti-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 999;
+        }
+
+        .star-particle {
+            position: absolute; width: 16px; height: 16px;
+            background: #f59e0b;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: fallEffect 2s ease-out forwards;
+        }
+
+        @keyframes fallEffect {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+
+        @media (max-width: 700px) {
+            .game-card { padding: 20px; }
+            h1 { font-size: 1.6rem; }
+            .hud-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .detective-lanes { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animations" id="bg-elements"></div>
+    <div class="confetti-canvas" id="confetti-holder"></div>
+
+    <audio id="sound-click" src="assets/click.mp3" preload="auto"></audio>
+    <audio id="sound-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="sound-clapping" src="assets/clapping.mp3" preload="auto"></audio>
+
+    <div class="controls-tray" id="utility-tray" style="display:none;">
+        <div class="volume-container">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-light);">VOL</span>
+            <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.1" value="0.5">
+        </div>
+        <button class="tray-btn" id="mute-btn" onclick="toggleMuteState()">🔊 Mute</button>
+        <button class="tray-btn" onclick="toggleContrastMode()">🌓 Contrast</button>
+    </div>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Educational Logo">
+    </div>
+
+    <div id="screen-intro" class="game-card">
+        <div class="badge">Grade 7 English Lesson</div>
+        <h1>Perfect Continuous Tenses</h1>
+        <p>Master ongoing actions tracking through time! Test your operational command of Present, Past, and Future Perfect Continuous Tense structures across 20 practice questions.</p>
+        
+        <div style="background: rgba(99, 102, 241, 0.02); padding: 15px 20px; border-radius: 12px; margin-bottom: 30px; text-align: left; font-size: 0.95rem; line-height: 1.5; border: 1px solid var(--border);">
+            <strong>Gameplay Rules:</strong>
+            <ul style="margin-left: 20px; margin-top: 6px; color: var(--text-light);">
+                <li>Each question grants a maximum of <strong>45 seconds</strong> response time.</li>
+                <li>An incorrect selection gives you <strong>one retry opportunity</strong>.</li>
+                <li>Desktop keyboard options <kbd>A</kbd>, <kbd>B</kbd>, <kbd>C</kbd>, or <kbd>D</kbd> function as immediate choice hotkeys.</li>
+            </ul>
+        </div>
+        
+        <button class="btn-primary" onclick="launchGameWorkflow()">Start Game</button>
+    </div>
+
+    <div id="screen-assessment" class="game-card">
+        <div class="hud-grid">
+            <div class="hud-item">
+                <span class="hud-label">Question</span>
+                <span class="hud-value" id="hud-progress-txt">1 / 20</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Score</span>
+                <span class="hud-value" id="hud-score-txt">0 / 20</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Attempt</span>
+                <span class="hud-value" id="hud-attempt-txt">1 / 2</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Timer</span>
+                <span class="hud-value" id="hud-timer-txt" style="color:var(--accent);">45s</span>
+            </div>
+        </div>
+
+        <div class="progress-track">
+            <div class="progress-bar-fill" id="hud-progress-fill"></div>
+        </div>
+
+        <div class="question-box" id="live-question-text">Loading question text...</div>
+        <div class="options-grid" id="live-options-box"></div>
+
+        <div class="explanation-card" id="live-explanation-box">
+            <div class="explanation-title" id="explanation-title-text">Correct Answer:</div>
+            <div style="font-size:0.95rem; line-height:1.45; color:var(--text-light);" id="explanation-body-text">Explanation Content...</div>
+        </div>
+    </div>
+
+    <div id="screen-challenge" class="game-card">
+        <div class="badge">🎁 Bonus Reward Level</div>
+        <h1>Duration Detective Challenge</h1>
+        <p>Categorize the time expressions by dragging/tapping them into the proper "Since" (point in time) or "For" (length of time) column box below!</p>
+        
+        <div class="duration-container">
+            <div class="detective-lanes">
+                <div class="detective-lane">
+                    <div class="detective-title">🎯 Since (Specific Point)</div>
+                    <div class="detective-drop" id="lane-zone-since"></div>
+                </div>
+                <div class="detective-lane">
+                    <div class="detective-title">⏱️ For (Duration Span)</div>
+                    <div class="detective-drop" id="lane-zone-for"></div>
+                </div>
+            </div>
+
+            <div class="challenge-vault" id="challenge-chips-vault"></div>
+        </div>
+
+        <button class="btn-primary" onclick="verifyDetectiveChallenge()" style="background-color: var(--primary);">Evaluate Time Matrix</button>
+    </div>
+
+    <div id="screen-result" class="game-card">
+        <div class="badge">Session Summary Profile</div>
+        <h1 id="res-headline-message">Calculating Metrics...</h1>
+        <p id="res-description-text">Review your diagnostic scores down below.</p>
+
+        <div class="hud-grid" style="max-width: 550px; margin: 0 auto 30px auto;">
+            <div class="hud-item">
+                <span class="hud-label">Final Score</span>
+                <span class="hud-value" id="res-ratio">0 / 20</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Percentage</span>
+                <span class="hud-value" id="res-percentage">0%</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Correct</span>
+                <span class="hud-value" id="res-correct" style="color:var(--success);">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Wrong</span>
+                <span class="hud-value" id="res-wrong" style="color:var(--error);">0</span>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
+            <button class="btn-primary" onclick="launchGameWorkflow()">Restart Game</button>
+            <button class="btn-primary" onclick="launchGameWorkflow()" style="background-color:var(--secondary);">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // STRICT COMPLETE MASTER DATASET REPOSITORY
+        const rawQuestionRepository = [
+            {
+                q: "1. Riya has been practicing the guitar for two hours. Which tense is used in the sentence?",
+                options: ["a) Present perfect", "b) Present perfect continuous", "c) Past perfect continuous", "d) Future perfect continuous"],
+                ans: "b) Present perfect continuous",
+                exp: "Correct Answer:\n b \n\nBrief Explanation:\nThe sentence uses 'has been practicing' which represents the present perfect continuous tense framework describing an ongoing activity linked to the present."
+            },
+            {
+                q: "2. The workers had been repairing the road before the rain started. Which tense is used in the sentence?",
+                options: ["a) Present perfect continuous", "b) Past perfect", "c) Past perfect continuous", "d) Future perfect continuous"],
+                ans: "c) Past perfect continuous",
+                exp: "Correct Answer:\n c \n\nBrief Explanation:\nThe structure 'had been repairing' correctly signals the past perfect continuous aspect, indicating an action that was ongoing prior to another specific point or action in past time."
+            },
+            {
+                q: "3. By next Friday, we will have been preparing for the exams for two weeks. Which tense is used in the sentence?",
+                options: ["a) Present perfect continuous", "b) Past perfect continuous", "c) Future perfect", "d) Future perfect continuous"],
+                ans: "d) Future perfect continuous",
+                exp: "Correct Answer:\n d \n\nBrief Explanation:\nThe syntax layout 'will have been preparing' combined with 'By next Friday' demonstrates the future perfect continuous configuration explicitly."
+            },
+            {
+                q: "4. Which sentence is in the present perfect continuous tense?",
+                options: ["a) She has been reading a novel since morning.", "b) She has read a novel since morning.", "c) She was reading a novel since morning.", "d) She will have been reading a novel since morning."],
+                ans: "a) She has been reading a novel since morning.",
+                exp: "Correct Answer:\n a \n\nBrief Explanation:\nOption 'a' matches the structural standard: subject + has/have + been + verb-ing, reflecting a continuous task tracking from a past origin."
+            },
+            {
+                q: "5. Which sentence is in the past perfect continuous tense?",
+                options: ["a) They had been waiting for the bus before it arrived.", "b) They have been waiting for the bus before it arrived.", "c) They will have been waiting for the bus before it arrived.", "d) They were waiting for the bus before it arrived."],
+                ans: "a) They had been waiting for the bus before it arrived.",
+                exp: "Correct Answer:\n a \n\nBrief Explanation:\nOption 'a' perfectly incorporates the continuous auxiliary modifier 'had been waiting' matching actions preceding past occurrences."
+            },
+            {
+                q: "6. Which sentence is in the future perfect continuous tense?",
+                options: ["a) I have been studying for three hours.", "b) I had been studying for three hours.", "c) I will have been studying for three hours by 8 p.m.", "d) I will study for three hours by 8 p.m."],
+                ans: "c) I will have been studying for three hours by 8 p.m.",
+                exp: "Correct Answer:\n c \n\nBrief Explanation:\nThe compound auxiliary 'will have been studying' sets up a future context bounding ongoing time measurements against a milestone index point."
+            },
+            {
+                q: "7. The players ________ for an hour before the coach arrived.",
+                options: ["a) have been practicing", "b) had been practicing", "c) will have been practicing", "d) practiced"],
+                ans: "b) had been practicing",
+                exp: "Correct Answer:\n b \n\nBrief Explanation:\nThe relative phrase 'before the coach arrived' indicates a past action, thus the preceding continuous period demands past perfect continuous 'had been practicing'."
+            },
+            {
+                q: "8. Meera ________ since 6 o'clock, so she needs a break.",
+                options: ["a) studies", "b) has been studying", "c) had been studying", "d) will have been studying"],
+                ans: "b) has been studying",
+                exp: "Correct Answer:\n b \n\nBrief Explanation:\nThe expression 'so she needs a break' demonstrates that the action is bound to present conditions, establishing present perfect continuous 'has been studying'."
+            },
+            {
+                q: "9. By this time tomorrow, we ________ on the project for five days.",
+                options: ["a) have been working", "b) had been working", "c) will have been working", "d) work"],
+                ans: "c) will have been working",
+                exp: "Correct Answer:\n c \n\nBrief Explanation:\nThe prefix phrase 'By this time tomorrow' acts as a clear future horizon marker requiring the application of 'will have been working'."
+            },
+            {
+                q: "10. Aarav started painting at 9 a.m. He is still painting at noon. Which sentence best describes this?",
+                options: ["a) Aarav has painted since 9 a.m.", "b) Aarav has been painting since 9 a.m.", "c) Aarav had been painting since 9 a.m.", "d) Aarav will have been painting since 9 a.m."],
+                ans: "b) Aarav has been painting since 9 a.m.",
+                exp: "Correct Answer:\n b \n\nBrief Explanation:\nBecause painting initiated historically and proceeds without interruption through the current reference hour, present perfect continuous is the precise match."
+            },
+            {
+                q: "11. The children were tired because they ________ in the playground for two hours before lunch.",
+                options: ["a) have been playing", "b) had been playing", "c) will have been playing", "d) play"],
+                ans: "b) had been playing",
+                exp: "Correct Answer:\n b \n\nBrief Explanation:\nThe frame of reference 'were tired' establishes a past setting, specifying 'had been playing' to define duration leading up to that point."
+            },
+            {
+                q: "12. By next month, my father ________ at this company for twenty years.",
+                options: ["a) has been working", "b) had been working", "c) will have been working", "d) works"],
+                ans: "c) will have been working",
+                exp: "Correct Answer:\n c \n\nBrief Explanation:\n'By next month' indexes an explicit forward milestone indicator, requiring future perfect continuous syntax configuration to structure duration metrics."
+            },
+            {
+                q: "13. Which sentence is correct?",
+                options: ["a) She have been studying since morning.", "b) She has been studying since morning.", "c) She has studying since morning.", "d) She has been study since morning."],
+                ans: "b) She has been studying since morning.",
+                exp: "Correct Answer:\n b \n\nBrief Explanation:\nThe singular subject pronoun 'She' matches properly with the auxiliary 'has' combined with 'been' and the participle 'studying'."
+            },
+            {
+                q: "14. Which sentence is correct?",
+                options: ["a) They had been waiting before the train arrived.", "b) They had waiting before the train arrived.", "c) They have been waiting before the train arrived.", "d) They will had been waiting before the train arrived."],
+                ans: "a) They had been waiting before the train arrived.",
+                exp: "Correct Answer:\n a \n\nBrief Explanation:\nOption 'a' implements standard past perfect continuous structural mapping parameters perfectly before coordinating with simple past context markers."
+            },
+            {
+                q: "15. Which sentence is correct?",
+                options: ["a) By tomorrow, I will have been working here for a year.", "b) By tomorrow, I have been working here for a year.", "c) By tomorrow, I had been working here for a year.", "d) By tomorrow, I will been working here for a year."],
+                ans: "a) By tomorrow, I will have been working here for a year.",
+                exp: "Correct Answer:\n a \n\nBrief Explanation:\nOption 'a' adheres strictly to correct structural layout requirements for mapping ongoing action duration parameters to a future deadline."
+            },
+            {
+                q: "16. Which time expression is commonly used with the present perfect continuous tense?",
+                options: ["a) Yesterday", "b) Last week", "c) Since", "d) Tomorrow"],
+                ans: "c) Since",
+                exp: "Correct Answer:\n c \n\nBrief Explanation:\n'Since' specifies the exact starting point of a continuous action tracking continuously up to the present moment."
+            },
+            {
+                q: "17. Which sentence shows an action that started in the past and is still continuing?",
+                options: ["a) She has been learning French for three years.", "b) She learned French last year.", "c) She will learn French next year.", "d) She learns French every Sunday."],
+                ans: "a) She has been learning French for three years.",
+                exp: "Correct Answer:\n a \n\nBrief Explanation:\nThe present perfect continuous sentence 'She has been learning...' emphasizes a task that remains active and incomplete in current timelines."
+            },
+            {
+                q: "18. Which sentence shows an action continuing up to a point in the past?",
+                options: ["a) I have been waiting for an hour.", "b) I had been waiting for an hour before the bus arrived.", "c) I will have been waiting for an hour.", "d) I waited for an hour."],
+                ans: "b) I had been waiting for an hour before the bus arrived.",
+                exp: "Correct Answer:\n b \n\nBrief Explanation:\nOption 'b' correctly leverages past perfect continuous syntax to demonstrate continuous duration before an incoming historical milestone event."
+            },
+            {
+                q: "19. Which sentence shows an action that will continue until a future point?",
+                options: ["a) We have been traveling for two days.", "b) We had been traveling for two days.", "c) We will have been traveling for two days by Friday.", "d) We traveled for two days."],
+                ans: "c) We will have been traveling for two days by Friday.",
+                exp: "Correct Answer:\n c \n\nBrief Explanation:\nFuture perfect continuous forms are designed to outline ongoing action spans leading right up into targeted future boundaries ('by Friday')."
+            },
+            {
+                q: "20. Which sentence correctly uses the present perfect continuous tense?",
+                options: ["a) He has been playing football since 5 p.m.", "b) He has played football since 5 p.m.", "c) He had been playing football since 5 p.m.", "d) He will have been playing football since 5 p.m"],
+                ans: "a) He has been playing football since 5 p.m.",
+                exp: "Correct Answer:\n a \n\nBrief Explanation:\nOption 'a' matches subject-verb agreement guidelines perfectly while using the correct present perfect continuous structure."
+            }
+        ];
+
+        // ENGINE VARIABLE SYSTEM
+        let sessionActiveQuestions = [];
+        let indexQuestionCursor = 0;
+        let cumulativeScoreTally = 0;
+        let counterTriesLeft = 2;
+        let globalTimerRef = null;
+        let numericTimeRemaining = 45;
+        let userVolumeSettingValue = 0.5;
+        let flagAudioIsMuted = false;
+
+        // Challenge State Tracking
+        let detectiveAssignments = { since: [], for: [] };
+        const challengeChipsData = [
+            { id: "c1", label: "6 o'clock", correct: "since" },
+            { id: "c2", label: "Three hours", correct: "for" },
+            { id: "c3", label: "Morning", correct: "since" },
+            { id: "c4", label: "Five days", correct: "for" },
+            { id: "c5", label: "2018", correct: "since" },
+            { id: "c6", label: "Two weeks", correct: "for" }
+        ];
+
+        window.onload = function() {
+            initializeVisualThemeScenery();
+            
+            // Mandatory 5 Second Delay Splash Execution
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.getElementById('utility-tray').style.display = 'flex';
+                    viewRouter('screen-intro');
+                }, 800);
+            }, 5000);
+
+            configureAudioVolumeSliders();
+            registerKeyboardNavigationTriggers();
+        };
+
+        function initializeVisualThemeScenery() {
+            const backgroundCanvas = document.getElementById('bg-elements');
+            const iconsSet = ['⏰', '⏳', '📅', '📝', '✨', '🕒', '📓'];
+            for(let i=0; i<20; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.innerText = iconsSet[Math.floor(Math.random() * iconsSet.length)];
+                element.style.left = `${Math.random() * 100}vw`;
+                element.style.animationDelay = `${Math.random() * 6}s`;
+                element.style.animationDuration = `${Math.random() * 12 + 16}s`;
+                backgroundCanvas.appendChild(element);
+            }
+        }
+
+        function viewRouter(screenId) {
+            document.querySelectorAll('.game-card').forEach(card => card.style.display = 'none');
+            document.getElementById(screenId).style.display = 'block';
+        }
+
+        function configureAudioVolumeSliders() {
+            const slider = document.getElementById('volume-slider');
+            slider.addEventListener('input', (e) => {
+                userVolumeSettingValue = e.target.value;
+                ['sound-click', 'sound-correct', 'sound-wrong', 'sound-clapping'].forEach(audioId => {
+                    document.getElementById(audioId).volume = userVolumeSettingValue;
+                });
+            });
+        }
+
+        function registerKeyboardNavigationTriggers() {
+            window.addEventListener('keydown', (event) => {
+                if(document.getElementById('screen-assessment').style.display === 'block') {
+                    const keystrokeRouteMapping = { 'a':0, 'b':1, 'c':2, 'd':3, 'A':0, 'B':1, 'C':2, 'D':3 };
+                    if(event.key in keystrokeRouteMapping) {
+                        const targetedIndex = keystrokeRouteMapping[event.key];
+                        const collection = document.querySelectorAll('.option-btn');
+                        if(collection[targetedIndex] && !collection[targetedIndex].disabled) {
+                            collection[targetedIndex].click();
+                        }
+                    }
+                }
+            });
+        }
+
+        function shuffleDataArray(inputArray) {
+            for (let i = inputArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [inputArray[i], inputArray[j]] = [inputArray[j], inputArray[i]];
+            }
+            return inputArray;
+        }
+
+        function launchGameWorkflow() {
+            triggerSoundPlayback('sound-click');
+            sessionActiveQuestions = shuffleDataArray(JSON.parse(JSON.stringify(rawQuestionRepository)));
+            sessionActiveQuestions.forEach(item => shuffleDataArray(item.options));
+            
+            indexQuestionCursor = 0;
+            cumulativeScoreTally = 0;
+            
+            viewRouter('screen-assessment');
+            buildQuestionDisplayView();
+        }
+
+        function buildQuestionDisplayView() {
+            counterTriesLeft = 2;
+            numericTimeRemaining = 45;
+            document.getElementById('live-explanation-box').style.display = 'none';
+            synchronizeUIMetricsHUD();
+
+            const dataObj = sessionActiveQuestions[indexQuestionCursor];
+            document.getElementById('live-question-text').innerText = dataObj.q;
+
+            const box = document.getElementById('live-options-box');
+            box.innerHTML = '';
+
+            dataObj.options.forEach(variantString => {
+                const buttonElement = document.createElement('button');
+                buttonElement.className = 'option-btn';
+                buttonElement.innerHTML = `<span>${variantString}</span>`;
+                buttonElement.onclick = () => parseOptionSelection(buttonElement, variantString);
+                box.appendChild(buttonElement);
+            });
+
+            initiateCountdownTicker();
+        }
+
+        function initiateCountdownTicker() {
+            clearInterval(globalTimerRef);
+            document.getElementById('hud-timer-txt').innerText = `${numericTimeRemaining}s`;
+            globalTimerRef = setInterval(() => {
+                numericTimeRemaining--;
+                document.getElementById('hud-timer-txt').innerText = `${numericTimeRemaining}s`;
+                if(numericTimeRemaining <= 0) {
+                    clearInterval(globalTimerRef);
+                    processTimerExpirationEvent();
+                }
+            }, 1000);
+        }
+
+        function synchronizeUIMetricsHUD() {
+            document.getElementById('hud-progress-txt').innerText = `${indexQuestionCursor + 1} / 20`;
+            document.getElementById('hud-score-txt').innerText = `Score: ${cumulativeScoreTally} / 20`;
+            document.getElementById('hud-attempt-txt').innerText = `${3 - counterTriesLeft} / 2`;
+            const fillWidthPercentage = (indexQuestionCursor / 20) * 100;
+            document.getElementById('hud-progress-fill').style.width = `${fillWidthPercentage}%`;
+        }
+
+        function parseOptionSelection(clickedDomNode, variantValueString) {
+            triggerSoundPlayback('sound-click');
+            const questionData = sessionActiveQuestions[indexQuestionCursor];
+            const validatesCorrectly = variantValueString.trim() === questionData.ans.trim();
+
+            if(validatesCorrectly) {
+                clearInterval(globalTimerRef);
+                clickedDomNode.classList.add('correct');
+                clickedDomNode.innerHTML += ' <span>⭐</span>';
+                freezeOptionsSelectionGrid();
+                cumulativeScoreTally++;
+                synchronizeUIMetricsHUD();
+                fireStarBurstConfetti();
+                triggerSoundPlayback('sound-correct');
+                setTimeout(proceedToSubsequentStage, 2000);
+            } else {
+                counterTriesLeft--;
+                clickedDomNode.classList.add('wrong');
+                clickedDomNode.innerHTML += ' <span>❌</span>';
+                clickedDomNode.disabled = true;
+                triggerSoundPlayback('sound-wrong');
+                synchronizeUIMetricsHUD();
+
+                if(counterTriesLeft <= 0) {
+                    clearInterval(globalTimerRef);
+                    freezeOptionsSelectionGrid();
+                    displayAnswerExplanationCard();
+                }
+            }
+        }
+
+        function processTimerExpirationEvent() {
+            freezeOptionsSelectionGrid();
+            displayAnswerExplanationCard();
+        }
+
+        function freezeOptionsSelectionGrid() {
+            document.querySelectorAll('.option-btn').forEach(node => node.disabled = true);
+        }
+
+        function displayAnswerExplanationCard() {
+            const questionData = sessionActiveQuestions[indexQuestionCursor];
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                if(btn.innerText.trim().startsWith(questionData.ans.trim().substring(0, 6))) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            const targetBox = document.getElementById('live-explanation-box');
+            document.getElementById('explanation-title-text').innerText = `Correct Answer: ${questionData.ans}`;
+            document.getElementById('explanation-body-text').innerText = questionData.exp.replace(/Correct Answer:.*\n/g, '');
+            targetBox.style.display = 'block';
+
+            setTimeout(proceedToSubsequentStage, 5000);
+        }
+
+        function proceedToSubsequentStage() {
+            indexQuestionCursor++;
+            if(indexQuestionCursor < 20) {
+                buildQuestionDisplayView();
+            } else {
+                initiateBonusChallengeArena();
+            }
+        }
+
+        function initiateBonusChallengeArena() {
+            viewRouter('screen-challenge');
+            detectiveAssignments = { since: [], for: [] };
+            
+            document.getElementById('lane-zone-since').innerHTML = '';
+            document.getElementById('lane-zone-for').innerHTML = '';
+
+            const shuffledChips = shuffleDataArray([...challengeChipsData]);
+            const storageVault = document.getElementById('challenge-chips-vault');
+            storageVault.innerHTML = '';
+
+            shuffledChips.forEach(chipObj => {
+                const itemNode = document.createElement('div');
+                itemNode.className = 'challenge-chip';
+                itemNode.innerText = chipObj.label;
+                itemNode.id = chipObj.id;
+                itemNode.onclick = () => routeChipToVacantLane(chipObj, itemNode);
+                storageVault.appendChild(itemNode);
+            });
+        }
+
+        function routeChipToVacantLane(chipMetadata, domElement) {
+            triggerSoundPlayback('sound-click');
+            let assignedCategory = '';
+            
+            if (detectiveAssignments.since.length <= detectiveAssignments.for.length) {
+                assignedCategory = 'since';
+            } else {
+                assignedCategory = 'for';
+            }
+
+            detectiveAssignments[assignedCategory].push(chipMetadata);
+            domElement.classList.add('assigned');
+
+            const containerBox = document.getElementById(`lane-zone-${assignedCategory}`);
+            const interactivePill = document.createElement('div');
+            interactivePill.className = 'placed-item';
+            interactivePill.innerText = chipMetadata.label;
+            interactivePill.onclick = (e) => {
+                e.stopPropagation();
+                removeChipFromLane(assignedCategory, chipMetadata.id);
+            };
+            containerBox.appendChild(interactivePill);
+        }
+
+        function removeChipFromLane(categoryKey, chipUniqueId) {
+            triggerSoundPlayback('sound-click');
+            detectiveAssignments[categoryKey] = detectiveAssignments[categoryKey].filter(c => c.id !== chipUniqueId);
+            document.getElementById(chipUniqueId).classList.remove('assigned');
+            
+            // Re-render lanes visually
+            ['since', 'for'].forEach(key => {
+                const box = document.getElementById(`lane-zone-${key}`);
+                box.innerHTML = '';
+                detectiveAssignments[key].forEach(c => {
+                    const pill = document.createElement('div');
+                    pill.className = 'placed-item';
+                    pill.innerText = c.label;
+                    pill.onclick = (e) => {
+                        e.stopPropagation();
+                        removeChipFromLane(key, c.id);
+                    };
+                    box.appendChild(pill);
+                });
+            });
+        }
+
+        function verifyDetectiveChallenge() {
+            let matchesPerfectly = true;
+            
+            challengeChipsData.forEach(item => {
+                const foundInSince = detectiveAssignments.since.some(c => c.id === item.id);
+                const foundInFor = detectiveAssignments.for.some(c => c.id === item.id);
+                
+                if (item.correct === 'since' && !foundInSince) matchesPerfectly = false;
+                if (item.correct === 'for' && !foundInFor) matchesPerfectly = false;
+            });
+
+            if(matchesPerfectly) {
+                triggerSoundPlayback('sound-correct');
+                fireStarBurstConfetti();
+                alert("🏆 Exceptional! You sorted every single time expression into its proper functional domain.");
+            } else {
+                triggerSoundPlayback('sound-wrong');
+                alert("❌ Some expressions are in the incorrect columns. Review duration metrics and try again!");
+            }
+
+            setTimeout(renderFinalMetricsSummary, 1200);
+        }
+
+        function renderFinalMetricsSummary() {
+            viewRouter('screen-result');
+            triggerSoundPlayback('sound-clapping');
+
+            document.getElementById('res-ratio').innerText = `${cumulativeScoreTally} / 20`;
+            const accuracyVal = Math.round((cumulativeScoreTally / 20) * 100);
+            document.getElementById('res-percentage').innerText = `${accuracyVal}%`;
+            document.getElementById('res-correct').innerText = cumulativeScoreTally;
+            document.getElementById('res-wrong').innerText = 20 - cumulativeScoreTally;
+
+            const headlineNode = document.getElementById('res-headline-message');
+            const descriptionNode = document.getElementById('res-description-text');
+
+            if(accuracyVal >= 85) {
+                headlineNode.innerText = "🏆 Time Master!";
+                descriptionNode.innerText = "Superb execution accuracy! You demonstrate absolute control identifying perfect continuous structural variables.";
+            } else if(accuracyVal >= 70) {
+                headlineNode.innerText = "🌟 Excellent!";
+                descriptionNode.innerText = "Highly proficient structural understanding. Re-examine timeline items to achieve total mastery.";
+            } else if(accuracyVal >= 50) {
+                headlineNode.innerText = "🎉 Great Job!";
+                descriptionNode.innerText = "Solid conversational grasp. Pay closer attention to verb patterns across complex conditions.";
+            } else {
+                headlineNode.innerText = "📘 Keep Practising!";
+                descriptionNode.innerText = "Review continuous indicators and structural rules to confidently improve performance parameters.";
+            }
+        }
+
+        function triggerSoundPlayback(id) {
+            if(flagAudioIsMuted) return;
+            const element = document.getElementById(id);
+            if(element) {
+                element.currentTime = 0;
+                element.play().catch(() => {});
+            }
+        }
+
+        function toggleMuteState() {
+            flagAudioIsMuted = !flagAudioIsMuted;
+            document.getElementById('mute-btn').innerText = flagAudioIsMuted ? "🔇 Muted" : "🔊 Mute";
+        }
+
+        function toggleContrastMode() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function fireStarBurstConfetti() {
+            const container = document.getElementById('confetti-holder');
+            const colorPalette = ['#6366f1', '#0ea5e9', '#f59e0b', '#10b981'];
+            for(let i=0; i<40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'star-particle';
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.backgroundColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+                particle.style.animationDelay = `${Math.random() * 0.3}s`;
+                container.appendChild(particle);
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+    </script>
+</body>
+</html>
