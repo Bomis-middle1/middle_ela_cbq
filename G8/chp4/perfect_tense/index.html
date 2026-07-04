@@ -1,1 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 English - Perfect Tenses Interactive Learning Game</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-light: #475569;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #e2e8f0;
+            --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
+        body.high-contrast {
+            --primary: #000000;
+            --primary-dark: #000000;
+            --secondary: #1e3a8a;
+            --accent: #d97706;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-light: #1e293b;
+            --success: #047857;
+            --error: #b91c1c;
+            --border: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Animated Environment Background */
+        .bg-animations {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.06;
+            animation: floatSlow 20s infinite linear;
+            user-select: none;
+        }
+
+        @keyframes floatSlow {
+            0% { transform: translateY(105vh) translateX(0) rotate(0deg); }
+            50% { transform: translateY(50vh) translateX(50px) rotate(180deg); opacity: 0.1; }
+            100% { transform: translateY(-10vh) translateX(-50px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Mandatory Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #splash-screen img {
+            max-width: 80%;
+            max-height: 60%;
+            object-fit: contain;
+        }
+
+        /* Game Container Cards */
+        .game-card {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.08);
+            border: 2px solid var(--border);
+            z-index: 10;
+            position: relative;
+            text-align: center;
+        }
+
+        .badge {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* UI Toolbar controls */
+        .controls-tray {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 800px;
+            z-index: 20;
+        }
+
+        .tray-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 10px;
+        }
+
+        .volume-slider {
+            width: 70px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 16px 36px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+            text-transform: uppercase;
+        }
+
+        .btn-primary:hover {
+            background-color: #d97706;
+            transform: translateY(-2px);
+        }
+
+        /* HUD Bars */
+        .hud-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+            background: rgba(79, 70, 229, 0.03);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hud-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .hud-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-top: 4px;
+        }
+
+        /* Progress Bar */
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background-color: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        /* Question and Options Area */
+        .question-box {
+            text-align: left;
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            color: var(--text);
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 16px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: rgba(79, 70, 229, 0.02);
+            transform: translateX(4px);
+        }
+
+        .option-btn.correct {
+            background-color: #ecfdf5 !important;
+            border-color: var(--success) !important;
+            color: var(--success) !important;
+        }
+
+        .option-btn.wrong {
+            background-color: #fef2f2 !important;
+            border-color: var(--error) !important;
+            color: var(--error) !important;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* Feedback Explanation Layer */
+        .explanation-card {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--secondary);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            text-align: left;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        /* Interactive Timeline Reward Layer */
+        .timeline-container {
+            border: 2px dashed var(--secondary);
+            background: rgba(6, 182, 212, 0.02);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .target-lanes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .lane {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .lane-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        .drop-zone {
+            background: #ffffff;
+            border: 2px dashed #cbd5e1;
+            padding: 15px;
+            min-height: 90px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .drop-zone.filled {
+            background: var(--primary);
+            color: white;
+            border-style: solid;
+        }
+
+        .items-vault {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .draggable-item {
+            background: white;
+            border: 2px solid var(--secondary);
+            color: var(--text);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .draggable-item.used {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* Confetti Stars */
+        .confetti-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 999;
+        }
+
+        .star {
+            position: absolute; width: 15px; height: 15px;
+            background: #f59e0b;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: fall 2s ease-out forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Review Screen Specifics */
+        .review-scroller {
+            max-height: 400px;
+            overflow-y: auto;
+            text-align: left;
+            margin: 25px 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .review-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .review-item:last-child { border-bottom: none; }
+
+        @media (max-width: 680px) {
+            .game-card { padding: 20px; }
+            h1 { font-size: 1.6rem; }
+            .hud-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .target-lanes { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animations" id="bg-elements"></div>
+    <div class="confetti-canvas" id="confetti-holder"></div>
+
+    <audio id="sound-click" src="assets/click.mp3" preload="auto"></audio>
+    <audio id="sound-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="sound-clapping" src="assets/clapping.mp3" preload="auto"></audio>
+
+    <div class="controls-tray" id="utility-tray" style="display:none;">
+        <div class="volume-container">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-light);">VOL</span>
+            <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.1" value="0.5">
+        </div>
+        <button class="tray-btn" id="mute-btn" onclick="toggleMuteState()">🔊 Mute</button>
+        <button class="tray-btn" onclick="toggleContrast()">🌓 Contrast</button>
+    </div>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Educational Branding Logo">
+    </div>
+
+    <div id="screen-intro" class="game-card">
+        <div class="badge">Grade 7 English Language</div>
+        <h1>Chapter: Perfect Tenses</h1>
+        <p>Step onto the timeline of completed actions! Test your knowledge on identifying and applying Present Perfect, Past Perfect, and Future Perfect sentence structures across 15 interactive questions.</p>
+        
+        <div style="background: rgba(79, 70, 229, 0.02); padding: 15px 20px; border-radius: 12px; margin-bottom: 30px; text-align: left; font-size: 0.95rem; line-height: 1.5; border: 1px solid var(--border);">
+            <strong>How to Play:</strong>
+            <ul style="margin-left: 20px; margin-top: 6px; color: var(--text-light);">
+                <li>Answer each question within the <strong>45-second</strong> time limit.</li>
+                <li>You have up to <strong>one retry</strong> for any incorrect response.</li>
+                <li>Use keys <kbd>A</kbd>, <kbd>B</kbd>, <kbd>C</kbd>, or <kbd>D</kbd> on desktop keyboard for quick inputs.</li>
+            </ul>
+        </div>
+        
+        <button class="btn-primary" onclick="initiateGameFlow()">Start Game</button>
+    </div>
+
+    <div id="screen-assessment" class="game-card">
+        <div class="hud-grid">
+            <div class="hud-item">
+                <span class="hud-label">Question</span>
+                <span class="hud-value" id="hud-progress-txt">1 / 15</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Total Score</span>
+                <span class="hud-value" id="hud-score-txt">0 / 15</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Attempt</span>
+                <span class="hud-value" id="hud-attempt-txt">1 / 2</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Time Left</span>
+                <span class="hud-value" id="hud-timer-txt" style="color:var(--accent);">45s</span>
+            </div>
+        </div>
+
+        <div class="progress-track">
+            <div class="progress-bar-fill" id="hud-progress-fill"></div>
+        </div>
+
+        <div class="question-box" id="live-question-text">Loading question context...</div>
+        <div class="options-grid" id="live-options-box"></div>
+
+        <div class="explanation-card" id="live-explanation-box">
+            <div class="explanation-title" id="explanation-title-text">Correct Answer:</div>
+            <div style="font-size:0.95rem; line-height:1.4; color:var(--text-light);" id="explanation-body-text">Explanation content...</div>
+        </div>
+    </div>
+
+    <div id="screen-challenge" class="game-card">
+        <div class="badge">🎁 Reward Level</div>
+        <h1>Timeline Completion Challenge</h1>
+        <p>Tap and arrange the sentences below into their proper chronological perfect tense category column!</p>
+        
+        <div class="timeline-container">
+            <div class="target-lanes">
+                <div class="lane">
+                    <div class="lane-title">Present Perfect</div>
+                    <div class="drop-zone" onclick="clearLaneAssignment(0)" id="lane-zone-0">Tap to place</div>
+                </div>
+                <div class="lane">
+                    <div class="lane-title">Past Perfect</div>
+                    <div class="drop-zone" onclick="clearLaneAssignment(1)" id="lane-zone-1">Tap to place</div>
+                </div>
+                <div class="lane">
+                    <div class="lane-title">Future Perfect</div>
+                    <div class="drop-zone" onclick="clearLaneAssignment(2)" id="lane-zone-2">Tap to place</div>
+                </div>
+            </div>
+
+            <div class="items-vault" id="challenge-chips-vault"></div>
+        </div>
+
+        <button class="btn-primary" onclick="verifyFinalChallengeMatrix()" style="background-color: var(--primary);">Evaluate Timeline Matrix</button>
+    </div>
+
+    <div id="screen-result" class="game-card">
+        <div class="badge">Assessment Complete</div>
+        <h1 id="res-headline-message">Evaluating...</h1>
+        <p id="res-description-text">Review your metrics breakdown profile below.</p>
+
+        <div class="hud-grid" style="max-width: 500px; margin: 0 auto 30px auto;">
+            <div class="hud-item">
+                <span class="hud-label">Score</span>
+                <span class="hud-value" id="res-ratio">0 / 15</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Accuracy</span>
+                <span class="hud-value" id="res-percentage">0%</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Correct</span>
+                <span class="hud-value" id="res-correct" style="color:var(--success);">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Wrong</span>
+                <span class="hud-value" id="res-wrong" style="color:var(--error);">0</span>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+            <button class="btn-primary" onclick="initiateGameFlow()">Restart Game</button>
+            <button class="btn-primary" onclick="initiateGameFlow()" style="background-color:var(--secondary);">Play Again</button>
+            <button class="btn-primary" onclick="displayDiagnosticScroller()" style="background-color:var(--text-light);">Review Items</button>
+        </div>
+    </div>
+
+    <div id="screen-review" class="game-card">
+        <div class="badge">Performance History</div>
+        <h1>Diagnostic Item Breakdown</h1>
+        <p>Review the questions precisely as formulated with your performance markers logged below.</p>
+
+        <div class="review-scroller" id="review-scroller-injection-box"></div>
+
+        <button class="btn-primary" onclick="viewRouter('screen-intro')" style="background-color:var(--primary-dark);">Back to Menu</button>
+    </div>
+
+    <script>
+        // STRICT SOURCE DATABASE ARRAY CONSTRUCTS
+        const globalQuestionRepository = [
+            {
+                q: "1. A boy has just washed his bicycle, and it is shining clean now. Which sentence best describes this?",
+                options: ["a) He washes his bicycle.", "b) He has washed his bicycle.", "c) He was washing his bicycle.", "d) He will wash his bicycle."],
+                ans: "b) He has washed his bicycle.",
+                exp: "Correct Answer: b\nBrief Explanation: The action represents a state that has been completed recently and possesses immediate observable physical results in the present moment, which calls for the present perfect tense structure 'has washed'."
+            },
+            {
+                q: "2. A teacher says, “By the time the bell rang, the students had already packed their bags.” Which tense is used?",
+                options: ["a) Present perfect", "b) Past perfect", "c) Future perfect", "d) Present continuous"],
+                ans: "b) Past perfect",
+                exp: "Correct Answer: b\nBrief Explanation: The past perfect tense formulation 'had packed' is correctly implemented to designate an activity completed prior to another explicit benchmark action in past timelines ('the bell rang')."
+            },
+            {
+                q: "3. A runner says, “By next Sunday, I will have completed the marathon training.” Which tense is shown?",
+                options: ["a) Present perfect", "b) Past perfect", "c) Future perfect", "d) Present perfect continuous"],
+                ans: "c) Future perfect",
+                exp: "Correct Answer: c\nBrief Explanation: The template 'will have completed' reflects the future perfect tense standard used to illustrate an event projected to finish before a specific future deadline ('By next Sunday')."
+            },
+            {
+                q: "4. Choose the correct present perfect sentence.",
+                options: ["a) I have visited the museum yesterday.", "b) I visited the museum yesterday.", "c) I have visited the museum.", "d) I will visit the museum."],
+                ans: "c) I have visited the museum.",
+                exp: "Correct Answer: c\nBrief Explanation: Present perfect statements cannot coexist with finished, specific past time tags like 'yesterday'. Therefore, statement 'c' accurately frames indefinite past experiences."
+            },
+            {
+                q: "5. Choose the correct past perfect sentence.",
+                options: ["a) She has finished her homework before dinner.", "b) She had finished her homework before dinner.", "c) She will have finished her homework before dinner.", "d) She finishes her homework before dinner."],
+                ans: "b) She had finished her homework before dinner.",
+                exp: "Correct Answer: b\nBrief Explanation: The construction 'had finished' successfully uses the past perfect form to emphasize completion prior to an unstated or specified past milestone period ('before dinner')."
+            },
+            {
+                q: "6. Choose the correct future perfect sentence.",
+                options: ["a) They will have completed the project by Monday.", "b) They have completed the project by Monday.", "c) They had completed the project by Monday.", "d) They are completing the project by Monday."],
+                ans: "a) They will have completed the project by Monday.",
+                exp: "Correct Answer: a\nBrief Explanation: Option 'a' satisfies the structural needs of the future perfect aspect, combining the modal auxiliary 'will' with 'have' and the past participle verb 'completed' before the temporal boundary 'by Monday'."
+            },
+            {
+                q: "7. Riya writes three poems every week. Which option rewrites the sentence in the present perfect tense?",
+                options: ["a) Riya has written three poems this week.", "b) Riya had written three poems this week.", "c) Riya will have written three poems this week.", "d) Riya is writing three poems this week."],
+                ans: "a) Riya has written three poems this week.",
+                exp: "Correct Answer: a\nBrief Explanation: Present perfect alignment transforms the root verb 'writes' into 'has written' matching the singular subject pronoun template for current ongoing week periods."
+            },
+            {
+                q: "8. The rain started. We reached home. Which option rewrites the sentence in the past perfect tense?",
+                options: ["a) We have reached home before the rain started.", "b) We had reached home before the rain started.", "c) We will have reached home before the rain started.", "d) We are reaching home before the rain started."],
+                ans: "b) We had reached home before the rain started.",
+                exp: "Correct Answer: b\nBrief Explanation: To establish that returning home took place entirely prior to the start of downpours, the earlier action must receive past perfect 'had reached' framing."
+            },
+            {
+                q: "9. By tomorrow evening, the chef prepares the cake. Which option rewrites the sentence in the future perfect tense?",
+                options: ["a) By tomorrow evening, the chef has prepared the cake.", "b) By tomorrow evening, the chef had prepared the cake.", "c) By tomorrow evening, the chef will have prepared the cake.", "d) By tomorrow evening, the chef is preparing the cake."],
+                ans: "c) By tomorrow evening, the chef will have prepared the cake.",
+                exp: "Correct Answer: c\nBrief Explanation: Future perfect mapping converts base action verbs into the predictive structural compound 'will have prepared' corresponding to the horizon 'By tomorrow evening'."
+            },
+            {
+                q: "10. Which sentence shows an action completed recently?",
+                options: ["a) The courier delivered the parcel.", "b) The courier has delivered the parcel.", "c) The courier was delivering the parcel.", "d) The courier will deliver the parcel."],
+                ans: "b) The courier has delivered the parcel.",
+                exp: "Correct Answer: b\nBrief Explanation: The present perfect form ('has delivered') specializes in emphasizing actions executed recently whose context and repercussions remain highly applicable to present conditions."
+            },
+            {
+                q: "11. Which sentence shows an action that happened before another past action?",
+                options: ["a) We had left before the train arrived.", "b) We have left before the train arrived.", "c) We will leave before the train arrived.", "d) We are leaving before the train arrived."],
+                ans: "a) We had left before the train arrived.",
+                exp: "Correct Answer: a\nBrief Explanation: The past perfect construction ('had left') is explicitly assigned to demonstrate that an event transpired before an alternative simple past sequence benchmark ('arrived')."
+            },
+            {
+                q: "12. Which sentence shows an action expected to be completed by a future time?",
+                options: ["a) By evening, she will have finished her painting.", "b) By evening, she has finished her painting.", "c) By evening, she had finished her painting.", "d) By evening, she is finishing her painting."],
+                ans: "a) By evening, she will have finished her painting.",
+                exp: "Correct Answer: a\nBrief Explanation: The combination of the time marker 'By evening' alongside the future perfect formulation 'will have finished' is the exact method for mapping milestones anticipated forward in time."
+            },
+            {
+                q: "13. The students complete their reading challenge. Which option rewrites the sentence in the present perfect tense?",
+                options: ["a) The students have completed their reading challenge.", "b) The students had completed their reading challenge.", "c) The students will have completed their reading challenge.", "d) The students are completing their reading challenge."],
+                ans: "a) The students have completed their reading challenge.",
+                exp: "Correct Answer: a\nBrief Explanation: Plural structural subjects ('The students') match with the baseline auxiliary form 'have' linked with past participle verb profiles ('completed')."
+            },
+            {
+                q: "14. The guests arrived after the function began. Which option correctly rewrites the sentence using the past perfect?",
+                options: ["a) The guests arrived after the function had begun.", "b) The guests have arrived after the function began.", "c) The guests will arrive after the function had begun.", "d) The guests are arriving after the function began."],
+                ans: "a) The guests arrived after the function had begun.",
+                exp: "Correct Answer: a\nBrief Explanation: Since the start of the function preceded the arrival of guests, the clause handling the function requires past perfect 'had begun' structural modification."
+            },
+            {
+                q: "15. The team finishes the science model by Friday. Which option rewrites the sentence in the future perfect tense?",
+                options: ["a) The team has finished the science model by Friday.", "b) The team had finished the science model by Friday.", "c) The team will have finished the science model by Friday.", "d) The team is finishing the science model by Friday."],
+                ans: "c) The team will have finished the science model by Friday.",
+                exp: "Correct Answer: c\nBrief Explanation: Translating standard current patterns into future perfect arrangements returns 'will have finished' referencing the definitive temporal cut-off 'by Friday'."
+            }
+        ];
+
+        // ENGINE RUNTIME CONSTANTS
+        let activeQuestionSet = [];
+        let questionCursor = 0;
+        let cumulativeScore = 0;
+        let activeRemainingTries = 2;
+        let counterThreadReference = null;
+        let dynamicTimerCount = 45;
+        let volumeLevelSetting = 0.5;
+        let internalAudioMuteToken = false;
+        let lanesTrackingArray = [null, null, null];
+        let postGameDiagnosticHistory = [];
+
+        window.onload = function() {
+            generateAmbientDecorations();
+            
+            // Exact 5-second Splash Display Loop
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.getElementById('utility-tray').style.display = 'flex';
+                    viewRouter('screen-intro');
+                }, 800);
+            }, 5000);
+
+            setupVolumeController();
+            hookKeyboardShortcutHooks();
+        };
+
+        function generateAmbientDecorations() {
+            const vault = document.getElementById('bg-elements');
+            const iconsList = ['⏰', '⏳', '📅', '➡️', '✓', '✨'];
+            for(let i=0; i<18; i++) {
+                const node = document.createElement('div');
+                node.className = 'floating-element';
+                node.innerText = iconsList[Math.floor(Math.random() * iconsList.length)];
+                node.style.left = `${Math.random() * 100}vw`;
+                node.style.animationDelay = `${Math.random() * 8}s`;
+                node.style.animationDuration = `${Math.random() * 10 + 15}s`;
+                vault.appendChild(node);
+            }
+        }
+
+        function viewRouter(screenId) {
+            document.querySelectorAll('.game-card').forEach(card => card.style.display = 'none');
+            document.getElementById(screenId).style.display = 'block';
+        }
+
+        function setupVolumeController() {
+            const slider = document.getElementById('volume-slider');
+            slider.addEventListener('input', (e) => {
+                volumeLevelSetting = e.target.value;
+                ['sound-click', 'sound-correct', 'sound-wrong', 'sound-clapping'].forEach(id => {
+                    document.getElementById(id).volume = volumeLevelSetting;
+                });
+            });
+        }
+
+        function hookKeyboardShortcutHooks() {
+            window.addEventListener('keydown', (e) => {
+                if(document.getElementById('screen-assessment').style.display === 'block') {
+                    const characterCodeMap = { 'a':0, 'b':1, 'c':2, 'd':3, 'A':0, 'B':1, 'C':2, 'D':3 };
+                    if(e.key in characterCodeMap) {
+                        const targetIndex = characterCodeMap[e.key];
+                        const availableButtons = document.querySelectorAll('.option-btn');
+                        if(availableButtons[targetIndex] && !availableButtons[targetIndex].disabled) {
+                            availableButtons[targetIndex].click();
+                        }
+                    }
+                }
+            });
+        }
+
+        function shuffleArray(targetArray) {
+            for (let i = targetArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [targetArray[i], targetArray[j]] = [targetArray[j], targetArray[i]];
+            }
+            return targetArray;
+        }
+
+        function initiateGameFlow() {
+            playSoundAsset('sound-click');
+            activeQuestionSet = shuffleArray(JSON.parse(JSON.stringify(globalQuestionRepository)));
+            activeQuestionSet.forEach(item => shuffleArray(item.options));
+            
+            questionCursor = 0;
+            cumulativeScore = 0;
+            postGameDiagnosticHistory = [];
+            
+            viewRouter('screen-assessment');
+            renderActiveQuestionNode();
+        }
+
+        function renderActiveQuestionNode() {
+            activeRemainingTries = 2;
+            dynamicTimerCount = 45;
+            document.getElementById('live-explanation-box').style.display = 'none';
+            synchronizeHUDIndicators();
+
+            const currentNode = activeQuestionSet[questionCursor];
+            document.getElementById('live-question-text').innerText = currentNode.q;
+
+            const gridBox = document.getElementById('live-options-box');
+            gridBox.innerHTML = '';
+
+            currentNode.options.forEach(optionText => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span>${optionText}</span>`;
+                btn.onclick = () => validateSelectionInput(btn, optionText);
+                gridBox.appendChild(btn);
+            });
+
+            launchTimerSequence();
+        }
+
+        function launchTimerSequence() {
+            clearInterval(counterThreadReference);
+            document.getElementById('hud-timer-txt').innerText = `${dynamicTimerCount}s`;
+            counterThreadReference = setInterval(() => {
+                dynamicTimerCount--;
+                document.getElementById('hud-timer-txt').innerText = `${dynamicTimerCount}s`;
+                if(dynamicTimerCount <= 0) {
+                    clearInterval(counterThreadReference);
+                    executeTimeExpiryProcedure();
+                }
+            }, 1000);
+        }
+
+        function synchronizeHUDIndicators() {
+            document.getElementById('hud-progress-txt').innerText = `${questionCursor + 1} / 15`;
+            document.getElementById('hud-score-txt').innerText = `Score: ${cumulativeScore} / 15`;
+            document.getElementById('hud-attempt-txt').innerText = `${3 - activeRemainingTries} / 2`;
+            const calculatedPercentage = (questionCursor / 15) * 100;
+            document.getElementById('hud-progress-fill').style.width = `${calculatedPercentage}%`;
+        }
+
+        function validateSelectionInput(clickedButton, variantStringValue) {
+            playSoundAsset('sound-click');
+            const currentNode = activeQuestionSet[questionCursor];
+            const identityMatchEvaluator = variantStringValue.trim() === currentNode.ans.trim();
+
+            if(identityMatchEvaluator) {
+                clearInterval(counterThreadReference);
+                clickedButton.classList.add('correct');
+                clickedButton.innerHTML += ' <span>⭐</span>';
+                blockInputInteractionGrid();
+                cumulativeScore++;
+                synchronizeHUDIndicators();
+                deployStarBurstConfetti();
+                playSoundAsset('sound-correct');
+                
+                logDiagnosticEntry(variantStringValue, true);
+                setTimeout(transitionToFollowingPhase, 2000);
+            } else {
+                activeRemainingTries--;
+                clickedButton.classList.add('wrong');
+                clickedButton.innerHTML += ' <span>❌</span>';
+                clickedButton.disabled = true;
+                playSoundAsset('sound-wrong');
+                synchronizeHUDIndicators();
+
+                if(activeRemainingTries <= 0) {
+                    clearInterval(counterThreadReference);
+                    blockInputInteractionGrid();
+                    logDiagnosticEntry(variantStringValue, false);
+                    revealCorrectAnswerState();
+                }
+            }
+        }
+
+        function executeTimeExpiryProcedure() {
+            blockInputInteractionGrid();
+            logDiagnosticEntry("[TIMER EXPIRED]", false);
+            revealCorrectAnswerState();
+        }
+
+        function blockInputInteractionGrid() {
+            document.querySelectorAll('.option-btn').forEach(button => button.disabled = true);
+        }
+
+        function logDiagnosticEntry(userPickedString, outcomeFlag) {
+            const currentNode = activeQuestionSet[questionCursor];
+            postGameDiagnosticHistory.push({
+                stem: currentNode.q,
+                userAnswer: userPickedString,
+                validAnswer: currentNode.ans,
+                explanation: currentNode.exp,
+                isCorrect: outcomeFlag
+            });
+        }
+
+        function revealCorrectAnswerState() {
+            const currentNode = activeQuestionSet[questionCursor];
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                if(btn.innerText.trim().startsWith(currentNode.ans.trim().substring(0, 6))) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            const block = document.getElementById('live-explanation-box');
+            document.getElementById('explanation-title-text').innerText = `Correct Answer: ${currentNode.ans}`;
+            document.getElementById('explanation-body-text').innerText = currentNode.exp.replace(/Correct Answer:.*\n/g, '');
+            block.style.display = 'block';
+
+            setTimeout(transitionToFollowingPhase, 5000);
+        }
+
+        function transitionToFollowingPhase() {
+            questionCursor++;
+            if(questionCursor < 15) {
+                renderActiveQuestionNode();
+            } else {
+                launchInteractiveRewardArena();
+            }
+        }
+
+        function launchInteractiveRewardArena() {
+            viewRouter('screen-challenge');
+            lanesTrackingArray = [null, null, null];
+            
+            for(let i=0; i<3; i++) {
+                const targetZone = document.getElementById(`lane-zone-${i}`);
+                targetZone.innerText = "Tap to place";
+                targetZone.classList.remove('filled');
+            }
+
+            const matrixChallengeData = [
+                { text: "He has washed his bicycle.", type: "Present Perfect" },
+                { text: "The students had packed their bags.", type: "Past Perfect" },
+                { text: "I will have completed the training.", type: "Future Perfect" }
+            ];
+
+            const randomizedItems = shuffleArray([...matrixChallengeData]);
+            const vault = document.getElementById('challenge-chips-vault');
+            vault.innerHTML = '';
+
+            randomizedItems.forEach((item, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'draggable-item';
+                chip.innerText = item.text;
+                chip.id = `challenge-chip-${index}`;
+                chip.onclick = () => mapItemToLane(item.text, item.type, chip.id);
+                vault.appendChild(chip);
+            });
+        }
+
+        function mapItemToLane(text, realType, elementId) {
+            playSoundAsset('sound-click');
+            const vacantIndex = lanesTrackingArray.findIndex(slot => slot === null);
+            if(vacantIndex === -1) return;
+
+            lanesTrackingArray[vacantIndex] = { text, realType, elementId };
+            
+            const targetUIBox = document.getElementById(`lane-zone-${vacantIndex}`);
+            targetUIBox.innerText = text;
+            targetUIBox.classList.add('filled');
+
+            document.getElementById(elementId).classList.add('used');
+        }
+
+        function clearLaneAssignment(laneIndex) {
+            if(!lanesTrackingArray[laneIndex]) return;
+            playSoundAsset('sound-click');
+
+            const referenceObj = lanesTrackingArray[laneIndex];
+            document.getElementById(referenceObj.elementId).classList.remove('used');
+
+            const targetUIBox = document.getElementById(`lane-zone-${laneIndex}`);
+            targetUIBox.innerText = "Tap to place";
+            targetUIBox.classList.remove('filled');
+
+            lanesTrackingArray[laneIndex] = null;
+        }
+
+        function verifyFinalChallengeMatrix() {
+            const laneHeadersSequence = ["Present Perfect", "Past Perfect", "Future Perfect"];
+            let matchingAccuracyValidation = true;
+
+            for(let i=0; i<3; i++) {
+                if(!lanesTrackingArray[i] || lanesTrackingArray[i].realType !== laneHeadersSequence[i]) {
+                    matchingAccuracyValidation = false;
+                }
+            }
+
+            if(matchingAccuracyValidation) {
+                playSoundAsset('sound-correct');
+                deployStarBurstConfetti();
+                alert("⭐ Incredible performance! Your perfect tense alignment is precise.");
+            } else {
+                playSoundAsset('sound-wrong');
+                alert("❌ A few timeline items are incorrectly sorted. Review indicators and try again!");
+            }
+
+            setTimeout(renderFinalMetricsSummary, 1200);
+        }
+
+        function renderFinalMetricsSummary() {
+            viewRouter('screen-result');
+            playSoundAsset('sound-clapping');
+
+            document.getElementById('res-ratio').innerText = `${cumulativeScore} / 15`;
+            const accuracyScore = Math.round((cumulativeScore / 15) * 100);
+            document.getElementById('res-percentage').innerText = `${accuracyScore}%`;
+            document.getElementById('res-correct').innerText = cumulativeScore;
+            document.getElementById('res-wrong').innerText = 15 - cumulativeScore;
+
+            const headerNode = document.getElementById('res-headline-message');
+            const messageDescNode = document.getElementById('res-description-text');
+
+            if(accuracyScore >= 90) {
+                headerNode.innerText = "🏆 Perfect Tense Champion!";
+                messageDescNode.innerText = "Superb clarity! You possess absolute alignment mastery over complex perfect timelines.";
+            } else if(accuracyScore >= 75) {
+                headerNode.innerText = "🌟 Excellent!";
+                messageDescNode.innerText = "Great operational comprehension. Minor focus on absolute temporal boundaries recommended.";
+            } else if(accuracyScore >= 50) {
+                headerNode.innerText = "🎉 Great Job!";
+                messageDescNode.innerText = "Decent functional understanding. Re-run to clarify structural differences between past and present vectors.";
+            } else {
+                headerNode.innerText = "📘 Keep Practising!";
+                messageDescNode.innerText = "Review the core markers for auxiliary verbs 'has', 'had', and 'will have' to reinforce accuracy.";
+            }
+        }
+
+        function displayDiagnosticScroller() {
+            const viewport = document.getElementById('review-scroller-injection-box');
+            viewport.innerHTML = '';
+
+            postGameDiagnosticHistory.forEach((log) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'review-item';
+                wrapper.style.borderLeft = log.isCorrect ? '6px solid var(--success)' : '6px solid var(--error)';
+
+                wrapper.innerHTML = `
+                    <div style="font-weight:700; margin-bottom:6px; color:var(--primary-dark); font-size:1.05rem;">${log.stem}</div>
+                    <div style="font-size:0.95rem; margin-bottom:4px;">Your Choice: <span style="font-weight:700; color:${log.isCorrect?'var(--success)':'var(--error)'};">${log.userAnswer}</span></div>
+                    <div style="font-size:0.95rem; margin-bottom:10px;">Valid Key Option: <span style="font-weight:700; color:var(--success);">${log.validAnswer}</span></div>
+                    <div style="font-size:0.9rem; padding:12px; background:#f1f5f9; border-radius:8px; line-height:1.45; color:var(--text-light); white-space:pre-wrap;">${log.explanation}</div>
+                `;
+                viewport.appendChild(wrapper);
+            });
+
+            viewRouter('screen-review');
+        }
+
+        function playSoundAsset(id) {
+            if(internalAudioMuteToken) return;
+            const audioTrack = document.getElementById(id);
+            if(audioTrack) {
+                audioTrack.currentTime = 0;
+                audioTrack.play().catch(() => {});
+            }
+        }
+
+        function toggleMuteState() {
+            internalAudioMuteToken = !internalAudioMuteToken;
+            document.getElementById('mute-btn').innerText = internalAudioMuteToken ? "🔇 Muted" : "🔊 Mute";
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function deployStarBurstConfetti() {
+            const targetCanvas = document.getElementById('confetti-holder');
+            const spectrumColors = ['#4f46e5', '#06b6d4', '#f59e0b', '#10b981'];
+            for(let i=0; i<35; i++) {
+                const starElement = document.createElement('div');
+                starElement.className = 'star';
+                starElement.style.left = `${Math.random() * 100}vw`;
+                starElement.style.backgroundColor = spectrumColors[Math.floor(Math.random() * spectrumColors.length)];
+                starElement.style.animationDelay = `${Math.random() * 0.3}s`;
+                targetCanvas.appendChild(starElement);
+                setTimeout(() => starElement.remove(), 2000);
+            }
+        }
+    </script>
+</body>
+</html>
