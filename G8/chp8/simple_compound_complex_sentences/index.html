@@ -527,9 +527,9 @@
 
         function updateInteractiveHUDDisplays() {
             document.getElementById('hud-progress').innerText = `${currentQuestionCursor + 1} / 12`;
-            document.getElementById('hud-score').innerText = `${cumulativeScoreCount} / 12`;
-            document.getElementById('hud-attempt').innerText = `${3 - activeRemainingTries} / 2`;
-            document.getElementById('hud-bar-fill').style.width = `${((currentQuestionCursor) / 12) * 100}%`;
+            document.getElementById('hud-score').innerText = `${cumulativeScoreCount} / 13`;
+            document.getElementById('hud-attempt').innerText = `${2 - activeRemainingTries + 1} / 2`;
+            document.getElementById('hud-bar-fill').style.width = `${((currentQuestionCursor + 1) / 12) * 100}%`;
         }
 
         function validateAnswerChoice(domElement, chosenText) {
@@ -672,12 +672,12 @@
 
         function showSummaryResults() {
             switchGameCard('result-screen');
-            const totalPerfectScorePoints = 12;
+            const totalPerfectScorePoints = 13;
             document.getElementById('res-ratio').innerText = `${cumulativeScoreCount} / ${totalPerfectScorePoints}`;
             const accuracy = Math.min(100, Math.round((cumulativeScoreCount / totalPerfectScorePoints) * 100));
             document.getElementById('res-percent').innerText = `${accuracy}%`;
-            document.getElementById('res-correct').innerText = Math.floor(cumulativeScoreCount);
-            document.getElementById('res-wrong').innerText = Math.max(0, 12 - Math.floor(cumulativeScoreCount));
+            document.getElementById('res-correct').innerText = cumulativeScoreCount % 1 === 0 ? cumulativeScoreCount : cumulativeScoreCount.toFixed(1);
+            document.getElementById('res-wrong').innerText = Math.max(0, 13 - Math.ceil(cumulativeScoreCount));
 
             const header = document.getElementById('res-heading-msg');
             const desc = document.getElementById('res-description');
