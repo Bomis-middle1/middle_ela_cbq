@@ -54,7 +54,7 @@
             padding: 20px;
         }
 
-        /* Grammar-themed ambient background animations */
+        /* Ambient Background Grid Element Graphics */
         .bg-animations {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -104,7 +104,7 @@
 
         .volume-slider { width: 80px; cursor: pointer; }
 
-        /* Stage Containers */
+        /* Stages Interface Layout Cards */
         .game-card {
             display: none; width: 100%; max-width: 800px;
             background: var(--surface); padding: 40px; border-radius: 24px;
@@ -113,7 +113,7 @@
             position: relative; text-align: center;
         }
 
-        .active-card { display: block; }
+        .active-card { display: block !important; }
 
         .badge {
             background-color: rgba(79, 70, 229, 0.1); color: var(--primary);
@@ -134,7 +134,7 @@
 
         .btn-action:hover { background-color: #d97706; transform: translateY(-2px); }
 
-        /* HUD Tracker Top-Bar */
+        /* HUD Live Interactive Panel Panels */
         .hud-bar {
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
             margin-bottom: 25px; background: rgba(79, 70, 229, 0.02);
@@ -157,6 +157,7 @@
             font-weight: 600; border-radius: 14px; cursor: pointer;
             text-align: left; transition: all 0.2s ease; display: flex;
             justify-content: space-between; align-items: center;
+            width: 100%;
         }
 
         .option-button:hover:not(:disabled) { border-color: var(--primary); background-color: rgba(79, 70, 229, 0.01); transform: translateX(4px); }
@@ -373,7 +374,7 @@
                 exp: "Dependent clauses begin with subordinating conjunctions such as because, although, when, if, before, after, while, etc. They cannot stand alone as an complete thought."
             },
             {
-                q: "5. Read this message from a class group chat:\n“Because I was late, I missed the bus, and I reached school on time.”\nWhat is the main error in the sentence?\na) The sentence should be simple only.\nb) The idea is correct, but the second part does not match the first part logically.\nb) The sentence has no conjunction.\nd) The word “because” should be removed because it is wrong.",
+                q: "5. Read this message from a class group chat:\n“Because I was late, I missed the bus, and I reached school on time.”\nWhat is the main error in the sentence?\na) The sentence should be simple only.\nb) The idea is correct, but the second part does not match the first part logically.\nc) The sentence has no conjunction.\nd) The word “because” should be removed because it is wrong.",
                 options: [
                     "a) The sentence should be simple only.",
                     "b) The idea is correct, but the second part does not match the first part logically.",
@@ -384,7 +385,7 @@
                 exp: "Being late and missing a bus creates a negative timeline conflict with logically reaching school on time using the conjunction 'and'."
             },
             {
-                q: "6. A student writes: “She completed her project. She submitted it before the deadline.”\nWhich option correctly joins the two ideas into a compound sentence?\na) She completed her project because she submitted it before the deadline.\nb) She completed her project, and she submitted it before the deadline.\nb) She completed her project when she submitted it before the deadline.\nd) She completed her project although she submitted it before the deadline.",
+                q: "6. A student writes: “She completed her project. She submitted it before the deadline.”\nWhich option correctly joins the two ideas into a compound sentence?\na) She completed her project because she submitted it before the deadline.\nb) She completed her project, and she submitted it before the deadline.\nc) She completed her project when she submitted it before the deadline.\nd) She completed her project although she submitted it before the deadline.",
                 options: [
                     "a) She completed her project because she submitted it before the deadline.",
                     "b) She completed her project, and she submitted it before the deadline.",
@@ -395,7 +396,7 @@
                 exp: "'And' connects two matching independent sentence statements without establishing an asymmetric sub-clause hierarchy."
             },
             {
-                q: "7. Read the sentence: “If it rains in the evening, we will stay indoors.” What kind of sentence structure is shown here?\na) Simple sentence\nb) Compound sentence\nb) Complex sentence\nd) Imperative sentence",
+                q: "7. Read the sentence: “If it rains in the evening, we will stay indoors.” What kind of sentence structure is shown here?\na) Simple sentence\nb) Compound sentence\nc) Complex sentence\nd) Imperative sentence",
                 options: [
                     "a) Simple sentence",
                     "b) Compound sentence",
@@ -518,12 +519,14 @@
 
         function configureAudioSliders() {
             const slider = document.getElementById('vol-slider');
-            slider.addEventListener('input', (e) => {
-                let vol = e.target.value;
-                ['audio-click', 'audio-correct', 'audio-wrong', 'audio-clapping'].forEach(sid => {
-                    document.getElementById(sid).volume = vol;
+            if (slider) {
+                slider.addEventListener('input', (e) => {
+                    let vol = e.target.value;
+                    ['audio-click', 'audio-correct', 'audio-wrong', 'audio-clapping'].forEach(sid => {
+                        document.getElementById(sid).volume = vol;
+                    });
                 });
-            });
+            }
         }
 
         function registerKeyboardHotkeyEvents() {
@@ -570,10 +573,8 @@
             const targetWrapper = document.getElementById('live-options-grid');
             targetWrapper.innerHTML = '';
 
-            // Randomize options structure while maintaining string mapping values exactly
-            let dynamicScrambledOptions = scrambleArrayElements([...contextData.options]);
-
-            dynamicScrambledOptions.forEach(optionText => {
+            // Render options cleanly exactly as written to avoid sorting loops
+            contextData.options.forEach(optionText => {
                 const btn = document.createElement('button');
                 btn.className = 'option-button';
                 btn.innerHTML = `<span>${optionText}</span>`;
@@ -666,10 +667,11 @@
         }
 
         function stepNextTimelineTrack() {
-            currentQuestionCursor++;
-            if(currentQuestionCursor < 12) {
+            if(currentQuestionCursor < 11) {
+                currentQuestionCursor++;
                 loadQuizQuestionItem();
             } else {
+                clearInterval(mainTimerIntervalRef);
                 launchBonusChallengeArena();
             }
         }
@@ -697,7 +699,6 @@
 
         function assignChipToColumn(meta, nodes) {
             playSoundAsset('audio-click');
-            // Distribute alternatively between categories to avoid stack skewing
             let bin = activeBonusIndex % 2 === 0 ? 'main' : 'dep';
             activeBonusIndex++;
 
