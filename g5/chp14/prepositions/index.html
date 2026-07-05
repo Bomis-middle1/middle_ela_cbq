@@ -1,1 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>City Adventure — Prepositions | Grade 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#4FB3E8;
+    --sky-bottom:#BEE7FA;
+    --sun:#FFC857;
+    --brick:#E4572E;
+    --brick-dark:#C6431E;
+    --park:#4C9F70;
+    --asphalt:#2E3944;
+    --cream:#FFF8EE;
+    --ink:#22303B;
+    --white:#FFFFFF;
+    --wrong:#E4572E;
+    --correct:#4C9F70;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-bottom) 55%, var(--cream) 55%);
+    color:var(--ink);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+  h1,h2,h3,.display{font-family:'Baloo 2',cursive;}
+  button{font-family:'Nunito',sans-serif; cursor:pointer; border:none;}
+  .screen{
+    min-height:100vh;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    padding:24px 16px 40px;
+  }
+  .screen.active{display:flex;}
 
+  /* ---------- Background city skyline (decorative, CSS-only) ---------- */
+  .skyline{
+    position:fixed; left:0; right:0; bottom:0; height:38vh; min-height:210px;
+    z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .building{
+    position:absolute; bottom:0; background:var(--asphalt); border-radius:4px 4px 0 0;
+    opacity:0.9;
+  }
+  .building .window{
+    position:absolute; width:8px; height:8px; background:var(--sun); opacity:0.5; border-radius:1px;
+  }
+  .cloud{
+    position:fixed; top:6%; background:#fff; opacity:0.9; border-radius:50px;
+    animation:drift linear infinite; z-index:0; pointer-events:none;
+  }
+  .cloud::before, .cloud::after{
+    content:''; position:absolute; background:#fff; border-radius:50%;
+  }
+  @keyframes drift{
+    from{transform:translateX(-20vw);}
+    to{transform:translateX(120vw);}
+  }
+  .car{
+    position:fixed; bottom:6vh; font-size:28px; z-index:0; pointer-events:none;
+    animation:driveby linear infinite;
+  }
+  @keyframes driveby{
+    from{transform:translateX(-10vw);}
+    to{transform:translateX(110vw);}
+  }
+  .sun-deco{
+    position:fixed; top:4%; right:6%; width:70px; height:70px; border-radius:50%;
+    background:radial-gradient(circle, #FFE08A 0%, var(--sun) 70%);
+    box-shadow:0 0 40px 10px rgba(255,200,87,0.5);
+    z-index:0;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .cloud, .car{animation:none;}
+  }
+
+  /* ---------- Splash ---------- */
+  #splash{
+    position:fixed; inset:0; z-index:100;
+    background:linear-gradient(135deg, var(--sky-top), var(--park));
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    transition:opacity 0.6s ease;
+  }
+  #splash img{
+    max-width:220px; max-height:220px; width:auto; height:auto;
+    animation:pop 0.6s cubic-bezier(.34,1.56,.64,1);
+    filter:drop-shadow(0 8px 20px rgba(0,0,0,0.25));
+  }
+  #splash.fade{opacity:0; pointer-events:none;}
+  @keyframes pop{
+    0%{transform:scale(0.4); opacity:0;}
+    100%{transform:scale(1); opacity:1;}
+  }
+
+  /* ---------- Cards / shared ---------- */
+  .card{
+    background:var(--white);
+    border-radius:24px;
+    box-shadow:0 14px 30px rgba(34,48,59,0.18);
+    padding:32px 28px;
+    max-width:560px;
+    width:100%;
+    position:relative;
+    z-index:1;
+  }
+  .eyebrow{
+    display:inline-block; background:var(--sun); color:var(--ink);
+    font-weight:800; font-size:12px; letter-spacing:1px; text-transform:uppercase;
+    padding:6px 14px; border-radius:999px; margin-bottom:14px;
+  }
+  .title-main{font-size:clamp(28px,6vw,40px); font-weight:800; color:var(--ink); margin:0 0 6px;}
+  .subtitle{color:#5B6B76; font-weight:600; margin:0 0 22px; font-size:15px;}
+  .btn-primary{
+    background:var(--brick); color:#fff; font-weight:800; font-size:17px;
+    padding:14px 32px; border-radius:14px; box-shadow:0 6px 0 var(--brick-dark);
+    transition:transform 0.08s ease;
+  }
+  .btn-primary:active{transform:translateY(4px); box-shadow:0 2px 0 var(--brick-dark);}
+  .meta-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;}
+  .meta-pill{
+    background:var(--cream); border:2px solid #EFE3D0; color:var(--ink);
+    font-weight:700; font-size:13px; padding:6px 12px; border-radius:999px;
+  }
+
+  /* ---------- Game screen ---------- */
+  .hud{
+    width:100%; max-width:560px; display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px; gap:10px; z-index:1; position:relative;
+  }
+  .score-box{
+    background:var(--white); border-radius:14px; padding:8px 16px; box-shadow:0 6px 16px rgba(34,48,59,0.12);
+    font-weight:800; color:var(--park); display:flex; align-items:center; gap:6px; font-size:15px;
+  }
+  .timer-box{
+    background:var(--white); border-radius:14px; padding:8px 16px; box-shadow:0 6px 16px rgba(34,48,59,0.12);
+    font-weight:800; font-size:15px; min-width:70px; text-align:center;
+  }
+  .timer-box.low{color:var(--wrong);}
+  .progress-track{
+    width:100%; max-width:560px; height:8px; background:#DCEFF9; border-radius:999px; margin-bottom:18px; overflow:hidden; z-index:1; position:relative;
+  }
+  .progress-fill{
+    height:100%; background:var(--park); border-radius:999px; transition:width 0.35s ease;
+  }
+  .q-count{font-weight:700; color:#5B6B76; font-size:13px; margin-bottom:8px; align-self:flex-start; max-width:560px; width:100%; z-index:1;}
+  .q-text{font-size:19px; font-weight:700; color:var(--ink); margin:0 0 22px; line-height:1.45;}
+  .options{display:flex; flex-direction:column; gap:12px;}
+  .opt-btn{
+    background:var(--cream); border:2px solid #EFE3D0; border-radius:14px;
+    padding:14px 16px; text-align:left; font-size:16px; font-weight:700; color:var(--ink);
+    display:flex; align-items:center; gap:12px; transition:all 0.15s ease;
+  }
+  .opt-btn .opt-letter{
+    background:var(--asphalt); color:#fff; width:28px; height:28px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
+  }
+  .opt-btn:hover:not(:disabled){border-color:var(--sky-top); transform:translateY(-1px);}
+  .opt-btn:disabled{cursor:default;}
+  .opt-btn.correct{background:#E4F5EA; border-color:var(--correct); color:var(--correct);}
+  .opt-btn.correct .opt-letter{background:var(--correct);}
+  .opt-btn.wrong{background:#FDEBE6; border-color:var(--wrong); color:var(--wrong);}
+  .opt-btn.wrong .opt-letter{background:var(--wrong);}
+  .opt-btn.dim{opacity:0.5;}
+
+  .feedback-banner{
+    margin-top:18px; padding:14px 16px; border-radius:14px; font-weight:700; font-size:14.5px;
+    display:none; align-items:flex-start; gap:10px; line-height:1.4;
+  }
+  .feedback-banner.show{display:flex;}
+  .feedback-banner.retry{background:#FFF3D6; color:#8A6300;}
+  .feedback-banner.reveal{background:#EAF2FF; color:#26456B;}
+  .feedback-banner .icon{font-size:20px;}
+  .next-hint{margin-top:14px; font-size:13px; color:#5B6B76; font-weight:600; text-align:center;}
+
+  /* ---------- Result screen ---------- */
+  .result-emoji{font-size:64px; margin-bottom:6px;}
+  .result-score{font-size:44px; font-weight:800; color:var(--brick); margin:6px 0;}
+  .result-sub{color:#5B6B76; font-weight:700; margin-bottom:24px;}
+  .stat-row{display:flex; gap:14px; width:100%; margin-bottom:24px;}
+  .stat{
+    flex:1; background:var(--cream); border-radius:14px; padding:14px; text-align:center;
+  }
+  .stat .num{font-size:22px; font-weight:800; color:var(--ink);}
+  .stat .lbl{font-size:12px; color:#5B6B76; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;}
+
+  /* ---------- Overlay effects ---------- */
+  .fx-layer{position:fixed; inset:0; pointer-events:none; z-index:50; overflow:hidden;}
+  .star-piece{
+    position:absolute; top:-5%; font-size:20px; animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{transform:translateY(110vh) rotate(360deg); opacity:0.2;}
+  }
+  .cross-flash{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.4);
+    font-size:70px; color:var(--wrong); opacity:0; z-index:60; pointer-events:none;
+  }
+  .cross-flash.show{
+    animation:crossPop 0.7s ease forwards;
+  }
+  @keyframes crossPop{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(0.3);}
+    30%{opacity:1; transform:translate(-50%,-50%) scale(1.1);}
+    60%{opacity:1; transform:translate(-50%,-50%) scale(1);}
+    100%{opacity:0; transform:translate(-50%,-50%) scale(0.9);}
+  }
+
+  .logo-corner{
+    position:fixed; top:14px; left:14px; width:42px; height:42px; z-index:5;
+    opacity:0.95;
+  }
+  .logo-corner img{width:100%; height:100%; object-fit:contain;}
+
+  footer.credit{
+    margin-top:26px; font-size:12px; color:#5B6B76; font-weight:600; z-index:1; position:relative;
+  }
+
+  @media (max-width:420px){
+    .card{padding:24px 18px; border-radius:18px;}
+    .q-text{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= SPLASH (logo, 5 seconds, then removed forever) ================= -->
+<div id="splash">
+  <img src="assets/logo.png" alt="Innovine">
+</div>
+
+<!-- ================= Decorative background ================= -->
+<div class="sun-deco"></div>
+<div class="cloud" id="cloud1" style="width:90px;height:34px;animation-duration:38s;"></div>
+<div class="cloud" id="cloud2" style="width:60px;height:24px;top:14%;animation-duration:52s;animation-delay:6s;"></div>
+<div class="car" style="animation-duration:16s;">🚗</div>
+<div class="car" style="animation-duration:24s;animation-delay:5s;bottom:5vh;">🚌</div>
+<div class="skyline" id="skyline"></div>
+
+<div class="logo-corner" id="logoCorner" style="display:none;">
+  <img src="assets/logo.png" alt="Innovine">
+</div>
+
+<!-- ================= INTRO SCREEN ================= -->
+<div class="screen" id="introScreen">
+  <div class="card" style="text-align:center;">
+    <span class="eyebrow">City Adventure</span>
+    <h1 class="title-main">Prepositions in the City</h1>
+    <p class="subtitle">Help your character get around town by choosing the right preposition!</p>
+    <div class="meta-row" style="justify-content:center;">
+      <span class="meta-pill">Grade 5</span>
+      <span class="meta-pill">English</span>
+      <span class="meta-pill">Chapter 14 · Prepositions</span>
+      <span class="meta-pill">12 Questions</span>
+    </div>
+    <button class="btn-primary" id="startBtn">Start the Adventure 🚕</button>
+  </div>
+</div>
+
+<!-- ================= GAME SCREEN ================= -->
+<div class="screen" id="gameScreen">
+  <div class="hud">
+    <div class="score-box">⭐ <span id="scoreVal">0</span></div>
+    <div class="timer-box" id="timerBox">45s</div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="card">
+    <div class="q-count" id="qCount">Question 1 of 12</div>
+    <p class="q-text" id="qText">Question text here</p>
+    <div class="options" id="optionsBox"></div>
+    <div class="feedback-banner" id="feedbackBanner"></div>
+    <div class="next-hint" id="nextHint" style="display:none;">Tap any option to continue →</div>
+  </div>
+</div>
+
+<!-- ================= RESULT SCREEN ================= -->
+<div class="screen" id="resultScreen">
+  <div class="card" style="text-align:center;">
+    <div class="result-emoji" id="resultEmoji">🏆</div>
+    <div class="result-score"><span id="finalScore">0</span> / <span id="maxScore">120</span></div>
+    <div class="result-sub" id="resultMsg">Great job exploring the city!</div>
+    <div class="stat-row">
+      <div class="stat"><div class="num" id="statFirstTry">0</div><div class="lbl">First try</div></div>
+      <div class="stat"><div class="num" id="statSecondTry">0</div><div class="lbl">Second try</div></div>
+      <div class="stat"><div class="num" id="statMissed">0</div><div class="lbl">Revealed</div></div>
+    </div>
+    <button class="btn-primary" id="retryBtn">Play Again 🔁</button>
+    <footer class="credit">Innovine Learning · City Adventure</footer>
+  </div>
+</div>
+
+<!-- Audio -->
+<audio id="sfxCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sfxWrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="sfxClaps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+<div class="fx-layer" id="fxLayer"></div>
+<div class="cross-flash" id="crossFlash">❌</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Data ---------------- */
+  var QUESTIONS = [
+    {q:"The flag hoisting will begin ______ 8:00 a.m.", opts:["at","on","in","by"], correct:0,
+     explain:"'At' is used for exact times."},
+    {q:"The celebration will be held ______ 15th August.", opts:["at","on","in","during"], correct:1,
+     explain:"'On' is used for specific dates."},
+    {q:"Rahul has been a member ______ 2022.", opts:["during","until","since","for"], correct:2,
+     explain:"'Since' shows the starting point of an action that continues."},
+    {q:"Visitors may enter ______ 10:00 a.m. ______ 4:00 p.m.", opts:["since...until","in...by","at...during","from...until"], correct:3,
+     explain:"'From...until' shows the duration between two points of time."},
+    {q:"Riya chooses a chair exactly next to her best friend Mehak. Which sentence correctly describes where Riya is sitting?", opts:["Riya is sitting beside Mehak.","Riya is sitting among Mehak.","Riya is sitting across Mehak.","Riya is sitting above Mehak."], correct:0,
+     explain:"'Beside' means at the side of someone."},
+    {q:"The projector hangs from the ceiling, higher than the table, without touching it. Which sentence is correct?", opts:["The projector is on the table.","The projector is above the table.","The projector is under the table.","The projector is against the table."], correct:1,
+     explain:"'Above' means higher than something without touching it."},
+    {q:"A sparrow lands on a tree branch and stays there. Which sentence correctly describes the sparrow?", opts:["The sparrow is above the branch.","The sparrow is over the branch.","The sparrow is on the branch.","The sparrow is across the branch."], correct:2,
+     explain:"'On' shows that the bird is touching the branch."},
+    {q:"Learners walk from one side of a narrow bridge to the other. They walked ______ the bridge.", opts:["along","around","through","across"], correct:3,
+     explain:"'Across' means moving from one side to the other."},
+    {q:"Learners keep following the riverbank for two kilometres without crossing it. They walked ______ the river.", opts:["along","through","across","into"], correct:0,
+     explain:"'Along' means moving beside something while following its length."},
+    {q:"At the aquarium, a dolphin jumps through a large ring in the water. The dolphin jumped ______ the ring.", opts:["into","through","around","above"], correct:1,
+     explain:"'Through' means passing from one side to the other, inside something."},
+    {q:"Chocolates are shared with every learner in Class 5. Which preposition correctly completes: 'The chocolates were shared ______ all the learners.'?", opts:["beside","across","among","between"], correct:2,
+     explain:"'Among' is used for more than two people."},
+    {q:"A cat is lying comfortably on a sofa cushion, touching it. Which sentence is correct?", opts:["The cat is sleeping above the sofa.","Both sentences are correct.","Neither sentence is correct.","The cat is sleeping on the sofa."], correct:3,
+     explain:"'On' is used when something is in contact with a surface."}
+  ];
+
+  var TIME_PER_Q = 45; // grade 5 -> 45 seconds
+  var POINTS_FIRST = 10, POINTS_SECOND = 5;
+
+  /* ---------------- State ---------------- */
+  var state = {
+    idx: 0,
+    score: 0,
+    attempts: 0,
+    timer: null,
+    timeLeft: TIME_PER_Q,
+    locked: false,
+    firstTryCount: 0,
+    secondTryCount: 0,
+    revealedCount: 0
+  };
+
+  /* ---------------- Elements ---------------- */
+  var el = {
+    splash: document.getElementById('splash'),
+    logoCorner: document.getElementById('logoCorner'),
+    introScreen: document.getElementById('introScreen'),
+    gameScreen: document.getElementById('gameScreen'),
+    resultScreen: document.getElementById('resultScreen'),
+    startBtn: document.getElementById('startBtn'),
+    retryBtn: document.getElementById('retryBtn'),
+    scoreVal: document.getElementById('scoreVal'),
+    timerBox: document.getElementById('timerBox'),
+    progressFill: document.getElementById('progressFill'),
+    qCount: document.getElementById('qCount'),
+    qText: document.getElementById('qText'),
+    optionsBox: document.getElementById('optionsBox'),
+    feedbackBanner: document.getElementById('feedbackBanner'),
+    nextHint: document.getElementById('nextHint'),
+    finalScore: document.getElementById('finalScore'),
+    maxScore: document.getElementById('maxScore'),
+    resultMsg: document.getElementById('resultMsg'),
+    resultEmoji: document.getElementById('resultEmoji'),
+    statFirstTry: document.getElementById('statFirstTry'),
+    statSecondTry: document.getElementById('statSecondTry'),
+    statMissed: document.getElementById('statMissed'),
+    fxLayer: document.getElementById('fxLayer'),
+    crossFlash: document.getElementById('crossFlash'),
+    sfxCorrect: document.getElementById('sfxCorrect'),
+    sfxWrong: document.getElementById('sfxWrong'),
+    sfxClaps: document.getElementById('sfxClaps')
+  };
+
+  el.maxScore.textContent = QUESTIONS.length * POINTS_FIRST;
+
+  /* ---------------- Splash logo (5s, then gone forever) ---------------- */
+  setTimeout(function(){
+    el.splash.classList.add('fade');
+    setTimeout(function(){
+      el.splash.remove(); // never comes back
+      el.logoCorner.style.display = 'block';
+      showScreen('introScreen');
+    }, 650);
+  }, 5000);
+
+  /* ---------------- Background skyline (generated once) ---------------- */
+  (function buildSkyline(){
+    var sky = document.getElementById('skyline');
+    var count = 9;
+    var palette = ['#2E3944','#3A4753','#25303A'];
+    for(var i=0;i<count;i++){
+      var w = 40 + Math.random()*50;
+      var h = 90 + Math.random()*130;
+      var b = document.createElement('div');
+      b.className = 'building';
+      b.style.width = w+'px';
+      b.style.height = h+'px';
+      b.style.left = (i*(100/count)) + '%';
+      b.style.background = palette[i % palette.length];
+      // windows
+      var wc = Math.floor(h/26);
+      for(var j=0;j<wc;j++){
+        var win = document.createElement('div');
+        win.className = 'window';
+        win.style.left = (8 + Math.random()*(w-24)) + 'px';
+        win.style.top = (10 + j*24) + 'px';
+        if(Math.random() < 0.3) win.style.opacity = '0.15';
+        b.appendChild(win);
+      }
+      sky.appendChild(b);
+    }
+  })();
+
+  function showScreen(id){
+    ['introScreen','gameScreen','resultScreen'].forEach(function(s){
+      document.getElementById(s).classList.toggle('active', s === id);
+    });
+  }
+
+  function playSfx(a){
+    try{ a.currentTime = 0; a.play().catch(function(){}); }catch(e){}
+  }
+
+  /* ---------------- Game flow ---------------- */
+  el.startBtn.addEventListener('click', function(){
+    state = {idx:0, score:0, attempts:0, timer:null, timeLeft:TIME_PER_Q, locked:false,
+      firstTryCount:0, secondTryCount:0, revealedCount:0};
+    el.scoreVal.textContent = '0';
+    showScreen('gameScreen');
+    loadQuestion();
+  });
+
+  el.retryBtn.addEventListener('click', function(){
+    showScreen('introScreen');
+  });
+
+  function loadQuestion(){
+    state.attempts = 0;
+    state.locked = false;
+    state.timeLeft = TIME_PER_Q;
+    var q = QUESTIONS[state.idx];
+
+    el.qCount.textContent = 'Question ' + (state.idx+1) + ' of ' + QUESTIONS.length;
+    el.qText.textContent = q.q;
+    el.progressFill.style.width = (state.idx / QUESTIONS.length * 100) + '%';
+    el.feedbackBanner.className = 'feedback-banner';
+    el.feedbackBanner.innerHTML = '';
+    el.nextHint.style.display = 'none';
+
+    el.optionsBox.innerHTML = '';
+    var letters = ['A','B','C','D'];
+    q.opts.forEach(function(opt, i){
+      var btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span><span>'+opt+'</span>';
+      btn.addEventListener('click', function(){ handleAnswer(i, btn); });
+      el.optionsBox.appendChild(btn);
+    });
+
+    startTimer();
+  }
+
+  function startTimer(){
+    clearInterval(state.timer);
+    updateTimerUI();
+    state.timer = setInterval(function(){
+      state.timeLeft--;
+      updateTimerUI();
+      if(state.timeLeft <= 0){
+        clearInterval(state.timer);
+        onTimeUp();
+      }
+    }, 1000);
+  }
+
+  function updateTimerUI(){
+    el.timerBox.textContent = state.timeLeft + 's';
+    el.timerBox.classList.toggle('low', state.timeLeft <= 10);
+  }
+
+  function onTimeUp(){
+    if(state.locked) return;
+    // Treat as a used attempt
+    state.attempts++;
+    var buttons = el.optionsBox.querySelectorAll('.opt-btn');
+    buttons.forEach(function(b){ b.disabled = true; });
+    if(state.attempts < 2){
+      showRetryBanner("⏰ Time's up! Take one more shot at it.");
+      // give a fresh short window for the retry
+      state.timeLeft = TIME_PER_Q;
+      buttons.forEach(function(b){ b.disabled = false; });
+      startTimer();
+    } else {
+      revealAnswer();
+    }
+  }
+
+  function handleAnswer(selectedIdx, btnEl){
+    if(state.locked) return;
+    clearInterval(state.timer);
+    var q = QUESTIONS[state.idx];
+    var buttons = el.optionsBox.querySelectorAll('.opt-btn');
+
+    if(selectedIdx === q.correct){
+      state.locked = true;
+      buttons.forEach(function(b, i){
+        b.disabled = true;
+        if(i === selectedIdx) b.classList.add('correct');
+        else b.classList.add('dim');
+      });
+      var pts = state.attempts === 0 ? POINTS_FIRST : POINTS_SECOND;
+      state.score += pts;
+      el.scoreVal.textContent = state.score;
+      if(state.attempts === 0) state.firstTryCount++; else state.secondTryCount++;
+      playSfx(el.sfxCorrect);
+      launchStarConfetti();
+      el.feedbackBanner.className = 'feedback-banner reveal show';
+      el.feedbackBanner.innerHTML = '<span class="icon">🎉</span><span>Correct! +'+pts+' points. '+q.explain+'</span>';
+      el.nextHint.style.display = 'block';
+      el.progressFill.style.width = ((state.idx+1) / QUESTIONS.length * 100) + '%';
+      setTimeout(advance, 1600);
+    } else {
+      state.attempts++;
+      btnEl.classList.add('wrong');
+      playSfx(el.sfxWrong);
+      flashCross();
+      if(state.attempts < 2){
+        buttons.forEach(function(b){ b.disabled = false; });
+        showRetryBanner('Not quite — give it one more try!');
+        state.timeLeft = TIME_PER_Q;
+        startTimer();
+      } else {
+        buttons.forEach(function(b, i){
+          b.disabled = true;
+          if(i === q.correct) b.classList.add('correct');
+        });
+        revealAnswer();
+      }
+    }
+  }
+
+  function showRetryBanner(msg){
+    el.feedbackBanner.className = 'feedback-banner retry show';
+    el.feedbackBanner.innerHTML = '<span class="icon">🔁</span><span>'+msg+'</span>';
+  }
+
+  function revealAnswer(){
+    state.locked = true;
+    clearInterval(state.timer);
+    state.revealedCount++;
+    var q = QUESTIONS[state.idx];
+    var buttons = el.optionsBox.querySelectorAll('.opt-btn');
+    buttons.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.correct) b.classList.add('correct');
+    });
+    el.feedbackBanner.className = 'feedback-banner reveal show';
+    el.feedbackBanner.innerHTML = '<span class="icon">💡</span><span>The correct answer is "'+q.opts[q.correct]+'". '+q.explain+'</span>';
+    el.nextHint.style.display = 'block';
+    el.progressFill.style.width = ((state.idx+1) / QUESTIONS.length * 100) + '%';
+    setTimeout(advance, 2200);
+  }
+
+  function advance(){
+    state.idx++;
+    if(state.idx >= QUESTIONS.length){
+      finishGame();
+    } else {
+      loadQuestion();
+    }
+  }
+
+  function finishGame(){
+    clearInterval(state.timer);
+    var max = QUESTIONS.length * POINTS_FIRST;
+    el.finalScore.textContent = state.score;
+    el.maxScore.textContent = max;
+    el.statFirstTry.textContent = state.firstTryCount;
+    el.statSecondTry.textContent = state.secondTryCount;
+    el.statMissed.textContent = state.revealedCount;
+
+    var pct = state.score / max;
+    if(pct >= 0.8){
+      el.resultEmoji.textContent = '🏆';
+      el.resultMsg.textContent = 'Amazing! You know your way around the city!';
+      playSfx(el.sfxClaps);
+    } else if(pct >= 0.5){
+      el.resultEmoji.textContent = '🚕';
+      el.resultMsg.textContent = 'Good job! A few more practice trips and you\'ll be a pro.';
+    } else {
+      el.resultEmoji.textContent = '🗺️';
+      el.resultMsg.textContent = 'Nice try! Explore the city again to sharpen your skills.';
+    }
+    showScreen('resultScreen');
+  }
+
+  /* ---------------- Effects ---------------- */
+  function launchStarConfetti(){
+    var count = 16;
+    for(var i=0;i<count;i++){
+      var star = document.createElement('div');
+      star.className = 'star-piece';
+      star.textContent = Math.random() < 0.5 ? '⭐' : '✨';
+      star.style.left = (Math.random()*100) + 'vw';
+      star.style.fontSize = (14 + Math.random()*14) + 'px';
+      star.style.animationDuration = (1.4 + Math.random()*1.2) + 's';
+      el.fxLayer.appendChild(star);
+      (function(node){
+        setTimeout(function(){ node.remove(); }, 2800);
+      })(star);
+    }
+  }
+
+  function flashCross(){
+    el.crossFlash.classList.remove('show');
+    void el.crossFlash.offsetWidth; // restart animation
+    el.crossFlash.classList.add('show');
+  }
+
+})();
+</script>
+</body>
+</html>
