@@ -1,1 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 English - Modals Masterclass Game</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --background: #e0f2fe;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #bae6fd;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
+        body.high-contrast {
+            --primary: #000000;
+            --primary-dark: #000000;
+            --secondary: #0044cc;
+            --accent: #b45309;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-light: #111111;
+            --success: #047857;
+            --error: #b91c1c;
+            --border: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background: radial-gradient(circle at center, #f0f9ff 0%, var(--background) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Grammar Background Particles */
+        .ambient-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .floating-word {
+            position: absolute;
+            font-weight: 800;
+            color: var(--primary);
+            opacity: 0.12;
+            font-size: 1.4rem;
+            animation: floatUpDown 8s infinite ease-in-out;
+        }
+
+        .floating-bubble {
+            position: absolute;
+            background: white;
+            border: 2px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            opacity: 0.25;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            animation: floatBubble 12s infinite linear;
+        }
+
+        @keyframes floatUpDown {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(5deg); }
+        }
+
+        @keyframes floatBubble {
+            0% { transform: translateY(105vh) scale(0.9); opacity: 0; }
+            10% { opacity: 0.25; }
+            90% { opacity: 0.25; }
+            100% { transform: translateY(-10vh) scale(1.1); opacity: 0; }
+        }
+
+        /* Mandatory Branding Screen Splash Layout */
+        #brand-splash {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .splash-logo {
+            max-width: 320px;
+            width: 85%;
+            height: auto;
+            margin-bottom: 25px;
+        }
+
+        .splash-bar-frame {
+            width: 220px;
+            height: 6px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .splash-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            animation: fillSplash 5s linear forwards;
+        }
+
+        @keyframes fillSplash {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Utilities Controls Tray */
+        .utility-tray {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 850px;
+            margin-bottom: 15px;
+            z-index: 10;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            padding: 6px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .tray-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        /* Interactive Card Framework */
+        .game-card {
+            display: none;
+            width: 100%;
+            max-width: 850px;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 32px;
+            box-shadow: 0 15px 35px rgba(14, 165, 233, 0.08);
+            border: 2px solid var(--border);
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .active-card { display: block !important; }
+
+        .badge {
+            background-color: rgba(79, 70, 229, 0.08);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h1 { color: var(--primary-dark); font-size: 2.3rem; font-weight: 800; margin-bottom: 15px; }
+        p { color: var(--text-light); font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px; }
+
+        .btn-action {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px 42px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 18px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .btn-action:active { transform: scale(0.97); }
+
+        /* HUD Tracker Parameters */
+        .hud-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 10px 0 25px 0;
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-block { display: flex; flex-direction: column; align-items: center; flex: 1; border-right: 1px solid var(--border); }
+        .hud-block:last-child { border-right: none; }
+        .hud-label { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; font-weight: 800; }
+        .hud-value { font-size: 1.4rem; font-weight: 800; color: var(--primary-dark); }
+
+        .progress-container { width: 100%; height: 10px; background-color: #e2e8f0; border-radius: 5px; overflow: hidden; margin-bottom: 35px; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.3s ease; }
+
+        .question-text { text-align: left; font-size: 1.35rem; font-weight: 700; line-height: 1.6; margin-bottom: 30px; color: var(--text); }
+        .options-container { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 25px; position: relative; }
+
+        /* Dynamic Options Elements */
+        .option-button {
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-button:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .option-button.correct { background-color: #ecfdf5 !important; border-color: var(--success) !important; color: var(--success) !important; font-weight: 700; }
+        .option-button.wrong { background-color: #fef2f2 !important; border-color: var(--error) !important; color: var(--error) !important; }
+        
+        .card-shake { animation: shakeEffect 0.4s ease-in-out; }
+        @keyframes shakeEffect {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .explanation-box { background-color: #f8fafc; border-left: 5px solid var(--secondary); padding: 25px; border-radius: 0 20px 20px 0; text-align: left; margin-top: 25px; display: none; }
+
+        /* Visual Feedback VFX Assets */
+        .star-vfx {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.5rem;
+            z-index: 99;
+            color: var(--accent);
+            animation: blowUp 0.6s ease-out forwards;
+        }
+        .cross-vfx {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.5rem;
+            z-index: 99;
+            color: var(--error);
+            animation: blowUp 0.6s ease-out forwards;
+        }
+        @keyframes blowUp {
+            0% { transform: translate(0,0) scale(0.5); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; }
+        }
+
+        /* Challenge Mini Game Arena Grid */
+        .challenge-scenario-card {
+            background: #fafafa;
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .challenge-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn-mini-choice {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-mini-choice:hover { background: var(--primary); color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-canvas" id="ambient-layer">
+        </div>
+
+    <div id="brand-splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://placehold.co/320x100?text=Innovine+Education';">
+        <div class="splash-bar-frame">
+            <div class="splash-bar-fill"></div>
+        </div>
+    </div>
+
+    <div class="utility-tray">
+        <div class="volume-container">
+            <span>VOL</span>
+            <input type="range" min="0" max="1" step="0.1" value="0.5" id="volume-slider" onchange="modifyEngineVolume()">
+        </div>
+        <button class="tray-btn" onclick="toggleMuteState()" id="mute-btn">🔊 Mute</button>
+        <button class="tray-btn" onclick="toggleContrastMode()">🌓 Contrast</button>
+    </div>
+
+    <div id="intro-screen" class="game-card active-card">
+        <div class="badge">Grade 7 English</div>
+        <h1>Modals Masterclass Arena</h1>
+        <p>Welcome to the grammar proving grounds. Master modal auxillary expressions across ability parameters, obligations, permissions, and situational context paths. Read every dialogue block closely!</p>
+        <button class="btn-action" onclick="initializeQuizSession()">Start Game</button>
+    </div>
+
+    <div id="quiz-screen" class="game-card">
+        <div class="hud-bar">
+            <div class="hud-block">
+                <span class="hud-label">Progress</span>
+                <span class="hud-value" id="hud-progress-text">1 / 12</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Score Track</span>
+                <span class="hud-value" id="hud-score-text">Score: 0 / 12</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Attempt</span>
+                <span class="hud-value" id="hud-attempt-text">1 / 2</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Timer</span>
+                <span class="hud-value" id="hud-timer-text">45s</span>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="hud-bar-fill"></div>
+        </div>
+
+        <div class="question-text" id="live-question-box"></div>
+        <div class="options-container" id="live-options-grid"></div>
+
+        <div class="explanation-box" id="live-explanation-card">
+            <div style="font-weight: 800; margin-bottom: 6px; color: var(--primary-dark);" id="exp-headline">Correct Answer Asset:</div>
+            <div id="exp-body" style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 15px;"></div>
+            <button class="btn-action" style="padding: 10px 24px; font-size: 1rem;" onclick="advanceSessionProgress()">Continue &rarr;</button>
+        </div>
+    </div>
+
+    <div id="bonus-screen" class="game-card">
+        <div class="badge" style="background-color: #fef3c7; color: #d97706;">Bonus Level</div>
+        <h1>Everyday English Challenge</h1>
+        <p>Test your intuition across common conversational real-world scenarios. Choose the optimal modal modifier configuration!</p>
+        
+        <div class="challenge-scenario-card">
+            <h4 style="margin-bottom: 8px; color: var(--primary-dark);" id="bonus-title">Scenario Matrix</h4>
+            <p style="font-size: 1.1rem; margin-bottom: 10px; color: var(--text);" id="bonus-prompt-text"></p>
+            <div class="challenge-buttons" id="bonus-choices-box"></div>
+        </div>
+        <div id="bonus-feedback-note" style="font-weight: bold; font-size: 1.05rem; margin-top: 15px;"></div>
+    </div>
+
+    <div id="result-screen" class="game-card">
+        <div class="badge">Evaluation Matrix Output</div>
+        <h1 id="result-headline-msg">Assessment Complete</h1>
+        <p id="result-analytics-body"></p>
+        
+        <div class="hud-bar" style="max-width: 450px; margin: 0 auto 30px auto;">
+            <div class="hud-block">
+                <span class="hud-label">Accuracy Score</span>
+                <span class="hud-value" id="final-metrics-score">0 / 12</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Percentage</span>
+                <span class="hud-value" id="final-metrics-percent">0%</span>
+            </div>
+        </div>
+        <button class="btn-action" onclick="resetAppEngine()">Play Again</button>
+    </div>
+
+    <script>
+        // STRICT UNTOUCHED IMMUTABLE QUESTION INVENTORY DATA STRINGS
+        const coreInventory = [
+            {
+                q: "1. Aarushi needs to leave class early because she has a doctor’s appointment. Which sentence sounds most polite and appropriate?",
+                options: [
+                    "a) I must leave class early for my doctor’s appointment.",
+                    "b) Can I leave class early for my doctor’s appointment?",
+                    "c) May I leave class early for my doctor’s appointment?",
+                    "d) I will leave class early for my doctor’s appointment."
+                ],
+                ans: "c) May I leave class early for my doctor’s appointment?",
+                exp: "'May' is the most polite and appropriate formal modal choice for asking permission inside a classroom context."
+            },
+            {
+                q: "2. A student is struggling to carry a stack of books. Which reply sounds like a polite offer?",
+                options: [
+                    "a) Should I carry your books?",
+                    "b) Would you like me to carry your books?",
+                    "c) Must I carry your books?",
+                    "d) Can I have your books?"
+                ],
+                ans: "b) Would you like me to carry your books?",
+                exp: "'Would you like...?' is an expert structured expression commonly implemented to deploy polite offers."
+            },
+            {
+                q: "3.The weather looks dark and cloudy before sports class. Which sentence best shows that rain is possible but not certain?",
+                options: [
+                    "a) It will rain during sports class.",
+                    "b) It might rain during sports class.",
+                    "c) It must rain during sports class.",
+                    "d) It should rain during sports class."
+                ],
+                ans: "b) It might rain during sports class.",
+                exp: "'Might' natively communicates weak conditional possibility rather than absolute situational certainty."
+            },
+            {
+                q: "4. A friend says they feel tired after eating too much junk food. What is the best advice?",
+                options: [
+                    "a) You may eat more junk food tomorrow.",
+                    "b) You should eat healthier food.",
+                    "c) You must have eaten too much.",
+                    "d) You might be eating healthier food."
+                ],
+                ans: "b) You should eat healthier food.",
+                exp: "'Should' is used to formulate soft recommendations and clear objective advice."
+            },
+            {
+                q: "5. The class is going on a field trip, and the teacher gives a safety rule. Which sentence shows a strong rule?",
+                options: [
+                    "a) You can wear a seatbelt.",
+                    "b) You might wear a seatbelt.",
+                    "c) You should wear a seatbelt.",
+                    "d) You must wear a seatbelt."
+                ],
+                ans: "d) You must wear a seatbelt.",
+                exp: "'Must' systematically communicates strict programmatic obligations, absolute laws, and critical safety codes."
+            },
+            {
+                q: "6. The teacher tells the students that the activity is optional and not compulsory. Which sentence is correct?",
+                options: [
+                    "a) You need not bring your notebooks.",
+                    "b) You must not bring your notebooks.",
+                    "c) You should not bring your notebooks.",
+                    "d) You can bring your notebooks."
+                ],
+                ans: "a) You need not bring your notebooks.",
+                exp: "'Need not' effectively clarifies that an activity lacks required structural necessity.",
+            },
+            {
+                q: "7. Meera sees her brother’s cycle outside the library. Which sentence shows a logical conclusion?",
+                options: [
+                    "a) He may be at the library.",
+                    "b) He must be at the library.",
+                    "c) He should be at the library.",
+                    "d) He can be at the library."
+                ],
+                ans: "b) He must be at the library.",
+                exp: "'Must be' expresses an authoritative logical conclusion drawn dynamically from available physical evidence."
+            },
+            {
+                q: "8. A student is talking about something they were able to do when they were younger. Which sentence is correct?",
+                options: [
+                    "a) I can swim when I was younger.",
+                    "b) I could swim when I was younger.",
+                    "c) I must swim when I was younger.",
+                    "d) I may swim when I was younger."
+                ],
+                ans: "b) I could swim when I was younger.",
+                exp: "'Could' evaluates and validates generalized talent and systemic capabilities located inside historical past timelines."
+            },
+            {
+                q: "9. A teacher is confident that the class will finish the project on time. Which sentence shows certainty?",
+                options: [
+                    "a) We might finish the project on time.",
+                    "b) We could finish the project on time.",
+                    "c) We will finish the project on time.",
+                    "d) We should finish the project on time."
+                ],
+                ans: "c) We will finish the project on time.",
+                exp: "'Will' establishes unyielding objective certainty regarding forthcoming prospective events."
+            },
+            {
+                q: "10. A student writes: “You must should revise before the test.” What is the correct fix?",
+                options: [
+                    "a) You must revise before the test.",
+                    "b) You may should revise before the test.",
+                    "c) You can should revise before the test.",
+                    "d) You need should revise before the test."
+                ],
+                ans: "a) You must revise before the test.",
+                exp: "Double modals are ungrammatical. Drop 'should' to allow the single modal 'must' to express structural obligation cleanly."
+            },
+            {
+                q: "11. A student says: “He could has already sent the homework.” What is the correct correction?",
+                options: [
+                    "a) He could already sent the homework.",
+                    "b) He could have already sent the homework.",
+                    "c) He can has already sent the homework.",
+                    "d) He should has already sent the homework."
+                ],
+                ans: "b) He could have already sent the homework.",
+                exp: "Modal operators always command the baseline infinitive root form ('have') when parsing perfective aspect configurations."
+            },
+            {
+                q: "12. Read the message from a class group chat:\n\n“Sir said we need not to bring our textbooks tomorrow.”\nWhat is the correct version?",
+                options: [
+                    "a) Sir said we need not bring our textbooks tomorrow.",
+                    "b) Sir said we must not bring our textbooks tomorrow.",
+                    "c) Sir said we should not to bring our textbooks tomorrow.",
+                    "d) Sir said we can not to bring our textbooks tomorrow."
+                ],
+                ans: "a) Sir said we need not bring our textbooks tomorrow.",
+                exp: "When serving as a core modal item, 'need not' patterns natively with a bare infinitive without 'to'."
+            }
+        ];
+
+        // Challenge Module Payload
+        const bonusInventory = [
+            { text: "Your friend looks stressed about an upcoming presentation. What polite suggestion can you offer?", choices: ["You must hide.", "Could I review your draft?", "You need not care."], core: "Could I review your draft?" },
+            { text: "You wish to borrow an absolute stranger's writing instrument in an exam hall. Select the most formal framework:", choices: ["Give it to me.", "May I borrow your pen?", "I will take this pen."], core: "May I borrow your pen?" }
+        ];
+
+        let challengeSet = [];
+        let indexPointer = 0;
+        let scoreCounter = 0;
+        let attemptsLeft = 1; 
+        let countdownRef = null;
+        let timerVal = 45;
+        let muteState = false;
+        let genericVol = 0.5;
+        let interactiveLock = false;
+        let bonusPointer = 0;
+
+        // System Native Playback Controllers
+        const audioEngine = {
+            correct: new Audio('assets/correct.mp3'),
+            wrong: new Audio('assets/wrong.mp3'),
+            clapping: new Audio('assets/clapping.mp3')
+        };
+
+        // Initialize Background Grammar Aesthetics
+        window.addEventListener('DOMContentLoaded', () => {
+            const ambientLayer = document.getElementById('ambient-layer');
+            const keywords = ["can", "could", "may", "might", "should", "must", "will", "would", "shall"];
+            
+            // Generate Text Sprites
+            for (let i = 0; i < 15; i++) {
+                let textNode = document.createElement('div');
+                textNode.className = 'floating-word';
+                textNode.innerText = keywords[Math.floor(Math.random() * keywords.length)];
+                textNode.style.left = Math.random() * 90 + '%';
+                textNode.style.top = Math.random() * 85 + '%';
+                textNode.style.animationDelay = (Math.random() * 5) + 's';
+                ambientLayer.appendChild(textNode);
+            }
+
+            // Continuous Bubble Generator Block
+            setInterval(() => {
+                let bubble = document.createElement('div');
+                bubble.className = 'floating-bubble';
+                bubble.innerText = keywords[Math.floor(Math.random() * keywords.length)] + " 💬";
+                bubble.style.left = Math.random() * 95 + '%';
+                bubble.style.animationDuration = (8 + Math.random() * 6) + 's';
+                ambientLayer.appendChild(bubble);
+                setTimeout(() => bubble.remove(), 14000);
+            }, 2500);
+
+            // Mandatory 5 Second Delay Frame Dismissal
+            setTimeout(() => {
+                const splash = document.getElementById('brand-splash');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.remove(), 500);
+                }
+            }, 5000);
+        });
+
+        function playAudioFile(key) {
+            if (muteState) return;
+            try {
+                audioEngine[key].currentTime = 0;
+                audioEngine[key].volume = genericVol;
+                audioEngine[key].play();
+            } catch (err) { console.log(`Audio driver waiting: assets/${key}.mp3`); }
+        }
+
+        function modifyEngineVolume() {
+            genericVol = parseFloat(document.getElementById('volume-slider').value);
+        }
+
+        function toggleMuteState() {
+            muteState = !muteState;
+            document.getElementById('mute-btn').innerText = muteState ? "❌ Unmute" : "🔊 Mute";
+        }
+
+        function toggleContrastMode() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function initializeQuizSession() {
+            // Shuffle array using Fisher-Yates to keep parsing processes lightweight
+            challengeSet = [...coreInventory].sort(() => Math.random() - 0.5);
+            indexPointer = 0;
+            scoreCounter = 0;
+            attemptsLeft = 1;
+            switchScreenView('quiz-screen');
+            loadActiveChallenge();
+        }
+
+        function loadActiveChallenge() {
+            interactiveLock = false;
+            clearInterval(countdownRef);
+            timerVal = 45;
+            
+            document.getElementById('hud-timer-text').innerText = timerVal + "s";
+            document.getElementById('hud-timer-text').style.color = "var(--primary-dark)";
+            document.getElementById('live-explanation-card').style.display = "none";
+            
+            let data = challengeSet[indexPointer];
+            document.getElementById('hud-progress-text').innerText = `${indexPointer + 1} / 12`;
+            document.getElementById('hud-score-text').innerText = `Score: ${scoreCounter} / 12`;
+            document.getElementById('hud-attempt-text').innerText = attemptsLeft === 1 ? "1 / 2" : "2 / 2";
+            document.getElementById('hud-bar-fill').style.width = `${(indexPointer / 12) * 100}%`;
+            
+            document.getElementById('live-question-box').innerText = data.q;
+            
+            // Randomize visual presentation array elements without changing original strings
+            let scrambledOptions = [...data.options].sort(() => Math.random() - 0.5);
+            
+            let grid = document.getElementById('live-options-grid');
+            grid.innerHTML = "";
+            
+            scrambledOptions.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = "option-button";
+                btn.innerHTML = `<span>${opt}</span>`;
+                btn.onclick = (e) => executeOptionEvaluation(opt, btn, e);
+                grid.appendChild(btn);
+            });
+
+            beginQuestionCountdown();
+        }
+
+        function beginQuestionCountdown() {
+            countdownRef = setInterval(() => {
+                timerVal--;
+                document.getElementById('hud-timer-text').innerText = timerVal + "s";
+                if (timerVal <= 10) {
+                    document.getElementById('hud-timer-text').style.color = "var(--error)";
+                }
+                if (timerVal <= 0) {
+                    clearInterval(countdownRef);
+                    processTimeoutFailure();
+                }
+            }, 1000);
+        }
+
+        function processTimeoutFailure() {
+            interactiveLock = true;
+            playAudioFile('wrong');
+            exposeResolutionDrawer();
+        }
+
+        function executeOptionEvaluation(selectedStr, btnElement, clickEvent) {
+            if (interactiveLock) return;
+            let currentPayload = challengeSet[indexPointer];
+
+            if (selectedStr === currentPayload.ans) {
+                // Correct path behavior
+                interactiveLock = true;
+                clearInterval(countdownRef);
+                btnElement.classList.add('correct');
+                btnElement.innerHTML += `<span>⭐</span>`;
+                generateVFXParticles(clickEvent, '⭐');
+                scoreCounter++;
+                document.getElementById('hud-score-text').innerText = `Score: ${scoreCounter} / 12`;
+                playAudioFile('correct');
+                
+                setTimeout(() => {
+                    advanceSessionProgress();
+                }, 1400);
+            } else {
+                // Incorrect path tracking
+                btnElement.classList.add('wrong');
+                btnElement.innerHTML += `<span>❌</span>`;
+                generateVFXParticles(clickEvent, '❌');
+                document.getElementById('quiz-screen').classList.add('card-shake');
+                setTimeout(() => document.getElementById('quiz-screen').classList.remove('card-shake'), 400);
+                playAudioFile('wrong');
+
+                if (attemptsLeft > 0) {
+                    // Retry mode handling
+                    attemptsLeft--;
+                    interactiveLock = true;
+                    clearInterval(countdownRef);
+                    setTimeout(() => {
+                        interactiveLock = false;
+                        document.getElementById('hud-attempt-text').innerText = "2 / 2";
+                        btnElement.classList.remove('wrong');
+                        let marker = btnElement.querySelector('span:last-child');
+                        if (marker) marker.remove();
+                        beginQuestionCountdown();
+                    }, 1200);
+                } else {
+                    // Direct route to explanation box
+                    interactiveLock = true;
+                    clearInterval(countdownRef);
+                    exposeResolutionDrawer();
+                }
+            }
+        }
+
+        function exposeResolutionDrawer() {
+            let currentPayload = challengeSet[indexPointer];
+            let buttons = document.querySelectorAll('.option-button');
+            
+            buttons.forEach(btn => {
+                let extractedText = btn.querySelector('span').innerText;
+                if (extractedText === currentPayload.ans) {
+                    btn.classList.add('correct');
+                }
+                btn.disabled = true;
+            });
+
+            document.getElementById('exp-body').innerText = currentPayload.exp;
+            document.getElementById('live-explanation-card').style.display = "block";
+        }
+
+        function advanceSessionProgress() {
+            attemptsLeft = 1;
+            indexPointer++;
+            
+            if (indexPointer >= challengeSet.length) {
+                bonusPointer = 0;
+                switchScreenView('bonus-screen');
+                loadBonusScenarioCard();
+            } else {
+                loadActiveChallenge();
+            }
+        }
+
+        // STAGE 3: REWARD MINI GAME MECHANICS
+        function loadBonusScenarioCard() {
+            document.getElementById('bonus-feedback-note').innerText = "";
+            let data = bonusInventory[bonusPointer];
+            document.getElementById('bonus-title').innerText = `Situation Card Matrix ${bonusPointer + 1}`;
+            document.getElementById('bonus-prompt-text').innerText = data.text;
+            
+            let tray = document.getElementById('bonus-choices-box');
+            tray.innerHTML = "";
+            
+            data.choices.forEach(ch => {
+                let btn = document.createElement('button');
+                btn.className = "btn-mini-choice";
+                btn.innerText = ch;
+                btn.onclick = () => evaluateBonusChoice(ch, data.core);
+                tray.appendChild(btn);
+            });
+        }
+
+        function evaluateBonusChoice(chosen, valid) {
+            let container = document.getElementById('bonus-feedback-note');
+            if (chosen === valid) {
+                container.style.color = "var(--success)";
+                container.innerText = "🌟 Optimal Choice Selection! Polite communication patterns verified.";
+                playAudioFile('correct');
+            } else {
+                container.style.color = "var(--text-light)";
+                container.innerText = "Notice: That alternative phrase might sound awkward or blunt across everyday contexts.";
+                playAudioFile('wrong');
+            }
+
+            setTimeout(() => {
+                bonusPointer++;
+                if (bonusPointer >= bonusInventory.length) {
+                    renderFinalDashboard();
+                } else {
+                    loadBonusScenarioCard();
+                }
+            }, 2000);
+        }
+
+        // STAGE 4: EVALUATION METRICS DISPLAY
+        function renderFinalDashboard() {
+            switchScreenView('result-screen');
+            playAudioFile('clapping');
+            
+            document.getElementById('final-metrics-score').innerText = `${scoreCounter} / 12`;
+            let percentage = Math.round((scoreCounter / 12) * 100);
+            document.getElementById('final-metrics-percent').innerText = percentage + "%";
+            
+            let labelNode = document.getElementById('result-headline-msg');
+            let reviewNode = document.getElementById('result-analytics-body');
+            
+            if (scoreCounter === 12) {
+                labelNode.innerText = "🏆 Modal Master!";
+                reviewNode.innerText = "Absolute syntactical mastery! You parsed every dialogue structure and obligation profile flawlessly.";
+            } else if (scoreCounter >= 9) {
+                labelNode.innerText = "🌟 Excellent!";
+                reviewNode.innerText = "Fantastic control over context variations. Your understanding of syntax indicators is outstanding.";
+            } else if (scoreCounter >= 6) {
+                labelNode.innerText = "🎉 Great Job!";
+                reviewNode.innerText = "Solid core results. Review permission levels and logical deduction pairs to push your score higher.";
+            } else {
+                labelNode.innerText = "📘 Keep Practising!";
+                reviewNode.innerText = "Grammar items require careful processing. Re-verify the explanation boards to improve syntax detection paths.";
+            }
+        }
+
+        function resetAppEngine() {
+            switchScreenView('intro-screen');
+        }
+
+        function switchScreenView(id) {
+            document.querySelectorAll('.game-card').forEach(card => card.classList.remove('active-card'));
+            document.getElementById(id).classList.add('active-card');
+        }
+
+        // Particle VFX Generation Core Engine
+        function generateVFXParticles(event, dynamicChar) {
+            if (!event) return;
+            const boundingBox = event.target.getBoundingClientRect();
+            const launchX = event.clientX || (boundingBox.left + boundingBox.width / 2);
+            const launchY = event.clientY || (boundingBox.top + boundingBox.height / 2);
+
+            for (let i = 0; i < 8; i++) {
+                let particle = document.createElement('div');
+                particle.className = dynamicChar === '★' || dynamicChar === '⭐' ? 'star-vfx' : 'cross-vfx';
+                particle.innerText = dynamicChar;
+                particle.style.left = launchX + 'px';
+                particle.style.top = launchY + 'px';
+                
+                let vectorX = (Math.random() - 0.5) * 160;
+                let vectorY = (Math.random() - 0.5) * 160 - 30;
+                let spin = Math.random() * 360;
+                
+                particle.style.setProperty('--x', `${vectorX}px`);
+                particle.style.setProperty('--y', `${vectorY}px`);
+                particle.style.setProperty('--r', `${spin}deg`);
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 600);
+            }
+        }
+    </script>
+</body>
+</html>
