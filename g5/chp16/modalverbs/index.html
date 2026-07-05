@@ -1,1 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Superhero Training Academy — Modal Verbs | Grade 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B1E3D;
+    --navy2:#132A52;
+    --red:#E63946;
+    --red-dark:#B72631;
+    --yellow:#FFC93C;
+    --blue:#3A86FF;
+    --white:#FFFFFF;
+    --panel:#F4F6FB;
+    --ink:#101426;
+    --correct:#2ECC71;
+    --wrong:#E63946;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:
+      radial-gradient(circle at 8px 8px, rgba(255,255,255,0.06) 2px, transparent 2.5px) 0 0/26px 26px,
+      linear-gradient(160deg, var(--navy) 0%, var(--navy2) 100%);
+    color:var(--ink);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+  h1,h2,h3,.display{font-family:'Bangers',cursive; letter-spacing:1px;}
+  button{font-family:'Nunito',sans-serif; cursor:pointer; border:none;}
+  .screen{
+    min-height:100vh;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    padding:24px 16px 40px;
+  }
+  .screen.active{display:flex;}
 
+  /* ---------- Background comic FX (decorative, CSS-only) ---------- */
+  .burst{
+    position:fixed; border-radius:50%; z-index:0; pointer-events:none; opacity:0.15;
+    background:radial-gradient(circle, var(--yellow) 0%, transparent 70%);
+  }
+  .burst.b1{width:340px; height:340px; top:-80px; right:-100px;}
+  .burst.b2{width:260px; height:260px; bottom:-60px; left:-80px; background:radial-gradient(circle, var(--blue) 0%, transparent 70%);}
+  .streak{
+    position:fixed; height:4px; background:linear-gradient(90deg, transparent, var(--yellow), transparent);
+    z-index:0; pointer-events:none; opacity:0.5;
+    animation:zoom linear infinite;
+  }
+  @keyframes zoom{
+    from{transform:translateX(-30vw); opacity:0;}
+    10%{opacity:0.6;}
+    90%{opacity:0.6;}
+    to{transform:translateX(130vw); opacity:0;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .streak{animation:none; display:none;}
+  }
+
+  /* ---------- Splash ---------- */
+  #splash{
+    position:fixed; inset:0; z-index:100;
+    background:radial-gradient(circle at 50% 40%, var(--navy2) 0%, var(--navy) 75%);
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    transition:opacity 0.6s ease;
+  }
+  #splash img{
+    max-width:220px; max-height:220px; width:auto; height:auto;
+    animation:pop 0.6s cubic-bezier(.34,1.56,.64,1);
+    filter:drop-shadow(0 0 30px rgba(255,201,60,0.5));
+  }
+  #splash.fade{opacity:0; pointer-events:none;}
+  @keyframes pop{
+    0%{transform:scale(0.3) rotate(-8deg); opacity:0;}
+    100%{transform:scale(1) rotate(0deg); opacity:1;}
+  }
+
+  /* ---------- Cards / shared ---------- */
+  .card{
+    background:var(--white);
+    border-radius:20px;
+    box-shadow:0 16px 34px rgba(0,0,0,0.4);
+    padding:32px 28px;
+    max-width:560px;
+    width:100%;
+    position:relative;
+    z-index:1;
+    border:4px solid var(--navy2);
+  }
+  .eyebrow{
+    display:inline-block; background:var(--red); color:#fff;
+    font-family:'Bangers',cursive; font-size:15px; letter-spacing:1.5px; text-transform:uppercase;
+    padding:6px 16px; border-radius:999px; margin-bottom:14px;
+    box-shadow:0 3px 0 var(--red-dark);
+  }
+  .title-main{font-size:clamp(30px,7vw,44px); color:var(--navy); margin:0 0 6px; line-height:1.05;}
+  .subtitle{color:#4A5468; font-weight:700; margin:0 0 22px; font-size:15px;}
+  .btn-primary{
+    background:var(--red); color:#fff; font-family:'Bangers',cursive; font-size:20px; letter-spacing:1px;
+    padding:14px 34px; border-radius:14px; box-shadow:0 6px 0 var(--red-dark);
+    transition:transform 0.08s ease;
+  }
+  .btn-primary:active{transform:translateY(4px); box-shadow:0 2px 0 var(--red-dark);}
+  .meta-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;}
+  .meta-pill{
+    background:var(--panel); border:2px solid #DCE2F0; color:var(--navy);
+    font-weight:800; font-size:13px; padding:6px 12px; border-radius:999px;
+  }
+
+  /* ---------- Game screen ---------- */
+  .hud{
+    width:100%; max-width:560px; display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px; gap:10px; z-index:1; position:relative;
+  }
+  .score-box{
+    background:var(--white); border-radius:14px; padding:8px 16px; box-shadow:0 6px 16px rgba(0,0,0,0.3);
+    font-weight:900; color:var(--red); display:flex; align-items:center; gap:6px; font-size:15px;
+  }
+  .timer-box{
+    background:var(--white); border-radius:14px; padding:8px 16px; box-shadow:0 6px 16px rgba(0,0,0,0.3);
+    font-weight:900; font-size:15px; min-width:70px; text-align:center; color:var(--navy);
+  }
+  .timer-box.low{color:var(--wrong);}
+
+  /* ---------- Signature element: power-up badge rack ---------- */
+  .badge-rack{
+    width:100%; max-width:560px; display:flex; gap:6px; margin-bottom:18px; z-index:1; position:relative;
+    justify-content:center; flex-wrap:wrap;
+  }
+  .badge{
+    width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,0.15);
+    border:2px solid rgba(255,255,255,0.3); display:flex; align-items:center; justify-content:center;
+    font-size:15px; transition:all 0.3s ease; opacity:0.5;
+  }
+  .badge.earned{
+    background:var(--yellow); border-color:#E0A800; opacity:1;
+    animation:badgePop 0.4s ease;
+    box-shadow:0 0 12px rgba(255,201,60,0.7);
+  }
+  @keyframes badgePop{
+    0%{transform:scale(0.3) rotate(-30deg);}
+    60%{transform:scale(1.2) rotate(10deg);}
+    100%{transform:scale(1) rotate(0);}
+  }
+  .q-count{font-weight:800; color:#D8DEEF; font-size:13px; margin-bottom:8px; align-self:flex-start; max-width:560px; width:100%; z-index:1;}
+  .q-text{font-size:19px; font-weight:800; color:var(--navy); margin:0 0 22px; line-height:1.45;}
+  .options{display:flex; flex-direction:column; gap:12px;}
+  .opt-btn{
+    background:var(--panel); border:2px solid #DCE2F0; border-radius:14px;
+    padding:14px 16px; text-align:left; font-size:16px; font-weight:800; color:var(--navy);
+    display:flex; align-items:center; gap:12px; transition:all 0.15s ease;
+  }
+  .opt-btn .opt-letter{
+    background:var(--navy); color:#fff; width:28px; height:28px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
+    font-family:'Bangers',cursive; font-size:16px;
+  }
+  .opt-btn:hover:not(:disabled){border-color:var(--blue); transform:translateY(-1px);}
+  .opt-btn:disabled{cursor:default;}
+  .opt-btn.correct{background:#E4F9EC; border-color:var(--correct); color:#1E9E56;}
+  .opt-btn.correct .opt-letter{background:var(--correct);}
+  .opt-btn.wrong{background:#FCE7E9; border-color:var(--wrong); color:var(--red-dark);}
+  .opt-btn.wrong .opt-letter{background:var(--wrong);}
+  .opt-btn.dim{opacity:0.5;}
+
+  .feedback-banner{
+    margin-top:18px; padding:14px 16px; border-radius:14px; font-weight:800; font-size:14.5px;
+    display:none; align-items:flex-start; gap:10px; line-height:1.4;
+  }
+  .feedback-banner.show{display:flex;}
+  .feedback-banner.retry{background:#FFF1CE; color:#8A5A00;}
+  .feedback-banner.reveal{background:#E4ECFC; color:#1D3A82;}
+  .feedback-banner .icon{font-size:20px;}
+  .next-hint{margin-top:14px; font-size:13px; color:#4A5468; font-weight:700; text-align:center;}
+
+  /* ---------- Result screen ---------- */
+  .result-emoji{font-size:64px; margin-bottom:6px;}
+  .result-score{font-size:48px; color:var(--red); margin:4px 0; font-family:'Bangers',cursive; letter-spacing:1px;}
+  .result-sub{color:#4A5468; font-weight:800; margin-bottom:24px;}
+  .stat-row{display:flex; gap:14px; width:100%; margin-bottom:24px;}
+  .stat{
+    flex:1; background:var(--panel); border-radius:14px; padding:14px; text-align:center;
+  }
+  .stat .num{font-size:22px; font-weight:900; color:var(--navy);}
+  .stat .lbl{font-size:12px; color:#4A5468; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;}
+
+  /* ---------- Overlay effects ---------- */
+  .fx-layer{position:fixed; inset:0; pointer-events:none; z-index:50; overflow:hidden;}
+  .star-piece{
+    position:absolute; top:-5%; font-size:20px; animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{transform:translateY(110vh) rotate(360deg); opacity:0.2;}
+  }
+  .cross-flash{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.4);
+    font-size:70px; color:var(--wrong); opacity:0; z-index:60; pointer-events:none;
+  }
+  .cross-flash.show{
+    animation:crossPop 0.7s ease forwards;
+  }
+  @keyframes crossPop{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(0.3);}
+    30%{opacity:1; transform:translate(-50%,-50%) scale(1.1);}
+    60%{opacity:1; transform:translate(-50%,-50%) scale(1);}
+    100%{opacity:0; transform:translate(-50%,-50%) scale(0.9);}
+  }
+
+  .logo-corner{
+    position:fixed; top:14px; left:14px; width:42px; height:42px; z-index:5;
+    opacity:0.95;
+  }
+  .logo-corner img{width:100%; height:100%; object-fit:contain;}
+
+  footer.credit{
+    margin-top:26px; font-size:12px; color:#4A5468; font-weight:700; z-index:1; position:relative;
+  }
+
+  @media (max-width:420px){
+    .card{padding:24px 18px; border-radius:18px;}
+    .q-text{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= SPLASH (logo, 5 seconds, then removed forever) ================= -->
+<div id="splash">
+  <img src="assets/logo.png" alt="Innovine">
+</div>
+
+<!-- ================= Decorative background ================= -->
+<div class="burst b1"></div>
+<div class="burst b2"></div>
+<div class="streak" style="top:18%; width:200px; animation-duration:6s;"></div>
+<div class="streak" style="top:64%; width:160px; animation-duration:8s; animation-delay:2.5s;"></div>
+
+<div class="logo-corner" id="logoCorner" style="display:none;">
+  <img src="assets/logo.png" alt="Innovine">
+</div>
+
+<!-- ================= INTRO SCREEN ================= -->
+<div class="screen" id="introScreen">
+  <div class="card" style="text-align:center;">
+    <span class="eyebrow">Superhero Training Academy</span>
+    <h1 class="title-main">Modal Verb Powers</h1>
+    <p class="subtitle">Master each power — ability, permission, possibility, and more — to earn your hero badges!</p>
+    <div class="meta-row" style="justify-content:center;">
+      <span class="meta-pill">Grade 5</span>
+      <span class="meta-pill">English</span>
+      <span class="meta-pill">Chapter 16 · Modal Verbs</span>
+      <span class="meta-pill">10 Questions</span>
+    </div>
+    <button class="btn-primary" id="startBtn">Begin Training ⚡</button>
+  </div>
+</div>
+
+<!-- ================= GAME SCREEN ================= -->
+<div class="screen" id="gameScreen">
+  <div class="hud">
+    <div class="score-box">⭐ <span id="scoreVal">0</span></div>
+    <div class="timer-box" id="timerBox">45s</div>
+  </div>
+  <div class="badge-rack" id="badgeRack"></div>
+  <div class="card">
+    <div class="q-count" id="qCount">Question 1 of 10</div>
+    <p class="q-text" id="qText">Question text here</p>
+    <div class="options" id="optionsBox"></div>
+    <div class="feedback-banner" id="feedbackBanner"></div>
+    <div class="next-hint" id="nextHint" style="display:none;">Tap any option to continue →</div>
+  </div>
+</div>
+
+<!-- ================= RESULT SCREEN ================= -->
+<div class="screen" id="resultScreen">
+  <div class="card" style="text-align:center;">
+    <div class="result-emoji" id="resultEmoji">🏆</div>
+    <div class="result-score"><span id="finalScore">0</span> / <span id="maxScore">100</span></div>
+    <div class="result-sub" id="resultMsg">Great work, hero-in-training!</div>
+    <div class="stat-row">
+      <div class="stat"><div class="num" id="statFirstTry">0</div><div class="lbl">First try</div></div>
+      <div class="stat"><div class="num" id="statSecondTry">0</div><div class="lbl">Second try</div></div>
+      <div class="stat"><div class="num" id="statMissed">0</div><div class="lbl">Revealed</div></div>
+    </div>
+    <button class="btn-primary" id="retryBtn">Train Again 🔁</button>
+    <footer class="credit">Innovine Learning · Superhero Training Academy</footer>
+  </div>
+</div>
+
+<!-- Audio -->
+<audio id="sfxCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sfxWrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="sfxClaps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+<div class="fx-layer" id="fxLayer"></div>
+<div class="cross-flash" id="crossFlash">❌</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Data ---------------- */
+  var QUESTIONS = [
+    {q:"Rohan has been practising guitar for two years and wants to play at the talent show. Which sentence best describes his ability?", opts:["Rohan can play the guitar.","Rohan may play the guitar.","Rohan must play the guitar.","Rohan should play the guitar."], correct:0,
+     explain:"'Can' is used to express ability."},
+    {q:"Sneha finishes her book early and wants to politely ask the librarian for another one. Which sentence is most appropriate?", opts:["Can I borrow another book?","Shall I borrow another book?","May I borrow another book?","Must I borrow another book?"], correct:2,
+     explain:"'May' is commonly used to ask for permission politely."},
+    {q:"There is only a small, uncertain chance of rain during the school picnic. Which sentence best describes the situation?", opts:["It will rain tomorrow.","It must rain tomorrow.","It can rain tomorrow.","It might rain tomorrow."], correct:3,
+     explain:"'Might' shows a possibility with lower certainty."},
+    {q:"The lab rules say safety goggles are compulsory during experiments. Which sentence correctly expresses this rule?", opts:["Learners may wear safety goggles.","Learners should wear safety goggles.","Learners must wear safety goggles.","Learners could wear safety goggles."], correct:2,
+     explain:"'Must' expresses obligation or necessity."},
+    {q:"Ananya's brother wants to give her a helpful suggestion, not an order, about reducing screen time. Which sentence is most suitable?", opts:["You must reduce your screen time.","You should reduce your screen time.","You can reduce your screen time.","You might reduce your screen time."], correct:1,
+     explain:"'Should' is used to give advice."},
+    {q:"A former student could run long distances very quickly back when he was in Grade 5. Which sentence correctly describes his past ability?", opts:["He can run long distances.","He will run long distances.","He must run long distances.","He could run long distances."], correct:3,
+     explain:"'Could' is used to express ability in the past."},
+    {q:"Riya forgot her notebook and wants to politely ask to borrow her friend's for one period. Which sentence is the best choice?", opts:["Could you lend me your notebook for one period?","Must you lend me your notebook?","Shall you lend me your notebook?","You will lend me your notebook."], correct:0,
+     explain:"'Could' makes a polite request."},
+    {q:"The Eco Club leader assures the principal that fifty saplings will definitely be planted by month's end. Which sentence best expresses this promise?", opts:["We may complete the work this month.","We should complete the work this month.","We will complete the work this month.","We could complete the work this month."], correct:2,
+     explain:"'Will' expresses determination or future action."},
+    {q:"One learner says 'Everyone should drink water regularly,' and another says 'Everyone must drink water during sports because the coach made it compulsory.' Which statement correctly matches the situation?", opts:["Both statements express advice.","The first statement expresses obligation, while the second expresses advice.","The first statement expresses advice, while the second expresses obligation.","Both statements express permission."], correct:2,
+     explain:"'Should' gives advice, while 'must' expresses obligation."},
+    {q:"Before the museum trip, the teacher reminds everyone to stay with the group and follow instructions carefully — this is compulsory. Which learner used the most suitable modal verb?", opts:["We may stay with our group during the visit.","We could stay with our group during the visit.","We can stay with our group during the visit.","We must stay with our group during the visit."], correct:3,
+     explain:"'Must' is appropriate because following the teacher's instructions is compulsory."}
+  ];
+
+  var TIME_PER_Q = 45; // grade 5 -> 45 seconds
+  var POINTS_FIRST = 10, POINTS_SECOND = 5;
+
+  /* ---------------- State ---------------- */
+  var state = {
+    idx: 0,
+    score: 0,
+    attempts: 0,
+    timer: null,
+    timeLeft: TIME_PER_Q,
+    locked: false,
+    firstTryCount: 0,
+    secondTryCount: 0,
+    revealedCount: 0
+  };
+
+  /* ---------------- Elements ---------------- */
+  var el = {
+    splash: document.getElementById('splash'),
+    logoCorner: document.getElementById('logoCorner'),
+    introScreen: document.getElementById('introScreen'),
+    gameScreen: document.getElementById('gameScreen'),
+    resultScreen: document.getElementById('resultScreen'),
+    startBtn: document.getElementById('startBtn'),
+    retryBtn: document.getElementById('retryBtn'),
+    scoreVal: document.getElementById('scoreVal'),
+    timerBox: document.getElementById('timerBox'),
+    badgeRack: document.getElementById('badgeRack'),
+    qCount: document.getElementById('qCount'),
+    qText: document.getElementById('qText'),
+    optionsBox: document.getElementById('optionsBox'),
+    feedbackBanner: document.getElementById('feedbackBanner'),
+    nextHint: document.getElementById('nextHint'),
+    finalScore: document.getElementById('finalScore'),
+    maxScore: document.getElementById('maxScore'),
+    resultMsg: document.getElementById('resultMsg'),
+    resultEmoji: document.getElementById('resultEmoji'),
+    statFirstTry: document.getElementById('statFirstTry'),
+    statSecondTry: document.getElementById('statSecondTry'),
+    statMissed: document.getElementById('statMissed'),
+    fxLayer: document.getElementById('fxLayer'),
+    crossFlash: document.getElementById('crossFlash'),
+    sfxCorrect: document.getElementById('sfxCorrect'),
+    sfxWrong: document.getElementById('sfxWrong'),
+    sfxClaps: document.getElementById('sfxClaps')
+  };
+
+  el.maxScore.textContent = QUESTIONS.length * POINTS_FIRST;
+
+  /* ---------------- Build badge rack (one per question) ---------------- */
+  (function buildBadges(){
+    for(var i=0;i<QUESTIONS.length;i++){
+      var b = document.createElement('div');
+      b.className = 'badge';
+      b.id = 'badge-'+i;
+      b.textContent = '⚡';
+      el.badgeRack.appendChild(b);
+    }
+  })();
+
+  function earnBadge(i){
+    var b = document.getElementById('badge-'+i);
+    if(b) b.classList.add('earned');
+  }
+
+  /* ---------------- Splash logo (5s, then gone forever) ---------------- */
+  setTimeout(function(){
+    el.splash.classList.add('fade');
+    setTimeout(function(){
+      el.splash.remove(); // never comes back
+      el.logoCorner.style.display = 'block';
+      showScreen('introScreen');
+    }, 650);
+  }, 5000);
+
+  function showScreen(id){
+    ['introScreen','gameScreen','resultScreen'].forEach(function(s){
+      document.getElementById(s).classList.toggle('active', s === id);
+    });
+  }
+
+  function playSfx(a){
+    try{ a.currentTime = 0; a.play().catch(function(){}); }catch(e){}
+  }
+
+  /* ---------------- Game flow ---------------- */
+  el.startBtn.addEventListener('click', function(){
+    state = {idx:0, score:0, attempts:0, timer:null, timeLeft:TIME_PER_Q, locked:false,
+      firstTryCount:0, secondTryCount:0, revealedCount:0};
+    el.scoreVal.textContent = '0';
+    document.querySelectorAll('.badge').forEach(function(b){ b.classList.remove('earned'); });
+    showScreen('gameScreen');
+    loadQuestion();
+  });
+
+  el.retryBtn.addEventListener('click', function(){
+    showScreen('introScreen');
+  });
+
+  function loadQuestion(){
+    state.attempts = 0;
+    state.locked = false;
+    state.timeLeft = TIME_PER_Q;
+    var q = QUESTIONS[state.idx];
+
+    el.qCount.textContent = 'Question ' + (state.idx+1) + ' of ' + QUESTIONS.length;
+    el.qText.textContent = q.q;
+    el.feedbackBanner.className = 'feedback-banner';
+    el.feedbackBanner.innerHTML = '';
+    el.nextHint.style.display = 'none';
+
+    el.optionsBox.innerHTML = '';
+    var letters = ['A','B','C','D'];
+    q.opts.forEach(function(opt, i){
+      var btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span><span>'+opt+'</span>';
+      btn.addEventListener('click', function(){ handleAnswer(i, btn); });
+      el.optionsBox.appendChild(btn);
+    });
+
+    startTimer();
+  }
+
+  function startTimer(){
+    clearInterval(state.timer);
+    updateTimerUI();
+    state.timer = setInterval(function(){
+      state.timeLeft--;
+      updateTimerUI();
+      if(state.timeLeft <= 0){
+        clearInterval(state.timer);
+        onTimeUp();
+      }
+    }, 1000);
+  }
+
+  function updateTimerUI(){
+    el.timerBox.textContent = state.timeLeft + 's';
+    el.timerBox.classList.toggle('low', state.timeLeft <= 10);
+  }
+
+  function onTimeUp(){
+    if(state.locked) return;
+    state.attempts++;
+    var buttons = el.optionsBox.querySelectorAll('.opt-btn');
+    buttons.forEach(function(b){ b.disabled = true; });
+    if(state.attempts < 2){
+      showRetryBanner("⏰ Time's up! Take one more shot at it.");
+      state.timeLeft = TIME_PER_Q;
+      buttons.forEach(function(b){ b.disabled = false; });
+      startTimer();
+    } else {
+      revealAnswer();
+    }
+  }
+
+  function handleAnswer(selectedIdx, btnEl){
+    if(state.locked) return;
+    clearInterval(state.timer);
+    var q = QUESTIONS[state.idx];
+    var buttons = el.optionsBox.querySelectorAll('.opt-btn');
+
+    if(selectedIdx === q.correct){
+      state.locked = true;
+      buttons.forEach(function(b, i){
+        b.disabled = true;
+        if(i === selectedIdx) b.classList.add('correct');
+        else b.classList.add('dim');
+      });
+      var pts = state.attempts === 0 ? POINTS_FIRST : POINTS_SECOND;
+      state.score += pts;
+      el.scoreVal.textContent = state.score;
+      if(state.attempts === 0) state.firstTryCount++; else state.secondTryCount++;
+      playSfx(el.sfxCorrect);
+      launchStarConfetti();
+      earnBadge(state.idx);
+      el.feedbackBanner.className = 'feedback-banner reveal show';
+      el.feedbackBanner.innerHTML = '<span class="icon">🎉</span><span>Correct! +'+pts+' points. '+q.explain+'</span>';
+      el.nextHint.style.display = 'block';
+      setTimeout(advance, 1600);
+    } else {
+      state.attempts++;
+      btnEl.classList.add('wrong');
+      playSfx(el.sfxWrong);
+      flashCross();
+      if(state.attempts < 2){
+        buttons.forEach(function(b){ b.disabled = false; });
+        showRetryBanner('Not quite — give it one more try!');
+        state.timeLeft = TIME_PER_Q;
+        startTimer();
+      } else {
+        buttons.forEach(function(b, i){
+          b.disabled = true;
+          if(i === q.correct) b.classList.add('correct');
+        });
+        revealAnswer();
+      }
+    }
+  }
+
+  function showRetryBanner(msg){
+    el.feedbackBanner.className = 'feedback-banner retry show';
+    el.feedbackBanner.innerHTML = '<span class="icon">🔁</span><span>'+msg+'</span>';
+  }
+
+  function revealAnswer(){
+    state.locked = true;
+    clearInterval(state.timer);
+    state.revealedCount++;
+    var q = QUESTIONS[state.idx];
+    var buttons = el.optionsBox.querySelectorAll('.opt-btn');
+    buttons.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.correct) b.classList.add('correct');
+    });
+    earnBadge(state.idx);
+    el.feedbackBanner.className = 'feedback-banner reveal show';
+    el.feedbackBanner.innerHTML = '<span class="icon">💡</span><span>The correct answer is "'+q.opts[q.correct]+'". '+q.explain+'</span>';
+    el.nextHint.style.display = 'block';
+    setTimeout(advance, 2200);
+  }
+
+  function advance(){
+    state.idx++;
+    if(state.idx >= QUESTIONS.length){
+      finishGame();
+    } else {
+      loadQuestion();
+    }
+  }
+
+  function finishGame(){
+    clearInterval(state.timer);
+    var max = QUESTIONS.length * POINTS_FIRST;
+    el.finalScore.textContent = state.score;
+    el.maxScore.textContent = max;
+    el.statFirstTry.textContent = state.firstTryCount;
+    el.statSecondTry.textContent = state.secondTryCount;
+    el.statMissed.textContent = state.revealedCount;
+
+    var pct = state.score / max;
+    if(pct >= 0.8){
+      el.resultEmoji.textContent = '🏆';
+      el.resultMsg.textContent = 'Incredible! You have unlocked full hero status!';
+      playSfx(el.sfxClaps);
+    } else if(pct >= 0.5){
+      el.resultEmoji.textContent = '🦸';
+      el.resultMsg.textContent = 'Solid training! A bit more practice and you will be unstoppable.';
+    } else {
+      el.resultEmoji.textContent = '🎯';
+      el.resultMsg.textContent = 'Good effort, trainee! Head back to the academy and try again.';
+    }
+    showScreen('resultScreen');
+  }
+
+  /* ---------------- Effects ---------------- */
+  function launchStarConfetti(){
+    var count = 16;
+    for(var i=0;i<count;i++){
+      var star = document.createElement('div');
+      star.className = 'star-piece';
+      star.textContent = Math.random() < 0.5 ? '⭐' : '✨';
+      star.style.left = (Math.random()*100) + 'vw';
+      star.style.fontSize = (14 + Math.random()*14) + 'px';
+      star.style.animationDuration = (1.4 + Math.random()*1.2) + 's';
+      el.fxLayer.appendChild(star);
+      (function(node){
+        setTimeout(function(){ node.remove(); }, 2800);
+      })(star);
+    }
+  }
+
+  function flashCross(){
+    el.crossFlash.classList.remove('show');
+    void el.crossFlash.offsetWidth; // restart animation
+    el.crossFlash.classList.add('show');
+  }
+
+})();
+</script>
+</body>
+</html>
