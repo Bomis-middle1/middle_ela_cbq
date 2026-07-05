@@ -1,1 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 English - Phrases Masterclass</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #e2e8f0;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
+        body.high-contrast {
+            --primary: #000000;
+            --primary-dark: #000000;
+            --secondary: #0044cc;
+            --accent: #b45309;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-light: #111111;
+            --success: #047857;
+            --error: #b91c1c;
+            --border: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Layer */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-item {
+            position: absolute;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            opacity: 0.08;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .floating-label {
+            background: rgba(79, 70, 229, 0.1);
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        /* Branding Splash Screen */
+        #brand-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease;
+        }
+
+        .splash-logo {
+            max-width: 300px;
+            width: 80%;
+            height: auto;
+            margin-bottom: 30px;
+            object-fit: contain;
+        }
+
+        .splash-loader-bar {
+            width: 200px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .splash-loader-progress {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            animation: fillSplashProgress 5s linear forwards;
+        }
+
+        @keyframes fillSplashProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Top Menu bar tray */
+        .utility-tray {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 850px;
+            margin-bottom: 15px;
+            z-index: 10;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            padding: 6px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .tray-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        /* App Base Cards */
+        .game-card {
+            display: none;
+            width: 100%;
+            max-width: 850px;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .active-card { display: block !important; }
+
+        .badge {
+            background-color: rgba(79, 70, 229, 0.08);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h1 { color: var(--primary-dark); font-size: 2.2rem; font-weight: 800; margin-bottom: 15px; }
+        p { color: var(--text-light); font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px; }
+
+        .btn-action {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .btn-action:active { transform: scale(0.98); }
+
+        /* HUD layout indicators */
+        .hud-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 10px 0 25px 0;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-block { display: flex; flex-direction: column; align-items: center; flex: 1; border-right: 1px solid var(--border); }
+        .hud-block:last-child { border-right: none; }
+        .hud-label { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; font-weight: 800; }
+        .hud-value { font-size: 1.4rem; font-weight: 800; color: #2e37a4; }
+
+        .progress-container { width: 100%; height: 8px; background-color: #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 35px; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.3s ease; }
+
+        .question-text { text-align: left; font-size: 1.35rem; font-weight: 700; line-height: 1.6; margin-bottom: 30px; color: var(--text); white-space: pre-line; }
+        .options-container { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 25px; }
+
+        /* Interactive multi choice components */
+        .option-button {
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-button:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .option-button.correct { background-color: #ecfdf5 !important; border-color: var(--success) !important; color: var(--success) !important; font-weight: 700; }
+        .option-button.wrong { background-color: #fef2f2 !important; border-color: var(--error) !important; color: var(--error) !important; }
+        
+        .card-shaker { animation: shakeFrame 0.4s ease-in-out; }
+        @keyframes shakeFrame {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .explanation-box { background-color: #f8fafc; border-left: 5px solid var(--secondary); padding: 25px; border-radius: 0 20px 20px 0; text-align: left; margin-top: 25px; display: none; }
+
+        /* Interactive Particle Confetti Assets */
+        .vfx-item {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.5rem;
+            z-index: 99;
+            animation: burstOut 0.6s ease-out forwards;
+        }
+        @keyframes burstOut {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; }
+        }
+
+        /* Phrase Master Playground Arena */
+        .bonus-arena-box {
+            background: #fafafa;
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .pool-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+            min-height: 50px;
+            justify-content: center;
+        }
+        .phrase-chip {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .phrase-chip:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .target-drop-zone {
+            background: #f1f5f9;
+            border: 2px dashed #94a3b8;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            min-height: 80px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Results table overview breakdown */
+        .results-summary-table {
+            width: 100%;
+            margin: 25px 0;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .results-summary-table th, .results-summary-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .results-summary-table th {
+            font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-canvas" id="canvas-decoration-layer"></div>
+
+    <div id="brand-splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://placehold.co/300x90?text=Innovine+Education';">
+        <div class="splash-loader-bar">
+            <div class="splash-loader-progress"></div>
+        </div>
+    </div>
+
+    <div class="utility-tray">
+        <div class="volume-container">
+            <span>VOL</span>
+            <input type="range" min="0" max="1" step="0.1" value="0.5" id="volume-slider" onchange="updateSystemVolume()">
+        </div>
+        <button class="tray-btn" onclick="toggleMuteStatus()" id="mute-btn">🔊 Mute</button>
+        <button class="tray-btn" onclick="toggleContrastStyle()">🌓 Contrast</button>
+    </div>
+
+    <div id="intro-screen" class="game-card active-card">
+        <div class="badge">Grade 7 English</div>
+        <h1>Phrases Masterclass</h1>
+        <p>Analyze linguistic components safely across 20 diagnostic items! Identify noun, adjective, and adverb expressions. Build syntax arrays, parse contextual cues, and earn structural score titles.</p>
+        <button class="btn-action" onclick="beginQuizSession()">Start Game</button>
+    </div>
+
+    <div id="quiz-screen" class="game-card">
+        <div class="hud-bar">
+            <div class="hud-block">
+                <span class="hud-label">Item Progress</span>
+                <span class="hud-value" id="hud-progress-counter">1 / 20</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Score Tracking</span>
+                <span class="hud-value" id="hud-score-counter">Score: 0 / 20</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Attempt Marker</span>
+                <span class="hud-value" id="hud-attempt-counter">1 / 2</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Time Remaining</span>
+                <span class="hud-value" id="hud-timer-counter" style="color: var(--accent);">45s</span>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="hud-bar-fill"></div>
+        </div>
+
+        <div class="question-text" id="live-question-field"></div>
+        <div class="options-container" id="live-options-field"></div>
+
+        <div class="explanation-box" id="live-explanation-field">
+            <div style="font-weight: 800; margin-bottom: 6px; color: var(--primary-dark);">Correct Answer Verification Matrix:</div>
+            <div id="exp-body" style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 15px;"></div>
+            <button class="btn-action" style="padding: 10px 24px; font-size: 1rem;" onclick="stepNextQuestion()">Continue &rarr;</button>
+        </div>
+    </div>
+
+    <div id="bonus-screen" class="game-card">
+        <div class="badge" style="background-color: rgba(245, 158, 11, 0.1); color: var(--accent);">Stage 3: Phrase Explorer Challenge</div>
+        <h1>Expand the Sentence Strip</h1>
+        <p>Let's complete a bonus reward track! Click the correct phrase option below to optimally match the target grammatical function specified. This track is purely for fun and will not modify your score.</p>
+        
+        <div class="bonus-arena-box">
+            <div style="font-weight: 800; color: var(--text-light); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px;">Target Objective:</div>
+            <h3 id="bonus-target-instruction" style="color: var(--primary-dark); margin-bottom: 20px;">Add an Adjective Phrase to modify the noun 'building'</h3>
+            
+            <div class="target-drop-zone" id="bonus-dropzone-view">
+                <span>The building collapsed.</span>
+            </div>
+            
+            <div class="pool-container" id="bonus-chips-pool"></div>
+        </div>
+        <div id="bonus-alert-message" style="margin-top: 15px; font-weight: 700; min-height: 24px;"></div>
+    </div>
+
+    <div id="result-screen" class="game-card">
+        <div class="badge">Session Summary Assessment</div>
+        <h1 id="result-title-heading">Assessment Review</h1>
+        <p id="result-feedback-text">Good performance navigating the phrase evaluation track.</p>
+        
+        <div class="hud-bar" style="max-width: 500px; margin: 0 auto 25px auto;">
+            <div class="hud-block">
+                <span class="hud-label">Final Score</span>
+                <span class="hud-value" id="res-score" style="color: var(--primary);">0 / 20</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Percentage</span>
+                <span class="hud-value" id="res-percent" style="color: var(--secondary);">0%</span>
+            </div>
+        </div>
+
+        <table class="results-summary-table">
+            <thead>
+                <tr>
+                    <th>Metric Type</th>
+                    <th>Count Matrix Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Correct Submissions</td>
+                    <td id="table-correct-val" style="font-weight:700; color: var(--success);">0</td>
+                </tr>
+                <tr>
+                    <td>Incorrect Submissions</td>
+                    <td id="table-wrong-val" style="font-weight:700; color: var(--error);">0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn-action" onclick="restartAppEngine()">Play Again</button>
+    </div>
+
+    <script>
+        // IMMUTABLE STRUCTURAL DATA REPOSITORY - 20 ITEMS EXACT AS SUPPLIED
+        const questionRepository = [
+            {
+                q: "1.The school magazine editor wants to make this sentence more descriptive:\n\"The boy won the race.\"\nWhich revision adds a noun phrase most effectively?",
+                options: [
+                    "a) The boy won the race quickly.",
+                    "b) The talented boy from Class 8 won the race.",
+                    "c) The boy won yesterday.",
+                    "d) The boy happily won the race."
+                ],
+                ans: "b) The talented boy from Class 8 won the race.",
+                exp: "A noun phrase gives more information about a noun or pronoun. 'The talented boy from Class 8' expands the subject noun into a descriptive phrase."
+            },
+            {
+                q: "2.A travel blogger writes:\n\"We visited a fort.\"\nWhich revision uses an adjective phrase to describe the fort?",
+                options: [
+                    "a) We visited a fort with ancient stone walls.",
+                    "b) We visited the fort yesterday.",
+                    "c) We visited a famous fort.",
+                    "d) We visited the fort quickly."
+                ],
+                ans: "a) We visited a fort with ancient stone walls.",
+                exp: "An adjective phrase describes or modifies a noun. Here, 'with ancient stone walls' is placed after the noun 'fort' to describe its physical attributes."
+            },
+            {
+                q: "3.A sports reporter wants to describe how the captain spoke after the match.\nWhich sentence uses an adverb phrase most effectively?",
+                options: [
+                    "a) The captain spoke with great confidence.",
+                    "b) The confident captain spoke.",
+                    "c) The captain gave a confident speech.",
+                    "d) The captain spoke yesterday."
+                ],
+                ans: "a) The captain spoke with great confidence.",
+                exp: "An adverb phrase describes how, when, where, or to what extent an action happens. 'With great confidence' tells us exactly how the captain spoke."
+            },
+            {
+                q: "4.A student writes:\n\"The teacher explained the lesson.\"\nWhich revision adds more detail using an adverb phrase?",
+                options: [
+                    "a) The teacher explained the lesson with great patience.",
+                    "b) The patient teacher explained the lesson.",
+                    "c) The teacher explained yesterday.",
+                    "d) The teacher explained the lesson patiently."
+                ],
+                ans: "a) The teacher explained the lesson with great patience.",
+                exp: "The phrase 'with great patience' acts as an adverb phrase describing the manner in which the teacher explained the lesson."
+            },
+            {
+                q: "5.Your teacher asks you to make this sentence more specific:\n\"A student answered the question.\"\nWhich option improves it using a noun phrase?",
+                options: [
+                    "a) The student answered quickly.",
+                    "b) The student answered confidently.",
+                    "c) The student with excellent presentation skills answered the question.",
+                    "d) The student answered yesterday."
+                ],
+                ans: "c) The student with excellent presentation skills answered the question.",
+                exp: "The modification expands the simple head noun into a compound noun phrase structure to make ideas clearer and more vivid."
+            },
+            {
+                q: "6.The school newsletter says:\n\"The tree provides shade.\"\nWhich sentence uses an adjective phrase to describe the tree?",
+                options: [
+                    "a) The tree with thick green branches provides shade.",
+                    "b) The tree provides shade during summer.",
+                    "c) The tree provides shade happily.",
+                    "d) The tree grows quickly."
+                ],
+                ans: "a) The tree with thick green branches provides shade.",
+                exp: "An adjective phrase describes or modifies a noun. 'With thick green branches' directly describes the attributes of 'the tree'."
+            },
+            {
+                q: "7.A class captain wants to describe how the volunteers worked.\nWhich sentence uses an adverb phrase?",
+                options: [
+                    "a) The volunteers worked with great enthusiasm.",
+                    "b) The enthusiastic volunteers worked.",
+                    "c) The volunteers worked yesterday.",
+                    "d) The volunteers were enthusiastic."
+                ],
+                ans: "a) The volunteers worked with great enthusiasm.",
+                exp: "The prepositional chunk 'with great enthusiasm' functions seamlessly as an adverb phrase of manner."
+            },
+            {
+                q: "8.The principal wants this announcement to sound more descriptive.\n\"The guests arrived.\"\nWhich sentence is the best improvement?",
+                options: [
+                    "a) The honoured guests from different schools arrived.",
+                    "b) The guests arrived early.",
+                    "c) The guests happily arrived.",
+                    "d) The guests arrived yesterday."
+                ],
+                ans: "a) The honoured guests from different schools arrived.",
+                exp: "This incorporates an expanded noun phrase acting as a detailed subject string, improving descriptive focus."
+            },
+            {
+                q: "9.A student writes:\n\"The girl carrying a heavy backpack smiled.\"\nWhat does the phrase carrying a heavy backpack do?",
+                options: [
+                    "a) It describes the girl.",
+                    "b) It describes smiled.",
+                    "c) It describes backpack.",
+                    "d) It describes heavy."
+                ],
+                ans: "a) It describes the girl.",
+                exp: "The adjectival participle group 'carrying a heavy backpack' acts as a modifier describing the noun 'girl'."
+            },
+            {
+                q: "10.A travel diary says:\n\"The family crossed the river with great care.\"\nWhy is with great care used?",
+                options: [
+                    "a) To describe the river.",
+                    "b) To describe how they crossed the river.",
+                    "c) To describe the family.",
+                    "d) To describe great."
+                ],
+                ans: "b) To describe how they crossed the river.",
+                exp: "An adverb phrase describes how, when, where, or to what extent an action happens. This specifies the manner of crossing."
+            },
+            {
+                q: "11.A photographer writes:\n\"The bird with bright blue feathers sat quietly on the branch.\"\nWhich words give more information about the bird?",
+                options: [
+                    "a) sat quietly",
+                    "b) with bright blue feathers",
+                    "c) on the branch",
+                    "d) quietly"
+                ],
+                ans: "b) with bright blue feathers",
+                exp: "The prepositional adjective phrase 'with bright blue feathers' provides descriptive physical detail explicitly mapping back to 'the bird'."
+            },
+            {
+                q: "12.A student writes:\n\"The scientist explained the experiment with complete clarity.\"\nWhat is the purpose of the phrase with complete clarity?",
+                options: [
+                    "a) It explains how the scientist spoke.",
+                    "b) It describes the scientist.",
+                    "c) It identifies the experiment.",
+                    "d) It names the scientist."
+                ],
+                ans: "a) It explains how the scientist spoke.",
+                exp: "The phrase behaves adverbially to modify the verb, showing the clear operational method or manner of explanation."
+            },
+            {
+                q: "13.The sentence needs more detail.\n\"The players celebrated.\"\nWhich option improves it using a noun phrase?",
+                options: [
+                    "a) The players celebrated loudly.",
+                    "b) The victorious players from our school celebrated.",
+                    "c) The players celebrated yesterday.",
+                    "d) The players celebrated happily."
+                ],
+                ans: "b) The victorious players from our school celebrated.",
+                exp: "This choice correctly converts the plain noun subject into an extended, informative descriptive noun phrase."
+            },
+            {
+                q: "14.A school magazine editor wants to describe the library.\nWhich sentence uses an adjective phrase?",
+                options: [
+                    "a) The library with thousands of books is always busy.",
+                    "b) The library is always busy.",
+                    "c) The library opens every morning.",
+                    "d) The library welcomed students warmly."
+                ],
+                ans: "a) The library with thousands of books is always busy.",
+                exp: "'With thousands of books' behaves as an adjective phrase that expands our qualitative understanding of the library noun."
+            },
+            {
+                q: "15.A news reporter wants to describe how the rescue team worked.\nWhich sentence is the best choice?",
+                options: [
+                    "a) The rescue team worked with remarkable courage.",
+                    "b) The courageous rescue team worked.",
+                    "c) The rescue team worked yesterday.",
+                    "d) The rescue team was courageous."
+                ],
+                ans: "a) The rescue team worked with remarkable courage.",
+                exp: "The structural combination 'with remarkable courage' answers 'how they worked', qualifying it as an adverb phrase."
+            },
+            {
+                q: "16.A student wants to make this sentence more descriptive.\n\"The puppy slept.\"\nWhich revision is the most effective?",
+                options: [
+                    "a) The tiny puppy under the table slept peacefully.",
+                    "b) The puppy slept yesterday.",
+                    "c) The puppy slept.",
+                    "d) The puppy slept quickly."
+                ],
+                ans: "a) The tiny puppy under the table slept peacefully.",
+                exp: "Good descriptive writing often uses phrases to make ideas clearer and more vivid, incorporating layered spatial and manner modifications."
+            },
+            {
+                q: "17.During the science exhibition, the judge praised the model made from recycled materials.\nWhy is this phrase effective?",
+                options: [
+                    "a) It gives more information about the model.",
+                    "b) It tells when the judge arrived.",
+                    "c) It explains how the judge spoke.",
+                    "d) It tells where the exhibition happened."
+                ],
+                ans: "a) It gives more information about the model.",
+                exp: "The participial descriptive line 'made from recycled materials' serves as an adjective modifier adding context to 'the model'."
+            },
+            {
+                q: "18.A student writes:\n\"The audience listened with complete attention.\"\nThe phrase with complete attention describes\na) the audience\nb) how they listened\nc) the programme\nd) complete",
+                options: [
+                    "a) the audience",
+                    "b) how they listened",
+                    "c) the programme",
+                    "d) complete"
+                ],
+                ans: "b) how they listened",
+                exp: "The modifier directly establishes the precise listening manner, serving structurally as an adverb phrase."
+            },
+            {
+                q: "19.Which sentence uses phrases most effectively to make the description clear?",
+                options: [
+                    "a) The cheerful children in colourful costumes performed with great energy.",
+                    "b) The children performed.",
+                    "c) The children performed yesterday.",
+                    "d) The children happily performed."
+                ],
+                ans: "a) The cheerful children in colourful costumes performed with great energy.",
+                exp: "A phrase does not contain both a subject and a finite verb, so it cannot stand alone, but combined here they make descriptions highly vivid."
+            },
+            {
+                q: "20.The editor wants the strongest description for the school magazine.\nWhich sentence is the best choice?",
+                options: [
+                    "a) The determined team from Green House completed the challenge with great confidence.",
+                    "b) The team completed the challenge.",
+                    "c) The team completed the challenge yesterday.",
+                    "d) The team confidently completed the challenge."
+                ],
+                ans: "a) The determined team from Green House completed the challenge with great confidence.",
+                exp: "Combines robust noun phrase modification ('The determined team from Green House') with an adverb phrase ('with great confidence') for maximum descriptive clarity."
+            }
+        ];
+
+        // Bonus Track Scenarios Configuration
+        const bonusChallenges = [
+            {
+                instruction: "Expand the phrase: Add an ADJECTIVE PHRASE to describe the 'chef'.",
+                baseBefore: "The chef ",
+                baseAfter: " prepared a delicious feast.",
+                options: [
+                    { text: "with exceptional culinary skills", type: "correct" },
+                    { text: "cooked yesterday", type: "wrong" },
+                    { text: "very fast", type: "wrong" }
+                ]
+            },
+            {
+                instruction: "Expand the phrase: Add an ADVERB PHRASE to show how the driver steered.",
+                baseBefore: "The driver steered the car ",
+                baseAfter: ".",
+                options: [
+                    { text: "with absolute precision", type: "correct" },
+                    { text: "blue and shiny", type: "wrong" },
+                    { text: "the vehicle owner", type: "wrong" }
+                ]
+            }
+        ];
+
+        let challengeSet = [];
+        let cursorIndex = 0;
+        let runningScore = 0;
+        let attemptsRemaining = 2;
+        let timerReference = null;
+        let timeLeft = 45;
+        let systemVolume = 0.5;
+        let isMuted = false;
+        let blockInputs = false;
+        let activeBonusIndex = 0;
+
+        // Audio System Map
+        const audioAssets = {
+            correct: new Audio('assets/correct.mp3'),
+            wrong: new Audio('assets/wrong.mp3'),
+            clapping: new Audio('assets/clapping.mp3')
+        };
+
+        // Initialize aesthetics & splash timer
+        window.addEventListener('DOMContentLoaded', () => {
+            initBackgroundDecorations();
+            
+            setTimeout(() => {
+                const splash = document.getElementById('brand-splash');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.remove(), 600);
+                }
+            }, 5000);
+        });
+
+        function initBackgroundDecorations() {
+            const layer = document.getElementById('canvas-decoration-layer');
+            const items = ["Noun Phrase", "Adjective Phrase", "Adverb Phrase", "📝", "📚", "🔍", "⭐"];
+            for (let i = 0; i < 18; i++) {
+                const div = document.createElement('div');
+                div.className = 'bg-item' + (i % 3 === 0 ? ' floating-label' : '');
+                div.innerText = items[Math.floor(Math.random() * items.length)];
+                div.style.left = Math.random() * 90 + '%';
+                div.style.top = Math.random() * 90 + '%';
+                div.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`;
+                layer.appendChild(div);
+            }
+        }
+
+        function triggerSound(key) {
+            if (isMuted) return;
+            try {
+                audioAssets[key].currentTime = 0;
+                audioAssets[key].volume = systemVolume;
+                audioAssets[key].play();
+            } catch (e) {
+                console.warn(`Audio system asset execution delayed: ${key}.mp3`);
+            }
+        }
+
+        function updateSystemVolume() {
+            systemVolume = parseFloat(document.getElementById('volume-slider').value);
+        }
+
+        function toggleMuteStatus() {
+            isMuted = !isMuted;
+            document.getElementById('mute-btn').innerText = isMuted ? "❌ Unmute" : "🔊 Mute";
+        }
+
+        function toggleContrastStyle() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function beginQuizSession() {
+            // Randomize question sequence order entirely
+            challengeSet = [...questionRepository].sort(() => Math.random() - 0.5);
+            cursorIndex = 0;
+            runningScore = 0;
+            switchActiveCard('quiz-screen');
+            loadActiveQuestionItem();
+        }
+
+        function loadActiveQuestionItem() {
+            blockInputs = false;
+            attemptsRemaining = 2;
+            clearInterval(timerReference);
+            timeLeft = 45;
+            
+            document.getElementById('hud-timer-counter').innerText = timeLeft + "s";
+            document.getElementById('hud-timer-counter').style.color = "var(--primary)";
+            document.getElementById('live-explanation-field').style.display = "none";
+            
+            const currentItem = challengeSet[cursorIndex];
+            
+            // HUD Refresh
+            document.getElementById('hud-progress-counter').innerText = `${cursorIndex + 1} / 20`;
+            document.getElementById('hud-score-counter').innerText = `Score: ${runningScore} / 20`;
+            document.getElementById('hud-attempt-counter').innerText = "1 / 2";
+            document.getElementById('hud-bar-fill').style.width = `${((cursorIndex) / 20) * 100}%`;
+            
+            document.getElementById('live-question-field').innerText = currentItem.q;
+            
+            // Randomize option order cleanly
+            const scrambledOptions = [...currentItem.options].sort(() => Math.random() - 0.5);
+            
+            const grid = document.getElementById('live-options-field');
+            grid.innerHTML = "";
+            
+            scrambledOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "option-button";
+                btn.innerHTML = `<span>${opt}</span>`;
+                btn.onclick = (e) => evaluateOptionSelection(opt, btn, e);
+                grid.appendChild(btn);
+            });
+
+            startCountdownTicker();
+        }
+
+        function startCountdownTicker() {
+            timerReference = setInterval(() => {
+                timeLeft--;
+                document.getElementById('hud-timer-counter').innerText = timeLeft + "s";
+                if (timeLeft <= 10) {
+                    document.getElementById('hud-timer-counter').style.color = "var(--error)";
+                }
+                if (timeLeft <= 0) {
+                    clearInterval(timerReference);
+                    handleTimeOutFailure();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOutFailure() {
+            blockInputs = true;
+            triggerSound('wrong');
+            revealExplanationDrawer();
+        }
+
+        function evaluateOptionSelection(selectedText, element, event) {
+            if (blockInputs) return;
+            const currentItem = challengeSet[cursorIndex];
+
+            if (selectedText === currentItem.ans) {
+                blockInputs = true;
+                clearInterval(timerReference);
+                element.classList.add('correct');
+                element.innerHTML += `<span>⭐</span>`;
+                generateExplosionVFX(event, '⭐');
+                runningScore++;
+                document.getElementById('hud-score-counter').innerText = `Score: ${runningScore} / 20`;
+                triggerSound('correct');
+                
+                setTimeout(() => {
+                    stepNextQuestion();
+                }, 1200);
+            } else {
+                element.classList.add('wrong');
+                element.innerHTML += `<span>❌</span>`;
+                generateExplosionVFX(event, '❌');
+                triggerSound('wrong');
+                
+                // Shake Card Animation effect
+                const card = document.getElementById('quiz-screen');
+                card.classList.add('card-shaker');
+                setTimeout(() => card.classList.remove('card-shaker'), 400);
+
+                if (attemptsRemaining === 2) {
+                    attemptsRemaining--;
+                    document.getElementById('hud-attempt-counter').innerText = "2 / 2";
+                } else {
+                    blockInputs = true;
+                    clearInterval(timerReference);
+                    revealExplanationDrawer();
+                }
+            }
+        }
+
+        function revealExplanationDrawer() {
+            const currentItem = challengeSet[cursorIndex];
+            const buttons = document.querySelectorAll('.option-button');
+            
+            buttons.forEach(btn => {
+                const textSpan = btn.querySelector('span').innerText;
+                if (textSpan === currentItem.ans) {
+                    btn.classList.add('correct');
+                }
+                btn.disabled = true;
+            });
+
+            document.getElementById('exp-body').innerText = currentItem.exp;
+            document.getElementById('live-explanation-field').style.display = "block";
+        }
+
+        function stepNextQuestion() {
+            cursorIndex++;
+            if (cursorIndex >= challengeSet.length) {
+                activeBonusIndex = 0;
+                switchActiveCard('bonus-screen');
+                initiateBonusChallengeItem();
+            } else {
+                loadActiveQuestionItem();
+            }
+        }
+
+        // STAGE 3: INTERACTIVE BONUS REWARD MATRIX
+        function initiateBonusChallengeItem() {
+            document.getElementById('bonus-alert-message').innerText = "";
+            const bData = bonusChallenges[activeBonusIndex];
+            document.getElementById('bonus-target-instruction').innerText = bData.instruction;
+            document.getElementById('bonus-dropzone-view').innerHTML = `<span>${bData.baseBefore} <span style="color:var(--primary); text-decoration: underline;">[ ? ]</span> ${bData.baseAfter}</span>`;
+            
+            const chipsBox = document.getElementById('bonus-chips-pool');
+            chipsBox.innerHTML = "";
+            
+            bData.options.forEach(opt => {
+                const chip = document.createElement('div');
+                chip.className = "phrase-chip";
+                chip.innerText = opt.text;
+                chip.onclick = () => verifyBonusSelection(opt, bData);
+                chipsBox.appendChild(chip);
+            });
+        }
+
+        function verifyBonusSelection(optionObj, contextData) {
+            const alertBox = document.getElementById('bonus-alert-message');
+            if (optionObj.type === "correct") {
+                triggerSound('correct');
+                alertBox.style.color = "var(--success)";
+                alertBox.innerText = "⭐ Excellent choice! Phrase integrated cleanly.";
+                document.getElementById('bonus-dropzone-view').innerHTML = `<span>${contextData.baseBefore} <b style="color:var(--success); font-size:1.3rem;">${optionObj.text}</b> ${contextData.baseAfter}</span>`;
+                
+                setTimeout(() => {
+                    activeBonusIndex++;
+                    if (activeBonusIndex >= bonusChallenges.length) {
+                        displayFinalSummaryDashboard();
+                    } else {
+                        initiateBonusChallengeItem();
+                    }
+                }, 1800);
+            } else {
+                triggerSound('wrong');
+                alertBox.style.color = "var(--error)";
+                alertBox.innerText = "❌ That modifier phrase doesn't serve the targeted grammar objective. Try another chip!";
+            }
+        }
+
+        // STAGE 4: EVALUATION DASHBOARD REVIEW
+        function displayFinalSummaryDashboard() {
+            switchActiveCard('result-screen');
+            triggerSound('clapping');
+            
+            document.getElementById('res-score').innerText = `${runningScore} / 20`;
+            const percent = Math.round((runningScore / 20) * 100);
+            document.getElementById('res-percent').innerText = percent + "%";
+            
+            document.getElementById('table-correct-val').innerText = runningScore;
+            document.getElementById('table-wrong-val').innerText = 20 - runningScore;
+            
+            const title = document.getElementById('result-title-heading');
+            const desc = document.getElementById('result-feedback-text');
+            
+            if (runningScore === 20) {
+                title.innerText = "🏆 Phrase Master!";
+                desc.innerText = "Incredible syntax absolute score mastery! You parsed every modifier and structural object group perfectly.";
+            } else if (runningScore >= 16) {
+                title.innerText = "🌟 Excellent!";
+                desc.innerText = "Superb phrase detection patterns. Your intuitive descriptive analysis matrix shows strong performance.";
+            } else if (runningScore >= 10) {
+                title.innerText = "🎉 Great Job!";
+                desc.innerText = "Good baseline performance. Review the functional difference between adjective and adverb structures to master your alignment.";
+            } else {
+                title.innerText = "📘 Keep Practising!";
+                desc.innerText = "Phrases can be tricky because they lack standalone verbs. Read through explanations carefully to improve identification speed.";
+            }
+        }
+
+        function restartAppEngine() {
+            switchActiveCard('intro-screen');
+        }
+
+        function switchActiveCard(id) {
+            document.querySelectorAll('.game-card').forEach(card => card.classList.remove('active-card'));
+            document.getElementById(id).classList.add('active-card');
+        }
+
+        function generateExplosionVFX(e, char) {
+            if (!e) return;
+            const rect = e.target.getBoundingClientRect();
+            const originX = e.clientX || (rect.left + rect.width / 2);
+            const originY = e.clientY || (rect.top + rect.height / 2);
+
+            for (let i = 0; i < 8; i++) {
+                const el = document.createElement('div');
+                el.className = 'vfx-item';
+                el.innerText = char;
+                el.style.color = char === '⭐' ? 'var(--accent)' : 'var(--error)';
+                el.style.left = originX + 'px';
+                el.style.top = originY + 'px';
+                
+                const xTrajectory = (Math.random() - 0.5) * 150;
+                const yTrajectory = (Math.random() - 0.5) * 150 - 20;
+                const rRotation = Math.random() * 360;
+                
+                el.style.setProperty('--x', `${xTrajectory}px`);
+                el.style.setProperty('--y', `${yTrajectory}px`);
+                el.style.setProperty('--r', `${rRotation}deg`);
+                
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 600);
+            }
+        }
+    </script>
+</body>
+</html>
