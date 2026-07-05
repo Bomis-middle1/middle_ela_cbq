@@ -1,1 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Butterfly Meadow — Transformation of Sentences | Grade 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#E8DFF5;
+    --sky-bottom:#F7E9EE;
+    --meadow:#8FBC94;
+    --meadow-dark:#6FA179;
+    --blossom:#F4A9C0;
+    --blossom-dark:#E084A3;
+    --sun:#FFD9A0;
+    --lavender:#C9B6E4;
+    --ink:#4A3B5C;
+    --white:#FFFFFF;
+    --cream:#FFFBF6;
+    --correct:#6FA179;
+    --wrong:#E0748C;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-bottom) 55%, var(--cream) 55%);
+    color:var(--ink);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+  h1,h2,h3,.display{font-family:'Quicksand',sans-serif;}
+  button{font-family:'Nunito',sans-serif; cursor:pointer; border:none;}
+  .screen{
+    min-height:100vh;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    padding:24px 16px 40px;
+  }
+  .screen.active{display:flex;}
 
+  /* ---------- Background meadow (decorative, CSS-only) ---------- */
+  .meadow-layer{
+    position:fixed; left:0; right:0; bottom:0; height:26vh; min-height:140px;
+    z-index:0; pointer-events:none; background:linear-gradient(to bottom, var(--meadow) 0%, var(--meadow-dark) 100%);
+    border-radius:50% 50% 0 0 / 18% 18% 0 0;
+    transform:scaleX(1.3);
+  }
+  .sun-deco{
+    position:fixed; top:5%; right:8%; width:80px; height:80px; border-radius:50%;
+    background:radial-gradient(circle, #FFF2D6 0%, var(--sun) 75%);
+    box-shadow:0 0 40px 12px rgba(255,217,160,0.5);
+    z-index:0;
+  }
+  .drift-butterfly{
+    position:fixed; font-size:20px; z-index:0; pointer-events:none; opacity:0.8;
+    animation:flutter linear infinite;
+  }
+  @keyframes flutter{
+    0%{transform:translate(-10vw, 0) rotate(0deg);}
+    25%{transform:translate(25vw, -18px) rotate(6deg);}
+    50%{transform:translate(60vw, 6px) rotate(-6deg);}
+    75%{transform:translate(90vw, -12px) rotate(4deg);}
+    100%{transform:translate(115vw, 0) rotate(0deg);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .drift-butterfly{animation:none;}
+  }
+
+  /* ---------- Splash ---------- */
+  #splash{
+    position:fixed; inset:0; z-index:100;
+    background:linear-gradient(135deg, var(--lavender), var(--meadow));
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    transition:opacity 0.6s ease;
+  }
+  #splash img{
+    max-width:220px; max-height:220px; width:auto; height:auto;
+    animation:pop 0.6s cubic-bezier(.34,1.56,.64,1);
+    filter:drop-shadow(0 8px 20px rgba(0,0,0,0.2));
+  }
+  #splash.fade{opacity:0; pointer-events:none;}
+  @keyframes pop{
+    0%{transform:scale(0.4); opacity:0;}
+    100%{transform:scale(1); opacity:1;}
+  }
+
+  /* ---------- Cards / shared ---------- */
+  .card{
+    background:var(--white);
+    border-radius:26px;
+    box-shadow:0 14px 30px rgba(74,59,92,0.15);
+    padding:32px 28px;
+    max-width:560px;
+    width:100%;
+    position:relative;
+    z-index:1;
+  }
+  .eyebrow{
+    display:inline-block; background:var(--blossom); color:#fff;
+    font-weight:700; font-size:12px; letter-spacing:1px; text-transform:uppercase;
+    padding:6px 14px; border-radius:999px; margin-bottom:14px;
+  }
+  .title-main{font-size:clamp(26px,6vw,38px); font-weight:700; color:var(--ink); margin:0 0 6px;}
+  .subtitle{color:#7A6B8C; font-weight:600; margin:0 0 22px; font-size:15px;}
+  .btn-primary{
+    background:var(--blossom); color:#fff; font-weight:700; font-size:17px;
+    padding:14px 32px; border-radius:16px; box-shadow:0 6px 0 var(--blossom-dark);
+    transition:transform 0.08s ease;
+  }
+  .btn-primary:active{transform:translateY(4px); box-shadow:0 2px 0 var(--blossom-dark);}
+  .meta-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;}
+  .meta-pill{
+    background:var(--cream); border:2px solid #F0E4EC; color:var(--ink);
+    font-weight:700; font-size:13px; padding:6px 12px; border-radius:999px;
+  }
+
+  /* ---------- Game screen ---------- */
+  .hud{
+    width:100%; max-width:560px; display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px; gap:10px; z-index:1; position:relative;
+  }
+  .score-box{
+    background:var(--white); border-radius:16px; padding:8px 16px; box-shadow:0 6px 16px rgba(74,59,92,0.12);
+    font-weight:800; color:var(--meadow-dark); display:flex; align-items:center; gap:6px; font-size:15px;
+  }
+  .timer-box{
+    background:var(--white); border-radius:16px; padding:8px 16px; box-shadow:0 6px 16px rgba(74,59,92,0.12);
+    font-weight:800; font-size:15px; min-width:70px; text-align:center;
+  }
+  .timer-box.low{color:var(--wrong);}
+
+  /* ---------- Signature element: chrysalis-to-butterfly rack ---------- */
+  .meadow-rack{
+    width:100%; max-width:560px; display:flex; gap:6px; margin-bottom:18px; z-index:1; position:relative;
+    justify-content:center; flex-wrap:wrap; background:rgba(255,255,255,0.5); border-radius:16px; padding:10px;
+  }
+  .cocoon{
+    width:32px; height:32px; border-radius:50% 50% 45% 45% / 60% 60% 40% 40%;
+    background:#D9CBE8; border:2px solid #C3AEDA; display:flex; align-items:center; justify-content:center;
+    font-size:15px; transition:all 0.3s ease;
+  }
+  .cocoon.hatched{
+    background:transparent; border:none;
+    animation:hatchPop 0.5s ease;
+  }
+  @keyframes hatchPop{
+    0%{transform:scale(0.5) rotate(-20deg);}
+    60%{transform:scale(1.3) rotate(10deg);}
+    100%{transform:scale(1) rotate(0);}
+  }
+  .q-count{font-weight:700; color:#7A6B8C; font-size:13px; margin-bottom:8px; align-self:flex-start; max-width:560px; width:100%; z-index:1;}
+  .q-text{font-size:19px; font-weight:700; color:var(--ink); margin:0 0 22px; line-height:1.45;}
+  .options{display:flex; flex-direction:column; gap:12px;}
+  .opt-btn{
+    background:var(--cream); border:2px solid #F0E4EC; border-radius:16px;
+    padding:14px 16px; text-align:left; font-size:16px; font-weight:700; color:var(--ink);
+    display:flex; align-items:center; gap:12px; transition:all 0.15s ease;
+  }
+  .opt-btn .opt-letter{
+    background:var(--lavender); color:#fff; width:28px; height:28px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
+  }
+  .opt-btn:hover:not(:disabled){border-color:var(--blossom); transform:translateY(-1px);}
+  .opt-btn:disabled{cursor:default;}
+  .opt-btn.correct{background:#E7F3EA; border-color:var(--correct); color:var(--correct);}
+  .opt-btn.correct .opt-letter{background:var(--correct);}
+  .opt-btn.wrong{background:#FBEAEE; border-color:var(--wrong); color:var(--wrong);}
+  .opt-btn.wrong .opt-letter{background:var(--wrong);}
+  .opt-btn.dim{opacity:0.5;}
+
+  .feedback-banner{
+    margin-top:18px; padding:14px 16px; border-radius:16px; font-weight:700; font-size:14.5px;
+    display:none; align-items:flex-start; gap:10px; line-height:1.4;
+  }
+  .feedback-banner.show{display:flex;}
+  .feedback-banner.retry{background:#FFF1DE; color:#8A6300;}
+  .feedback-banner.reveal{background:#F1E9F8; color:#5B3E7A;}
+  .feedback-banner .icon{font-size:20px;}
+  .next-hint{margin-top:14px; font-size:13px; color:#7A6B8C; font-weight:600; text-align:center;}
+
+  /* ---------- Result screen ---------- */
+  .result-emoji{font-size:64px; margin-bottom:6px;}
+  .result-score{font-size:44px; font-weight:700; color:var(--blossom-dark); margin:6px 0;}
+  .result-sub{color:#7A6B8C; font-weight:700; margin-bottom:24px;}
+  .stat-row{display:flex; gap:14px; width:100%; margin-bottom:24px;}
+  .stat{
+    flex:1; background:var(--cream); border-radius:16px; padding:14px; text-align:center;
+  }
+  .stat .num{font-size:22px; font-weight:800; color:var(--ink);}
+  .stat .lbl{font-size:12px; color:#7A6B8C; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;}
+
+  /* ---------- Overlay effects ---------- */
+  .fx-layer{position:fixed; inset:0; pointer-events:none; z-index:50; overflow:hidden;}
+  .star-piece{
+    position:absolute; top:-5%; font-size:20px; animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{transform:translateY(110vh) rotate(360deg); opacity:0.2;}
+  }
+  .cross-flash{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.4);
+    font-size:70px; color:var(--wrong); opacity:0; z-index:60; pointer-events:none;
+  }
+  .cross-flash.show{
+    animation:crossPop 0.7s ease forwards;
+  }
+  @keyframes crossPop{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(0.3);}
+    30%{opacity:1; transform:translate(-50%,-50%) scale(1.1);}
+    60%{opacity:1; transform:translate(-50%,-50%) scale(1);}
+    100%{opacity:0; transform:translate(-50%,-50%) scale(0.9);}
+  }
+
+  .logo-corner{
+    position:fixed; top:14px; left:14px; width:42px; height:42px; z-index:5;
+    opacity:0.95;
+  }
+  .logo-corner img{width:100%; height:100%; object-fit:contain;}
+
+  footer.credit{
+    margin-top:26px; font-size:12px; color:#7A6B8C; font-weight:600; z-index:1; position:relative;
+  }
+
+  @media (max-width:420px){
+    .card{padding:24px 18px; border-radius:20px;}
+    .q-text{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= SPLASH (logo, 5 seconds, then removed forever) ================= -->
+<div id="splash">
+  <img src="assets/logo.png" alt="Innovine">
+</div>
+
+<!-- ================= Decorative background ================= -->
+<div class="sun-deco"></div>
+<div class="drift-butterfly" style="top:14%; animation-duration:20s;">🦋</div>
+<div class="drift-butterfly" style="top:24%; animation-duration:28s; animation-delay:6s;">🦋</div>
+<div class="meadow-layer"></div>
+
+<div class="logo-corner" id="logoCorner" style="display:none;">
+  <img src="assets/logo.png" alt="Innovine">
+</div>
+
+<!-- ================= INTRO SCREEN ================= -->
+<div class="screen" id="introScreen">
+  <div class="card" style="text-align:center;">
+    <span class="eyebrow">Butterfly Meadow</span>
+    <h1 class="title-main">Sentence Transformations</h1>
+    <p class="subtitle">Every correct answer helps a cocoon hatch into a butterfly — watch the meadow come alive!</p>
+    <div class="meta-row" style="justify-content:center;">
+      <span class="meta-pill">Grade 5</span>
+      <span class="meta-pill">English</span>
+      <span class="meta-pill">Chapter 17 · Transformation of Sentences</span>
+      <span class="meta-pill">10 Questions</span>
+    </div>
+    <button class="btn-primary" id="startBtn">Enter the Meadow 🦋</button>
+  </div>
+</div>
+
+<!-- ================= GAME SCREEN ================= -->
+<div class="screen" id="gameScreen">
+  <div class="hud">
+    <div class="score-box">⭐ <span id="scoreVal">0</span></div>
+    <div class="timer-box" id="timerBox">45s</div>
+  </div>
+  <div class="meadow-rack" id="meadowRack"></div>
+  <div class="card">
+    <div class="q-count" id="qCount">Question 1 of 10</div>
+    <p class="q-text" id="qText">Question text here</p>
+    <div class="options" id="optionsBox"></div>
+    <div class="feedback-banner" id="feedbackBanner"></div>
+    <div class="next-hint" id="nextHint" style="display:none;">Tap any option to continue →</div>
+  </div>
+</div>
+
+<!-- ================= RESULT SCREEN ================= -->
+<div class="screen" id="resultScreen">
+  <div class="card" style="text-align:center;">
+    <div class="result-emoji" id="resultEmoji">🏆</div>
+    <div class="result-score"><span id="finalScore">0</span> / <span id="maxScore">100</span></div>
+    <div class="result-sub" id="resultMsg">The whole meadow is fluttering with butterflies!</div>
+    <div class="stat-row">
+      <div class="stat"><div class="num" id="statFirstTry">0</div><div class="lbl">First try</div></div>
+      <div class="stat"><div class="num" id="statSecondTry">0</div><div class="lbl">Second try</div></div>
+      <div class="stat"><div class="num" id="statMissed">0</div><div class="lbl">Revealed</div></div>
+    </div>
+    <button class="btn-primary" id="retryBtn">Play Again 🔁</button>
+    <footer class="credit">Innovine Learning · Butterfly Meadow</footer>
+  </div>
+</div>
+
+<!-- Audio -->
+<audio id="sfxCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sfxWrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="sfxClaps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+<div class="fx-layer" id="fxLayer"></div>
+<div class="cross-flash" id="crossFlash">❌</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Data ---------------- */
+  var QUESTIONS = [
+    {q:"The principal's morning notice simply states that lights and fans should be switched off — it does not question, exclaim, or command directly. Which option correctly identifies the sentence?", opts:["Declarative sentence","Interrogative sentence","Exclamatory sentence","Imperative sentence"], correct:0,
+     explain:"A declarative sentence simply states information."},
+    {q:"Riya says \"What a beautiful rainbow!\", Kabir says \"Please close the window.\", Anaya says \"Where is my notebook?\", and Vivaan says \"The rainbow has seven colours.\" Who has spoken an exclamatory sentence?", opts:["Kabir","Riya","Vivaan","Anaya"], correct:1,
+     explain:"Exclamatory sentences express strong feelings."},
+    {q:"The class monitor wants to politely instruct learners to keep the classroom clean, without asking a question or stating a fact. Which sentence should the monitor write?", opts:["The classroom is clean.","Is the classroom clean?","What a clean classroom!","Keep the classroom clean."], correct:3,
+     explain:"Imperative sentences express commands, requests or advice."},
+    {q:"The sentence 'Everyone enjoyed the science exhibition' needs to become negative without changing its meaning. Which version is correct?", opts:["Everyone did not enjoy the science exhibition.","Nobody enjoyed the science exhibition.","No one hated the science exhibition.","No one failed to enjoy the science exhibition."], correct:2,
+     explain:"Replacing the opposite word (enjoyed → hated) with a negative keeps the meaning unchanged."},
+    {q:"'Only the team captain can collect the winners' certificates' needs to be rewritten in the negative form without changing its meaning. Which sentence is correct?", opts:["None can collect the certificates.","No captain can collect the certificates.","None but the team captain can collect the certificates.","Nobody collected the certificates."], correct:2,
+     explain:"'Only' changes to 'None but' in the negative transformation."},
+    {q:"'The fire alarm rang as soon as the principal entered the building' needs to be rewritten using another expression without changing the meaning. Which sentence is correct?", opts:["The principal entered after the alarm rang.","The principal entered before the alarm rang.","No sooner did the principal enter the building than the alarm rang.","The principal entered because the alarm rang."], correct:2,
+     explain:"'As soon as' changes to 'No sooner...than'."},
+    {q:"'Both Aarav and Rohan acted confidently on stage' needs to be rewritten in another form without changing its meaning. Which sentence is correct?", opts:["Aarav or Rohan acted confidently.","Neither Aarav nor Rohan acted confidently.","Not only Aarav but also Rohan acted confidently.","Aarav acted confidently but Rohan did not."], correct:2,
+     explain:"'Both...and' changes to 'Not only...but also'."},
+    {q:"The librarian says, \"Riya did not fail to return the library book on time.\" What does this sentence really mean?", opts:["Riya forgot to return the book.","Riya returned the book on time.","Riya lost the book.","Riya has not visited the library."], correct:1,
+     explain:"'Did not fail to' means the action was successfully completed."},
+    {q:"Four learners write notices: A. 'Submit your project by Friday.' B. 'Where will the exhibition be held?' C. 'The exhibition begins at 10 a.m.' D. 'What an exciting exhibition!' Which learner has written an imperative sentence?", opts:["Learner A","Learner B","Learner C","Learner D"], correct:0,
+     explain:"Imperative sentences give instructions or commands."},
+    {q:"Which option correctly transforms the sentence into its negative form without changing its meaning?", opts:["Only the principal entered the hall. → Nobody entered the hall.","Both Meera and Siya won prizes. → Neither Meera nor Siya won prizes.","As soon as the bell rang, the learners left. → No sooner did the bell ring than the learners left.","Rahul likes football. → Rahul does not like football."], correct:2,
+     explain:"'As soon as' correctly changes to 'No sooner...than' while preserving the meaning."}
+  ];
+
+  var TIME_PER_Q = 45; // grade 5 -> 45 seconds
+  var POINTS_FIRST = 10, POINTS_SECOND = 5;
+
+  /* ---------------- State ---------------- */
+  var state = {
+    idx: 0,
+    score: 0,
+    attempts: 0,
+    timer: null,
+    timeLeft: TIME_PER_Q,
+    locked: false,
+    firstTryCount: 0,
+    secondTryCount: 0,
+    revealedCount: 0
+  };
+
+  /* ---------------- Elements ---------------- */
+  var el = {
+    splash: document.getElementById('splash'),
+    logoCorner: document.getElementById('logoCorner'),
+    introScreen: document.getElementById('introScreen'),
+    gameScreen: document.getElementById('gameScreen'),
+    resultScreen: document.getElementById('resultScreen'),
+    startBtn: document.getElementById('startBtn'),
+    retryBtn: document.getElementById('retryBtn'),
+    scoreVal: document.getElementById('scoreVal'),
+    timerBox: document.getElementById('timerBox'),
+    meadowRack: document.getElementById('meadowRack'),
+    qCount: document.getElementById('qCount'),
+    qText: document.getElementById('qText'),
+    optionsBox: document.getElementById('optionsBox'),
+    feedbackBanner: document.getElementById('feedbackBanner'),
+    nextHint: document.getElementById('nextHint'),
+    finalScore: document.getElementById('finalScore'),
+    maxScore: document.getElementById('maxScore'),
+    resultMsg: document.getElementById('resultMsg'),
+    resultEmoji: document.getElementById('resultEmoji'),
+    statFirstTry: document.getElementById('statFirstTry'),
+    statSecondTry: document.getElementById('statSecondTry'),
+    statMissed: document.getElementById('statMissed'),
+    fxLayer: document.getElementById('fxLayer'),
+    crossFlash: document.getElementById('crossFlash'),
+    sfxCorrect: document.getElementById('sfxCorrect'),
+    sfxWrong: document.getElementById('sfxWrong'),
+    sfxClaps: document.getElementById('sfxClaps')
+  };
+
+  el.maxScore.textContent = QUESTIONS.length * POINTS_FIRST;
+
+  /* ---------------- Build meadow rack (cocoon per question) ---------------- */
+  (function buildCocoons(){
+    for(var i=0;i<QUESTIONS.length;i++){
+      var c = document.createElement('div');
+      c.className = 'cocoon';
+      c.id = 'cocoon-'+i;
+      el.meadowRack.appendChild(c);
+    }
+  })();
+
+  function hatch(i){
+    var c = document.getElementById('cocoon-'+i);
+    if(c){
+      c.classList.add('hatched');
+      c.textContent = '🦋';
+    }
+  }
+
+  /* ---------------- Splash logo (5s, then gone forever) ---------------- */
+  setTimeout(function(){
+    el.splash.classList.add('fade');
+    setTimeout(function(){
+      el.splash.remove(); // never comes back
+      el.logoCorner.style.display = 'block';
+      showScreen('introScreen');
+    }, 650);
+  }, 5000);
+
+  function showScreen(id){
+    ['introScreen','gameScreen','resultScreen'].forEach(function(s){
+      document.getElementById(s).classList.toggle('active', s === id);
+    });
+  }
+
+  function playSfx(a){
+    try{ a.currentTime = 0; a.play().catch(function(){}); }catch(e){}
+  }
+
+  /* ---------------- Game flow ---------------- */
+  el.startBtn.addEventListener('click', function(){
+    state = {idx:0, score:0, attempts:0, timer:null, timeLeft:TIME_PER_Q, locked:false,
+      firstTryCount:0, secondTryCount:0, revealedCount:0};
+    el.scoreVal.textContent = '0';
+    document.querySelectorAll('.cocoon').forEach(function(c){ c.classList.remove('hatched'); c.textContent=''; });
+    showScreen('gameScreen');
+    loadQuestion();
+  });
+
+  el.retryBtn.addEventListener('click', function(){
+    showScreen('introScreen');
+  });
+
+  function loadQuestion(){
+    state.attempts = 0;
+    state.locked = false;
+    state.timeLeft = TIME_PER_Q;
+    var q = QUESTIONS[state.idx];
+
+    el.qCount.textContent = 'Question ' + (state.idx+1) + ' of ' + QUESTIONS.length;
+    el.qText.textContent = q.q;
+    el.feedbackBanner.className = 'feedback-banner';
+    el.feedbackBanner.innerHTML = '';
+    el.nextHint.style.display = 'none';
+
+    el.optionsBox.innerHTML = '';
+    var letters = ['A','B','C','D'];
+    q.opts.forEach(function(opt, i){
+      var btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span><span>'+opt+'</span>';
+      btn.addEventListener('click', function(){ handleAnswer(i, btn); });
+      el.optionsBox.appendChild(btn);
+    });
+
+    startTimer();
+  }
+
+  function startTimer(){
+    clearInterval(state.timer);
+    updateTimerUI();
+    state.timer = setInterval(function(){
+      state.timeLeft--;
+      updateTimerUI();
+      if(state.timeLeft <= 0){
+        clearInterval(state.timer);
+        onTimeUp();
+      }
+    }, 1000);
+  }
+
+  function updateTimerUI(){
+    el.timerBox.textContent = state.timeLeft + 's';
+    el.timerBox.classList.toggle('low', state.timeLeft <= 10);
+  }
+
+  function onTimeUp(){
+    if(state.locked) return;
+    state.attempts++;
+    var buttons = el.optionsBox.querySelectorAll('.opt-btn');
+    buttons.forEach(function(b){ b.disabled = true; });
+    if(state.attempts < 2){
+      showRetryBanner("⏰ Time's up! Take one more shot at it.");
+      state.timeLeft = TIME_PER_Q;
+      buttons.forEach(function(b){ b.disabled = false; });
+      startTimer();
+    } else {
+      revealAnswer();
+    }
+  }
+
+  function handleAnswer(selectedIdx, btnEl){
+    if(state.locked) return;
+    clearInterval(state.timer);
+    var q = QUESTIONS[state.idx];
+    var buttons = el.optionsBox.querySelectorAll('.opt-btn');
+
+    if(selectedIdx === q.correct){
+      state.locked = true;
+      buttons.forEach(function(b, i){
+        b.disabled = true;
+        if(i === selectedIdx) b.classList.add('correct');
+        else b.classList.add('dim');
+      });
+      var pts = state.attempts === 0 ? POINTS_FIRST : POINTS_SECOND;
+      state.score += pts;
+      el.scoreVal.textContent = state.score;
+      if(state.attempts === 0) state.firstTryCount++; else state.secondTryCount++;
+      playSfx(el.sfxCorrect);
+      launchStarConfetti();
+      hatch(state.idx);
+      el.feedbackBanner.className = 'feedback-banner reveal show';
+      el.feedbackBanner.innerHTML = '<span class="icon">🎉</span><span>Correct! +'+pts+' points. '+q.explain+'</span>';
+      el.nextHint.style.display = 'block';
+      setTimeout(advance, 1600);
+    } else {
+      state.attempts++;
+      btnEl.classList.add('wrong');
+      playSfx(el.sfxWrong);
+      flashCross();
+      if(state.attempts < 2){
+        buttons.forEach(function(b){ b.disabled = false; });
+        showRetryBanner('Not quite — give it one more try!');
+        state.timeLeft = TIME_PER_Q;
+        startTimer();
+      } else {
+        buttons.forEach(function(b, i){
+          b.disabled = true;
+          if(i === q.correct) b.classList.add('correct');
+        });
+        revealAnswer();
+      }
+    }
+  }
+
+  function showRetryBanner(msg){
+    el.feedbackBanner.className = 'feedback-banner retry show';
+    el.feedbackBanner.innerHTML = '<span class="icon">🔁</span><span>'+msg+'</span>';
+  }
+
+  function revealAnswer(){
+    state.locked = true;
+    clearInterval(state.timer);
+    state.revealedCount++;
+    var q = QUESTIONS[state.idx];
+    var buttons = el.optionsBox.querySelectorAll('.opt-btn');
+    buttons.forEach(function(b, i){
+      b.disabled = true;
+      if(i === q.correct) b.classList.add('correct');
+    });
+    hatch(state.idx);
+    el.feedbackBanner.className = 'feedback-banner reveal show';
+    el.feedbackBanner.innerHTML = '<span class="icon">💡</span><span>The correct answer is "'+q.opts[q.correct]+'". '+q.explain+'</span>';
+    el.nextHint.style.display = 'block';
+    setTimeout(advance, 2200);
+  }
+
+  function advance(){
+    state.idx++;
+    if(state.idx >= QUESTIONS.length){
+      finishGame();
+    } else {
+      loadQuestion();
+    }
+  }
+
+  function finishGame(){
+    clearInterval(state.timer);
+    var max = QUESTIONS.length * POINTS_FIRST;
+    el.finalScore.textContent = state.score;
+    el.maxScore.textContent = max;
+    el.statFirstTry.textContent = state.firstTryCount;
+    el.statSecondTry.textContent = state.secondTryCount;
+    el.statMissed.textContent = state.revealedCount;
+
+    var pct = state.score / max;
+    if(pct >= 0.8){
+      el.resultEmoji.textContent = '🏆';
+      el.resultMsg.textContent = 'Wonderful! The whole meadow is fluttering with butterflies!';
+      playSfx(el.sfxClaps);
+    } else if(pct >= 0.5){
+      el.resultEmoji.textContent = '🦋';
+      el.resultMsg.textContent = 'Lovely progress! A little more practice and every cocoon will hatch.';
+    } else {
+      el.resultEmoji.textContent = '🌸';
+      el.resultMsg.textContent = 'Good start! Visit the meadow again to help more cocoons hatch.';
+    }
+    showScreen('resultScreen');
+  }
+
+  /* ---------------- Effects ---------------- */
+  function launchStarConfetti(){
+    var count = 16;
+    for(var i=0;i<count;i++){
+      var star = document.createElement('div');
+      star.className = 'star-piece';
+      star.textContent = Math.random() < 0.5 ? '⭐' : '✨';
+      star.style.left = (Math.random()*100) + 'vw';
+      star.style.fontSize = (14 + Math.random()*14) + 'px';
+      star.style.animationDuration = (1.4 + Math.random()*1.2) + 's';
+      el.fxLayer.appendChild(star);
+      (function(node){
+        setTimeout(function(){ node.remove(); }, 2800);
+      })(star);
+    }
+  }
+
+  function flashCross(){
+    el.crossFlash.classList.remove('show');
+    void el.crossFlash.offsetWidth; // restart animation
+    el.crossFlash.classList.add('show');
+  }
+
+})();
+</script>
+</body>
+</html>
