@@ -1,1 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct & Indirect Speech | Grade 5 English</title>
+    <style>
+        :root {
+            --primary: #1E4620;       /* Deep Jungle Vine Green */
+            --primary-dark: #122C14;  /* Dense Canopy Shadow */
+            --secondary: #E67E22;     /* Vibrant Parrot Orange */
+            --success: #2ECC71;       /* Bright Leaf Green */
+            --danger: #E74C3C;        /* Exotic Orchid Red */
+            --background: #F4F9F4;    /* Soft Mint Tinted Mist */
+            --text: #2C3E50;
+            --text-light: #7F8C8D;
+            --card-bg: #FFFFFF;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Performance-friendly Background Animation Layer */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-star {
+            position: absolute;
+            background: rgba(46, 204, 113, 0.15);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: floatUp 14s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(105vh) rotate(0deg) scale(0.5); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-5vh) rotate(360deg) scale(1.1); opacity: 0; }
+        }
+
+        /* Layout Container */
+        .container {
+            width: 90%;
+            max-width: 680px;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(30, 70, 32, 0.08);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+            border: 3px solid #EBF5EB;
+        }
+
+        /* Screens Manager */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* Splash Screen Layer */
+        #splash-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #FFFFFF;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        #splash-screen img {
+            max-width: 230px;
+            height: auto;
+            animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        /* Typography & Headings */
+        h1 { font-size: 26px; margin-bottom: 8px; color: var(--primary); font-weight: 700; }
+        h2 { font-size: 21px; margin-bottom: 20px; color: var(--primary); }
+        p.subtitle { color: var(--text-light); margin-bottom: 25px; font-size: 15px; }
+        
+        /* HUD Display Bar */
+        .hud-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #EBF5EB;
+        }
+        .hud-item {
+            font-weight: 700;
+            font-size: 14px;
+            background: #EBF5EB;
+            padding: 8px 15px;
+            border-radius: 6px;
+            color: var(--primary);
+        }
+        .timer-badge { background: #FDEBD0; color: #B9770E; border: 1px solid #F5CBA7; }
+
+        /* Progress Framework */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.4s ease;
+        }
+
+        /* Question Frame Box */
+        .question-box {
+            font-size: 17px;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            text-align: left;
+            padding: 20px;
+            background: #F9FDF9;
+            border-left: 5px solid var(--secondary);
+            border-radius: 6px;
+            border-top: 1px solid #EBF5EB;
+            border-right: 1px solid #EBF5EB;
+            border-bottom: 1px solid #EBF5EB;
+        }
+
+        /* Grid Configuration Options Buttons */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .option-btn {
+            background: #FFFFFF;
+            border: 2px solid #E5E7EB;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: #F9FDF9;
+        }
+        .option-btn:disabled { cursor: not-allowed; }
+        
+        .option-btn.correct {
+            background: #E8F8F5 !important;
+            border-color: var(--success) !important;
+            color: #117A65 !important;
+            font-weight: 600;
+        }
+        .option-btn.wrong {
+            background: #FDEDEC !important;
+            border-color: var(--danger) !important;
+            color: #78281F !important;
+        }
+
+        /* Explanations Display Panel */
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.5;
+            display: none;
+            text-align: left;
+            background: #F2F4F4;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Control / Action Buttons */
+        .btn-action {
+            background: var(--primary);
+            color: #FFF;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            margin-top: 15px;
+        }
+        .btn-action:hover { background: var(--primary-dark); }
+
+        /* Custom Cross & Star Particle Layouts */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 999;
+            animation: popOut 0.6s ease-out forwards;
+        }
+        @keyframes popOut {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--mx), var(--my)) scale(1) rotate(var(--rot)); opacity: 0; }
+        }
+
+        /* Final Stage Banner */
+        .final-challenge-badge {
+            background: linear-gradient(135deg, #1E4620, #E67E22);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        @media(max-width: 480px) {
+            .container { padding: 25px 15px; width: 95%; }
+            h1 { font-size: 21px; }
+            .question-box { font-size: 15px; padding: 15px; }
+            .option-btn { font-size: 14px; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation" id="ambient-bg"></div>
+
+    <div id="splash-screen">
+        <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('splash-fallback').style.display='block';">
+        <h2 id="splash-fallback" style="display:none; color: #1E4620;">Innovine</h2>
+    </div>
+
+    <div class="container">
+        <div id="intro-screen" class="screen">
+            <h1>Direct &amp; Indirect Speech</h1>
+            <p class="subtitle">Grade 5 English Language Application Arena</p>
+            <div style="background: #F9FDF9; padding: 20px; border-radius: 8px; text-align: left; margin-bottom: 25px; font-size: 14px; line-height: 1.6; border: 1px solid #EBF5EB;">
+                <strong>🌿 Jungle Trek Rules:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>You will clear <strong>10 competency linguistic challenges</strong> on reported speech.</li>
+                    <li>A strict limit of <strong>45 seconds</strong> is allocated for each task tracker.</li>
+                    <li>If your first selection is wrong, you receive **one retry** opportunity.</li>
+                    <li>A second incorrect choice finishes options and unlocks grammatical secrets.</li>
+                </ul>
+            </div>
+            <button class="btn-action" onclick="startQuiz()">Begin Language Safari</button>
+        </div>
+
+        <div id="quiz-screen" class="screen">
+            <div class="hud-bar">
+                <div class="hud-item" id="q-tracker">Question 1/10</div>
+                <div class="hud-item timer-badge" id="timer-display">⏱️ 45s</div>
+                <div class="hud-item" id="score-tracker">Score: 0</div>
+            </div>
+            <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
+            
+            <div id="final-badge-container"></div>
+            <div class="question-box" id="question-text">Loading reported speech task details...</div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="feedback-box" id="feedback-container"></div>
+            
+            <button class="btn-action" id="next-btn" style="display: none;" onclick="handleNext()">Advance Trek</button>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <h2>Expedition Completed! 🦜</h2>
+            <p class="subtitle">Linguistic Mastery Score Sheet</p>
+            <div style="margin: 30px 0; font-size: 24px; font-weight: 700;">
+                Final Score: <span id="final-score" style="color: var(--success); font-size: 36px;">0</span> / 10
+            </div>
+            <div style="background: #F2F4F4; padding: 18px; border-radius: 8px; font-size: 15px; margin-bottom: 25px; line-height: 1.5;" id="performance-msg"></div>
+            <button class="btn-action" onclick="restartQuiz()">Restart Safari Trail</button>
+        </div>
+    </div>
+
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audio-cheer" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+    <script>
+        // 10 Unique Grammar Competency Questions Array
+        const quizData = [
+            {
+                q: "The Eco Club organised a tree plantation drive in the school garden. After the activity, the teacher asked each learner to share one thing they had learned. Aarav stood up and said, \"We planted twenty saplings today.\" Later, the class reporter prepared a short report for the school magazine. She wanted to include Aarav's statement without using his exact words. Which sentence should she write?",
+                a: [
+                    "Aarav said, \"We planted twenty saplings today.\"",
+                    "Aarav said that they had planted twenty saplings that day.",
+                    "Aarav said they planted twenty saplings today.",
+                    "Aarav says that they planted twenty saplings today."
+                ],
+                correct: 1,
+                exp: "Indirect speech removes quotation marks and updates matching markers: 'today' becomes 'that day', and the past tense adjusts cleanly."
+            },
+            {
+                q: "During the Annual Day rehearsal, the dance teacher reminded the performers, \"You will perform confidently tomorrow.\" After practice, Riya told her mother what the teacher had said. She wanted to report the message correctly without repeating the exact words. Which sentence correctly reports the teacher's statement?",
+                a: [
+                    "The teacher said that they would perform confidently the next day.",
+                    "The teacher said, \"You will perform confidently tomorrow.\"",
+                    "The teacher said that they will perform confidently tomorrow.",
+                    "The teacher said that you would perform confidently tomorrow."
+                ],
+                correct: 0,
+                exp: "When converting to indirect speech, modal verb 'will' steps back into 'would', and the time marker 'tomorrow' updates to 'the next day'."
+            },
+            {
+                q: "The class visited a science museum. Before entering the robotics section, the guide said, \"I am explaining how these robots work.\" Later, one learner wrote about the visit in her diary. She wanted to report the guide's words correctly. Which sentence is the correct indirect speech?",
+                a: [
+                    "The guide said that he explained how those robots worked.",
+                    "The guide said that he was explaining how those robots worked.",
+                    "The guide said that he is explaining how these robots work.",
+                    "The guide said that I was explaining how these robots worked."
+                ],
+                correct: 1,
+                exp: "Present continuous structures ('am explaining') shift cleanly into past continuous frames ('was explaining'), and 'these' correctly steps away into 'those'."
+            },
+            {
+                q: "The school captain announced during assembly, \"Everybody must wear the identity card.\" After the assembly, a new learner asked another student what the announcement meant. The student decided to report the captain's words correctly. Which sentence should the student use?",
+                a: [
+                    "The captain said that everybody must wear the identity card.",
+                    "The captain said that everybody had to wear the identity card.",
+                    "The captain said that everybody would wear the identity card.",
+                    "The captain said that everybody could wear the identity card."
+                ],
+                correct: 1,
+                exp: "The modal obligation verb 'must' standardly transforms into 'had to' to capture the reporting frame properly."
+            },
+            {
+                q: "During a football coaching camp, the coach said, \"I can teach you a new passing technique.\" Later, the sports teacher informed the principal about the coach's promise. She wanted to report the statement accurately. Which sentence is correct?",
+                a: [
+                    "The coach said that he could teach them a new passing technique.",
+                    "The coach said that he can teach them a new passing technique.",
+                    "The coach said that I could teach you a new passing technique.",
+                    "The coach said, \"I can teach you a new passing technique.\""
+                ],
+                correct: 0,
+                exp: "The structural ability marker 'can' rolls backward into 'could', and perspective pronouns align securely to match the original speaker."
+            },
+            {
+                q: "The school principal visited the library and said, \"This book will help you understand our history.\" Later, the librarian reported the principal's words to another teacher. Which sentence correctly changes the demonstrative adjective?",
+                a: [
+                    "The principal said that this book would help them understand their history.",
+                    "The principal said that those books would help them understand their history.",
+                    "The principal said that that book would help them understand their history.",
+                    "The principal said that the book will help you understand our history."
+                ],
+                correct: 2,
+                exp: "Proximate demonstrative adjectives shift orientation back into distant markers: 'this book' becomes 'that book'."
+            },
+            {
+                q: "The class teacher announced, \"We are decorating these notice boards now.\" After school, a learner told his parents about the activity. While changing the sentence into indirect speech, he also needed to change the time and place expressions. Which option is correct?",
+                a: [
+                    "The teacher said that they were decorating those notice boards then.",
+                    "The teacher said that they are decorating these notice boards now.",
+                    "The teacher said that we were decorating these notice boards today.",
+                    "The teacher said that they decorated those notice boards tomorrow."
+                ],
+                correct: 0,
+                exp: "Time and placement coordinates require strict modifications inside reported logic: 'these' moves to 'those' and 'now' securely alters to 'then'."
+            },
+            {
+                q: "Four learners changed the same sentence into indirect speech.\nDirect Speech: Riya said, \"I finished my project yesterday.\"\nWho changed it correctly?",
+                a: [
+                    "Riya said that she had finished her project yesterday.",
+                    "Riya said that she finished her project yesterday.",
+                    "Riya said that she had finished her project the previous day.",
+                    "Riya said that I had finished my project the previous day."
+                ],
+                correct: 2,
+                exp: "Simple past frames ('finished') push deeper into past perfect frames ('had finished'), while the temporal element 'yesterday' matches up to 'the previous day'."
+            },
+            {
+                q: "The school gardener told the learners, \"We will plant flowers here next week.\" Four learners reported the sentence differently while preparing the Environment Club newsletter. Which learner has reported the sentence correctly?",
+                a: [
+                    "The gardener said that they would plant flowers there the following week.",
+                    "The gardener said that they will plant flowers here next week.",
+                    "The gardener said that we would plant flowers here the following week.",
+                    "The gardener said that they would plant flowers here tomorrow."
+                ],
+                correct: 0,
+                exp: "Spatial position switches ('here' becomes 'there') and time intervals transform appropriately ('next week' shifts cleanly into 'the following week')."
+            },
+            {
+                q: "During an English activity, the teacher asked learners to report statements correctly. Rahul said, \"The Earth revolves around the Sun.\" One learner believed the tense should change in indirect speech, while another said it should remain the same because it is a universal truth. Which statement is correct?",
+                a: [
+                    "Rahul said that the Earth revolved around the Sun.",
+                    "Rahul said that the Earth had revolved around the Sun.",
+                    "Rahul said that the Earth revolves around the Sun.",
+                    "Rahul said that the Earth would revolve around the Sun."
+                ],
+                correct: 2,
+                exp: "Universal, scientifically objective facts do not suffer structural tense regression inside indirect environments because they remain constantly true.",
+                isFinalChallenge: true
+            }
+        ];
+
+        // Core Engine State Logic
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timerValue = 45; // Grade 5 Standard limits
+        let timerInterval = null;
+        let attemptsMade = 0;
+        let hasAnsweredCurrent = false;
+
+        function initBackground() {
+            const bgContainer = document.getElementById('ambient-bg');
+            for (let i = 0; i < 7; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-star';
+                element.style.left = Math.random() * 100 + 'vw';
+                element.style.top = Math.random() * 100 + 'vh';
+                element.style.width = element.style.height = (Math.random() * 18 + 10) + 'px';
+                element.style.animationDelay = (Math.random() * 7) + 's';
+                bgContainer.appendChild(element);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initBackground();
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    showScreen('intro-screen');
+                }, 500);
+            }, 5000);
+        });
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            showScreen('quiz-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hasAnsweredCurrent = false;
+            attemptsMade = 0;
+            timerValue = 45;
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('feedback-container').style.display = 'none';
+            
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            const badgeContainer = document.getElementById('final-badge-container');
+            if(currentQuestion.isFinalChallenge) {
+                badgeContainer.innerHTML = `<span class="final-challenge-badge">🐾 Final Challenge Canopy</span>`;
+            } else {
+                badgeContainer.innerHTML = '';
+            }
+
+            document.getElementById('q-tracker').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById('score-tracker').innerText = `Score: ${score}`;
+            document.getElementById('progress').style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
+            document.getElementById('question-text').innerText = currentQuestion.q;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.a.forEach((optionText, idx) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.innerText = optionText;
+                button.onclick = (e) => handleOptionSelection(idx, button, e);
+                optionsContainer.appendChild(button);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timer-display').innerText = `⏱️ ${timerValue}s`;
+            
+            timerInterval = setInterval(() => {
+                timerValue--;
+                document.getElementById('timer-display').innerText = `⏱️ ${timerValue}s`;
+                
+                if (timerValue <= 0) {
+                    clearInterval(timerInterval);
+                    revealCorrectAnswer();
+                }
+            }, 1000);
+        }
+
+        function playSound(audioId) {
+            const sound = document.getElementById(audioId);
+            if(sound && sound.play) {
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
+            }
+        }
+
+        function triggerFeedbackAnimation(e, isCorrect) {
+            const container = document.getElementById('quiz-screen');
+            const rect = container.getBoundingClientRect();
+            const x = e ? (e.clientX - rect.left) : (rect.width / 2);
+            const y = e ? (e.clientY - rect.top) : (rect.height / 3);
+
+            for(let i = 0; i < (isCorrect ? 12 : 4); i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                if(isCorrect) {
+                    particle.style.background = ['#E67E22', '#2ECC71', '#1E4620'][Math.floor(Math.random()*3)];
+                    particle.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
+                    particle.style.width = particle.style.height = (Math.random() * 11 + 7) + 'px';
+                } else {
+                    particle.innerHTML = '✕';
+                    particle.style.color = '#E74C3C';
+                    particle.style.fontWeight = 'bold';
+                    particle.style.fontSize = '18px';
+                }
+
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                const mx = (Math.random() * 180 - 90) + 'px';
+                const my = (Math.random() * 180 - 90) + 'px';
+                const rot = (Math.random() * 360) + 'deg';
+                
+                particle.style.setProperty('--mx', mx);
+                particle.style.setProperty('--my', my);
+                particle.style.setProperty('--rot', rot);
+
+                container.appendChild(particle);
+                setTimeout(() => particle.remove(), 600);
+            }
+        }
+
+        function handleOptionSelection(selectedIndex, clickedButton, event) {
+            if (hasAnsweredCurrent) return;
+
+            const currentQuestion = quizData[currentQuestionIndex];
+
+            if (selectedIndex === currentQuestion.correct) {
+                clearInterval(timerInterval);
+                hasAnsweredCurrent = true;
+                clickedButton.classList.add('correct');
+                playSound('audio-correct');
+                triggerFeedbackAnimation(event, true);
+                
+                score++;
+                document.getElementById('score-tracker').innerText = `Score: ${score}`;
+                showFeedback(true);
+            } else {
+                attemptsMade++;
+                playSound('audio-wrong');
+                triggerFeedbackAnimation(event, false);
+                clickedButton.classList.add('wrong');
+                clickedButton.disabled = true;
+
+                if (attemptsMade === 1) {
+                    alert("Speech syntax misalignment! Keep tracking perspective shifts, time parameters, and retry.");
+                } else {
+                    clearInterval(timerInterval);
+                    hasAnsweredCurrent = true;
+                    revealCorrectAnswer();
+                }
+            }
+        }
+
+        function revealCorrectAnswer() {
+            hasAnsweredCurrent = true;
+            clearInterval(timerInterval);
+            
+            const currentQuestion = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('#options-container .option-btn');
+            
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === currentQuestion.correct) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            showFeedback(false);
+        }
+
+        function showFeedback(wasCorrect) {
+            const feedbackBox = document.getElementById('feedback-container');
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            feedbackBox.style.display = 'block';
+            feedbackBox.innerHTML = `
+                <strong style="color: ${wasCorrect ? 'var(--success)' : 'var(--danger)'}">
+                    ${wasCorrect ? '✓ Speech Restructured Correctly' : '✕ Grammatical Shift Error'}
+                </strong>
+                <p style="margin-top: 6px;">${currentQuestion.exp}</p>
+            `;
+            
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function handleNext() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            clearInterval(timerInterval);
+            document.getElementById('progress').style.width = '100%';
+            showScreen('result-screen');
+            
+            document.getElementById('final-score').innerText = score;
+            playSound('audio-cheer');
+
+            let msg = "";
+            if(score === quizData.length) {
+                msg = "👑 Language Master! You successfully traversed the canopy trail without dropping a single syntax coordinate.";
+            } else if (score >= 7) {
+                msg = "🌿 Accomplished Explorer! You have acquired a highly dependable grasp on variable reported speech parameters.";
+            } else {
+                msg = "📚 Map study required. Focus on how relative indicators (tense backshifting, pronouns, time tags) update between styles.";
+            }
+            document.getElementById('performance-msg').innerText = msg;
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
