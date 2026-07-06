@@ -1,1 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 English - Chapter 16: Collocations Interactive Game</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-light: #475569;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #e2e8f0;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
+        body.high-contrast {
+            --primary: #000000;
+            --primary-dark: #000000;
+            --secondary: #0033cc;
+            --accent: #c2410c;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-light: #1e293b;
+            --success: #047857;
+            --error: #b91c1c;
+            --border: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Decorator Layers */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-decor {
+            position: absolute;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            opacity: 0.05;
+            user-select: none;
+            white-space: nowrap;
+            animation: floatAnim 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatAnim {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(8deg); }
+        }
+
+        .floating-bubble {
+            background: rgba(79, 70, 229, 0.05);
+            padding: 6px 14px;
+            border-radius: 12px;
+            border: 1px dashed var(--primary);
+        }
+
+        /* Mandatory Branding Splash Window */
+        #brand-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        .splash-logo {
+            max-width: 320px;
+            width: 80%;
+            height: auto;
+            margin-bottom: 25px;
+            object-fit: contain;
+        }
+
+        .splash-loader {
+            width: 220px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .splash-progress {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            animation: startSplashLoader 5s linear forwards;
+        }
+
+        @keyframes startSplashLoader {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Action Control Toolbar Tray */
+        .utility-tray {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 850px;
+            margin-bottom: 15px;
+            z-index: 10;
+        }
+
+        .volume-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            padding: 6px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .tray-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .tray-btn:focus { outline: 3px solid var(--accent); }
+
+        /* Card Framework Elements */
+        .game-card {
+            display: none;
+            width: 100%;
+            max-width: 850px;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .active-card { display: block !important; }
+
+        .stage-badge {
+            background-color: rgba(79, 70, 229, 0.08);
+            color: var(--primary);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h1 { color: var(--primary-dark); font-size: 2.3rem; font-weight: 800; margin-bottom: 15px; }
+        p { color: var(--text-light); font-size: 1.15rem; line-height: 1.6; margin-bottom: 30px; }
+
+        .btn-action {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px 38px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .btn-action:active { transform: scale(0.98); }
+        .btn-action:focus { outline: 3px solid var(--primary); }
+
+        /* HUD Element Container Components */
+        .hud-grid {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 10px 0 25px 0;
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-unit { display: flex; flex-direction: column; align-items: center; flex: 1; border-right: 1px solid var(--border); }
+        .hud-unit:last-child { border-right: none; }
+        .hud-title { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
+        .hud-data { font-size: 1.35rem; font-weight: 800; color: var(--primary-dark); }
+
+        .progress-wrapper { width: 100%; height: 8px; background-color: #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 35px; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.3s ease; }
+
+        .passage-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid var(--secondary);
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: var(--text);
+            margin-bottom: 20px;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .question-title { text-align: left; font-size: 1.35rem; font-weight: 700; line-height: 1.6; margin-bottom: 25px; color: var(--text); white-space: pre-line; }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 25px; }
+
+        /* Option Selections Framework Styles */
+        .option-item {
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-item:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
+        .option-item:focus { outline: 3px solid var(--accent); }
+
+        .option-item.correct { background-color: #ecfdf5 !important; border-color: var(--success) !important; color: var(--success) !important; font-weight: 700; box-shadow: 0 0 12px rgba(16, 185, 129, 0.2); }
+        .option-item.wrong { background-color: #fef2f2 !important; border-color: var(--error) !important; color: var(--error) !important; }
+        
+        .shake-animation { animation: shakeEffect 0.4s ease-in-out; }
+        @keyframes shakeEffect {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .explanation-wrapper { background-color: #f8fafc; border-left: 5px solid var(--primary); padding: 25px; border-radius: 0 16px 16px 0; text-align: left; margin-top: 25px; display: none; }
+
+        /* Particle Visual Canvas Layouts */
+        .fx-sprite {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.6rem;
+            z-index: 99;
+            animation: travelOut 0.6s ease-out forwards;
+        }
+        @keyframes travelOut {
+            0% { transform: translate(0, 0) scale(0.6); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) rotate(var(--dr)); opacity: 0; }
+        }
+
+        /* Stage 3 Bonus Stage Components */
+        .bonus-board {
+            background: #f8fafc;
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .chips-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+            min-height: 50px;
+            justify-content: center;
+        }
+        .word-chip {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .word-chip:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .word-chip:focus { outline: 3px solid var(--accent); }
+        
+        .dropzone-field {
+            background: #f1f5f9;
+            border: 2px dashed #94a3b8;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            min-height: 80px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Diagnostic Result Table Layouts */
+        .summary-dashboard-table {
+            width: 100%;
+            margin: 25px 0;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .summary-dashboard-table th, .summary-dashboard-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        .summary-dashboard-table th {
+            font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-canvas" id="canvas-decorations"></div>
+
+    <div id="brand-splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://placehold.co/320x100?text=Innovine+Education';">
+        <div class="splash-loader">
+            <div class="splash-progress"></div>
+        </div>
+    </div>
+
+    <div class="utility-tray">
+        <div class="volume-box">
+            <span>VOLUME</span>
+            <input type="range" min="0" max="1" step="0.1" value="0.5" id="volume-slider" onchange="modifyGlobalVolumeSetting()">
+        </div>
+        <button class="tray-btn" onclick="toggleMuteFlag()" id="mute-trigger">🔊 Mute</button>
+        <button class="tray-btn" onclick="toggleHighContrastTheme()">🌓 Contrast</button>
+    </div>
+
+    <div id="intro-screen" class="game-card active-card">
+        <div class="stage-badge">Grade 7</div>
+        <h1>Chapter 16 – Collocations</h1>
+        <p>Welcome to the Collocation Challenge Board! Collocations are natural word partnerships that native speakers use automatically together. Learn how combinations like "heavy rain," "make an effort," or "pay attention" make your English sound natural, polished, and smooth. Complete all 20 tracking evaluations to launch your exclusive bonus round matching challenge!</p>
+        <button class="btn-action" onclick="initializeGameSessionEngine()">Start Game</button>
+    </div>
+
+    <div id="quiz-screen" class="game-card">
+        <div class="hud-grid">
+            <div class="hud-unit">
+                <span class="hud-title">Question Number</span>
+                <span class="hud-data" id="tracker-q-number">1 / 20</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Visible Score</span>
+                <span class="hud-data" id="tracker-score-val">Score: 0 / 20</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Attempts Remaining</span>
+                <span class="hud-data" id="tracker-attempt-val">1 / 2</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Countdown Timer</span>
+                <span class="hud-data" id="tracker-timer-val" style="color: var(--accent);">45s</span>
+            </div>
+        </div>
+
+        <div class="progress-wrapper">
+            <div class="progress-fill" id="tracker-bar-fill"></div>
+        </div>
+
+        <div class="passage-box" id="live-passage-box" style="display: none;">
+            <strong>Context Passage:</strong><br>
+            The Eco Club planned a tree plantation drive for Saturday. The teachers made careful arrangements and paid close attention to safety. Every student took part with great enthusiasm. Although there was heavy rain in the afternoon, the event was a great success because everyone made an effort to complete the work.
+        </div>
+
+        <div class="question-title" id="live-question-title"></div>
+        <div class="options-grid" id="live-options-grid"></div>
+
+        <div class="explanation-wrapper" id="live-explanation-box">
+            <div style="font-weight: 800; margin-bottom: 8px; color: var(--primary-dark);" id="live-explanation-title-node">Correct Answer Details:</div>
+            <div id="explanation-body-text" style="font-size: 1rem; color: var(--text-light); margin-bottom: 18px; line-height: 1.5; white-space: pre-line;"></div>
+            <button class="btn-action" style="padding: 10px 24px; font-size: 1rem;" onclick="advanceNextQuestionTrack()">Continue &rarr;</button>
+        </div>
+    </div>
+
+    <div id="bonus-screen" class="game-card">
+        <div class="stage-badge" style="background-color: rgba(245, 158, 11, 0.1); color: var(--accent);">Stage 3: Reward Level</div>
+        <h1>🧩 Collocation Master Challenge</h1>
+        <p>Let's play Word Partner Match! Link the given verb or adjective with its most natural matching structural word piece below. This round is for practice and does not alter your main assessment score matrix.</p>
+        
+        <div class="bonus-board">
+            <div style="font-weight: 800; color: var(--text-light); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px;">Target Word Stem:</div>
+            <h2 id="bonus-term-field" style="color: var(--primary-dark); margin-bottom: 20px; background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid var(--border); display: inline-block;">make a</h2>
+            
+            <div class="dropzone-field" id="bonus-dropzone-status">
+                <span>Select the correct partner chip from below:</span>
+            </div>
+            
+            <div class="chips-pool" id="bonus-chips-container"></div>
+        </div>
+        <div id="bonus-validation-message" style="margin-top: 15px; font-weight: 700; min-height: 24px;"></div>
+    </div>
+
+    <div id="result-screen" class="game-card">
+        <div class="stage-badge">Assessment Matrix Summary</div>
+        <h1 id="result-headline-title">Assessment Report</h1>
+        <p id="result-description-text">Review your analytical parameters log panel below.</p>
+        
+        <div class="hud-grid" style="max-width: 500px; margin: 0 auto 25px auto;">
+            <div class="hud-unit">
+                <span class="hud-title">Final Score</span>
+                <span class="hud-data" id="panel-score-val" style="color: var(--primary);">0 / 20</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Percentage</span>
+                <span class="hud-data" id="panel-percent-val" style="color: var(--secondary);">0%</span>
+            </div>
+        </div>
+
+        <table class="summary-dashboard-table">
+            <thead>
+                <tr>
+                    <th>Metric Classification</th>
+                    <th>Count Record Matrix Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Correct Answers</td>
+                    <td id="panel-correct-count" style="font-weight:700; color: var(--success);">0</td>
+                </tr>
+                <tr>
+                    <td>Wrong Answers</td>
+                    <td id="panel-wrong-count" style="font-weight:700; color: var(--error);">0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button class="btn-action" onclick="restartWholeAppWorkflowEngine()">Restart Game</button>
+            <button class="btn-action" style="background-color: var(--secondary); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);" onclick="restartWholeAppWorkflowEngine()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // STRICT REPOSITORY OF CHAPTER QUESTIONS - PRESERVING EVERY SINGLE SYMBOL VERBATIM
+        const completeVerificationDeck = [
+            { id: 1, hasPassage: true, q: "1. The Eco Club secretary is writing a report. Which sentence best completes the report?", options: ["a) The teachers did careful arrangements before the event.", "b) The teachers made careful arrangements before the event.", "c) The teachers created careful arrangements before the event.", "d) The teachers took careful arrangements before the event."], ans: "b) The teachers made careful arrangements before the event.", exp: "We say 'make arrangements', not 'do', 'create', or 'take'. Therefore, 'made careful arrangements' is the most natural collocation." },
+            { id: 2, hasPassage: true, q: "2. A student writes,\"Our teachers paid deep attention to everyone's safety.\"\nWhich revision uses the most natural collocation?", options: ["a) paid full attention", "b) paid close attention", "c) paid hard attention", "d) paid strong attention."], ans: "b) paid close attention", exp: "In English, the standard modifier that collocates naturally with attention to specify detailed vigilance is 'close attention'." },
+            { id: 3, hasPassage: true, q: "3. The report says,\"Although there was heavy rain, the programme continued.\"\nWhy is heavy rain the best choice?", options: ["a) Because heavy naturally collocates with rain.", "b) Because strong rain is more formal.", "c) Because big rain is used in reports.", "d) Because powerful rain is the standard expression."], ans: "a) Because heavy naturally collocates with rain.", exp: "English adjectives are fixed by common convention; 'heavy' is the standard natural partner word that pairs with 'rain'." },
+            { id: 4, hasPassage: true, q: "4. The principal wants to congratulate the students.\nWhich sentence sounds the most natural?", options: ["a) Everyone made an effort to complete the activity.", "b) Everyone did an effort to complete the activity.", "c) Everyone created an effort to complete the activity.", "d) Everyone took an effort to complete the activity."], ans: "a) Everyone made an effort to complete the activity.", exp: "The noun 'effort' systematically pairs with the operational verb 'make' to sound correct and natural." },
+            { id: 5, hasPassage: false, q: "5. Your teacher asks you to complete Maths exercises at home.\nWhich sentence sounds most natural?", options: ["a) I have to do my homework tonight.", "b) I have to make my homework tonight.", "c) I have to perform my homework tonight.", "d) I have to create my homework tonight."], ans: "a) I have to do my homework tonight.", exp: "Educational tasks, assignments, and house exercises naturally pair with 'do'. Thus, 'do my homework' is correct." },
+            { id: 6, hasPassage: false, q: "6. A student writes,\"I made a mistake because I did a decision too quickly.\"\nWhich correction improves the sentence?", options: ["a) made a decision", "b) took a decision", "c) created a decision", "d) Both (a) and (b) are acceptable."], ans: "d) Both (a) and (b) are acceptable.", exp: "Both \"make a decision\" and \"take a decision\" are acceptable, noting that \"make\" is more common internationally, while \"take\" is common in British English." },
+            { id: 7, hasPassage: false, q: "7. The school bus was delayed because there were too many vehicles on the road.\nWhich sentence best describes the situation?", options: ["a) There was heavy traffic.", "b) There was loud traffic.", "c) There was strong traffic.", "d) There was big traffic."], ans: "a) There was heavy traffic.", exp: "The adjective 'heavy' is the customary collocation to describe a large amount of vehicles causing congestion on public roads." },
+            { id: 8, hasPassage: false, q: "8. Your friend has been sneezing since morning.\nWhich sentence sounds most natural?", options: ["a) I think I've caught a cold.", "b) I think I've made a cold.", "c) I think I've done a cold.", "d) I think I've built a cold."], ans: "a) I think I've caught a cold.", exp: "Illnesses and infections such as flu or chills are contextually linked with the verb 'catch'. Hence, 'caught a cold' is natural." },
+            { id: 9, hasPassage: false, q: "9. Which sentence contains the incorrect collocation?", options: ["a) The player broke the record.", "b) The chef made a delicious meal.", "c) She paid close attention.", "d) He did a serious mistake."], ans: "d) He did a serious mistake.", exp: "The correct collocation is 'made a mistake', not 'did a mistake', making choice (d) the incorrect pair." },
+            { id: 10, hasPassage: false, q: "10. The science teacher explained a difficult experiment.\nWhich sentence sounds the most natural?", options: ["a) The teacher gave a clear explanation.", "b) The teacher made a clear explanation.", "c) The teacher did a clear explanation.", "d) The teacher created a clear explanation."], ans: "a) The teacher gave a clear explanation.", exp: "The noun 'explanation' naturally pairs with the verb 'give' when imparting descriptive insight to others." },
+            { id: 11, hasPassage: false, q: "11. Assertion (A): \"Strong tea\" is the correct expression.\nReason (R): Some English words naturally occur together as fixed combinations.", options: ["a) Both A and R are true, and R correctly explains A.", "b) Both A and R are true, but R does not explain A.", "c) A is true, but R is false.", "d) A is false, but R is true."], ans: "a) Both A and R are true, and R correctly explains A.", exp: "Collocations represent arbitrary linguistic patterns commonly accepted by convention; 'strong tea' is a perfect illustration of this rule." },
+            { id: 12, hasPassage: false, q: "12.Which expression does NOT belong with the others?", options: ["a) make a decision", "b) make a mistake", "c) make progress", "d) make homework"], ans: "d) make homework", exp: "We say 'do homework'. All other items are structurally authentic collocations using the action verb 'make'." },
+            { id: 13, hasPassage: false, q: "13. A student texts,\"I am having a big interest in robotics.\"\nWhich revision sounds most natural?", options: ["a) I have a keen interest in robotics.", "b) I have a large interest in robotics.", "c) I have a heavy interest in robotics.", "d) I have a broad interest in robotics."], ans: "a) I have a keen interest in robotics.", exp: "The precise adjective used by convention to show strong intellectual curiosity is 'keen interest'." },
+            { id: 14, hasPassage: false, q: "14. Which sentence is most suitable for a school newsletter?", options: ["a) The students showed keen interest in the exhibition.", "b) The students showed big interest in the exhibition.", "c) The students showed large interest in the exhibition.", "d) The students showed broad interest in the exhibition."], ans: "a) The students showed keen interest in the exhibition.", exp: "Formal texts use 'keen interest' to indicate enthusiastic attention and curious involvement." },
+            { id: 15, hasPassage: false, q: "15. Which sentence is correctly written?", options: ["a) The doctor gave me useful advice.", "b) The doctor made me useful advice.", "c) The doctor did me useful advice.", "d) The doctor took me useful advice."], ans: "a) The doctor gave me useful advice.", exp: "When offering suggestions, guidance or recommendations, the standard verb pairing used is 'give advice'." },
+            { id: 16, hasPassage: false, q: "16. Which sentence sounds the most natural?", options: ["a) She had a brief conversation with the principal.", "b) She had a fast conversation with the principal.", "c) She had a speedy conversation with the principal.", "d) She had a rapid conversation with the principal."], ans: "a) She had a brief conversation with the principal.", exp: "To state that an exchange or talk was short, English uses the adjective 'brief conversation'." },
+            { id: 17, hasPassage: false, q: "17. The school football team won the district championship after months of practice.\nWhich sentence best describes their achievement?", options: ["a) They achieved great success.", "b) They achieved huge success.", "c) They achieved large success.", "d) They achieved broad success."], ans: "a) They achieved great success.", exp: "The modifier 'great' perfectly collocates with 'success' to denote outstanding team achievements." },
+            { id: 18, hasPassage: false, q: "18. Which sentence uses the wrong collocation?", options: ["a) The audience gave a warm welcome.", "b) The audience gave a loud welcome.", "c) The teacher made a suggestion.", "d) We took a photograph."], ans: "b) The audience gave a loud welcome.", exp: "While a welcome can be loud, 'warm welcome' or 'loud applause' are the correct conventional formulas; choice (b) is the least natural collocation here." },
+            { id: 19, hasPassage: false, q: "19. Which sentence would sound most natural in an interview?", options: ["a) I have gained valuable experience through volunteering.", "b) I have collected valuable experience through volunteering.", "c) I have caught valuable experience through volunteering.", "d) I have taken valuable experience through volunteering."], ans: "a) I have gained valuable experience through volunteering.", exp: "The most natural verb used to describe acquiring knowledge, insights, or career skills over time is 'gain experience'." },
+            { id: 20, hasPassage: false, q: "20. Assertion (A): Native speakers usually say pay attention instead of give attention.\nReason (R): Collocations are fixed or commonly accepted word partnerships in English.", options: ["a) Both A and R are true, and R correctly explains A.", "b) Both A and R are true, but R does not explain A.", "c) A is true, but R is false.", "d) A is false, but R is true."], ans: "a) Both A and R are true, and R correctly explains A.", exp: "Both vectors are true, and the reason correctly outlines why fixed phrase sets like 'pay attention' are preferred by convention." }
+        ];
+
+        let playSessionTrackDeck = [];
+        let executionTrackIndex = 0;
+        let internalRunningScore = 0;
+        let currentRemainingWrongAttempts = 2;
+        let systemClockTimerId = null;
+        let countdownSecondsLeft = 45;
+        let activeVolumeCoefficient = 0.5;
+        let audioGlobalMuteFlag = false;
+        let structuralInterfaceSuspended = false;
+        let bonusStageCursor = 0;
+
+        // Stage 3 Bonus Board Matrix Setup Config
+        const comprehensiveBonusPool = [
+            { stem: "make a", matchTarget: "decision", choices: ["decision", "homework", "tea"] },
+            { stem: "pay", matchTarget: "attention", choices: ["attention", "cold", "photograph"] },
+            { stem: "catch a", matchTarget: "cold", choices: ["cold", "advice", "record"] },
+            { stem: "heavy", matchTarget: "rain", choices: ["rain", "tea", "suggestion"] },
+            { stem: "strong", matchTarget: "tea", choices: ["tea", "homework", "traffic"] },
+            { stem: "do", matchTarget: "homework", choices: ["homework", "decision", "photograph"] },
+            { stem: "take a", matchTarget: "photograph", choices: ["photograph", "cold", "attention"] },
+            { stem: "give", matchTarget: "advice", choices: ["advice", "mistake", "traffic"] },
+            { stem: "keen", matchTarget: "interest", choices: ["interest", "rain", "explanation"] },
+            { stem: "break a", matchTarget: "record", choices: ["record", "attention", "decision"] }
+        ];
+
+        // Sfx Player Config Track Cache
+        const dynamicAudioRack = {
+            correct: new Audio('assets/correct.mp3'),
+            wrong: new Audio('assets/wrong.mp3'),
+            clapping: new Audio('assets/clapping.mp3')
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateFloatingCanvasDecorators();
+            
+            // 5 seconds mandatory splash lifecycle timer execution block
+            setTimeout(() => {
+                const splash = document.getElementById('brand-splash');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.remove(), 600);
+                }
+            }, 5000);
+        });
+
+        function generateFloatingCanvasDecorators() {
+            const rootCanvas = document.getElementById('canvas-decorations');
+            const icons = ["🧩", "📖", "Collocation", "Pair", "Heavy Rain", "Make a Decision", "📝", "✨", "Dictionary"];
+            for (let i = 0; i < 22; i++) {
+                const node = document.createElement('div');
+                node.className = 'bg-decor' + (i % 4 === 0 ? ' floating-bubble' : '');
+                node.innerText = icons[Math.floor(Math.random() * icons.length)];
+                node.style.left = Math.random() * 92 + '%';
+                node.style.top = Math.random() * 92 + '%';
+                node.style.animationDelay = `${Math.random() * 5}s`;
+                rootCanvas.appendChild(node);
+            }
+        }
+
+        function playSoundAssetTrack(key) {
+            if (audioGlobalMuteFlag) return;
+            try {
+                if (dynamicAudioRack[key]) {
+                    dynamicAudioRack[key].currentTime = 0;
+                    dynamicAudioRack[key].volume = activeVolumeCoefficient;
+                    dynamicAudioRack[key].play();
+                }
+            } catch (err) {
+                console.log(`Local fallback notice for: assets/${key}.mp3`);
+            }
+        }
+
+        function modifyGlobalVolumeSetting() {
+            activeVolumeCoefficient = parseFloat(document.getElementById('volume-slider').value);
+        }
+
+        function toggleMuteFlag() {
+            audioGlobalMuteFlag = !audioGlobalMuteFlag;
+            document.getElementById('mute-trigger').innerText = audioGlobalMuteFlag ? "❌ Unmute" : "🔊 Mute";
+        }
+
+        function toggleHighContrastTheme() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function initializeGameSessionEngine() {
+            // Randomize the main question deck order on initial startup execution flow
+            playSessionTrackDeck = [...completeVerificationDeck].sort(() => Math.random() - 0.5);
+            executionTrackIndex = 0;
+            internalRunningScore = 0;
+            changeCardViewportFrame('quiz-screen');
+            renderActiveQuestionTrack();
+        }
+
+        function renderActiveQuestionTrack() {
+            structuralInterfaceSuspended = false;
+            currentRemainingWrongAttempts = 2;
+            clearInterval(systemClockTimerId);
+            countdownSecondsLeft = 45;
+            
+            document.getElementById('tracker-timer-val').innerText = countdownSecondsLeft + "s";
+            document.getElementById('tracker-timer-val').style.color = "var(--primary)";
+            document.getElementById('live-explanation-box').style.display = "none";
+            
+            const itemData = playSessionTrackDeck[executionTrackIndex];
+
+            // Render/hide the context passage depending on verification parameter
+            const contextPassageBlock = document.getElementById('live-passage-box');
+            if (itemData.hasPassage) {
+                contextPassageBlock.style.display = "block";
+            } else {
+                contextPassageBlock.style.display = "none";
+            }
+
+            // Sync structural HUD parameters panel counters
+            document.getElementById('tracker-q-number').innerText = `${executionTrackIndex + 1} / 20`;
+            document.getElementById('tracker-score-val').innerText = `Score: ${internalRunningScore} / 20`;
+            document.getElementById('tracker-attempt-val').innerText = "1 / 2";
+            document.getElementById('tracker-bar-fill').style.width = `${(executionTrackIndex / 20) * 100}%`;
+            
+            document.getElementById('live-question-title').innerText = itemData.q;
+            
+            // Randomize alternative options lists positions independently
+            const dynamicShuffledOptions = [...itemData.options].sort(() => Math.random() - 0.5);
+            
+            const interactiveGrid = document.getElementById('live-options-grid');
+            interactiveGrid.innerHTML = "";
+            
+            dynamicShuffledOptions.forEach(optString => {
+                const choiceButton = document.createElement('button');
+                choiceButton.className = "option-item";
+                choiceButton.innerHTML = `<span>${optString}</span>`;
+                choiceButton.onclick = (e) => processOptionSelectionLogic(optString, choiceButton, e);
+                interactiveGrid.appendChild(choiceButton);
+            });
+
+            launchActiveCountdownTimer();
+        }
+
+        function launchActiveCountdownTimer() {
+            systemClockTimerId = setInterval(() => {
+                countdownSecondsLeft--;
+                document.getElementById('tracker-timer-val').innerText = countdownSecondsLeft + "s";
+                if (countdownSecondsLeft <= 10) {
+                    document.getElementById('tracker-timer-val').style.color = "var(--error)";
+                }
+                if (countdownSecondsLeft <= 0) {
+                    clearInterval(systemClockTimerId);
+                    processClockExpiryLogic();
+                }
+            }, 1000);
+        }
+
+        function processClockExpiryLogic() {
+            structuralInterfaceSuspended = true;
+            playSoundAssetTrack('wrong');
+            exposeExplanationDrawerBox("Timer Expired!");
+        }
+
+        function processOptionSelectionLogic(chosenText, itemButtonRef, clickEvent) {
+            if (structuralInterfaceSuspended) return;
+            const itemData = playSessionTrackDeck[executionTrackIndex];
+
+            if (chosenText === itemData.ans) {
+                structuralInterfaceSuspended = true;
+                clearInterval(systemClockTimerId);
+                itemButtonRef.classList.add('correct');
+                itemButtonRef.innerHTML += `<span>✔</span>`;
+                generateParticlesBurstExplosion(clickEvent, '⭐');
+                internalRunningScore++;
+                document.getElementById('tracker-score-val').innerText = `Score: ${internalRunningScore} / 20`;
+                playSoundAssetTrack('correct');
+                
+                setTimeout(() => {
+                    advanceNextQuestionTrack();
+                }, 1200);
+            } else {
+                itemButtonRef.classList.add('wrong');
+                itemButtonRef.innerHTML += `<span>❌</span>`;
+                generateParticlesBurstExplosion(clickEvent, '❌');
+                playSoundAssetTrack('wrong');
+                
+                const mainQuizCard = document.getElementById('quiz-screen');
+                mainQuizCard.classList.add('shake-animation');
+                setTimeout(() => mainQuizCard.classList.remove('shake-animation'), 400);
+
+                if (currentRemainingWrongAttempts === 2) {
+                    currentRemainingWrongAttempts--;
+                    document.getElementById('tracker-attempt-val').innerText = "2 / 2";
+                } else {
+                    structuralInterfaceSuspended = true;
+                    clearInterval(systemClockTimerId);
+                    exposeExplanationDrawerBox("Incorrect!");
+                }
+            }
+        }
+
+        function exposeExplanationDrawerBox(headerLabel) {
+            const itemData = playSessionTrackDeck[executionTrackIndex];
+            const targetButtons = document.querySelectorAll('.option-item');
+            
+            targetButtons.forEach(btn => {
+                const verificationText = btn.querySelector('span').innerText;
+                if (verificationText === itemData.ans) {
+                    btn.classList.add('correct');
+                }
+                btn.disabled = true;
+            });
+
+            document.getElementById('live-explanation-title-node').innerText = `${headerLabel} - Correct Answer: ${itemData.ans}`;
+            document.getElementById('explanation-body-text').innerText = itemData.exp;
+            document.getElementById('live-explanation-box').style.display = "block";
+        }
+
+        function advanceNextQuestionTrack() {
+            executionTrackIndex++;
+            if (executionTrackIndex >= playSessionTrackDeck.length) {
+                bonusStageCursor = 0;
+                changeCardViewportFrame('bonus-screen');
+                renderInteractiveBonusChallengeStep();
+            } else {
+                renderActiveQuestionTrack();
+            }
+        }
+
+        // STAGE 3 — BONUS CHALLENGE INTERACTIVE ENGINE
+        function renderInteractiveBonusChallengeStep() {
+            document.getElementById('bonus-validation-message').innerText = "";
+            const currentBonusItem = comprehensiveBonusPool[bonusStageCursor];
+            
+            document.getElementById('bonus-term-field').innerText = currentBonusItem.stem;
+            document.getElementById('bonus-dropzone-status').innerHTML = `<span>Select the correct partner chip from below:</span>`;
+            
+            const poolBoxContainer = document.getElementById('bonus-chips-container');
+            poolBoxContainer.innerHTML = "";
+            
+            // Randomize choice chips placement layout inside bonus levels
+            const shuffledChips = [...currentBonusItem.choices].sort(() => Math.random() - 0.5);
+            
+            shuffledChips.forEach(chipText => {
+                const chipNode = document.createElement('div');
+                chipNode.className = "word-chip";
+                chipNode.innerText = chipText;
+                chipNode.setAttribute('tabindex', '0');
+                chipNode.onclick = () => evaluateBonusRoundSelection(chipText, currentBonusItem.matchTarget);
+                poolBoxContainer.appendChild(chipNode);
+            });
+        }
+
+        function evaluateBonusRoundSelection(chosenChipText, exactAnswerTargetText) {
+            const dynamicValidationLabel = document.getElementById('bonus-validation-message');
+            if (chosenChipText === exactAnswerTargetText) {
+                playSoundAssetTrack('correct');
+                dynamicValidationLabel.style.color = "var(--success)";
+                dynamicValidationLabel.innerText = "⭐ Perfect Collocation! Partnership locked correctly.";
+                
+                setTimeout(() => {
+                    bonusStageCursor++;
+                    if (bonusStageCursor >= comprehensiveBonusPool.length) {
+                        displaySummaryDashboardScreen();
+                    } else {
+                        renderInteractiveBonusChallengeStep();
+                    }
+                }, 1400);
+            } else {
+                playSoundAssetTrack('wrong');
+                dynamicValidationLabel.style.color = "var(--error)";
+                dynamicValidationLabel.innerText = "❌ Unnatural partnership. Think about common combinations and pick another option!";
+            }
+        }
+
+        // STAGE 4 — RESULT DASHBOARD CONTROL PANEL
+        function displaySummaryDashboardScreen() {
+            changeCardViewportFrame('result-screen');
+            playSoundAssetTrack('clapping');
+            
+            document.getElementById('panel-score-val').innerText = `${internalRunningScore} / 20`;
+            const absolutePercentage = Math.round((internalRunningScore / 20) * 100);
+            document.getElementById('panel-percent-val').innerText = absolutePercentage + "%";
+            
+            document.getElementById('panel-correct-count').innerText = internalRunningScore;
+            document.getElementById('panel-wrong-count').innerText = 20 - internalRunningScore;
+            
+            const headlineNode = document.getElementById('result-headline-title');
+            const descriptionNode = document.getElementById('result-description-text');
+            
+            if (internalRunningScore === 20) {
+                headlineNode.innerText = "🏆 Collocation Champion!";
+                descriptionNode.innerText = "Absolute mastery achieved! Your instincts for English word partnerships are flawless. You understand exactly how to sound natural in both formal reports and everyday dialogue.";
+            } else if (internalRunningScore >= 15) {
+                headlineNode.innerText = "🌟 Excellent Vocabulary!";
+                descriptionNode.innerText = "Superb job! You possess an outstanding eye for natural phrasing combinations and correct contextual modifiers.";
+            } else if (internalRunningScore >= 10) {
+                headlineNode.innerText = "🎉 Fantastic Work!";
+                descriptionNode.innerText = "Good performance! Keep monitoring how words group naturally together when reading books or dictionaries to make your writing flow even smoother.";
+            } else {
+                headlineNode.innerText = "📘 Keep Practising!";
+                descriptionNode.innerText = "Collocations take regular practice to memorize. Review the explanation pop-ups and try running through the questions once more to sharpen your skills!";
+            }
+        }
+
+        function restartWholeAppWorkflowEngine() {
+            changeCardViewportFrame('intro-screen');
+        }
+
+        function changeCardViewportFrame(targetHtmlId) {
+            document.querySelectorAll('.game-card').forEach(card => card.classList.remove('active-card'));
+            document.getElementById(targetHtmlId).classList.add('active-card');
+        }
+
+        function generateParticlesBurstExplosion(e, characterSymbol) {
+            if (!e) return;
+            const elementBounds = e.target.getBoundingClientRect();
+            const startX = e.clientX || (elementBounds.left + elementBounds.width / 2);
+            const startY = e.clientY || (elementBounds.top + elementBounds.height / 2);
+
+            for (let i = 0; i < 8; i++) {
+                const particleNode = document.createElement('div');
+                particleNode.className = 'fx-sprite';
+                particleNode.innerText = characterSymbol;
+                particleNode.style.color = characterSymbol === '⭐' ? 'var(--accent)' : 'var(--error)';
+                particleNode.style.left = startX + 'px';
+                particleNode.style.top = startY + 'px';
+                
+                const deltaX = (Math.random() - 0.5) * 160;
+                const deltaY = (Math.random() - 0.5) * 160 - 20;
+                const rotationDeg = Math.random() * 360;
+                
+                particleNode.style.setProperty('--dx', `${deltaX}px`);
+                particleNode.style.setProperty('--dy', `${deltaY}px`);
+                particleNode.style.setProperty('--dr', `${rotationDeg}deg`);
+                
+                document.body.appendChild(particleNode);
+                setTimeout(() => particleNode.remove(), 600);
+            }
+        }
+    </script>
+</body>
+</html>
