@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 7 English - Phrasal Verbs Game</title>
+    <title>Grade 7 English - Phrasal Verbs Interactive Learning Game</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -54,7 +54,7 @@
             position: relative;
         }
 
-        /* Animated Background Decorator Layers */
+        /* Animated Background Layer */
         .bg-canvas {
             position: fixed;
             top: 0;
@@ -71,19 +71,25 @@
             font-size: 1.3rem;
             font-weight: 700;
             color: var(--primary);
-            opacity: 0.06;
+            opacity: 0.05;
             user-select: none;
             white-space: nowrap;
+            animation: floatingFloat 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatingFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(10deg); }
         }
 
         .floating-bubble {
-            background: rgba(79, 70, 229, 0.06);
+            background: rgba(79, 70, 229, 0.05);
             padding: 6px 14px;
             border-radius: 12px;
             border: 1px dashed var(--primary);
         }
 
-        /* Branding Splash Screen Window */
+        /* Mandatory Branding Splash Screen */
         #brand-splash {
             position: fixed;
             top: 0;
@@ -96,7 +102,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.6s ease;
+            opacity: 1;
+            transition: opacity 0.6s ease-in-out;
         }
 
         .splash-logo {
@@ -127,7 +134,7 @@
             100% { width: 100%; }
         }
 
-        /* Action Bar Control Tray */
+        /* Action Control Toolbar Tray */
         .utility-tray {
             display: flex;
             justify-content: flex-end;
@@ -165,11 +172,9 @@
             gap: 8px;
             transition: all 0.2s;
         }
-        .tray-btn:focus {
-            outline: 3px solid var(--accent);
-        }
+        .tray-btn:focus { outline: 3px solid var(--accent); }
 
-        /* Core Application Layout Base Cards */
+        /* Game Structure Core Windows */
         .game-card {
             display: none;
             width: 100%;
@@ -217,7 +222,7 @@
         .btn-action:active { transform: scale(0.98); }
         .btn-action:focus { outline: 3px solid var(--primary); }
 
-        /* HUD parameters panels */
+        /* HUD Tracker Parameters */
         .hud-grid {
             display: flex;
             justify-content: space-around;
@@ -240,7 +245,7 @@
         .question-title { text-align: left; font-size: 1.35rem; font-weight: 700; line-height: 1.6; margin-bottom: 25px; color: var(--text); white-space: pre-line; }
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 25px; }
 
-        /* Alternative buttons options framework */
+        /* Option Item Layout Buttons */
         .option-item {
             background-color: var(--surface);
             border: 2px solid var(--border);
@@ -261,9 +266,7 @@
             border-color: var(--primary);
             background-color: #f8fafc;
         }
-        .option-item:focus {
-            outline: 3px solid var(--accent);
-        }
+        .option-item:focus { outline: 3px solid var(--accent); }
 
         .option-item.correct { background-color: #ecfdf5 !important; border-color: var(--success) !important; color: var(--success) !important; font-weight: 700; box-shadow: 0 0 12px rgba(16, 185, 129, 0.2); }
         .option-item.wrong { background-color: #fef2f2 !important; border-color: var(--error) !important; color: var(--error) !important; }
@@ -277,7 +280,7 @@
 
         .explanation-wrapper { background-color: #f8fafc; border-left: 5px solid var(--primary); padding: 25px; border-radius: 0 16px 16px 0; text-align: left; margin-top: 25px; display: none; }
 
-        /* Visual Confetti FX particles */
+        /* Confetti Burst Particle Layouts */
         .fx-sprite {
             position: absolute;
             pointer-events: none;
@@ -290,7 +293,7 @@
             100% { transform: translate(var(--dx), var(--dy)) rotate(var(--dr)); opacity: 0; }
         }
 
-        /* Stage 3: Bonus Interactive Layout elements */
+        /* Stage 3: Bonus Interactive Boards */
         .bonus-board {
             background: #f8fafc;
             border: 2px dashed var(--border);
@@ -322,6 +325,8 @@
             background: var(--primary);
             color: white;
         }
+        .word-chip:focus { outline: 3px solid var(--accent); }
+        
         .dropzone-field {
             background: #f1f5f9;
             border: 2px dashed #94a3b8;
@@ -337,7 +342,7 @@
             justify-content: center;
         }
 
-        /* Results dashboard card metrics layout */
+        /* Results dashboard table layout */
         .summary-dashboard-table {
             width: 100%;
             margin: 25px 0;
@@ -377,9 +382,9 @@
     </div>
 
     <div id="intro-screen" class="game-card active-card">
-        <div class="stage-badge">Grade 7 English</div>
+        <div class="stage-badge">Grade 7</div>
         <h1>Chapter 15 – Phrasal Verbs</h1>
-        <p>Welcome to the Phrasal Verb Challenge Engine! Explore how verbs combine with prepositions or adverbs to form unique context-driven expressions. Master vital concepts including separable versus inseparable configurations, transitive look-ups, and real-life conversational applications. Complete all 20 tracking evaluations to activate your exclusive reward round!</p>
+        <p>Welcome to the Phrasal Verb Challenge! Test your skills on how verbs join particles to create completely fresh meanings. Learn how to differentiate separable structures from inseparable idiomatic terms. Clear all 20 interactive question steps perfectly to access the Phrasal Verb Master Challenge bonus level!</p>
         <button class="btn-action" onclick="initializeGameSession()">Start Game</button>
     </div>
 
@@ -390,7 +395,7 @@
                 <span class="hud-data" id="tracker-q-number">1 / 20</span>
             </div>
             <div class="hud-unit">
-                <span class="hud-title">Progress Indicator</span>
+                <span class="hud-title">Visible Score</span>
                 <span class="hud-data" id="tracker-score-val">Score: 0 / 20</span>
             </div>
             <div class="hud-unit">
@@ -411,23 +416,23 @@
         <div class="options-grid" id="live-options-grid"></div>
 
         <div class="explanation-wrapper" id="live-explanation-box">
-            <div style="font-weight: 800; margin-bottom: 8px; color: var(--primary-dark);">Grammar Concept Insight:</div>
-            <div id="explanation-body-text" style="font-size: 1rem; color: var(--text-light); margin-bottom: 18px; line-height: 1.5;"></div>
+            <div style="font-weight: 800; margin-bottom: 8px; color: var(--primary-dark);" id="live-explanation-title-node">Correct Answer Details:</div>
+            <div id="explanation-body-text" style="font-size: 1rem; color: var(--text-light); margin-bottom: 18px; line-height: 1.5; white-space: pre-line;"></div>
             <button class="btn-action" style="padding: 10px 24px; font-size: 1rem;" onclick="advanceNextQuestionTrack()">Continue &rarr;</button>
         </div>
     </div>
 
     <div id="bonus-screen" class="game-card">
-        <div class="stage-badge" style="background-color: rgba(245, 158, 11, 0.1); color: var(--accent);">Stage 3: Interactive Arena</div>
+        <div class="stage-badge" style="background-color: rgba(245, 158, 11, 0.1); color: var(--accent);">Stage 3: Bonus Level</div>
         <h1>🚀 Phrasal Verb Master Challenge</h1>
-        <p>Let's play the Meaning Match speed round! Link each core phrasal verb to its contextual operation profile by selecting the matching structural badge listed below.</p>
+        <p>Welcome to the Meaning Match speed run! Connect the target phrasal expressions with their proper operational definition profiles below. This level serves as a reward round and will not modify your core MCQ assessment score.</p>
         
         <div class="bonus-board">
-            <div style="font-weight: 800; color: var(--text-light); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px;">Target Phrasal Verb:</div>
+            <div style="font-weight: 800; color: var(--text-light); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px;">Phrasal Expression Under Test:</div>
             <h2 id="bonus-term-field" style="color: var(--primary-dark); margin-bottom: 20px; background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid var(--border); display: inline-block;">put off</h2>
             
             <div class="dropzone-field" id="bonus-dropzone-status">
-                <span>Select the correct definition below:</span>
+                <span>Select the correct definition match from below:</span>
             </div>
             
             <div class="chips-pool" id="bonus-chips-container"></div>
@@ -436,9 +441,9 @@
     </div>
 
     <div id="result-screen" class="game-card">
-        <div class="stage-badge">Assessment Matrix Complete</div>
+        <div class="stage-badge">Final Assessment Log</div>
         <h1 id="result-headline-title">Assessment Report</h1>
-        <p id="result-description-text">Review your analytical grammar metrics panel below.</p>
+        <p id="result-description-text">Review your analytical parameters matrix below.</p>
         
         <div class="hud-grid" style="max-width: 500px; margin: 0 auto 25px auto;">
             <div class="hud-unit">
@@ -455,7 +460,7 @@
             <thead>
                 <tr>
                     <th>Metric Classification</th>
-                    <th>Count Record Matrix Value</th>
+                    <th>Count Record Value</th>
                 </tr>
             </thead>
             <tbody>
@@ -470,105 +475,110 @@
             </tbody>
         </table>
 
-        <button class="btn-action" style="margin-right: 10px;" onclick="restartWholeAppWorkflow()">Restart Game</button>
-        <button class="btn-action" style="background-color: var(--secondary); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);" onclick="restartWholeAppWorkflow()">Play Again</button>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button class="btn-action" onclick="restartWholeAppWorkflow()">Restart Game</button>
+            <button class="btn-action" style="background-color: var(--secondary); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);" onclick="restartWholeAppWorkflow()">Play Again</button>
+        </div>
     </div>
 
     <script>
-        // IMMUTABLE EVALUATION DATA FRAMEWORK STORAGE - ABSOLUTE TEXT FIDELITY PRESERVED
-        const comprehensiveQuestionsPool = [
-            { id: 1, q: "1. The principal says: \"Please ______ your assignment before leaving the classroom.\"\nWhich phrasal verb best completes the sentence?", options: ["a) hand in", "b) look after", "c) break down", "d) give up"], ans: "a) hand in", exp: "'Hand in' means to submit an assignment or document to an authority figure like a teacher or principal." },
-            { id: 2, q: "2. Riya planned to cycle to school, but her bicycle stopped working halfway.\nWhich sentence best describes the situation?", options: ["a) Her bicycle broke out.", "b) Her bicycle broke down.", "c) Her bicycle took off.", "d) Her bicycle gave up."], ans: "b) Her bicycle broke down.", exp: "'Break down' is used when a mechanical system or vehicle stops functioning correctly." },
-            { id: 3, q: "3. A student writes:\"I came across with an interesting article while doing my research.\"\nWhich is the correct sentence?", options: ["a) I came across an interesting article while doing my research.", "b) I came an interesting article across while doing my research.", "c) I came through across an interesting article.", "d) I came over with an interesting article."], ans: "a) I came across an interesting article while doing my research.", exp: "'Came across' is an inseparable phrasal verb meaning to meet or find by chance; it does not take 'with'." },
-            { id: 4, q: "4. The science teacher says, \"We'll ______ this problem tomorrow because we don't have enough time today.\"\nWhich phrasal verb best completes the sentence?", options: ["a) put off", "b) break down", "c) turn on", "d) hand in"], ans: "a) put off", exp: "'Put off' means to postpone or delay an action or topic until a later date." },
-            { id: 5, q: "5. Which phrasal verb does NOT match the others?", options: ["a) hand in", "b) submit", "c) turn in", "d) look after"], ans: "d) look after", exp: "'Hand in' and 'turn in' both mean 'submit', whereas 'look after' means to take care of someone or something." },
-            { id: 6, q: "6. Assertion (A): The sentence \"The meeting was put off until Friday\" is correct.\nReason (R): \"Put off\" means \"to postpone.\"", options: ["a) Both A and R are true, and R correctly explains A.", "b) Both A and R are true, but R does not explain A.", "c) A is true, but R is false.", "d) A is false, but R is true."], ans: "a) Both A and R are true, and R correctly explains A.", exp: "The statement correctly employs 'put off' in a passive construction, matching its definition 'to postpone'." },
-            { id: 7, q: "7. A student writes,\"Please look the new words up in the dictionary.\"\nWhich sentence is correct if the object is a pronoun?", options: ["a) Please look them up in the dictionary.", "b) Please look up them in the dictionary.", "c) Please them look up.", "d) Please look them."], ans: "a) Please look them up in the dictionary.", exp: "When the object of a separable phrasal verb is a pronoun, it must be placed between the verb and the particle." },
-            { id: 8, q: "8. The school canteen had no sandwiches left by lunchtime.\nWhich sentence best describes the situation?", options: ["a) The canteen ran into sandwiches.", "b) The canteen ran out of sandwiches.", "c) The canteen turned off sandwiches.", "d) The canteen broke up sandwiches."], ans: "b) The canteen ran out of sandwiches.", exp: "'Run out of' means to completely deplete the available supply of an item." },
-            { id: 9, q: "9. Your friend has a fever but feels better after two days.\nWhich sentence is most appropriate?", options: ["a) She got over the illness quickly.", "b) She took over the illness quickly.", "c) She looked into the illness quickly.", "d) She handed in the illness quickly."], ans: "a) She got over the illness quickly.", exp: "'Get over' is used contextually to mean recovering from an illness, shock, or difficulty." },
-            { id: 10, q: "10.Which sentence shows that \"look after\" is being used correctly?", options: ["a) She looks after her younger brother every evening.", "b) She looks after the answer in the notebook.", "c) She looks after the lights before sleeping.", "d) She looks after the homework tomorrow."], ans: "a) She looks after her younger brother every evening.", exp: "'Look after' correctly means to care for or watch over someone, such as a younger sibling." },
-            { id: 11, q: "11. Error Detection\nWhich sentence is incorrect?", options: ["a) The teacher asked us to carry on with the activity.", "b) We carried on working despite the rain.", "c) Please carry with on your work.", "d) They carried on talking after lunch."], ans: "c) Please carry with on your work.", exp: "The phrasing 'carry with on' breaks the cohesive structure of the phrasal verb 'carry on'." },
-            { id: 12, q: "12. Application\nThe manager asked the committee to investigate the complaint.\nWhich phrasal verb can replace investigate?", options: ["a) look into", "b) hand in", "c) give up", "d) take off"], ans: "a) look into", exp: "'Look into' means to investigate, examine, or gather facts about a situation or problem." },
-            { id: 13, q: "13. Grammar in Use\nWhich sentence correctly uses a separable phrasal verb?", options: ["a) Please turn off the fan.", "b) Please turn the fan off.", "c) Both (a) and (b)", "d) Neither (a) nor (b)"], ans: "c) Both (a) and (b)", exp: "Separable phrasal verbs like 'turn off' allow noun objects to appear either after the particle or between the verb and particle." },
-            { id: 14, q: "14. Error Detection\nWhich sentence is grammatically correct?", options: ["a) She gave up the competition after falling ill.", "b) She gave the competition after up falling ill.", "c) She up gave the competition.", "d) She gave after up the competition."], ans: "a) She gave up the competition after falling ill.", exp: "'Give up' is correctly placed continuously here before its direct noun object 'the competition'." },
-            { id: 15, q: "15. Case Study\nA new principal became responsible for the school after the previous principal retired.\nWhich sentence best describes the situation?", options: ["a) The new principal took over the school.", "b) The new principal looked after the school.", "c) The new principal broke down the school.", "d) The new principal handed in the school."], ans: "a) The new principal took over the school.", exp: "'Take over' means to assume control, duty, or management responsibility from another individual." },
-            { id: 16, q: "16. Application\nThe teacher asked the students not to stop trying even though the puzzle was difficult.\nWhich phrasal verb means \"stop trying\"?", options: ["a) carry on", "b) give up", "c) look into", "d) take over"], ans: "b) give up", exp: "'Give up' specifically defines the act of surrendering, yielding, or ceasing efforts." },
-            { id: 17, q: "17. Assertion–Reason\nAssertion (A): \"Look after\" is an inseparable phrasal verb.\nReason (R): We cannot say \"Look the baby after.\"", options: ["a) Both A and R are true, and R correctly explains A.", "b) Both A and R are true, but R does not explain A.", "c) A is true, but R is false.", "d) A is false, but R is true."], ans: "a) Both A and R are true, and R correctly explains A.", exp: "Since 'look after' is inseparable, splitting it with the object 'the baby' produces ungrammatical output. Both options connect correctly." },
-            { id: 18, q: "18. Editing\nChoose the correctly edited sentence.", options: ["a) The flight took off at 6 a.m.", "b) The flight took on at 6 a.m.", "c) The flight broke off at 6 a.m.", "d) The flight looked after at 6 a.m."], ans: "a) The flight took off at 6 a.m.", exp: "For aircraft, 'take off' means to depart from the ground and rise into the air." },
-            { id: 19, q: "19. Contextual Usage\nThe school concert has been postponed until next month.\nWhich sentence uses the correct phrasal verb?", options: ["a) The concert has been put off until next month.", "b) The concert has been taken off until next month.", "c) The concert has been looked into until next month.", "d) The concert has been handed in until next month."], ans: "a) The concert has been put off until next month.", exp: "'Put off' is the standard idiomatic expression utilized to state that an organized event has been postponed." },
-            { id: 20, q: "20. Functional Choice\nWhich sentence sounds the most natural in everyday English?", options: ["a) Please carry on with your presentation.", "b) Please continue on your presentation.", "c) Please go your presentation.", "d) Please proceed with carry on your presentation."], ans: "a) Please carry on with your presentation.", exp: "'Carry on with' is a highly natural, idiomatic phrasal combination meaning to proceed with an activity." }
+        // STRICT REPOSITORY OF CHAPTER QUESTIONS - PRESERVING VERBATIM SYSTEM TEXT, BLANKS, AND PUNCTUATION
+        const masterEvaluationDeck = [
+            { id: 1, q: "1. The principal says: \"Please ______ your assignment before leaving the classroom.\"\nWhich phrasal verb best completes the sentence?", options: ["a) hand in", "b) look after", "c) break down", "d) give up"], ans: "a) hand in", exp: "'Hand in' means to submit an assignment or a document to an authority figure." },
+            { id: 2, q: "2. Riya planned to cycle to school, but her bicycle stopped working halfway.\nWhich sentence best describes the situation?", options: ["a) Her bicycle broke out.", "b) Her bicycle broke down.", "c) Her bicycle took off.", "d) Her bicycle gave up."], ans: "b) Her bicycle broke down.", exp: "'Broke down' describes a machinery configuration or automotive system failing and stopping function." },
+            { id: 3, q: "3. A student writes:\"I came across with an interesting article while doing my research.\"\nWhich is the correct sentence?", options: ["a) I came across an interesting article while doing my research.", "b) I came an interesting article across while doing my research.", "c) I came through across an interesting article.", "d) I came over with an interesting article."], ans: "a) I came across an interesting article while doing my research.", exp: "'Came across' is an inseparable phrasal unit that takes a direct object without using the extra preposition 'with'." },
+            { id: 4, q: "4. The science teacher says, \"We'll ______ this problem tomorrow because we don't have enough time today.\"\nWhich phrasal verb best completes the sentence?", options: ["a) put off", "b) break down", "c) turn on", "d) hand in"], ans: "a) put off", exp: "'Put off' means to delay, adjourn, or postpone a plan or event." },
+            { id: 5, q: "5. Which phrasal verb does NOT match the others?", options: ["a) hand in", "b) submit", "c) turn in", "d) look after"], ans: "d) look after", exp: "'Hand in' and 'turn in' both share the definition of 'submit', making 'look after' (to care for) the unique odd entry." },
+            { id: 6, q: "6. Assertion (A): The sentence \"The meeting was put off until Friday\" is correct.\nReason (R): \"Put off\" means \"to postpone.\"", options: ["a) Both A and R are true, and R correctly explains A.", "b) Both A and R are true, but R does not explain A.", "c) A is true, but R is false.", "d) A is false, but R is true."], ans: "a) Both A and R are true, and R correctly explains A.", exp: "The statement properly uses the passive form of 'put off', and the provided meaning accurately defines its usage." },
+            { id: 7, q: "7. A student writes,\"Please look the new words up in the dictionary.\"\nWhich sentence is correct if the object is a pronoun?", options: ["a) Please look them up in the dictionary.", "b) Please look up them in the dictionary.", "c) Please them look up.", "d) Please look them."], ans: "a) Please look them up in the dictionary.", exp: "Separable phrasal verbs require a pronoun object to be placed directly between the core verb and the operational particle." },
+            { id: 8, q: "8. The school canteen had no sandwiches left by lunchtime.\nWhich sentence best describes the situation?", options: ["a) The canteen ran into sandwiches.", "b) The canteen ran out of sandwiches.", "c) The canteen turned off sandwiches.", "d) The canteen broke up sandwiches."], ans: "b) The canteen ran out of sandwiches.", exp: "'Ran out of' defines a status where supplies are entirely depleted or finished." },
+            { id: 9, q: "9. Your friend has a fever but feels better after two days.\nWhich sentence is most appropriate?", options: ["a) She got over the illness quickly.", "b) She took over the illness quickly.", "c) She looked into the illness quickly.", "d) She handed in the illness quickly."], ans: "a) She got over the illness quickly.", exp: "'Get over' is used idiomatic vocabulary representing recovery from a biological sickness or emotional trauma." },
+            { id: 10, q: "10.Which sentence shows that \"look after\" is being used correctly?", options: ["a) She looks after her younger brother every evening.", "b) She looks after the answer in the notebook.", "c) She looks after the lights before sleeping.", "d) She looks after the homework tomorrow."], ans: "a) She looks after her younger brother every evening.", exp: "'Look after' correctly means to care for, guard, or tend to a living person or object." },
+            { id: 11, q: "11. Error Detection\nWhich sentence is incorrect?", options: ["a) The teacher asked us to carry on with the activity.", "b) We carried on working despite the rain.", "c) Please carry with on your work.", "d) They carried on talking after lunch."], ans: "c) Please carry with on your work.", exp: "The phrase 'carry on' must remain unbroken before applying relational modifiers; 'carry with on' violates standard grammar rules." },
+            { id: 12, q: "12. Application\nThe manager asked the committee to investigate the complaint.\nWhich phrasal verb can replace investigate?", options: ["a) look into", "b) hand in", "c) give up", "d) take off"], ans: "a) look into", exp: "'Look into' translates contextually as evaluating or conducting a systematic investigation." },
+            { id: 13, q: "13. Grammar in Use\nWhich sentence correctly uses a separable phrasal verb?", options: ["a) Please turn off the fan.", "b) Please turn the fan off.", "c) Both (a) and (b)", "d) Neither (a) nor (b)"], ans: "c) Both (a) and (b)", exp: "Separable terms like 'turn off' allow a distinct noun object to sit comfortably either after the particle or splitting the mid-section." },
+            { id: 14, q: "14. Error Detection\nWhich sentence is grammatically correct?", options: ["a) She gave up the competition after falling ill.", "b) She gave the competition after up falling ill.", "c) She up gave the competition.", "d) She gave after up the competition."], ans: "a) She gave up the competition after falling ill.", exp: "The sentence smoothly positions the phrasal verb 'gave up' as a unified concept right before the nominal complement." },
+            { id: 15, q: "15. Case Study\nA new principal became responsible for the school after the previous principal retired.\nWhich sentence best describes the situation?", options: ["a) The new principal took over the school.", "b) The new principal looked after the school.", "c) The new principal broke down the school.", "d) The new principal handed in the school."], ans: "a) The new principal took over the school.", exp: "'Take over' represents assuming management, command, leadership, or authoritative responsibility from another individual." },
+            { id: 16, q: "16. Application\nThe teacher asked the students not to stop trying even though the puzzle was difficult.\nWhich phrasal verb means \"stop trying\"?", options: ["a) carry on", "b) give up", "c) look into", "d) take over"], ans: "b) give up", exp: "'Give up' specifically means to surrender efforts, stop testing strategies, or lose hope." },
+            { id: 17, q: "17. Assertion–Reason\nAssertion (A): \"Look after\" is an inseparable phrasal verb.\nReason (R): We cannot say \"Look the baby after.\"", options: ["a) Both A and R are true, and R correctly explains A.", "b) Both A and R are true, but R does not explain A.", "c) A is true, but R is false.", "d) A is false, but R is true."], ans: "a) Both A and R are true, and R correctly explains A.", exp: "Since 'look after' is inseparable, splitting it around the object produces erroneous forms. The reason directly verifies the assertion." },
+            { id: 18, q: "18. Editing\nChoose the correctly edited sentence.", options: ["a) The flight took off at 6 a.m.", "b) The flight took on at 6 a.m.", "c) The flight broke off at 6 a.m.", "d) The flight looked after at 6 a.m."], ans: "a) The flight took off at 6 a.m.", exp: "For aviation vehicles and planes, 'take off' represents escalating from an airfield into active flight." },
+            { id: 19, q: "19. Contextual Usage\nThe school concert has been postponed until next month.\nWhich sentence uses the correct phrasal verb?", options: ["a) The concert has been put off until next month.", "b) The concert has been taken off until next month.", "c) The concert has been looked into until next month.", "d) The concert has been handed in until next month."], ans: "a) The concert has been put off until next month.", exp: "'Put off' matches the required passive criteria meaning the performance timeline has been adjusted to a later date." },
+            { id: 20, q: "20. Functional Choice\nWhich sentence sounds the most natural in everyday English?", options: ["a) Please carry on with your presentation.", "b) Please continue on your presentation.", "c) Please go your presentation.", "d) Please proceed with carry on your presentation."], ans: "a) Please carry on with your presentation.", exp: "'Carry on with' is a highly natural idiomatic grouping used daily to mean continuing a specific task." }
         ];
 
-        let runtimeActiveDeck = [];
-        let executionTrackIndex = 0;
-        let systemRunningScore = 0;
-        let remainingWrongAttempts = 2;
-        let countdownTickerId = null;
-        let countdownSecondsLeft = 45;
-        let activeVolumeCoefficient = 0.5;
-        let activeAudioMutedState = false;
-        let interfaceSuspendedFlag = false;
-        let stage3BonusQuestionCounter = 0;
+        let playSessionDeck = [];
+        let indexCursor = 0;
+        let scoreTrackerValue = 0;
+        let localAttemptsTracker = 2;
+        let clockIntervalHolder = null;
+        let remainingClockTime = 45;
+        let globalVolumeSetting = 0.5;
+        let globalMuteFlag = false;
+        let lockInterfaceControls = false;
+        let currentBonusTaskStep = 0;
 
-        // Stage 3 interactive matching matrix configuration
-        const bonusInteractivePool = [
-            { word: "hand in", correctDefinition: "To submit an assignment or document", options: ["To submit an assignment or document", "To investigate details", "To stop trying"] },
-            { word: "break down", correctDefinition: "To stop working mechanically", options: ["To stop working mechanically", "To care for someone", "To postpone an event"] },
-            { word: "look into", correctDefinition: "To investigate a complaint or case", options: ["To investigate a complaint or case", "To deplete a supply", "To depart by flight"] }
+        // Stage 3 Bonus Level Content Array
+        const bonusInteractiveMatrix = [
+            { phrasal: "hand in", trueDef: "To submit an assignment or document", pool: ["To submit an assignment or document", "To look for answers", "To cancel entirely"] },
+            { phrasal: "break down", trueDef: "To stop working mechanically", pool: ["To stop working mechanically", "To start a flight departure", "To recover completely"] },
+            { phrasal: "look into", trueDef: "To investigate a complaint or case", pool: ["To investigate a complaint or case", "To surrender structural effort", "To manage a location"] }
         ];
 
-        // System audio assets node configuration map
-        const applicationSfxRack = {
+        // Sound Effects Handler Cache
+        const dynamicSfxRack = {
+            click: null, // Initialized gracefully contextually if needed
             correct: new Audio('assets/correct.mp3'),
             wrong: new Audio('assets/wrong.mp3'),
             clapping: new Audio('assets/clapping.mp3')
         };
 
         window.addEventListener('DOMContentLoaded', () => {
-            generateFloatingBackgroundVisuals();
+            initializeVisualCanvasAssets();
             
-            // Core 5-second branding timeout block trigger
+            // Explicit 5-second mandatory splash lifecycle countdown loop
             setTimeout(() => {
-                const layer = document.getElementById('brand-splash');
-                if (layer) {
-                    layer.style.opacity = '0';
-                    setTimeout(() => layer.remove(), 600);
+                const splashWindow = document.getElementById('brand-splash');
+                if (splashWindow) {
+                    splashWindow.style.opacity = '0';
+                    setTimeout(() => splashWindow.remove(), 600);
                 }
             }, 5000);
         });
 
-        function generateFloatingBackgroundVisuals() {
-            const rootLayer = document.getElementById('canvas-decorations');
-            const indicators = ["📚", "🔍", "Phrasal", "Verb", "Turn Off", "Look Up", "📖", "✨", "Put Off"];
-            for (let i = 0; i < 22; i++) {
-                const node = document.createElement('div');
-                node.className = 'bg-decor' + (i % 4 === 0 ? ' floating-bubble' : '');
-                node.innerText = indicators[Math.floor(Math.random() * indicators.length)];
-                node.style.left = Math.random() * 92 + '%';
-                node.style.top = Math.random() * 92 + '%';
-                node.style.transform = `rotate(${(Math.random() - 0.5) * 45}deg)`;
-                rootLayer.appendChild(node);
+        function initializeVisualCanvasAssets() {
+            const canvas = document.getElementById('canvas-decorations');
+            const markers = ["📖", "🔍", "Verb", "Particle", "Look Up", "Give Up", "📝", "✨", "Dictionary"];
+            for (let i = 0; i < 20; i++) {
+                const badge = document.createElement('div');
+                badge.className = 'bg-decor' + (i % 4 === 0 ? ' floating-bubble' : '');
+                badge.innerText = markers[Math.floor(Math.random() * markers.length)];
+                badge.style.left = Math.random() * 92 + '%';
+                badge.style.top = Math.random() * 92 + '%';
+                badge.style.animationDelay = `${Math.random() * 4}s`;
+                canvas.appendChild(badge);
             }
         }
 
-        function playSoundTrack(key) {
-            if (activeAudioMutedState) return;
+        function playSoundElement(tag) {
+            if (globalMuteFlag) return;
             try {
-                applicationSfxRack[key].currentTime = 0;
-                applicationSfxRack[key].volume = activeVolumeCoefficient;
-                applicationSfxRack[key].play();
+                if (dynamicSfxRack[tag]) {
+                    dynamicSfxRack[tag].currentTime = 0;
+                    dynamicSfxRack[tag].volume = globalVolumeSetting;
+                    dynamicSfxRack[tag].play();
+                }
             } catch (err) {
-                console.warn(`Local audio playback notice: assets/${key}.mp3 was handled safely.`);
+                console.log(`Audio reference for asset fallback trigger: assets/${tag}.mp3`);
             }
         }
 
         function modifyGlobalVolume() {
-            activeVolumeCoefficient = parseFloat(document.getElementById('volume-slider').value);
+            globalVolumeSetting = parseFloat(document.getElementById('volume-slider').value);
         }
 
         function toggleMute() {
-            activeAudioMutedState = !activeAudioMutedState;
-            document.getElementById('mute-trigger').innerText = activeAudioMutedState ? "❌ Unmute" : "🔊 Mute";
+            globalMuteFlag = !globalMuteFlag;
+            document.getElementById('mute-trigger').innerText = globalMuteFlag ? "❌ Unmute" : "🔊 Mute";
         }
 
         function toggleHighContrast() {
@@ -576,244 +586,246 @@
         }
 
         function initializeGameSession() {
-            // Randomize whole question pool order on launch
-            runtimeActiveDeck = [...comprehensiveQuestionsPool].sort(() => Math.random() - 0.5);
-            executionTrackIndex = 0;
-            systemRunningScore = 0;
-            changeCardViewport('quiz-screen');
-            renderActiveQuestionTrack();
+            // Randomize question sequence order for execution deck lifecycle
+            playSessionDeck = [...masterEvaluationDeck].sort(() => Math.random() - 0.5);
+            indexCursor = 0;
+            scoreTrackerValue = 0;
+            changeVisibleCardFrame('quiz-screen');
+            renderActiveQuestionFrame();
         }
 
-        function renderActiveQuestionTrack() {
-            interfaceSuspendedFlag = false;
-            remainingWrongAttempts = 2;
-            clearInterval(countdownTickerId);
-            countdownSecondsLeft = 45;
+        function renderActiveQuestionFrame() {
+            lockInterfaceControls = false;
+            localAttemptsTracker = 2;
+            clearInterval(clockIntervalHolder);
+            remainingClockTime = 45;
             
-            document.getElementById('tracker-timer-val').innerText = countdownSecondsLeft + "s";
+            document.getElementById('tracker-timer-val').innerText = remainingClockTime + "s";
             document.getElementById('tracker-timer-val').style.color = "var(--primary)";
             document.getElementById('live-explanation-box').style.display = "none";
             
-            const targetQuestion = runtimeActiveDeck[executionTrackIndex];
+            const activeData = playSessionDeck[indexCursor];
 
-            // Sync structural parameters on HUD panels
-            document.getElementById('tracker-q-number').innerText = `${executionTrackIndex + 1} / 20`;
-            document.getElementById('tracker-score-val').innerText = `Score: ${systemRunningScore} / 20`;
+            // Setup tracking labels on HUD
+            document.getElementById('tracker-q-number').innerText = `${indexCursor + 1} / 20`;
+            document.getElementById('tracker-score-val').innerText = `Score: ${scoreTrackerValue} / 20`;
             document.getElementById('tracker-attempt-val').innerText = "1 / 2";
-            document.getElementById('tracker-bar-fill').style.width = `${(executionTrackIndex / 20) * 100}%`;
+            document.getElementById('tracker-bar-fill').style.width = `${(indexCursor / 20) * 100}%`;
             
-            document.getElementById('live-question-title').innerText = targetQuestion.q;
+            document.getElementById('live-question-title').innerText = activeData.q;
             
-            // Randomize choices array positions dynamically independently
-            const randomizedAlternatives = [...targetQuestion.options].sort(() => Math.random() - 0.5);
+            // Randomize options array indices independently without altering textual strings
+            const balancedOptions = [...activeData.options].sort(() => Math.random() - 0.5);
             
-            const interactiveGrid = document.getElementById('live-options-grid');
-            interactiveGrid.innerHTML = "";
+            const optionsContainer = document.getElementById('live-options-grid');
+            optionsContainer.innerHTML = "";
             
-            randomizedAlternatives.forEach(opt => {
-                const elementBtn = document.createElement('button');
-                elementBtn.className = "option-item";
-                elementBtn.innerHTML = `<span>${opt}</span>`;
-                elementBtn.onclick = (e) => evaluateOptionSelection(opt, elementBtn, e);
-                interactiveGrid.appendChild(elementBtn);
+            balancedOptions.forEach(elementStr => {
+                const choiceBtn = document.createElement('button');
+                choiceBtn.className = "option-item";
+                choiceBtn.innerHTML = `<span>${elementStr}</span>`;
+                choiceBtn.onclick = (e) => processSelectedOptionAction(elementStr, choiceBtn, e);
+                optionsContainer.appendChild(choiceBtn);
             });
 
-            launchClockTicker();
+            startLiveCountdownTimer();
         }
 
-        function launchClockTicker() {
-            countdownTickerId = setInterval(() => {
-                countdownSecondsLeft--;
-                document.getElementById('tracker-timer-val').innerText = countdownSecondsLeft + "s";
-                if (countdownSecondsLeft <= 10) {
+        function startLiveCountdownTimer() {
+            clockIntervalHolder = setInterval(() => {
+                remainingClockTime--;
+                document.getElementById('tracker-timer-val').innerText = remainingClockTime + "s";
+                if (remainingClockTime <= 10) {
                     document.getElementById('tracker-timer-val').style.color = "var(--error)";
                 }
-                if (countdownSecondsLeft <= 0) {
-                    clearInterval(countdownTickerId);
-                    processClockExpiryEvent();
+                if (remainingClockTime <= 0) {
+                    clearInterval(clockIntervalHolder);
+                    handleTimeExpiryState();
                 }
             }, 1000);
         }
 
-        function processClockExpiryEvent() {
-            interfaceSuspendedFlag = true;
-            playSoundTrack('wrong');
-            exposeExplanationBox();
+        function handleTimeExpiryState() {
+            lockInterfaceControls = true;
+            playSoundElement('wrong');
+            exposeExplanationDrawer("Timer Expired!");
         }
 
-        function evaluateOptionSelection(chosenStr, buttonRef, eventObj) {
-            if (interfaceSuspendedFlag) return;
-            const targetQuestion = runtimeActiveDeck[executionTrackIndex];
+        function processSelectedOptionAction(chosenText, actionButton, eventRef) {
+            if (lockInterfaceControls) return;
+            const currentItem = playSessionDeck[indexCursor];
 
-            if (chosenStr === targetQuestion.ans) {
-                interfaceSuspendedFlag = true;
-                clearInterval(countdownTickerId);
-                buttonRef.classList.add('correct');
-                buttonRef.innerHTML += `<span>✔</span>`;
-                triggerParticlesExplosion(eventObj, '⭐');
-                systemRunningScore++;
-                document.getElementById('tracker-score-val').innerText = `Score: ${systemRunningScore} / 20`;
-                playSoundTrack('correct');
+            if (chosenText === currentItem.ans) {
+                lockInterfaceControls = true;
+                clearInterval(clockIntervalHolder);
+                actionButton.classList.add('correct');
+                actionButton.innerHTML += `<span>✔</span>`;
+                generateExplosionFX(eventRef, '⭐');
+                scoreTrackerValue++;
+                document.getElementById('tracker-score-val').innerText = `Score: ${scoreTrackerValue} / 20`;
+                playSoundElement('correct');
                 
                 setTimeout(() => {
                     advanceNextQuestionTrack();
                 }, 1200);
             } else {
-                buttonRef.classList.add('wrong');
-                buttonRef.innerHTML += `<span>❌</span>`;
-                triggerParticlesExplosion(eventObj, '❌');
-                playSoundTrack('wrong');
+                actionButton.classList.add('wrong');
+                actionButton.innerHTML += `<span>❌</span>`;
+                generateExplosionFX(eventRef, '❌');
+                playSoundElement('wrong');
                 
-                const frameElement = document.getElementById('quiz-screen');
-                frameElement.classList.add('shake-animation');
-                setTimeout(() => frameElement.classList.remove('shake-animation'), 400);
+                const stageBox = document.getElementById('quiz-screen');
+                stageBox.classList.add('shake-animation');
+                setTimeout(() => stageBox.classList.remove('shake-animation'), 400);
 
-                if (remainingWrongAttempts === 2) {
-                    remainingWrongAttempts--;
+                if (localAttemptsTracker === 2) {
+                    localAttemptsTracker--;
                     document.getElementById('tracker-attempt-val').innerText = "2 / 2";
                 } else {
-                    interfaceSuspendedFlag = true;
-                    clearInterval(countdownTickerId);
-                    exposeExplanationBox();
+                    lockInterfaceControls = true;
+                    clearInterval(clockIntervalHolder);
+                    exposeExplanationDrawer("Incorrect Attempt");
                 }
             }
         }
 
-        function exposeExplanationBox() {
-            const targetQuestion = runtimeActiveDeck[executionTrackIndex];
-            const domesticButtons = document.querySelectorAll('.option-item');
+        function exposeExplanationDrawer(headerText) {
+            const currentItem = playSessionDeck[indexCursor];
+            const activeOptionsList = document.querySelectorAll('.option-item');
             
-            domesticButtons.forEach(btn => {
-                const textCheck = btn.querySelector('span').innerText;
-                if (textCheck === targetQuestion.ans) {
+            activeOptionsList.forEach(btn => {
+                const rawInnerText = btn.querySelector('span').innerText;
+                if (rawInnerText === currentItem.ans) {
                     btn.classList.add('correct');
                 }
                 btn.disabled = true;
             });
 
-            document.getElementById('explanation-body-text').innerText = `Correct Answer: ${targetQuestion.ans}\n\n${targetQuestion.exp}`;
+            document.getElementById('live-explanation-title-node').innerText = `${headerText} - Correct Answer: ${currentItem.ans}`;
+            document.getElementById('explanation-body-text').innerText = currentItem.exp;
             document.getElementById('live-explanation-box').style.display = "block";
         }
 
         function advanceNextQuestionTrack() {
-            executionTrackIndex++;
-            if (executionTrackIndex >= runtimeActiveDeck.length) {
-                stage3BonusQuestionCounter = 0;
-                changeCardViewport('bonus-screen');
-                renderSpeechReporterBonusItem();
+            indexCursor++;
+            if (indexCursor >= playSessionDeck.length) {
+                currentBonusTaskStep = 0;
+                changeVisibleCardFrame('bonus-screen');
+                renderInteractiveBonusChallengeStep();
             } else {
-                renderActiveQuestionTrack();
+                renderActiveQuestionFrame();
             }
         }
 
-        // STAGE 3: INTERACTIVE PHRASAL VERB CHALLENGE ARENA
-        function renderSpeechReporterBonusItem() {
+        // STAGE 3: BONUS INTERACTIVE LEVEL
+        function renderInteractiveBonusChallengeStep() {
             document.getElementById('bonus-validation-message').innerText = "";
-            const activeBonus = bonusInteractivePool[stage3BonusQuestionCounter];
+            const currentBonusData = bonusInteractiveMatrix[currentBonusTaskStep];
             
-            document.getElementById('bonus-term-field').innerText = activeBonus.word;
-            document.getElementById('bonus-dropzone-status').innerHTML = `<span>Select the accurate definition block matching the expression above:</span>`;
+            document.getElementById('bonus-term-field').innerText = currentBonusData.phrasal;
+            document.getElementById('bonus-dropzone-status').innerHTML = `<span>Select the accurate matching option from below:</span>`;
             
             const poolNode = document.getElementById('bonus-chips-container');
             poolNode.innerHTML = "";
             
-            // Randomize definitions choices layout
-            const randomizedDefinitions = [...activeBonus.options].sort(() => Math.random() - 0.5);
+            // Randomize choice options layout positions inside bonus deck round
+            const shuffledBonusChoices = [...currentBonusData.pool].sort(() => Math.random() - 0.5);
             
-            randomizedDefinitions.forEach(def => {
-                const chipItem = document.createElement('div');
-                chipItem.className = "word-chip";
-                chipItem.innerText = def;
-                chipItem.onclick = () => verifyInteractiveBonusAction(def, activeBonus.correctDefinition);
-                poolNode.appendChild(chipItem);
+            shuffledBonusChoices.forEach(text => {
+                const chip = document.createElement('div');
+                chip.className = "word-chip";
+                chip.innerText = text;
+                chip.setAttribute('tabindex', '0');
+                chip.onclick = () => evaluateBonusRoundSelection(text, currentBonusData.trueDef);
+                poolNode.appendChild(chip);
             });
         }
 
-        function verifyInteractiveBonusAction(selectedDef, trueDefinition) {
-            const validationField = document.getElementById('bonus-validation-message');
-            if (selectedDef === trueDefinition) {
-                playSoundTrack('correct');
-                validationField.style.color = "var(--success)";
-                validationField.innerText = "⭐ Correct match locked! Phrasal verb operation confirmed.";
+        function evaluateBonusRoundSelection(selectedText, exactAnswerText) {
+            const logBox = document.getElementById('bonus-validation-message');
+            if (selectedText === exactAnswerText) {
+                playSoundElement('correct');
+                logBox.style.color = "var(--success)";
+                logBox.innerText = "⭐ Excellent! Definition configuration aligned successfully.";
                 
                 setTimeout(() => {
-                    stage3BonusQuestionCounter++;
-                    if (stage3BonusQuestionCounter >= bonusInteractivePool.length) {
-                        displaySummaryDashboardPanel();
+                    currentBonusTaskStep++;
+                    if (currentBonusTaskStep >= bonusInteractiveMatrix.length) {
+                        displaySummaryDashboardScreen();
                     } else {
-                        renderSpeechReporterBonusItem();
+                        renderInteractiveBonusChallengeStep();
                     }
                 }, 1400);
             } else {
-                playSoundTrack('wrong');
-                validationField.style.color = "var(--error)";
-                validationField.innerText = "❌ Incorrect application. Re-verify the definition and choose again.";
+                playSoundElement('wrong');
+                logBox.style.color = "var(--error)";
+                logBox.innerText = "❌ Meaning mismatch. Review item context and evaluate alternatives.";
             }
         }
 
-        // STAGE 4: FINAL ASSESSMENT SUMMARY CARD DASHBOARD
-        function displaySummaryDashboardPanel() {
-            changeCardViewport('result-screen');
-            playSoundTrack('clapping');
+        // STAGE 4: RESULT SCREEN COMPONENT
+        function displaySummaryDashboardScreen() {
+            changeVisibleCardFrame('result-screen');
+            playSoundElement('clapping');
             
-            document.getElementById('panel-score-val').innerText = `${systemRunningScore} / 20`;
-            const percentageValue = Math.round((systemRunningScore / 20) * 100);
-            document.getElementById('panel-percent-val').innerText = percentageValue + "%";
+            document.getElementById('panel-score-val').innerText = `${scoreTrackerValue} / 20`;
+            const absolutePercentage = Math.round((scoreTrackerValue / 20) * 100);
+            document.getElementById('panel-percent-val').innerText = absolutePercentage + "%";
             
-            document.getElementById('panel-correct-count').innerText = systemRunningScore;
-            document.getElementById('panel-wrong-count').innerText = 20 - systemRunningScore;
+            document.getElementById('panel-correct-count').innerText = scoreTrackerValue;
+            document.getElementById('panel-wrong-count').innerText = 20 - scoreTrackerValue;
             
-            const headlineNode = document.getElementById('result-headline-title');
-            const descriptionNode = document.getElementById('result-description-text');
+            const headlinerNode = document.getElementById('result-headline-title');
+            const descriptorNode = document.getElementById('result-description-text');
             
-            if (systemRunningScore === 20) {
-                headlineNode.innerText = "🏆 Grammar Champion!";
-                descriptionNode.innerText = "Flawless score! You have successfully mastered separable and inseparable phrasal verbs, directional prepositional shifts, and real-world idiomatic usage rules.";
-            } else if (systemRunningScore >= 15) {
-                headlineNode.innerText = "🌟 Outstanding!";
-                descriptionNode.innerText = "Superb execution! You clearly understand how phrasal elements adapt to pronouns and noun objects across complex context scenarios.";
-            } else if (systemRunningScore >= 10) {
-                headlineNode.innerText = "🎉 Excellent Work!";
-                descriptionNode.innerText = "Solid proficiency! Remember to check if a phrasal verb can be separated by its object pronoun to make your sentences flow perfectly.";
+            if (scoreTrackerValue === 20) {
+                headlinerNode.innerText = "🏆 Grammar Champion!";
+                descriptorNode.innerText = "Flawless metrics recorded! You have completely mastered separable and inseparable phrasal combinations and their specific applications across everyday scenarios.";
+            } else if (scoreTrackerValue >= 15) {
+                headlinerNode.innerText = "🌟 Outstanding!";
+                descriptorNode.innerText = "Superb analytical skills! You clearly understand object placement rules and contextual preposition adjustments.";
+            } else if (scoreTrackerValue >= 10) {
+                headlinerNode.innerText = "🎉 Excellent Work!";
+                descriptorNode.innerText = "Great performance achieved! Remember to verify whether an object pronoun splits the phrasal verb to ensure maximum structural correctness.";
             } else {
-                headlineNode.innerText = "📘 Keep Practising!";
-                descriptionNode.innerText = "Phrasal combinations require systematic tracking. Review our grammar insights and definition mappings to reinforce your analytical skills.";
+                headlinerNode.innerText = "📘 Keep Practising!";
+                descriptorNode.innerText = "Phrasal verbs require repeated situational experience. Review the feedback matrix details to reinforce your core diagnostic confidence!";
             }
         }
 
         function restartWholeAppWorkflow() {
-            changeCardViewport('intro-screen');
+            changeVisibleCardFrame('intro-screen');
         }
 
-        function changeCardViewport(id) {
-            document.querySelectorAll('.game-card').forEach(card => card.classList.remove('active-card'));
-            document.getElementById(id).classList.add('active-card');
+        function changeVisibleCardFrame(targetId) {
+            document.querySelectorAll('.game-card').forEach(box => box.classList.remove('active-card'));
+            document.getElementById(targetId).classList.add('active-card');
         }
 
-        function triggerParticlesExplosion(e, symbol) {
+        function generateExplosionFX(e, characterSymbol) {
             if (!e) return;
-            const bounds = e.target.getBoundingClientRect();
-            const posX = e.clientX || (bounds.left + bounds.width / 2);
-            const posY = e.clientY || (bounds.top + bounds.height / 2);
+            const containerBounds = e.target.getBoundingClientRect();
+            const clickX = e.clientX || (containerBounds.left + containerBounds.width / 2);
+            const clickY = e.clientY || (containerBounds.top + containerBounds.height / 2);
 
             for (let i = 0; i < 8; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'fx-sprite';
-                particle.innerText = symbol;
-                particle.style.color = symbol === '⭐' ? 'var(--accent)' : 'var(--error)';
-                particle.style.left = posX + 'px';
-                particle.style.top = posY + 'px';
+                const splashNode = document.createElement('div');
+                splashNode.className = 'fx-sprite';
+                splashNode.innerText = characterSymbol;
+                splashNode.style.color = characterSymbol === '⭐' ? 'var(--accent)' : 'var(--error)';
+                splashNode.style.left = clickX + 'px';
+                splashNode.style.top = clickY + 'px';
                 
-                const deltaX = (Math.random() - 0.5) * 160;
-                const deltaY = (Math.random() - 0.5) * 160 - 20;
-                const rotation = Math.random() * 360;
+                const translationX = (Math.random() - 0.5) * 160;
+                const translationY = (Math.random() - 0.5) * 160 - 20;
+                const dynamicRotation = Math.random() * 360;
                 
-                particle.style.setProperty('--dx', `${deltaX}px`);
-                particle.style.setProperty('--dy', `${deltaY}px`);
-                particle.style.setProperty('--dr', `${rotation}deg`);
+                splashNode.style.setProperty('--dx', `${translationX}px`);
+                splashNode.style.setProperty('--dy', `${translationY}px`);
+                splashNode.style.setProperty('--dr', `${dynamicRotation}deg`);
                 
-                document.body.appendChild(particle);
-                setTimeout(() => particle.remove(), 600);
+                document.body.appendChild(splashNode);
+                setTimeout(() => splashNode.remove(), 600);
             }
         }
     </script>
