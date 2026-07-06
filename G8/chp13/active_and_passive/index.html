@@ -1,1 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 English - Active and Passive Voice</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #e2e8f0;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
+        body.high-contrast {
+            --primary: #000000;
+            --primary-dark: #000000;
+            --secondary: #0044cc;
+            --accent: #b45309;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-light: #111111;
+            --success: #047857;
+            --error: #b91c1c;
+            --border: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Layer */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-item {
+            position: absolute;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            opacity: 0.07;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .floating-label {
+            background: rgba(79, 70, 229, 0.08);
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        /* Branding Splash Screen */
+        #brand-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease;
+        }
+
+        .splash-logo {
+            max-width: 300px;
+            width: 80%;
+            height: auto;
+            margin-bottom: 30px;
+            object-fit: contain;
+        }
+
+        .splash-loader-bar {
+            width: 200px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .splash-loader-progress {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            animation: fillSplashProgress 5s linear forwards;
+        }
+
+        @keyframes fillSplashProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Utilities Toolbar Tray */
+        .utility-tray {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 850px;
+            margin-bottom: 15px;
+            z-index: 10;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            padding: 6px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .tray-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        /* App Base Cards */
+        .game-card {
+            display: none;
+            width: 100%;
+            max-width: 850px;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .active-card { display: block !important; }
+
+        .badge {
+            background-color: rgba(79, 70, 229, 0.08);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h1 { color: var(--primary-dark); font-size: 2.2rem; font-weight: 800; margin-bottom: 15px; }
+        p { color: var(--text-light); font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px; }
+
+        .btn-action {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .btn-action:active { transform: scale(0.98); }
+
+        /* HUD layout indicators */
+        .hud-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 10px 0 25px 0;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-block { display: flex; flex-direction: column; align-items: center; flex: 1; border-right: 1px solid var(--border); }
+        .hud-block:last-child { border-right: none; }
+        .hud-label { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; font-weight: 800; }
+        .hud-value { font-size: 1.4rem; font-weight: 800; color: #2e37a4; }
+
+        .progress-container { width: 100%; height: 8px; background-color: #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 35px; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.3s ease; }
+
+        /* Context Container Style */
+        .passage-box {
+            background-color: #f1f5f9;
+            border-left: 6px solid var(--primary);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+            margin-bottom: 25px;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--text);
+            font-weight: 600;
+            white-space: pre-line;
+        }
+        .passage-part-tag {
+            font-size: 0.8rem;
+            font-weight: 800;
+            background: var(--primary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .question-text { text-align: left; font-size: 1.35rem; font-weight: 700; line-height: 1.6; margin-bottom: 30px; color: var(--text); white-space: pre-line; }
+        .options-container { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 25px; }
+
+        /* Option buttons styles */
+        .option-button {
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-button:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .option-button.correct { background-color: #ecfdf5 !important; border-color: var(--success) !important; color: var(--success) !important; font-weight: 700; }
+        .option-button.wrong { background-color: #fef2f2 !important; border-color: var(--error) !important; color: var(--error) !important; }
+        
+        .card-shaker { animation: shakeFrame 0.4s ease-in-out; }
+        @keyframes shakeFrame {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .explanation-box { background-color: #f8fafc; border-left: 5px solid var(--secondary); padding: 25px; border-radius: 0 20px 20px 0; text-align: left; margin-top: 25px; display: none; }
+
+        /* VFX animations */
+        .vfx-item {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.5rem;
+            z-index: 99;
+            animation: burstOut 0.6s ease-out forwards;
+        }
+        @keyframes burstOut {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; }
+        }
+
+        /* Voice Master Challenge Playground */
+        .bonus-arena-box {
+            background: #fafafa;
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .pool-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+            min-height: 50px;
+            justify-content: center;
+        }
+        .phrase-chip {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .phrase-chip:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .target-drop-zone {
+            background: #f1f5f9;
+            border: 2px dashed #94a3b8;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            min-height: 80px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Summary Dashboard Styles */
+        .results-summary-table {
+            width: 100%;
+            margin: 25px 0;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .results-summary-table th, .results-summary-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .results-summary-table th {
+            font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-canvas" id="canvas-decoration-layer"></div>
+
+    <div id="brand-splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://placehold.co/300x90?text=Innovine+Education';">
+        <div class="splash-loader-bar">
+            <div class="splash-loader-progress"></div>
+        </div>
+    </div>
+
+    <div class="utility-tray">
+        <div class="volume-container">
+            <span>VOL</span>
+            <input type="range" min="0" max="1" step="0.1" value="0.5" id="volume-slider" onchange="updateSystemVolume()">
+        </div>
+        <button class="tray-btn" onclick="toggleMuteStatus()" id="mute-btn">🔊 Mute</button>
+        <button class="tray-btn" onclick="toggleContrastStyle()">🌓 Contrast</button>
+    </div>
+
+    <div id="intro-screen" class="game-card active-card">
+        <div class="badge">Grade 7 English</div>
+        <h1>Active and Passive Voice</h1>
+        <p>Master formal and contextual sentence structure adaptations! Learn when to emphasize the doer versus the action across announcements, science reports, and notices. Complete 20 interactive evaluation units followed by an exclusive voice sorting assignment.</p>
+        <button class="btn-action" onclick="beginQuizSession()">Start Game</button>
+    </div>
+
+    <div id="quiz-screen" class="game-card">
+        <div class="hud-bar">
+            <div class="hud-block">
+                <span class="hud-label">Question Number</span>
+                <span class="hud-value" id="hud-progress-counter">1 / 20</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Progress Indicator</span>
+                <span class="hud-value" id="hud-score-counter">Score: 0 / 20</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Attempts remaining</span>
+                <span class="hud-value" id="hud-attempt-counter">1 / 2</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Countdown Timer</span>
+                <span class="hud-value" id="hud-timer-counter" style="color: var(--accent);">45s</span>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="hud-bar-fill"></div>
+        </div>
+
+        <div id="live-context-wrapper" style="display: none;">
+            <div class="passage-part-tag" id="live-context-tag">School Notice</div>
+            <div class="passage-box" id="live-context-field"></div>
+        </div>
+
+        <div class="question-text" id="live-question-field"></div>
+        <div class="options-container" id="live-options-field"></div>
+
+        <div class="explanation-box" id="live-explanation-field">
+            <div style="font-weight: 800; margin-bottom: 6px; color: var(--primary-dark);">Correct Answer Verification Matrix:</div>
+            <div id="exp-body" style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 15px;"></div>
+            <button class="btn-action" style="padding: 10px 24px; font-size: 1rem;" onclick="stepNextQuestion()">Continue &rarr;</button>
+        </div>
+    </div>
+
+    <div id="bonus-screen" class="game-card">
+        <div class="badge" style="background-color: rgba(245, 158, 11, 0.1); color: var(--accent);">Stage 3: Voice Converter</div>
+        <h1>Voice Master Challenge</h1>
+        <p>Let's complete the bonus challenge level! Categorize the structural voice profile of each sentence by clicking its correct structural function below. This sandbox block does not alter your formal score metrics.</p>
+        
+        <div class="bonus-arena-box">
+            <div style="font-weight: 800; color: var(--text-light); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px;">Sentence Under Investigation:</div>
+            <h3 id="bonus-verbal-text" style="color: var(--primary-dark); margin-bottom: 20px; font-style: italic; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid var(--border);">"The solution was heated for five minutes."</h3>
+            
+            <div class="target-drop-zone" id="bonus-dropzone-view">
+                <span>Select the correct active or passive configuration match below:</span>
+            </div>
+            
+            <div class="pool-container" id="bonus-chips-pool"></div>
+        </div>
+        <div id="bonus-alert-message" style="margin-top: 15px; font-weight: 700; min-height: 24px;"></div>
+    </div>
+
+    <div id="result-screen" class="game-card">
+        <div class="badge">Session Assessment Report Card</div>
+        <h1 id="result-title-heading">Assessment Review</h1>
+        <p id="result-feedback-text">Good performance navigating the formal voice transformation evaluation.</p>
+        
+        <div class="hud-bar" style="max-width: 500px; margin: 0 auto 25px auto;">
+            <div class="hud-block">
+                <span class="hud-label">Final Score</span>
+                <span class="hud-value" id="res-score" style="color: var(--primary);">0 / 20</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Percentage</span>
+                <span class="hud-value" id="res-percent" style="color: var(--secondary);">0%</span>
+            </div>
+        </div>
+
+        <table class="results-summary-table">
+            <thead>
+                <tr>
+                    <th>Metric Type</th>
+                    <th>Count Matrix Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Correct Answers</td>
+                    <td id="table-correct-val" style="font-weight:700; color: var(--success);">0</td>
+                </tr>
+                <tr>
+                    <td>Wrong Answers</td>
+                    <td id="table-wrong-val" style="font-weight:700; color: var(--error);">0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn-action" onclick="restartAppEngine()">Play Again</button>
+    </div>
+
+    <script>
+        // IMMUTABLE NOTICE/CONTEXT REPOSITORY
+        const contextParagraphs = {
+            notice1: `School Notice\nYesterday, the Annual Science Exhibition was inaugurated by the Principal. More than 150 projects were displayed by students. The winners will be announced during Monday's assembly.`
+        };
+
+        // IMMUTABLE REPOSITORY OF ALL QUESTIONS EXACTLY AS PROVIDED
+        const contextBasedGroup = [
+            { id: 1, contextKey: "notice1", sectionPart: "School Notice", q: "1. Why has the writer used passive voice in the first sentence?", options: ["a) To focus on the event rather than the person performing the action.", "b) To make the sentence shorter.", "c) To avoid using the past tense.", "d) To make the sentence informal."], ans: "a) To focus on the event rather than the person performing the action.", exp: "Passive voice is commonly used in reports, notices, scientific writing, newspapers, and formal announcements where the action is more important than the doer." },
+            { id: 2, contextKey: "notice1", sectionPart: "School Notice", q: "2. Which sentence from the notice focuses more on the action than on the doer?\n\nSchool Notice\nYesterday, the Annual Science Exhibition was inaugurated by the Principal. More than 150 projects were displayed by students. The winners will be announced during Monday's assembly.", options: ["a) Students displayed more than 150 projects.", "b) More than 150 projects were displayed by students.", "c) The students are displaying more than 150 projects.", "d) The students displayed projects yesterday."], ans: "b) More than 150 projects were displayed by students.", exp: "Passive voice uses the appropriate form of 'be' followed by the past participle of the main verb ('were displayed') to place emphasis on the objects/action rather than the students." },
+            { id: 3, contextKey: "notice1", sectionPart: "School Notice", q: "3. Which sentence from the notice could naturally be rewritten in the active voice?\n\nSchool Notice\nYesterday, the Annual Science Exhibition was inaugurated by the Principal. More than 150 projects were displayed by students. The winners will be announced during Monday's assembly.", options: ["a) Yesterday, the Annual Science Exhibition was inaugurated by the Principal.", "b) More than 150 projects were displayed by students.", "c) The winners will be announced during Monday's assembly.", "d) Both (a) and (b)."], ans: "d) Both (a) and (b).", exp: "Sentences with explicit or known agent doers ('by the Principal' and 'by students') can easily and naturally be transformed back into active sentence counterparts." }
+        ];
+
+        const standaloneGroup = [
+            { id: 4, contextKey: null, q: "4. The school laboratory manual contains the following instruction. Which sentence is most suitable?", options: ["a) We heated the solution for five minutes.", "b) Heat the solution for five minutes.", "c) The solution was heated for five minutes.", "d) I heated the solution carefully."], ans: "b) Heat the solution for five minutes.", exp: "Imperative sentences usually remain in active voice for instructions within manuals or laboratory guidelines to provide direct, clear direction." },
+            { id: 5, contextKey: null, q: "5. You are writing a newspaper report about a tree plantation drive. Which sentence is the most appropriate?", options: ["a) Students planted 500 trees yesterday.", "b) We planted 500 trees yesterday.", "c) Five hundred trees were planted yesterday.", "d) I planted many trees yesterday."], ans: "c) Five hundred trees were planted yesterday.", exp: "Passive voice focuses on the action or the receiver of the action. In a newspaper headline or report summary, the number of trees planted is more prominent than the vague agents." },
+            { id: 6, contextKey: null, q: "6. The principal wants to display an announcement outside the examination hall. Which sentence sounds the most formal?", options: ["a) The teachers checked all the answer sheets.", "b) All answer sheets have been checked.", "c) We checked all the answer sheets.", "d) Our teachers checked everything."], ans: "b) All answer sheets have been checked.", exp: "Passive voice focuses on the action or the receiver of the action, elevating formality by removing personal pronouns like 'we' or 'our teachers' entirely." },
+            { id: 7, contextKey: null, q: "7. Which sentence is different from the others?", options: ["a) The classrooms were cleaned before school.", "b) The trophies were distributed after the event.", "c) The librarian arranged the books neatly.", "d) The certificates were printed yesterday."], ans: "c) The librarian arranged the books neatly.", exp: "Active voice focuses on the doer of the action. Options a, b, and d are constructed using the passive voice format, while c uses active past simple." },
+            { id: 8, contextKey: null, q: "8. Which sentence does NOT follow the same voice as the others?", options: ["a) The match was postponed due to rain.", "b) The homework was submitted on time.", "c) The players practised every evening.", "d) The road was repaired last week."], ans: "c) The players practised every evening.", exp: "This sentence features active voice since the primary grammatical subject ('the players') performs the physical action directly." },
+            { id: 9, contextKey: null, q: "9. A student writes:\n\"The invitation was send by the class teacher.\" Choose the correct correction.", options: ["a) The invitation was sent by the class teacher.", "b) The invitation was sending by the class teacher.", "c) The invitation is sent by the class teacher.", "d) The invitation had send by the class teacher."], ans: "a) The invitation was sent by the class teacher.", exp: "Passive voice structurally demands the appropriate past tense form of 'be' followed exclusively by the past participle ('sent') of the target root verb." },
+            { id: 10, contextKey: null, q: "10. A student writes: \"The prizes were distribute by the chief guest.\"\nWhich option correctly fixes the sentence?", options: ["a) The prizes were distributed by the chief guest.", "b) The prizes were distributing by the chief guest.", "c) The prizes have distribute by the chief guest.", "d) The prizes distributed were by the chief guest."], ans: "a) The prizes were distributed by the chief guest.", exp: "The passive voice voice structure explicitly necessitates the past participle form ('distributed') rather than the bare present base root form." },
+            { id: 11, contextKey: null, q: "11. Read the sentence. \"The roads were closed after the heavy rainfall.\"\nWhy is passive voice a better choice here?", options: ["a) The important information is that the roads were closed.", "b) The sentence has no subject.", "c) Passive voice always sounds longer.", "d) Active voice cannot describe past events."], ans: "a) The important information is that the roads were closed.", exp: "Choose active or passive voice depending on what should receive emphasis. Here, the immediate condition of road closure is crucial for safety warnings." },
+            { id: 12, contextKey: null, q: "12. A science report says, \"The samples were examined carefully before the results were recorded.\"\nWhy has the writer used passive voice?", options: ["a) The focus is on the scientific process rather than the people performing it.", "b) Passive voice is compulsory in science.", "c) The writer does not know English grammar.", "d) Active voice cannot be used in reports."], ans: "a) The focus is on the scientific process rather than the people performing it.", exp: "Scientific style defaults to passive structures because experimental consistency is valued above the specific individual identity of researchers." },
+            { id: 13, contextKey: null, q: "13.Assertion (A): Passive voice is commonly used in newspaper reports.\nReason (R): Newspaper reports often focus more on the event than on the person who performed the action.", options: ["a) Both A and R are true, and R correctly explains A.", "b) Both A and R are true, but R does not explain A.", "c) A is true, but R is false.", "d) A is false, but R is true."], ans: "a) Both A and R are true, and R correctly explains A.", exp: "Newspapers prioritize the public event or happening itself. Hence, assertion A and the explanatory rationale R align flawlessly." },
+            { id: 14, contextKey: null, q: "14.Assertion (A): Every active voice sentence should always be changed into passive voice.\nReason (R): Passive voice is always better than active voice.", options: ["a) Both A and R are true.", "b) A is true, but R is false.", "c) A is false, and R is false.", "d) A is false, but R is true."], ans: "c) A is false, and R is false.", exp: "Neither active nor passive is inherently superior or universally applicable; their strategic selection is completely context-dependent." },
+            { id: 15, contextKey: null, q: "15. A school magazine contains this sentence: \"The winners announced during the assembly.\"\nWhich is the best correction?", options: ["a) The winners were announced during the assembly.", "b) The winners was announced during the assembly.", "c) The winners announcing during the assembly.", "d) The winners have announce during the assembly."], ans: "a) The winners were announced during the assembly.", exp: "Because 'winners' is plural, it requires the auxiliary verb 'were' paired with the standard past participle form 'announced'." },
+            { id: 16, contextKey: null, q: "16. A student is writing about a football match. Which sentence sounds more suitable for a sports report?", options: ["a) The referee blew the final whistle.", "b) The final whistle was blown by the referee.", "c) I saw the referee blow the whistle.", "d) Our referee blew the whistle."], ans: "b) The final whistle was blown by the referee.", exp: "In journalism covering dynamic games, standard sports phrasing emphasizes key game milestones ('the final whistle') over individual actor emphasis." },
+            { id: 17, contextKey: null, q: "17. The school website says: \"The registration forms have been uploaded.\"\nWhy is passive voice appropriate?", options: ["a) The action is more important than who uploaded the forms.", "b) The uploader is unknown.", "c) Passive voice is shorter.", "d) Websites cannot use active voice."], ans: "a) The action is more important than who uploaded the forms.", exp: "For system announcements, users need to know about the status/availability of files, rendering the identity of the digital uploader secondary." },
+            { id: 18, contextKey: null, q: "18. Which sentence would sound most appropriate in a history textbook?", options: ["a) Emperor Ashoka built many roads.", "b) Many roads were built during Emperor Ashoka's reign.", "c) We know Emperor Ashoka built roads.", "d) I learned that Ashoka built roads."], ans: "b) Many roads were built during Emperor Ashoka's reign.", exp: "Textbooks focus extensively on historical development trends or structural infrastructure achievements within eras, making passive constructions highly suitable." },
+            { id: 19, contextKey: null, q: "19. Which sentence would sound most appropriate in a hospital notice?", options: ["a) The nurse cleaned the ward.", "b) The ward has been cleaned.", "c) We cleaned the ward.", "d) Someone cleaned the ward."], ans: "b) The ward has been cleaned.", exp: "Sanitary state declaration conditions are what patients care about, shifting focus purely onto the space being successfully cleaned." },
+            { id: 20, contextKey: null, q: "20. Which sentence is the most suitable ending for this announcement?\n\"The lost wallet has been found.\"", options: ["a) The owner may collect it from the school office.", "b) We found the wallet yesterday.", "c) I found the wallet near the library.", "d) Someone found the wallet."], ans: "a) The owner may collect it from the school office.", exp: "Maintains formal, objective institutional style to address instructions directly to the owner without shifting to arbitrary narrative pronouns." }
+        ];
+
+        let challengeSet = [];
+        let cursorIndex = 0;
+        let runningScore = 0;
+        let attemptsRemaining = 2;
+        let timerReference = null;
+        let timeLeft = 45;
+        let systemVolume = 0.5;
+        let isMuted = false;
+        let blockInputs = false;
+        let activeBonusIndex = 0;
+
+        // Stage 3 Bonus Configuration Model Array
+        const bonusChallenges = [
+            { phrase: "Five hundred trees were planted yesterday by volunteers.", highlight: "were planted", options: [{ text: "Passive Voice", correct: true }, { text: "Active Voice", correct: false }] },
+            { phrase: "The principal announced the holiday.", highlight: "announced", options: [{ text: "Active Voice", correct: true }, { text: "Passive Voice", correct: false }] },
+            { phrase: "All answer sheets have been checked thoroughly.", highlight: "have been checked", options: [{ text: "Passive Voice", correct: true }, { text: "Active Voice", correct: false }] }
+        ];
+
+        // Audio asset mappings
+        const audioAssets = {
+            correct: new Audio('assets/correct.mp3'),
+            wrong: new Audio('assets/wrong.mp3'),
+            clapping: new Audio('assets/clapping.mp3')
+        };
+
+        // Init layout configurations
+        window.addEventListener('DOMContentLoaded', () => {
+            initBackgroundDecorations();
+            
+            setTimeout(() => {
+                const splash = document.getElementById('brand-splash');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.remove(), 600);
+                }
+            }, 5000);
+        });
+
+        function initBackgroundDecorations() {
+            const layer = document.getElementById('canvas-decoration-layer');
+            const markers = ["Active", "Passive", "Notice Board", "📢", "📋", "⭐", "🏹", "Doer Emphasis", "Action Target"];
+            for (let i = 0; i < 18; i++) {
+                const div = document.createElement('div');
+                div.className = 'bg-item' + (i % 3 === 0 ? ' floating-label' : '');
+                div.innerText = markers[Math.floor(Math.random() * markers.length)];
+                div.style.left = Math.random() * 90 + '%';
+                div.style.top = Math.random() * 90 + '%';
+                div.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`;
+                layer.appendChild(div);
+            }
+        }
+
+        function triggerSound(key) {
+            if (isMuted) return;
+            try {
+                audioAssets[key].currentTime = 0;
+                audioAssets[key].volume = systemVolume;
+                audioAssets[key].play();
+            } catch (e) {
+                console.warn(`Audio playback deferred for ${key}.mp3`);
+            }
+        }
+
+        function updateSystemVolume() {
+            systemVolume = parseFloat(document.getElementById('volume-slider').value);
+        }
+
+        function toggleMuteStatus() {
+            isMuted = !isMuted;
+            document.getElementById('mute-btn').innerText = isMuted ? "❌ Unmute" : "🔊 Mute";
+        }
+
+        function toggleContrastStyle() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function beginQuizSession() {
+            // Keep content-based sets contextualized together, randomize position of groupings safely
+            const balanceChoice = Math.random() > 0.5;
+            if (balanceChoice) {
+                challengeSet = [...contextBasedGroup, ...standaloneGroup];
+            } else {
+                challengeSet = [...standaloneGroup, ...contextBasedGroup];
+            }
+            
+            cursorIndex = 0;
+            runningScore = 0;
+            switchActiveCard('quiz-screen');
+            loadActiveQuestionItem();
+        }
+
+        function loadActiveQuestionItem() {
+            blockInputs = false;
+            attemptsRemaining = 2;
+            clearInterval(timerReference);
+            timeLeft = 45;
+            
+            document.getElementById('hud-timer-counter').innerText = timeLeft + "s";
+            document.getElementById('hud-timer-counter').style.color = "var(--primary)";
+            document.getElementById('live-explanation-field').style.display = "none";
+            
+            const currentItem = challengeSet[cursorIndex];
+            
+            // Display linked context boxes adaptively if specified
+            const contextWrapper = document.getElementById('live-context-wrapper');
+            if (currentItem.contextKey) {
+                contextWrapper.style.display = "block";
+                document.getElementById('live-context-tag').innerText = currentItem.sectionPart;
+                document.getElementById('live-context-field').innerText = contextParagraphs[currentItem.contextKey];
+            } else {
+                contextWrapper.style.display = "none";
+            }
+
+            // Refresh UI trackers
+            document.getElementById('hud-progress-counter').innerText = `${cursorIndex + 1} / 20`;
+            document.getElementById('hud-score-counter').innerText = `Score: ${runningScore} / 20`;
+            document.getElementById('hud-attempt-counter').innerText = "1 / 2";
+            document.getElementById('hud-bar-fill').style.width = `${((cursorIndex) / 20) * 100}%`;
+            
+            document.getElementById('live-question-field').innerText = currentItem.q;
+            
+            // Randomize multiple choice option structures independently
+            const optionsPool = [...currentItem.options].sort(() => Math.random() - 0.5);
+            
+            const layoutGrid = document.getElementById('live-options-field');
+            layoutGrid.innerHTML = "";
+            
+            optionsPool.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "option-button";
+                btn.innerHTML = `<span>${opt}</span>`;
+                btn.onclick = (e) => evaluateOptionSelection(opt, btn, e);
+                layoutGrid.appendChild(btn);
+            });
+
+            startCountdownTicker();
+        }
+
+        function startCountdownTicker() {
+            timerReference = setInterval(() => {
+                timeLeft--;
+                document.getElementById('hud-timer-counter').innerText = timeLeft + "s";
+                if (timeLeft <= 10) {
+                    document.getElementById('hud-timer-counter').style.color = "var(--error)";
+                }
+                if (timeLeft <= 0) {
+                    clearInterval(timerReference);
+                    handleTimeOutFailure();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOutFailure() {
+            blockInputs = true;
+            triggerSound('wrong');
+            revealExplanationDrawer();
+        }
+
+        function evaluateOptionSelection(selectedText, element, event) {
+            if (blockInputs) return;
+            const currentItem = challengeSet[cursorIndex];
+
+            if (selectedText === currentItem.ans) {
+                blockInputs = true;
+                clearInterval(timerReference);
+                element.classList.add('correct');
+                element.innerHTML += `<span>⭐</span>`;
+                generateExplosionVFX(event, '⭐');
+                runningScore++;
+                document.getElementById('hud-score-counter').innerText = `Score: ${runningScore} / 20`;
+                triggerSound('correct');
+                
+                setTimeout(() => {
+                    stepNextQuestion();
+                }, 1200);
+            } else {
+                element.classList.add('wrong');
+                element.innerHTML += `<span>❌</span>`;
+                generateExplosionVFX(event, '❌');
+                triggerSound('wrong');
+                
+                // Active Card Shake Effect
+                const card = document.getElementById('quiz-screen');
+                card.classList.add('card-shaker');
+                setTimeout(() => card.classList.remove('card-shaker'), 400);
+
+                if (attemptsRemaining === 2) {
+                    attemptsRemaining--;
+                    document.getElementById('hud-attempt-counter').innerText = "2 / 2";
+                } else {
+                    blockInputs = true;
+                    clearInterval(timerReference);
+                    revealExplanationDrawer();
+                }
+            }
+        }
+
+        function revealExplanationDrawer() {
+            const currentItem = challengeSet[cursorIndex];
+            const buttons = document.querySelectorAll('.option-button');
+            
+            buttons.forEach(btn => {
+                const textSpan = btn.querySelector('span').innerText;
+                if (textSpan === currentItem.ans) {
+                    btn.classList.add('correct');
+                }
+                btn.disabled = true;
+            });
+
+            document.getElementById('exp-body').innerText = currentItem.exp;
+            document.getElementById('live-explanation-field').style.display = "block";
+        }
+
+        function stepNextQuestion() {
+            cursorIndex++;
+            if (cursorIndex >= challengeSet.length) {
+                activeBonusIndex = 0;
+                switchActiveCard('bonus-screen');
+                initiateBonusChallengeItem();
+            } else {
+                loadActiveQuestionItem();
+            }
+        }
+
+        // STAGE 3: BONUS CHALLENGE LAB INTERACTIVES
+        function initiateBonusChallengeItem() {
+            document.getElementById('bonus-alert-message').innerText = "";
+            const activeData = bonusChallenges[activeBonusIndex];
+            
+            document.getElementById('bonus-verbal-text').innerHTML = activeData.phrase.replace(
+                activeData.highlight, `<span style="background-color: #fef08a; padding: 2px 6px; border-radius: 4px; border: 1px dashed var(--accent);">${activeData.highlight}</span>`
+            );
+            
+            document.getElementById('bonus-dropzone-view').innerHTML = `<span>Map the syntax structure voice profile accurately!</span>`;
+            
+            const pool = document.getElementById('bonus-chips-pool');
+            pool.innerHTML = "";
+            
+            activeData.options.forEach(opt => {
+                const chip = document.createElement('div');
+                chip.className = "phrase-chip";
+                chip.innerText = opt.text;
+                chip.onclick = () => verifyBonusSelection(opt);
+                pool.appendChild(chip);
+            });
+        }
+
+        function verifyBonusSelection(optionObj) {
+            const alertBox = document.getElementById('bonus-alert-message');
+            if (optionObj.correct) {
+                triggerSound('correct');
+                alertBox.style.color = "var(--success)";
+                alertBox.innerText = "⭐ Profile mapped accurately! Brilliant observation.";
+                
+                setTimeout(() => {
+                    activeBonusIndex++;
+                    if (activeBonusIndex >= bonusChallenges.length) {
+                        displayFinalSummaryDashboard();
+                    } else {
+                        initiateBonusChallengeItem();
+                    }
+                }, 1500);
+            } else {
+                triggerSound('wrong');
+                alertBox.style.color = "var(--error)";
+                alertBox.innerText = "❌ Voice category mismatch. Look closely at action priority markers and retry.";
+            }
+        }
+
+        // STAGE 4: TERMINAL ASSESSMENT REPORT GENERATION
+        function displayFinalSummaryDashboard() {
+            switchActiveCard('result-screen');
+            triggerSound('clapping');
+            
+            document.getElementById('res-score').innerText = `${runningScore} / 20`;
+            const percent = Math.round((runningScore / 20) * 100);
+            document.getElementById('res-percent').innerText = percent + "%";
+            
+            document.getElementById('table-correct-val').innerText = runningScore;
+            document.getElementById('table-wrong-val').innerText = 20 - runningScore;
+            
+            const headline = document.getElementById('result-title-heading');
+            const feedback = document.getElementById('result-feedback-text');
+            
+            if (runningScore === 20) {
+                headline.innerText = "🏆 Voice Master!";
+                feedback.innerText = "Absolute register and voice mastery! You distinguished perfectly between subjective doer focuses and target action passive results.";
+            } else if (runningScore >= 15) {
+                headline.innerText = "🌟 Excellent!";
+                feedback.innerText = "Superb structural understanding of passive applications across newspapers, manuals, and formal administrative announcements.";
+            } else if (runningScore >= 10) {
+                headline.innerText = "🎉 Great Job!";
+                feedback.innerText = "Good performance framework baseline achieved! Keep in mind that passive layouts emphasize the event or action over the doer.";
+            } else {
+                headline.innerText = "📘 Keep Practising!";
+                feedback.innerText = "Syntactic voice configurations depend heavily on communicative goals. Review auxiliary modifications to reinforce past participle transformations.";
+            }
+        }
+
+        function restartAppEngine() {
+            switchActiveCard('intro-screen');
+        }
+
+        function switchActiveCard(id) {
+            document.querySelectorAll('.game-card').forEach(card => card.classList.remove('active-card'));
+            document.getElementById(id).classList.add('active-card');
+        }
+
+        function generateExplosionVFX(e, character) {
+            if (!e) return;
+            const boundingBox = e.target.getBoundingClientRect();
+            const posX = e.clientX || (boundingBox.left + boundingBox.width / 2);
+            const posY = e.clientY || (boundingBox.top + boundingBox.height / 2);
+
+            for (let i = 0; i < 8; i++) {
+                const element = document.createElement('div');
+                element.className = 'vfx-item';
+                element.innerText = character;
+                element.style.color = character === '⭐' ? 'var(--accent)' : 'var(--error)';
+                element.style.left = posX + 'px';
+                element.style.top = posY + 'px';
+                
+                const deltaX = (Math.random() - 0.5) * 160;
+                const deltaY = (Math.random() - 0.5) * 160 - 20;
+                const angle = Math.random() * 360;
+                
+                element.style.setProperty('--x', `${deltaX}px`);
+                element.style.setProperty('--y', `${deltaY}px`);
+                element.style.setProperty('--r', `${angle}deg`);
+                
+                document.body.appendChild(element);
+                setTimeout(() => element.remove(), 600);
+            }
+        }
+    </script>
+</body>
+</html>
