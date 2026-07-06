@@ -1,1 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 English - Phrasal Verbs Game</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-light: #475569;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #e2e8f0;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
+        body.high-contrast {
+            --primary: #000000;
+            --primary-dark: #000000;
+            --secondary: #0033cc;
+            --accent: #c2410c;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-light: #1e293b;
+            --success: #047857;
+            --error: #b91c1c;
+            --border: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Decorator Layers */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-decor {
+            position: absolute;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            opacity: 0.06;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .floating-bubble {
+            background: rgba(79, 70, 229, 0.06);
+            padding: 6px 14px;
+            border-radius: 12px;
+            border: 1px dashed var(--primary);
+        }
+
+        /* Branding Splash Screen Window */
+        #brand-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease;
+        }
+
+        .splash-logo {
+            max-width: 320px;
+            width: 80%;
+            height: auto;
+            margin-bottom: 25px;
+            object-fit: contain;
+        }
+
+        .splash-loader {
+            width: 220px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .splash-progress {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            animation: startSplashLoader 5s linear forwards;
+        }
+
+        @keyframes startSplashLoader {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Action Bar Control Tray */
+        .utility-tray {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 850px;
+            margin-bottom: 15px;
+            z-index: 10;
+        }
+
+        .volume-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            padding: 6px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .tray-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .tray-btn:focus {
+            outline: 3px solid var(--accent);
+        }
+
+        /* Core Application Layout Base Cards */
+        .game-card {
+            display: none;
+            width: 100%;
+            max-width: 850px;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .active-card { display: block !important; }
+
+        .stage-badge {
+            background-color: rgba(79, 70, 229, 0.08);
+            color: var(--primary);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h1 { color: var(--primary-dark); font-size: 2.3rem; font-weight: 800; margin-bottom: 15px; }
+        p { color: var(--text-light); font-size: 1.15rem; line-height: 1.6; margin-bottom: 30px; }
+
+        .btn-action {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px 38px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .btn-action:active { transform: scale(0.98); }
+        .btn-action:focus { outline: 3px solid var(--primary); }
+
+        /* HUD parameters panels */
+        .hud-grid {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 10px 0 25px 0;
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-unit { display: flex; flex-direction: column; align-items: center; flex: 1; border-right: 1px solid var(--border); }
+        .hud-unit:last-child { border-right: none; }
+        .hud-title { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
+        .hud-data { font-size: 1.35rem; font-weight: 800; color: var(--primary-dark); }
+
+        .progress-wrapper { width: 100%; height: 8px; background-color: #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 35px; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.3s ease; }
+
+        .question-title { text-align: left; font-size: 1.35rem; font-weight: 700; line-height: 1.6; margin-bottom: 25px; color: var(--text); white-space: pre-line; }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 25px; }
+
+        /* Alternative buttons options framework */
+        .option-item {
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-item:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
+        .option-item:focus {
+            outline: 3px solid var(--accent);
+        }
+
+        .option-item.correct { background-color: #ecfdf5 !important; border-color: var(--success) !important; color: var(--success) !important; font-weight: 700; box-shadow: 0 0 12px rgba(16, 185, 129, 0.2); }
+        .option-item.wrong { background-color: #fef2f2 !important; border-color: var(--error) !important; color: var(--error) !important; }
+        
+        .shake-animation { animation: shakeEffect 0.4s ease-in-out; }
+        @keyframes shakeEffect {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .explanation-wrapper { background-color: #f8fafc; border-left: 5px solid var(--primary); padding: 25px; border-radius: 0 16px 16px 0; text-align: left; margin-top: 25px; display: none; }
+
+        /* Visual Confetti FX particles */
+        .fx-sprite {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.6rem;
+            z-index: 99;
+            animation: travelOut 0.6s ease-out forwards;
+        }
+        @keyframes travelOut {
+            0% { transform: translate(0, 0) scale(0.6); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) rotate(var(--dr)); opacity: 0; }
+        }
+
+        /* Stage 3: Bonus Interactive Layout elements */
+        .bonus-board {
+            background: #f8fafc;
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .chips-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+            min-height: 50px;
+            justify-content: center;
+        }
+        .word-chip {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .word-chip:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .dropzone-field {
+            background: #f1f5f9;
+            border: 2px dashed #94a3b8;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            min-height: 80px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Results dashboard card metrics layout */
+        .summary-dashboard-table {
+            width: 100%;
+            margin: 25px 0;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .summary-dashboard-table th, .summary-dashboard-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        .summary-dashboard-table th {
+            font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-canvas" id="canvas-decorations"></div>
+
+    <div id="brand-splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://placehold.co/320x100?text=Innovine+Education';">
+        <div class="splash-loader">
+            <div class="splash-progress"></div>
+        </div>
+    </div>
+
+    <div class="utility-tray">
+        <div class="volume-box">
+            <span>VOLUME</span>
+            <input type="range" min="0" max="1" step="0.1" value="0.5" id="volume-slider" onchange="modifyGlobalVolume()">
+        </div>
+        <button class="tray-btn" onclick="toggleMute()" id="mute-trigger">🔊 Mute</button>
+        <button class="tray-btn" onclick="toggleHighContrast()">🌓 Contrast</button>
+    </div>
+
+    <div id="intro-screen" class="game-card active-card">
+        <div class="stage-badge">Grade 7 English</div>
+        <h1>Chapter 15 – Phrasal Verbs</h1>
+        <p>Welcome to the Phrasal Verb Challenge Engine! Explore how verbs combine with prepositions or adverbs to form unique context-driven expressions. Master vital concepts including separable versus inseparable configurations, transitive look-ups, and real-life conversational applications. Complete all 20 tracking evaluations to activate your exclusive reward round!</p>
+        <button class="btn-action" onclick="initializeGameSession()">Start Game</button>
+    </div>
+
+    <div id="quiz-screen" class="game-card">
+        <div class="hud-grid">
+            <div class="hud-unit">
+                <span class="hud-title">Question Number</span>
+                <span class="hud-data" id="tracker-q-number">1 / 20</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Progress Indicator</span>
+                <span class="hud-data" id="tracker-score-val">Score: 0 / 20</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Attempts Remaining</span>
+                <span class="hud-data" id="tracker-attempt-val">1 / 2</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Countdown Timer</span>
+                <span class="hud-data" id="tracker-timer-val" style="color: var(--accent);">45s</span>
+            </div>
+        </div>
+
+        <div class="progress-wrapper">
+            <div class="progress-fill" id="tracker-bar-fill"></div>
+        </div>
+
+        <div class="question-title" id="live-question-title"></div>
+        <div class="options-grid" id="live-options-grid"></div>
+
+        <div class="explanation-wrapper" id="live-explanation-box">
+            <div style="font-weight: 800; margin-bottom: 8px; color: var(--primary-dark);">Grammar Concept Insight:</div>
+            <div id="explanation-body-text" style="font-size: 1rem; color: var(--text-light); margin-bottom: 18px; line-height: 1.5;"></div>
+            <button class="btn-action" style="padding: 10px 24px; font-size: 1rem;" onclick="advanceNextQuestionTrack()">Continue &rarr;</button>
+        </div>
+    </div>
+
+    <div id="bonus-screen" class="game-card">
+        <div class="stage-badge" style="background-color: rgba(245, 158, 11, 0.1); color: var(--accent);">Stage 3: Interactive Arena</div>
+        <h1>🚀 Phrasal Verb Master Challenge</h1>
+        <p>Let's play the Meaning Match speed round! Link each core phrasal verb to its contextual operation profile by selecting the matching structural badge listed below.</p>
+        
+        <div class="bonus-board">
+            <div style="font-weight: 800; color: var(--text-light); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px;">Target Phrasal Verb:</div>
+            <h2 id="bonus-term-field" style="color: var(--primary-dark); margin-bottom: 20px; background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid var(--border); display: inline-block;">put off</h2>
+            
+            <div class="dropzone-field" id="bonus-dropzone-status">
+                <span>Select the correct definition below:</span>
+            </div>
+            
+            <div class="chips-pool" id="bonus-chips-container"></div>
+        </div>
+        <div id="bonus-validation-message" style="margin-top: 15px; font-weight: 700; min-height: 24px;"></div>
+    </div>
+
+    <div id="result-screen" class="game-card">
+        <div class="stage-badge">Assessment Matrix Complete</div>
+        <h1 id="result-headline-title">Assessment Report</h1>
+        <p id="result-description-text">Review your analytical grammar metrics panel below.</p>
+        
+        <div class="hud-grid" style="max-width: 500px; margin: 0 auto 25px auto;">
+            <div class="hud-unit">
+                <span class="hud-title">Final Score</span>
+                <span class="hud-data" id="panel-score-val" style="color: var(--primary);">0 / 20</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Percentage</span>
+                <span class="hud-data" id="panel-percent-val" style="color: var(--secondary);">0%</span>
+            </div>
+        </div>
+
+        <table class="summary-dashboard-table">
+            <thead>
+                <tr>
+                    <th>Metric Classification</th>
+                    <th>Count Record Matrix Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Correct Answers</td>
+                    <td id="panel-correct-count" style="font-weight:700; color: var(--success);">0</td>
+                </tr>
+                <tr>
+                    <td>Wrong Answers</td>
+                    <td id="panel-wrong-count" style="font-weight:700; color: var(--error);">0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn-action" style="margin-right: 10px;" onclick="restartWholeAppWorkflow()">Restart Game</button>
+        <button class="btn-action" style="background-color: var(--secondary); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);" onclick="restartWholeAppWorkflow()">Play Again</button>
+    </div>
+
+    <script>
+        // IMMUTABLE EVALUATION DATA FRAMEWORK STORAGE - ABSOLUTE TEXT FIDELITY PRESERVED
+        const comprehensiveQuestionsPool = [
+            { id: 1, q: "1. The principal says: \"Please ______ your assignment before leaving the classroom.\"\nWhich phrasal verb best completes the sentence?", options: ["a) hand in", "b) look after", "c) break down", "d) give up"], ans: "a) hand in", exp: "'Hand in' means to submit an assignment or document to an authority figure like a teacher or principal." },
+            { id: 2, q: "2. Riya planned to cycle to school, but her bicycle stopped working halfway.\nWhich sentence best describes the situation?", options: ["a) Her bicycle broke out.", "b) Her bicycle broke down.", "c) Her bicycle took off.", "d) Her bicycle gave up."], ans: "b) Her bicycle broke down.", exp: "'Break down' is used when a mechanical system or vehicle stops functioning correctly." },
+            { id: 3, q: "3. A student writes:\"I came across with an interesting article while doing my research.\"\nWhich is the correct sentence?", options: ["a) I came across an interesting article while doing my research.", "b) I came an interesting article across while doing my research.", "c) I came through across an interesting article.", "d) I came over with an interesting article."], ans: "a) I came across an interesting article while doing my research.", exp: "'Came across' is an inseparable phrasal verb meaning to meet or find by chance; it does not take 'with'." },
+            { id: 4, q: "4. The science teacher says, \"We'll ______ this problem tomorrow because we don't have enough time today.\"\nWhich phrasal verb best completes the sentence?", options: ["a) put off", "b) break down", "c) turn on", "d) hand in"], ans: "a) put off", exp: "'Put off' means to postpone or delay an action or topic until a later date." },
+            { id: 5, q: "5. Which phrasal verb does NOT match the others?", options: ["a) hand in", "b) submit", "c) turn in", "d) look after"], ans: "d) look after", exp: "'Hand in' and 'turn in' both mean 'submit', whereas 'look after' means to take care of someone or something." },
+            { id: 6, q: "6. Assertion (A): The sentence \"The meeting was put off until Friday\" is correct.\nReason (R): \"Put off\" means \"to postpone.\"", options: ["a) Both A and R are true, and R correctly explains A.", "b) Both A and R are true, but R does not explain A.", "c) A is true, but R is false.", "d) A is false, but R is true."], ans: "a) Both A and R are true, and R correctly explains A.", exp: "The statement correctly employs 'put off' in a passive construction, matching its definition 'to postpone'." },
+            { id: 7, q: "7. A student writes,\"Please look the new words up in the dictionary.\"\nWhich sentence is correct if the object is a pronoun?", options: ["a) Please look them up in the dictionary.", "b) Please look up them in the dictionary.", "c) Please them look up.", "d) Please look them."], ans: "a) Please look them up in the dictionary.", exp: "When the object of a separable phrasal verb is a pronoun, it must be placed between the verb and the particle." },
+            { id: 8, q: "8. The school canteen had no sandwiches left by lunchtime.\nWhich sentence best describes the situation?", options: ["a) The canteen ran into sandwiches.", "b) The canteen ran out of sandwiches.", "c) The canteen turned off sandwiches.", "d) The canteen broke up sandwiches."], ans: "b) The canteen ran out of sandwiches.", exp: "'Run out of' means to completely deplete the available supply of an item." },
+            { id: 9, q: "9. Your friend has a fever but feels better after two days.\nWhich sentence is most appropriate?", options: ["a) She got over the illness quickly.", "b) She took over the illness quickly.", "c) She looked into the illness quickly.", "d) She handed in the illness quickly."], ans: "a) She got over the illness quickly.", exp: "'Get over' is used contextually to mean recovering from an illness, shock, or difficulty." },
+            { id: 10, q: "10.Which sentence shows that \"look after\" is being used correctly?", options: ["a) She looks after her younger brother every evening.", "b) She looks after the answer in the notebook.", "c) She looks after the lights before sleeping.", "d) She looks after the homework tomorrow."], ans: "a) She looks after her younger brother every evening.", exp: "'Look after' correctly means to care for or watch over someone, such as a younger sibling." },
+            { id: 11, q: "11. Error Detection\nWhich sentence is incorrect?", options: ["a) The teacher asked us to carry on with the activity.", "b) We carried on working despite the rain.", "c) Please carry with on your work.", "d) They carried on talking after lunch."], ans: "c) Please carry with on your work.", exp: "The phrasing 'carry with on' breaks the cohesive structure of the phrasal verb 'carry on'." },
+            { id: 12, q: "12. Application\nThe manager asked the committee to investigate the complaint.\nWhich phrasal verb can replace investigate?", options: ["a) look into", "b) hand in", "c) give up", "d) take off"], ans: "a) look into", exp: "'Look into' means to investigate, examine, or gather facts about a situation or problem." },
+            { id: 13, q: "13. Grammar in Use\nWhich sentence correctly uses a separable phrasal verb?", options: ["a) Please turn off the fan.", "b) Please turn the fan off.", "c) Both (a) and (b)", "d) Neither (a) nor (b)"], ans: "c) Both (a) and (b)", exp: "Separable phrasal verbs like 'turn off' allow noun objects to appear either after the particle or between the verb and particle." },
+            { id: 14, q: "14. Error Detection\nWhich sentence is grammatically correct?", options: ["a) She gave up the competition after falling ill.", "b) She gave the competition after up falling ill.", "c) She up gave the competition.", "d) She gave after up the competition."], ans: "a) She gave up the competition after falling ill.", exp: "'Give up' is correctly placed continuously here before its direct noun object 'the competition'." },
+            { id: 15, q: "15. Case Study\nA new principal became responsible for the school after the previous principal retired.\nWhich sentence best describes the situation?", options: ["a) The new principal took over the school.", "b) The new principal looked after the school.", "c) The new principal broke down the school.", "d) The new principal handed in the school."], ans: "a) The new principal took over the school.", exp: "'Take over' means to assume control, duty, or management responsibility from another individual." },
+            { id: 16, q: "16. Application\nThe teacher asked the students not to stop trying even though the puzzle was difficult.\nWhich phrasal verb means \"stop trying\"?", options: ["a) carry on", "b) give up", "c) look into", "d) take over"], ans: "b) give up", exp: "'Give up' specifically defines the act of surrendering, yielding, or ceasing efforts." },
+            { id: 17, q: "17. Assertion–Reason\nAssertion (A): \"Look after\" is an inseparable phrasal verb.\nReason (R): We cannot say \"Look the baby after.\"", options: ["a) Both A and R are true, and R correctly explains A.", "b) Both A and R are true, but R does not explain A.", "c) A is true, but R is false.", "d) A is false, but R is true."], ans: "a) Both A and R are true, and R correctly explains A.", exp: "Since 'look after' is inseparable, splitting it with the object 'the baby' produces ungrammatical output. Both options connect correctly." },
+            { id: 18, q: "18. Editing\nChoose the correctly edited sentence.", options: ["a) The flight took off at 6 a.m.", "b) The flight took on at 6 a.m.", "c) The flight broke off at 6 a.m.", "d) The flight looked after at 6 a.m."], ans: "a) The flight took off at 6 a.m.", exp: "For aircraft, 'take off' means to depart from the ground and rise into the air." },
+            { id: 19, q: "19. Contextual Usage\nThe school concert has been postponed until next month.\nWhich sentence uses the correct phrasal verb?", options: ["a) The concert has been put off until next month.", "b) The concert has been taken off until next month.", "c) The concert has been looked into until next month.", "d) The concert has been handed in until next month."], ans: "a) The concert has been put off until next month.", exp: "'Put off' is the standard idiomatic expression utilized to state that an organized event has been postponed." },
+            { id: 20, q: "20. Functional Choice\nWhich sentence sounds the most natural in everyday English?", options: ["a) Please carry on with your presentation.", "b) Please continue on your presentation.", "c) Please go your presentation.", "d) Please proceed with carry on your presentation."], ans: "a) Please carry on with your presentation.", exp: "'Carry on with' is a highly natural, idiomatic phrasal combination meaning to proceed with an activity." }
+        ];
+
+        let runtimeActiveDeck = [];
+        let executionTrackIndex = 0;
+        let systemRunningScore = 0;
+        let remainingWrongAttempts = 2;
+        let countdownTickerId = null;
+        let countdownSecondsLeft = 45;
+        let activeVolumeCoefficient = 0.5;
+        let activeAudioMutedState = false;
+        let interfaceSuspendedFlag = false;
+        let stage3BonusQuestionCounter = 0;
+
+        // Stage 3 interactive matching matrix configuration
+        const bonusInteractivePool = [
+            { word: "hand in", correctDefinition: "To submit an assignment or document", options: ["To submit an assignment or document", "To investigate details", "To stop trying"] },
+            { word: "break down", correctDefinition: "To stop working mechanically", options: ["To stop working mechanically", "To care for someone", "To postpone an event"] },
+            { word: "look into", correctDefinition: "To investigate a complaint or case", options: ["To investigate a complaint or case", "To deplete a supply", "To depart by flight"] }
+        ];
+
+        // System audio assets node configuration map
+        const applicationSfxRack = {
+            correct: new Audio('assets/correct.mp3'),
+            wrong: new Audio('assets/wrong.mp3'),
+            clapping: new Audio('assets/clapping.mp3')
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateFloatingBackgroundVisuals();
+            
+            // Core 5-second branding timeout block trigger
+            setTimeout(() => {
+                const layer = document.getElementById('brand-splash');
+                if (layer) {
+                    layer.style.opacity = '0';
+                    setTimeout(() => layer.remove(), 600);
+                }
+            }, 5000);
+        });
+
+        function generateFloatingBackgroundVisuals() {
+            const rootLayer = document.getElementById('canvas-decorations');
+            const indicators = ["📚", "🔍", "Phrasal", "Verb", "Turn Off", "Look Up", "📖", "✨", "Put Off"];
+            for (let i = 0; i < 22; i++) {
+                const node = document.createElement('div');
+                node.className = 'bg-decor' + (i % 4 === 0 ? ' floating-bubble' : '');
+                node.innerText = indicators[Math.floor(Math.random() * indicators.length)];
+                node.style.left = Math.random() * 92 + '%';
+                node.style.top = Math.random() * 92 + '%';
+                node.style.transform = `rotate(${(Math.random() - 0.5) * 45}deg)`;
+                rootLayer.appendChild(node);
+            }
+        }
+
+        function playSoundTrack(key) {
+            if (activeAudioMutedState) return;
+            try {
+                applicationSfxRack[key].currentTime = 0;
+                applicationSfxRack[key].volume = activeVolumeCoefficient;
+                applicationSfxRack[key].play();
+            } catch (err) {
+                console.warn(`Local audio playback notice: assets/${key}.mp3 was handled safely.`);
+            }
+        }
+
+        function modifyGlobalVolume() {
+            activeVolumeCoefficient = parseFloat(document.getElementById('volume-slider').value);
+        }
+
+        function toggleMute() {
+            activeAudioMutedState = !activeAudioMutedState;
+            document.getElementById('mute-trigger').innerText = activeAudioMutedState ? "❌ Unmute" : "🔊 Mute";
+        }
+
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function initializeGameSession() {
+            // Randomize whole question pool order on launch
+            runtimeActiveDeck = [...comprehensiveQuestionsPool].sort(() => Math.random() - 0.5);
+            executionTrackIndex = 0;
+            systemRunningScore = 0;
+            changeCardViewport('quiz-screen');
+            renderActiveQuestionTrack();
+        }
+
+        function renderActiveQuestionTrack() {
+            interfaceSuspendedFlag = false;
+            remainingWrongAttempts = 2;
+            clearInterval(countdownTickerId);
+            countdownSecondsLeft = 45;
+            
+            document.getElementById('tracker-timer-val').innerText = countdownSecondsLeft + "s";
+            document.getElementById('tracker-timer-val').style.color = "var(--primary)";
+            document.getElementById('live-explanation-box').style.display = "none";
+            
+            const targetQuestion = runtimeActiveDeck[executionTrackIndex];
+
+            // Sync structural parameters on HUD panels
+            document.getElementById('tracker-q-number').innerText = `${executionTrackIndex + 1} / 20`;
+            document.getElementById('tracker-score-val').innerText = `Score: ${systemRunningScore} / 20`;
+            document.getElementById('tracker-attempt-val').innerText = "1 / 2";
+            document.getElementById('tracker-bar-fill').style.width = `${(executionTrackIndex / 20) * 100}%`;
+            
+            document.getElementById('live-question-title').innerText = targetQuestion.q;
+            
+            // Randomize choices array positions dynamically independently
+            const randomizedAlternatives = [...targetQuestion.options].sort(() => Math.random() - 0.5);
+            
+            const interactiveGrid = document.getElementById('live-options-grid');
+            interactiveGrid.innerHTML = "";
+            
+            randomizedAlternatives.forEach(opt => {
+                const elementBtn = document.createElement('button');
+                elementBtn.className = "option-item";
+                elementBtn.innerHTML = `<span>${opt}</span>`;
+                elementBtn.onclick = (e) => evaluateOptionSelection(opt, elementBtn, e);
+                interactiveGrid.appendChild(elementBtn);
+            });
+
+            launchClockTicker();
+        }
+
+        function launchClockTicker() {
+            countdownTickerId = setInterval(() => {
+                countdownSecondsLeft--;
+                document.getElementById('tracker-timer-val').innerText = countdownSecondsLeft + "s";
+                if (countdownSecondsLeft <= 10) {
+                    document.getElementById('tracker-timer-val').style.color = "var(--error)";
+                }
+                if (countdownSecondsLeft <= 0) {
+                    clearInterval(countdownTickerId);
+                    processClockExpiryEvent();
+                }
+            }, 1000);
+        }
+
+        function processClockExpiryEvent() {
+            interfaceSuspendedFlag = true;
+            playSoundTrack('wrong');
+            exposeExplanationBox();
+        }
+
+        function evaluateOptionSelection(chosenStr, buttonRef, eventObj) {
+            if (interfaceSuspendedFlag) return;
+            const targetQuestion = runtimeActiveDeck[executionTrackIndex];
+
+            if (chosenStr === targetQuestion.ans) {
+                interfaceSuspendedFlag = true;
+                clearInterval(countdownTickerId);
+                buttonRef.classList.add('correct');
+                buttonRef.innerHTML += `<span>✔</span>`;
+                triggerParticlesExplosion(eventObj, '⭐');
+                systemRunningScore++;
+                document.getElementById('tracker-score-val').innerText = `Score: ${systemRunningScore} / 20`;
+                playSoundTrack('correct');
+                
+                setTimeout(() => {
+                    advanceNextQuestionTrack();
+                }, 1200);
+            } else {
+                buttonRef.classList.add('wrong');
+                buttonRef.innerHTML += `<span>❌</span>`;
+                triggerParticlesExplosion(eventObj, '❌');
+                playSoundTrack('wrong');
+                
+                const frameElement = document.getElementById('quiz-screen');
+                frameElement.classList.add('shake-animation');
+                setTimeout(() => frameElement.classList.remove('shake-animation'), 400);
+
+                if (remainingWrongAttempts === 2) {
+                    remainingWrongAttempts--;
+                    document.getElementById('tracker-attempt-val').innerText = "2 / 2";
+                } else {
+                    interfaceSuspendedFlag = true;
+                    clearInterval(countdownTickerId);
+                    exposeExplanationBox();
+                }
+            }
+        }
+
+        function exposeExplanationBox() {
+            const targetQuestion = runtimeActiveDeck[executionTrackIndex];
+            const domesticButtons = document.querySelectorAll('.option-item');
+            
+            domesticButtons.forEach(btn => {
+                const textCheck = btn.querySelector('span').innerText;
+                if (textCheck === targetQuestion.ans) {
+                    btn.classList.add('correct');
+                }
+                btn.disabled = true;
+            });
+
+            document.getElementById('explanation-body-text').innerText = `Correct Answer: ${targetQuestion.ans}\n\n${targetQuestion.exp}`;
+            document.getElementById('live-explanation-box').style.display = "block";
+        }
+
+        function advanceNextQuestionTrack() {
+            executionTrackIndex++;
+            if (executionTrackIndex >= runtimeActiveDeck.length) {
+                stage3BonusQuestionCounter = 0;
+                changeCardViewport('bonus-screen');
+                renderSpeechReporterBonusItem();
+            } else {
+                renderActiveQuestionTrack();
+            }
+        }
+
+        // STAGE 3: INTERACTIVE PHRASAL VERB CHALLENGE ARENA
+        function renderSpeechReporterBonusItem() {
+            document.getElementById('bonus-validation-message').innerText = "";
+            const activeBonus = bonusInteractivePool[stage3BonusQuestionCounter];
+            
+            document.getElementById('bonus-term-field').innerText = activeBonus.word;
+            document.getElementById('bonus-dropzone-status').innerHTML = `<span>Select the accurate definition block matching the expression above:</span>`;
+            
+            const poolNode = document.getElementById('bonus-chips-container');
+            poolNode.innerHTML = "";
+            
+            // Randomize definitions choices layout
+            const randomizedDefinitions = [...activeBonus.options].sort(() => Math.random() - 0.5);
+            
+            randomizedDefinitions.forEach(def => {
+                const chipItem = document.createElement('div');
+                chipItem.className = "word-chip";
+                chipItem.innerText = def;
+                chipItem.onclick = () => verifyInteractiveBonusAction(def, activeBonus.correctDefinition);
+                poolNode.appendChild(chipItem);
+            });
+        }
+
+        function verifyInteractiveBonusAction(selectedDef, trueDefinition) {
+            const validationField = document.getElementById('bonus-validation-message');
+            if (selectedDef === trueDefinition) {
+                playSoundTrack('correct');
+                validationField.style.color = "var(--success)";
+                validationField.innerText = "⭐ Correct match locked! Phrasal verb operation confirmed.";
+                
+                setTimeout(() => {
+                    stage3BonusQuestionCounter++;
+                    if (stage3BonusQuestionCounter >= bonusInteractivePool.length) {
+                        displaySummaryDashboardPanel();
+                    } else {
+                        renderSpeechReporterBonusItem();
+                    }
+                }, 1400);
+            } else {
+                playSoundTrack('wrong');
+                validationField.style.color = "var(--error)";
+                validationField.innerText = "❌ Incorrect application. Re-verify the definition and choose again.";
+            }
+        }
+
+        // STAGE 4: FINAL ASSESSMENT SUMMARY CARD DASHBOARD
+        function displaySummaryDashboardPanel() {
+            changeCardViewport('result-screen');
+            playSoundTrack('clapping');
+            
+            document.getElementById('panel-score-val').innerText = `${systemRunningScore} / 20`;
+            const percentageValue = Math.round((systemRunningScore / 20) * 100);
+            document.getElementById('panel-percent-val').innerText = percentageValue + "%";
+            
+            document.getElementById('panel-correct-count').innerText = systemRunningScore;
+            document.getElementById('panel-wrong-count').innerText = 20 - systemRunningScore;
+            
+            const headlineNode = document.getElementById('result-headline-title');
+            const descriptionNode = document.getElementById('result-description-text');
+            
+            if (systemRunningScore === 20) {
+                headlineNode.innerText = "🏆 Grammar Champion!";
+                descriptionNode.innerText = "Flawless score! You have successfully mastered separable and inseparable phrasal verbs, directional prepositional shifts, and real-world idiomatic usage rules.";
+            } else if (systemRunningScore >= 15) {
+                headlineNode.innerText = "🌟 Outstanding!";
+                descriptionNode.innerText = "Superb execution! You clearly understand how phrasal elements adapt to pronouns and noun objects across complex context scenarios.";
+            } else if (systemRunningScore >= 10) {
+                headlineNode.innerText = "🎉 Excellent Work!";
+                descriptionNode.innerText = "Solid proficiency! Remember to check if a phrasal verb can be separated by its object pronoun to make your sentences flow perfectly.";
+            } else {
+                headlineNode.innerText = "📘 Keep Practising!";
+                descriptionNode.innerText = "Phrasal combinations require systematic tracking. Review our grammar insights and definition mappings to reinforce your analytical skills.";
+            }
+        }
+
+        function restartWholeAppWorkflow() {
+            changeCardViewport('intro-screen');
+        }
+
+        function changeCardViewport(id) {
+            document.querySelectorAll('.game-card').forEach(card => card.classList.remove('active-card'));
+            document.getElementById(id).classList.add('active-card');
+        }
+
+        function triggerParticlesExplosion(e, symbol) {
+            if (!e) return;
+            const bounds = e.target.getBoundingClientRect();
+            const posX = e.clientX || (bounds.left + bounds.width / 2);
+            const posY = e.clientY || (bounds.top + bounds.height / 2);
+
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'fx-sprite';
+                particle.innerText = symbol;
+                particle.style.color = symbol === '⭐' ? 'var(--accent)' : 'var(--error)';
+                particle.style.left = posX + 'px';
+                particle.style.top = posY + 'px';
+                
+                const deltaX = (Math.random() - 0.5) * 160;
+                const deltaY = (Math.random() - 0.5) * 160 - 20;
+                const rotation = Math.random() * 360;
+                
+                particle.style.setProperty('--dx', `${deltaX}px`);
+                particle.style.setProperty('--dy', `${deltaY}px`);
+                particle.style.setProperty('--dr', `${rotation}deg`);
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 600);
+            }
+        }
+    </script>
+</body>
+</html>
