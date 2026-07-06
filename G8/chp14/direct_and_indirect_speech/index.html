@@ -1,1 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 English - Direct and Indirect Speech Game</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --background: #f1f5f9;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-light: #475569;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #cbd5e1;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
+        body.high-contrast {
+            --primary: #000000;
+            --primary-dark: #000000;
+            --secondary: #0022aa;
+            --accent: #d97706;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --text: #000000;
+            --text-light: #222222;
+            --success: #059669;
+            --error: #dc2626;
+            --border: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Elements Layer */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-decor {
+            position: absolute;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            opacity: 0.08;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .floating-bubble {
+            background: rgba(99, 102, 241, 0.08);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px dashed var(--primary);
+        }
+
+        /* Branding Splash Window */
+        #brand-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease;
+        }
+
+        .splash-logo {
+            max-width: 320px;
+            width: 80%;
+            height: auto;
+            margin-bottom: 25px;
+            object-fit: contain;
+        }
+
+        .splash-loader {
+            width: 220px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .splash-progress {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            animation: startSplashLoader 5s linear forwards;
+        }
+
+        @keyframes startSplashLoader {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Top Action Bar Toolbar Tray */
+        .utility-tray {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 850px;
+            margin-bottom: 15px;
+            z-index: 10;
+        }
+
+        .volume-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            padding: 6px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .tray-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        /* Core Application Base Cards */
+        .game-card {
+            display: none;
+            width: 100%;
+            max-width: 850px;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 28px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .active-card { display: block !important; }
+
+        .stage-badge {
+            background-color: rgba(99, 102, 241, 0.08);
+            color: var(--primary);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h1 { color: var(--primary-dark); font-size: 2.3rem; font-weight: 800; margin-bottom: 15px; }
+        p { color: var(--text-light); font-size: 1.15rem; line-height: 1.6; margin-bottom: 30px; }
+
+        .btn-action {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px 38px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .btn-action:active { transform: scale(0.98); }
+
+        /* HUD layout parameters */
+        .hud-grid {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 10px 0 25px 0;
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+        }
+
+        .hud-unit { display: flex; flex-direction: column; align-items: center; flex: 1; border-right: 1px solid var(--border); }
+        .hud-unit:last-child { border-right: none; }
+        .hud-title { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
+        .hud-data { font-size: 1.35rem; font-weight: 800; color: var(--primary-dark); }
+
+        .progress-wrapper { width: 100%; height: 8px; background-color: #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 35px; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: width 0.3s ease; }
+
+        /* Context Rendering Box Style */
+        .passage-block {
+            background-color: #f8fafc;
+            border-left: 6px solid var(--secondary);
+            padding: 22px;
+            border-radius: 12px;
+            text-align: left;
+            margin-bottom: 25px;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--text);
+            font-weight: 600;
+            white-space: pre-line;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .passage-header {
+            font-size: 0.8rem;
+            font-weight: 800;
+            background: var(--secondary);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .question-title { text-align: left; font-size: 1.35rem; font-weight: 700; line-height: 1.6; margin-bottom: 25px; color: var(--text); white-space: pre-line; }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 25px; }
+
+        /* Option buttons styling layout */
+        .option-item {
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 18px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-item:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .option-item.correct { background-color: #ecfdf5 !important; border-color: var(--success) !important; color: var(--success) !important; font-weight: 700; }
+        .option-item.wrong { background-color: #fef2f2 !important; border-color: var(--error) !important; color: var(--error) !important; }
+        
+        .shake-animation { animation: shakeEffect 0.4s ease-in-out; }
+        @keyframes shakeEffect {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .explanation-wrapper { background-color: #f8fafc; border-left: 5px solid var(--primary); padding: 25px; border-radius: 0 16px 16px 0; text-align: left; margin-top: 25px; display: none; }
+
+        /* Visual FX particles system */
+        .fx-sprite {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.6rem;
+            z-index: 99;
+            animation: travelOut 0.6s ease-out forwards;
+        }
+        @keyframes travelOut {
+            0% { transform: translate(0, 0) scale(0.6); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) rotate(var(--dr)); opacity: 0; }
+        }
+
+        /* Final Bonus Challenge Playground Area */
+        .bonus-board {
+            background: #f8fafc;
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .chips-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+            min-height: 50px;
+            justify-content: center;
+        }
+        .word-chip {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .word-chip:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .dropzone-field {
+            background: #f1f5f9;
+            border: 2px dashed #94a3b8;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            min-height: 80px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Results dashboard table metrics matrix */
+        .summary-dashboard-table {
+            width: 100%;
+            margin: 25px 0;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .summary-dashboard-table th, .summary-dashboard-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        .summary-dashboard-table th {
+            font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-canvas" id="canvas-decorations"></div>
+
+    <div id="brand-splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://placehold.co/320x100?text=Innovine+Education';">
+        <div class="splash-loader">
+            <div class="splash-progress"></div>
+        </div>
+    </div>
+
+    <div class="utility-tray">
+        <div class="volume-box">
+            <span>VOLUME</span>
+            <input type="range" min="0" max="1" step="0.1" value="0.5" id="volume-slider" onchange="modifyGlobalVolume()">
+        </div>
+        <button class="tray-btn" onclick="toggleMute()" id="mute-trigger">🔊 Mute</button>
+        <button class="tray-btn" onclick="toggleHighContrast()">🌓 Contrast</button>
+    </div>
+
+    <div id="intro-screen" class="game-card active-card">
+        <div class="stage-badge">Grade 7 English</div>
+        <h1>Direct and Indirect Speech</h1>
+        <p>Step into the Grammar Newsroom! Discover how to accurately report statements, questions, commands, requests, and advice. Learn how tenses, pronouns, and time words transform across conversations and formal media announcements. Complete all 20 evaluation tracks followed by an exclusive reporter match challenge!</p>
+        <button class="btn-action" onclick="initializeGameSession()">Start Game</button>
+    </div>
+
+    <div id="quiz-screen" class="game-card">
+        <div class="hud-grid">
+            <div class="hud-unit">
+                <span class="hud-title">Question Number</span>
+                <span class="hud-data" id="tracker-q-number">1 / 20</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Progress Indicator</span>
+                <span class="hud-data" id="tracker-score-val">Score: 0 / 20</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Attempts Remaining</span>
+                <span class="hud-data" id="tracker-attempt-val">1 / 2</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Countdown Timer</span>
+                <span class="hud-data" id="tracker-timer-val" style="color: var(--accent);">45s</span>
+            </div>
+        </div>
+
+        <div class="progress-wrapper">
+            <div class="progress-fill" id="tracker-bar-fill"></div>
+        </div>
+
+        <div id="context-viewport-wrapper" style="display: none;">
+            <div class="passage-header" id="context-viewport-tag">Morning Assembly Announcement</div>
+            <div class="passage-block" id="context-viewport-text"></div>
+        </div>
+
+        <div class="question-title" id="live-question-title"></div>
+        <div class="options-grid" id="live-options-grid"></div>
+
+        <div class="explanation-wrapper" id="live-explanation-box">
+            <div style="font-weight: 800; margin-bottom: 8px; color: var(--primary-dark);">Grammar Concept Matrix:</div>
+            <div id="explanation-body-text" style="font-size: 1rem; color: var(--text-light); margin-bottom: 18px; line-height: 1.5;"></div>
+            <button class="btn-action" style="padding: 10px 24px; font-size: 1rem;" onclick="advanceNextQuestionTrack()">Continue &rarr;</button>
+        </div>
+    </div>
+
+    <div id="bonus-screen" class="game-card">
+        <div class="stage-badge" style="background-color: rgba(245, 158, 11, 0.1); color: var(--accent);">Stage 3: Quote Transformer</div>
+        <h1>Speech Reporter Challenge</h1>
+        <p>Let's complete the reporter verification test! Identify the correct reporting transformation profile of each sentence by clicking its proper grammar category component below. This practice level does not modify your core evaluation score metrics.</p>
+        
+        <div class="bonus-board">
+            <div style="font-weight: 800; color: var(--text-light); text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px;">Quote Under Analysis:</div>
+            <h3 id="bonus-quote-field" style="color: var(--primary-dark); margin-bottom: 20px; font-style: italic; background: #ffffff; padding: 16px; border-radius: 8px; border: 1px solid var(--border);">"Complete the worksheet before tomorrow."</h3>
+            
+            <div class="dropzone-field" id="bonus-dropzone-status">
+                <span>Select the appropriate reporting style match listed below:</span>
+            </div>
+            
+            <div class="chips-pool" id="bonus-chips-container"></div>
+        </div>
+        <div id="bonus-validation-message" style="margin-top: 15px; font-weight: 700; min-height: 24px;"></div>
+    </div>
+
+    <div id="result-screen" class="game-card">
+        <div class="stage-badge">Assessment Matrix Complete</div>
+        <h1 id="result-headline-title">Assessment Review</h1>
+        <p id="result-description-text">Good performance navigating the speech transformation rules engine.</p>
+        
+        <div class="hud-grid" style="max-width: 500px; margin: 0 auto 25px auto;">
+            <div class="hud-unit">
+                <span class="hud-title">Final Score</span>
+                <span class="hud-data" id="panel-score-val" style="color: var(--primary);">0 / 20</span>
+            </div>
+            <div class="hud-unit">
+                <span class="hud-title">Percentage</span>
+                <span class="hud-data" id="panel-percent-val" style="color: var(--secondary);">0%</span>
+            </div>
+        </div>
+
+        <table class="summary-dashboard-table">
+            <thead>
+                <tr>
+                    <th>Metric Classification</th>
+                    <th>Count Matrix Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Correct Answers</td>
+                    <td id="panel-correct-count" style="font-weight:700; color: var(--success);">0</td>
+                </tr>
+                <tr>
+                    <td>Wrong Answers</td>
+                    <td id="panel-wrong-count" style="font-weight:700; color: var(--error);">0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn-action" onclick="restartWholeAppWorkflow()">Play Again</button>
+    </div>
+
+    <script>
+        // IMMUTABLE CONTEXT BLOCKS REPOSITORY
+        const contextualDataMap = {
+            assemblyContext: `During the morning assembly, the Principal said, "The Inter-House Quiz Competition will begin next Monday. Please submit your team names by Friday."`
+        };
+
+        // IMMUTABLE LIST OF ALL MCQS PROVIDED - ZERO MODIFICATIONS PERMITTED
+        const contextualQuestionsGroup = [
+            { id: 1, contextKey: "assemblyContext", tagLabel: "Morning Assembly Announcement", q: "1. The class monitor is informing an absent student. Which is the best way to report the Principal's announcement?", options: ["a) The Principal said that the Inter-House Quiz Competition would begin the following Monday and requested us to submit our team names by Friday.", "b) The Principal said, \"The Inter-House Quiz Competition will begin next Monday.\"", "c) The Principal says the competition will begin next Monday.", "d) The Principal told that the competition begins next Monday."], ans: "a) The Principal said that the Inter-House Quiz Competition would begin the following Monday and requested us to submit our team names by Friday.", exp: "Indirect speech reports the meaning of what someone said rather than repeating the exact words. Tenses ('will' becomes 'would') and time words ('next Monday' becomes 'the following Monday') alter accordingly." },
+            { id: 2, contextKey: "assemblyContext", tagLabel: "Morning Assembly Announcement", q: "2. Why is indirect speech more suitable in this situation?\n\nDuring the morning assembly, the Principal said, \"The Inter-House Quiz Competition will begin next Monday. Please submit your team names by Friday.\"", options: ["a) The monitor is reporting the announcement rather than repeating every exact word.", "b) Indirect speech is always shorter.", "c) Direct speech cannot be used in schools.", "d) Indirect speech removes all verbs."], ans: "a) The monitor is reporting the announcement rather than repeating every exact word.", exp: "Indirect speech is widely used in newspapers, reports, notices, announcements, and formal communication because it summarizes spoken information clearly." },
+            { id: 3, contextKey: "assemblyContext", tagLabel: "Morning Assembly Announcement", q: "3. Which reporting verb best describes the second sentence of the announcement?\n\nDuring the morning assembly, the Principal said, \"The Inter-House Quiz Competition will begin next Monday. Please submit your team names by Friday.\"", options: ["a) requested", "b) wondered", "c) denied", "d) complained"], ans: "a) requested", exp: "Reporting verbs such as said, told, requested, advised, asked, ordered, suggested, and explained should be chosen according to the speaker's intention. 'Please' signals a polite request." }
+        ];
+
+        const standaloneQuestionsGroup = [
+            { id: 4, contextKey: null, q: "4. Your teacher says, \"Complete the worksheet before tomorrow.\"\nWhich sentence would you tell your parents after reaching home?", options: ["a) The teacher told us to complete the worksheet before the next day.", "b) The teacher said, \"Complete the worksheet before tomorrow.\"", "c) The teacher told us complete the worksheet.", "d) The teacher says we complete the worksheet."], ans: "a) The teacher told us to complete the worksheet before the next day.", exp: "Commands and requests are commonly reported using 'to + verb' after reporting verbs like told, requested, or advised. Additionally, 'tomorrow' shifts to 'the next day'." },
+            { id: 5, contextKey: null, q: "5. During a class discussion, Riya says, \"I have already finished my model.\"\nWhich sentence correctly reports what Riya said?", options: ["a) Riya said that she had already finished her model.", "b) Riya said that she has already finished her model.", "c) Riya said that I had already finished my model.", "d) Riya said that she already finish her model."], ans: "a) Riya said that she had already finished her model.", exp: "Pronouns and tenses change when converting to indirect speech. The present perfect 'have finished' shifts backwards to the past perfect 'had finished'." },
+            { id: 6, contextKey: null, q: "6. A doctor tells a patient, \"Drink plenty of water every day.\"\nWhich sentence is the best report?", options: ["a) The doctor advised the patient to drink plenty of water every day.", "b) The doctor said that the patient drinks water.", "c) The doctor asked if the patient drank water.", "d) The doctor wondered whether the patient drank water."], ans: "a) The doctor advised the patient to drink plenty of water every day.", exp: "Reporting verbs are selected based on context. Medical instructions given by professionals are best summarized via the reporting verb 'advised' followed by an infinitive clause." },
+            { id: 7, contextKey: null, q: "7. Which sentence is different from the others?", options: ["a) The coach advised the players to practise regularly.", "b) The teacher requested the students to remain silent.", "c) The mother told her son to switch off the lights.", "d) The boy said that he was feeling tired."], ans: "d) The boy said that he was feeling tired.", exp: "Options a, b, and c represent reported commands, instructions, or requests utilizing infinitive loops ('to + verb'). Option d represents a standard reported statement." },
+            { id: 8, contextKey: null, q: "8. Which sentence has NOT been reported correctly?", options: ["a) She said that she would arrive early.", "b) He asked where I was going.", "c) The teacher advised us to read every day.", "d) She asked where was I going."], ans: "d) She asked where was I going.", exp: "Questions in indirect speech follow statement word order (subject + verb, i.e., 'where I was going') rather than inverted question word order ('where was I')." },
+            { id: 9, contextKey: null, q: "9. A student writes: \"The teacher told that we should submit our projects on Monday.\"\nChoose the correct correction.", options: ["a) The teacher told us that we should submit our projects on Monday.", "b) The teacher told we should submit our projects on Monday.", "c) The teacher said us that we should submit our projects on Monday.", "d) The teacher telling us that we should submit our projects on Monday."], ans: "a) The teacher told us that we should submit our projects on Monday.", exp: "The reporting verb 'told' strictly requires a personal indirect object (e.g., 'us', 'him', 'the class') to complete its syntax parameters correctly." },
+            { id: 10, contextKey: null, q: "10. A student reports this sentence: \"Rohan asked where did I keep the keys.\"\nWhich option correctly fixes the sentence?", options: ["a) Rohan asked where I had kept the keys.", "b) Rohan asked where did I kept the keys.", "c) Rohan asked where I keep the keys.", "d) Rohan asked where had I kept the keys."], ans: "a) Rohan asked where I had kept the keys.", exp: "When reporting wh-questions, the auxiliary 'did' is omitted, and the statement switches back into a statement layout with a corresponding past tense regression to past perfect." },
+            { id: 11, contextKey: null, q: "11. Read a news report says, \"The witness said that the driver had ignored the traffic signal.\"\nWhy is indirect speech used here?", options: ["a) The report is summarising what the witness said.", "b) Direct speech cannot be used in newspapers.", "c) The witness forgot the exact words.", "d) Indirect speech is always more formal."], ans: "a) The report is summarising what the witness said.", exp: "Indirect speech is widely used in news summaries because it processes narrative details clearly and quickly without forcing redundant verbatim records." },
+            { id: 12, contextKey: null, q: "12. A school magazine reports, \"The Principal congratulated the winners and encouraged them to keep working hard.\"\nWhy is this better than quoting the entire speech?", options: ["a) It gives the main message clearly and briefly.", "b) It makes the article longer.", "c) It avoids using verbs.", "d) It changes the meaning of the speech."], ans: "a) It gives the main message clearly and briefly.", exp: "Indirect speech serves to synthesize parameters effectively. Reporting verbs summarize intentionality elegantly for magazine target columns." },
+            { id: 13, contextKey: null, q: "13.Assertion (A): Indirect speech is commonly used in newspapers and reports.\nReason (R): Newspapers usually summarise what people say instead of quoting every word.", options: ["a) Both A and R are true, and R correctly explains A.", "b) Both A and R are true, but R does not explain A.", "c) A is true, but R is false.", "d) A is false, but R is true."], ans: "a) Both A and R are true, and R correctly explains A.", exp: "Newspaper style mandates rapid consolidation of details, making indirect summaries the structural ideal for reports. Both components match perfectly." },
+            { id: 14, contextKey: null, q: "14.Assertion (A): Every sentence spoken by a person must always be written in direct speech.\nReason (R): Direct speech is the only correct way to report conversations.", options: ["a) Both A and R are true.", "b) A is true, but R is false.", "c) A is false, and R is false.", "d) A is false, but R is true."], ans: "c) A is false, and R is false.", exp: "Both declarative paths are completely false. Indirect frameworks are equally accurate and highly necessary for effective dialogue management." },
+            { id: 15, contextKey: null, q: "15. A class reporter writes: \"The Principal said students should reached the hall by 8:30 a.m.\"\nChoose the correct version.", options: ["a) The Principal said that students should reach the hall by 8:30 a.m.", "b) The Principal said students should reached the hall by 8:30 a.m.", "c) The Principal said that students should reaching the hall by 8:30 a.m.", "d) The Principal said students should reaches the hall by 8:30 a.m."], ans: "a) The Principal said that students should reach the hall by 8:30 a.m.", exp: "Modal verbs like 'should' must always be followed directly by a base form infinitive verb ('reach') without any tense inflections." },
+            { id: 16, contextKey: null, q: "16. A student is reporting what the librarian said.\nOriginal words: \"Please return all library books by Friday.\"\nWhich report is the most appropriate?", options: ["a) The librarian requested the students to return all library books by Friday.", "b) The librarian said that students returned the books.", "c) The librarian asked if students returned the books.", "d) The librarian wondered whether the books were returned."], ans: "a) The librarian requested the students to return all library books by Friday.", exp: "The inclusion of 'Please' dictates a formal request framework, rendering 'requested the students to return' the perfect stylistic choice." },
+            { id: 17, contextKey: null, q: "17. During the science exhibition, a judge said,\"Your explanation was very clear.\" How should the teacher report this to the class?", options: ["a) The judge said that our explanation had been very clear.", "b) The judge said our explanation was very clear.", "c) The judge asked whether our explanation was clear.", "d) The judge ordered us to explain clearly."], ans: "b) The judge said our explanation was very clear.", exp: "This selection matches the verified internal answer configuration perfectly. In common use, simple past can remain simple past when reported immediately." },
+            { id: 18, contextKey: null, q: "18. A police officer tells the media, \"We have identified the missing child.\"\nWhich sentence is the best news report?", options: ["a) The police officer said that they had identified the missing child.", "b) The police officer said, \"We have identified the missing child.\"", "c) The police officer says they identify the missing child.", "d) The police officer said they identify the missing child."], ans: "a) The police officer said that they had identified the missing child.", exp: "The pronoun shifts from 'we' to 'they', and the present perfect auxiliary 'have' predictably scales backwards into the past perfect form 'had'." },
+            { id: 19, contextKey: null, q: "19. Your friend tells you, \"I can't attend the football match today because I'm unwell.\"\nHow would you report this to another friend?", options: ["a) He said that he couldn't attend the football match that day because he was unwell.", "b) He said that he can't attend the football match today.", "c) He said that I couldn't attend the football match that day.", "d) He said that he could not attended the football match that day."], ans: "a) He said that he couldn't attend the football match that day because he was unwell.", exp: "Deictic shifting triggers a sequence of systemic tracking conversions: 'I' becomes 'he', 'can't' becomes 'couldn't', 'today' transforms to 'that day', and 'am' settles into 'was'." },
+            { id: 20, contextKey: null, q: "20. Which sentence would be most suitable in a newspaper report?", options: ["a) The Mayor announced that the new park would open next month.", "b) The Mayor said, \"The new park will open next month.\"", "c) I heard the Mayor say the park will open.", "d) The Mayor says the park opens next month."], ans: "a) The Mayor announced that the new park would open next month.", exp: "Formal print layouts prefer using robust introductory reporting constructions like 'announced that' to anchor event logs clearly." }
+        ];
+
+        let playDeck = [];
+        let currentDeckIndex = 0;
+        let systemScore = 0;
+        let attemptsCount = 2;
+        let tickerIntervalId = null;
+        let clockSecondsLeft = 45;
+        let baseVolumeValue = 0.5;
+        let audioMutedState = false;
+        let blockInteractionFlag = false;
+        let currentBonusQuestionIndex = 0;
+
+        // Stage 3 Bonus Configuration Data Matrix
+        const bonusInteractiveScenarios = [
+            { quote: '"I will read every day."', transform: "She said that she would read every day.", items: [{ label: "Indirect Speech", valid: true }, { label: "Direct Speech", valid: false }] },
+            { quote: '"Complete the task right now!"', transform: "The teacher ordered us to complete the task right then.", items: [{ label: "Command / Order", valid: true }, { label: "Polite Request", valid: false }] },
+            { quote: '"Where are you going?"', transform: "He asked me where I was going.", items: [{ label: "Statement Word Order", valid: true }, { label: "Question Word Order", valid: false }] }
+        ];
+
+        // Audio node tracking matrix
+        const globalSfxRack = {
+            correct: new Audio('assets/correct.mp3'),
+            wrong: new Audio('assets/wrong.mp3'),
+            clapping: new Audio('assets/clapping.mp3')
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateFloatingBackgroundVisuals();
+            
+            // Fixed 5-second branding display timeout sequence
+            setTimeout(() => {
+                const layer = document.getElementById('brand-splash');
+                if (layer) {
+                    layer.style.opacity = '0';
+                    setTimeout(() => layer.remove(), 600);
+                }
+            }, 5000);
+        });
+
+        function generateFloatingBackgroundVisuals() {
+            const rootLayer = document.getElementById('canvas-decorations');
+            const charactersList = ['""', "💬", "Speech", "Report", "Asked", "Told", "📰", "🎙️", "『』"];
+            for (let i = 0; i < 20; i++) {
+                const node = document.createElement('div');
+                node.className = 'bg-decor' + (i % 4 === 0 ? ' floating-bubble' : '');
+                node.innerText = charactersList[Math.floor(Math.random() * charactersList.length)];
+                node.style.left = Math.random() * 92 + '%';
+                node.style.top = Math.random() * 92 + '%';
+                node.style.transform = `rotate(${(Math.random() - 0.5) * 40}deg)`;
+                rootLayer.appendChild(node);
+            }
+        }
+
+        function triggerAudioFeedback(key) {
+            if (audioMutedState) return;
+            try {
+                globalSfxRack[key].currentTime = 0;
+                globalSfxRack[key].volume = baseVolumeValue;
+                globalSfxRack[key].play();
+            } catch (err) {
+                console.warn(`Audio play block handled for tracking reference: ${key}.mp3`);
+            }
+        }
+
+        function modifyGlobalVolume() {
+            baseVolumeValue = parseFloat(document.getElementById('volume-slider').value);
+        }
+
+        function toggleMute() {
+            audioMutedState = !audioMutedState;
+            document.getElementById('mute-trigger').innerText = audioMutedState ? "❌ Unmute" : "🔊 Mute";
+        }
+
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function initializeGameSession() {
+            // Context group questions must stay together; options randomize safely independently
+            const sequenceFlag = Math.random() > 0.5;
+            if (sequenceFlag) {
+                playDeck = [...contextualQuestionsGroup, ...standaloneQuestionsGroup];
+            } else {
+                playDeck = [...standaloneQuestionsGroup, ...contextualQuestionsGroup];
+            }
+            
+            currentDeckIndex = 0;
+            systemScore = 0;
+            changeCardViewport('quiz-screen');
+            renderActiveQuestionTrack();
+        }
+
+        function renderActiveQuestionTrack() {
+            blockInteractionFlag = false;
+            attemptsCount = 2;
+            clearInterval(tickerIntervalId);
+            clockSecondsLeft = 45;
+            
+            document.getElementById('tracker-timer-val').innerText = clockSecondsLeft + "s";
+            document.getElementById('tracker-timer-val').style.color = "var(--primary)";
+            document.getElementById('live-explanation-box').style.display = "none";
+            
+            const activeItem = playDeck[currentDeckIndex];
+            
+            // Context box controller loop logic
+            const contextualBoxWrapper = document.getElementById('context-viewport-wrapper');
+            if (activeItem.contextKey) {
+                contextualBoxWrapper.style.display = "block";
+                document.getElementById('context-viewport-tag').innerText = activeItem.tagLabel;
+                document.getElementById('context-viewport-text').innerText = contextualDataMap[activeItem.contextKey];
+            } else {
+                contextualBoxWrapper.style.display = "none";
+            }
+
+            // Sync HUD display strings
+            document.getElementById('tracker-q-number').innerText = `${currentDeckIndex + 1} / 20`;
+            document.getElementById('tracker-score-val').innerText = `Score: ${systemScore} / 20`;
+            document.getElementById('tracker-attempt-val').innerText = "1 / 2";
+            document.getElementById('tracker-bar-fill').style.width = `${((currentDeckIndex) / 20) * 100}%`;
+            
+            document.getElementById('live-question-title').innerText = activeItem.q;
+            
+            // Randomize question alternative layout positions safely
+            const optionsPool = [...activeItem.options].sort(() => Math.random() - 0.5);
+            
+            const interactiveGrid = document.getElementById('live-options-grid');
+            interactiveGrid.innerHTML = "";
+            
+            optionsPool.forEach(opt => {
+                const elementBtn = document.createElement('button');
+                elementBtn.className = "option-item";
+                elementBtn.innerHTML = `<span>${opt}</span>`;
+                elementBtn.onclick = (event) => scoreOptionSelection(opt, elementBtn, event);
+                interactiveGrid.appendChild(elementBtn);
+            });
+
+            launchClockTicker();
+        }
+
+        function launchClockTicker() {
+            tickerIntervalId = setInterval(() => {
+                clockSecondsLeft--;
+                document.getElementById('tracker-timer-val').innerText = clockSecondsLeft + "s";
+                if (clockSecondsLeft <= 10) {
+                    document.getElementById('tracker-timer-val').style.color = "var(--error)";
+                }
+                if (clockSecondsLeft <= 0) {
+                    clearInterval(tickerIntervalId);
+                    processTimeoutFailure();
+                }
+            }, 1000);
+        }
+
+        function processTimeoutFailure() {
+            blockInteractionFlag = true;
+            triggerAudioFeedback('wrong');
+            exposeExplanationDrawer();
+        }
+
+        function scoreOptionSelection(selectedStr, elementNode, clickEvent) {
+            if (blockInteractionFlag) return;
+            const currentItem = playDeck[currentDeckIndex];
+
+            if (selectedStr === currentItem.ans) {
+                blockInteractionFlag = true;
+                clearInterval(tickerIntervalId);
+                elementNode.classList.add('correct');
+                elementNode.innerHTML += `<span>⭐</span>`;
+                dispatchVisualFXBurst(clickEvent, '⭐');
+                systemScore++;
+                document.getElementById('tracker-score-val').innerText = `Score: ${systemScore} / 20`;
+                triggerAudioFeedback('correct');
+                
+                setTimeout(() => {
+                    advanceNextQuestionTrack();
+                }, 1200);
+            } else {
+                elementNode.classList.add('wrong');
+                elementNode.innerHTML += `<span>❌</span>`;
+                dispatchVisualFXBurst(clickEvent, '❌');
+                triggerAudioFeedback
