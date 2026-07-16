@@ -26,14 +26,14 @@
             overflow: hidden;
         }
 
-        /* --- INNOVINE SPLASH SCREEN --- */
+        /* --- SPLASH SCREEN (VISIBLE FOR 5 SECONDS) --- */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #111215; /* Sleek, dark premium backdrop */
+            background-color: #111215;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -43,16 +43,16 @@
         }
 
         .splash-logo {
-            max-width: 220px;
+            max-width: 240px;
             opacity: 0;
-            transform: scale(0.85);
-            animation: splashEntrance 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            transform: scale(0.9);
+            animation: splashEntrance 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         @keyframes splashEntrance {
             0% {
                 opacity: 0;
-                transform: scale(0.85);
+                transform: scale(0.9);
             }
             100% {
                 opacity: 1;
@@ -66,14 +66,14 @@
             pointer-events: none;
         }
 
-        /* --- MAIN INTERACTIVE CONTAINER --- */
+        /* --- MAIN INTERACTIVE CONTAINER (CLEAN CARD WITH NO LOGO/HEADER) --- */
         .quiz-container {
             background: white;
             border-radius: 16px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.1);
             width: 90%;
             max-width: 550px;
-            padding: 30px;
+            padding: 40px 30px;
             box-sizing: border-box;
             text-align: center;
             opacity: 0;
@@ -86,41 +86,12 @@
             transform: translateY(0);
         }
 
-        .header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border-bottom: 2px solid var(--light);
-            padding-bottom: 20px;
-            margin-bottom: 25px;
-        }
-
-        .game-logo {
-            max-height: 50px;
-            margin-bottom: 10px;
-            object-fit: contain;
-        }
-
-        h1 {
-            font-size: 20px;
-            margin: 0;
-            color: var(--primary);
-        }
-
-        h2 {
-            font-size: 14px;
-            color: #8d99ae;
-            margin: 5px 0 0 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
         .progress-bar {
             width: 100%;
             height: 8px;
             background-color: var(--light);
             border-radius: 4px;
-            margin-bottom: 25px;
+            margin-bottom: 35px;
             overflow: hidden;
         }
 
@@ -132,39 +103,41 @@
         }
 
         .question-box {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 600;
             margin-bottom: 15px;
-            line-height: 1.4;
+            line-height: 1.5;
+            color: #1e293b;
         }
 
         .hint-box {
             font-style: italic;
-            color: #6c757d;
-            margin-bottom: 25px;
+            color: #64748b;
+            margin-bottom: 35px;
             font-size: 15px;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 14px;
         }
 
         .option-btn {
-            background-color: var(--light);
+            background-color: white;
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 15px 20px;
-            font-size: 16px;
+            border-radius: 10px;
+            padding: 16px 24px;
+            font-size: 18px;
             font-weight: 500;
             cursor: pointer;
             text-align: left;
+            color: #334155;
             transition: all 0.2s ease;
         }
 
         .option-btn:hover:not([disabled]) {
-            background-color: #edf2f7;
+            background-color: #f8fafc;
             border-color: #cbd5e1;
         }
 
@@ -210,21 +183,15 @@
 </head>
 <body>
 
-<!-- 1. INNOVINE SPLASH SCREEN LAYER -->
+<!-- 1. INTRO SPLASH SCREEN BLOCK (5 SECONDS) -->
 <div id="splash" class="splash-screen">
-    <img src="assets/logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/200x80?text=INNOVINE'">
+    <img src="assets/logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/240x90?text=INNOVINE'">
 </div>
 
-<!-- 2. GAME WINDOW CONTAINER -->
+<!-- 2. MAIN QUIZ APP (NO HEADERS OR LOGOS INSIDE THE CARD) -->
 <div id="quiz-container" class="quiz-container">
-    <!-- Active Game View -->
+    <!-- Active Gameplay Layout -->
     <div id="quiz-view">
-        <div class="header">
-            <img src="assets/logo.png" alt="Innovine Logo" class="game-logo" onerror="this.style.display='none'">
-            <h1>Figures of Speech</h1>
-            <h2>Grade 5 • Chapter 22</h2>
-        </div>
-
         <div class="progress-bar">
             <div id="progress" class="progress-fill"></div>
         </div>
@@ -235,22 +202,22 @@
         <div id="options" class="options-grid"></div>
     </div>
 
-    <!-- Final Results View -->
+    <!-- Final Results Layout -->
     <div id="result-view" class="result-screen">
-        <h2>Quiz Completed!</h2>
+        <h2 style="font-size: 24px; margin: 0 0 10px 0;">Quiz Completed!</h2>
         <div class="score-display" id="final-score">0/0</div>
-        <p id="feedback-text">Great job completing Chapter 22!</p>
+        <p id="feedback-text" style="color: #64748b; font-size: 16px;">Great job completing Chapter 22!</p>
         <button class="restart-btn" onclick="resetQuiz()">Try Again</button>
     </div>
 </div>
 
 <script>
-    // Audio elements configured exactly to your asset pathways
+    // Asset sound targets
     const audioCorrect = new Audio('assets/correct.mp3');
     const audioWrong = new Audio('assets/wrong.mp3');
     const audioClaps = new Audio('assets/freesound_community-claps-44774.mp3');
 
-    // Lesson Data
+    // Questions pool
     const questions = [
         {
             sentence: '"The autumn leaves danced across the driveway."',
@@ -282,20 +249,17 @@
     let score = 0;
     let canAnswer = true;
 
-    // --- TIMED SPLASH HANDLER ---
+    // --- LOGO SPLASH DISMISS TIMER (5000ms) ---
     window.addEventListener('DOMContentLoaded', () => {
-        // 1. Let the entrance CSS animation build for 1.8 seconds 
-        // 2. Then trigger the vanishing sequence
         setTimeout(() => {
             const splash = document.getElementById('splash');
             const container = document.getElementById('quiz-container');
             
-            splash.classList.add('vanished');       // Smoothly transitions splash layer out
-            container.classList.add('active');      // Fades up the core game layout
+            splash.classList.add('vanished');
+            container.classList.add('active');
             
-            // Render first question as soon as game reveals
             loadQuestion(); 
-        }, 2500); 
+        }, 5000); 
     });
 
     function loadQuestion() {
@@ -334,7 +298,7 @@
             score++;
             
             audioCorrect.currentTime = 0; 
-            audioCorrect.play().catch(e => console.log("Audio play deferred until active user touch events."));
+            audioCorrect.play().catch(e => console.log("Audio waiting for user click interaction."));
         } else {
             selectedButton.classList.add('wrong');
             buttons.forEach(btn => {
@@ -344,7 +308,7 @@
             });
 
             audioWrong.currentTime = 0;
-            audioWrong.play().catch(e => console.log("Audio play deferred."));
+            audioWrong.play().catch(e => console.log("Audio waiting."));
         }
 
         setTimeout(() => {
@@ -367,7 +331,7 @@
         document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
         
         audioClaps.currentTime = 0;
-        audioClaps.play().catch(e => console.log("Audio play deferred."));
+        audioClaps.play().catch(e => console.log("Audio waiting."));
     }
 
     function resetQuiz() {
