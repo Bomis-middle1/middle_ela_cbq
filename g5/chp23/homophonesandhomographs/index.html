@@ -33,7 +33,7 @@
             overflow: hidden;
         }
 
-        /* --- SPLASH SCREEN (VISIBLE FOR 5 SECONDS) --- */
+        /* --- SPLASH SCREEN (VISIBLE FOR 5 SECONDS WITH SMART BACKUP) --- */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -49,7 +49,6 @@
             transition: opacity 0.8s ease-in-out, visibility 0.8s;
         }
 
-        /* Container to handle image hiding and text fallback showing */
         .logo-container {
             text-align: center;
             opacity: 0;
@@ -64,7 +63,6 @@
             display: block;
         }
 
-        /* Custom stylish fallback design if the image fails to load */
         .logo-fallback {
             display: none;
             color: #ffffff;
@@ -355,12 +353,11 @@
 </head>
 <body>
 
-<!-- 1. INTRO SPLASH SCREEN BLOCK (5 SECONDS WITH SMART BACKUP) -->
+<!-- 1. INTRO SPLASH SCREEN BLOCK (5 SECONDS WITH FIXED RELATIVE PATHS) -->
 <div id="splash" class="splash-screen">
     <div class="logo-container">
-        <!-- Logo Image attempts to load your exact path -->
-        <img id="logo-img" src="g5/chp23/homophonesandhomographs/assets/logo.png" alt="Innovine" class="splash-logo" onerror="handleLogoError()">
-        <!-- Fallback text styling kicks in automatically if the image can't be fetched -->
+        <!-- Exact relative path corrected to load when index.html is loaded from within homophonesandhomographs folder -->
+        <img id="logo-img" src="assets/logo.png" alt="Innovine" class="splash-logo" onerror="handleLogoError()">
         <div id="logo-text" class="logo-fallback">INNOVINE</div>
     </div>
 </div>
@@ -406,14 +403,13 @@
 </div>
 
 <script>
-    // Fallback handler if local directory issues block logo.png
     function handleLogoError() {
         document.getElementById('logo-img').style.display = 'none';
         document.getElementById('logo-text').style.display = 'block';
     }
 
-    // Exact requested asset directory setup
-    const assetBase = 'g5/chp23/homophonesandhomographs/assets/';
+    // Exact corrected relative asset pathway matching your structure
+    const assetBase = 'assets/';
     const audioCorrect = new Audio(assetBase + 'correct.mp3');
     const audioWrong = new Audio(assetBase + 'wrong.mp3');
     const audioClaps = new Audio(assetBase + 'freesound_community-claps-44774.mp3');
