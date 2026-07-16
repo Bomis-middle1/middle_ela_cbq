@@ -8,7 +8,7 @@
   :root{
     --bg1:#eef7ff;
     --bg2:#f7f4ff;
-    --card:rgba(255,255,255,.88);
+    --card:rgba(255,255,255,.9);
     --ink:#17324d;
     --muted:#5e6f82;
     --accent:#5b7cfa;
@@ -19,18 +19,28 @@
     --shadow:0 18px 50px rgba(36,58,96,.12);
   }
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--bg1),var(--bg2));overflow-x:hidden}
+  html,body{
+    margin:0;height:100%;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    overflow-x:hidden;
+  }
   body::before{
     content:'';
-    position:fixed;
-    inset:0;
+    position:fixed;inset:0;
     background:
       radial-gradient(circle at 15% 20%, rgba(91,124,250,.14), transparent 18%),
       radial-gradient(circle at 80% 10%, rgba(123,92,246,.12), transparent 16%),
       radial-gradient(circle at 70% 75%, rgba(29,181,106,.08), transparent 18%);
     pointer-events:none;
   }
-  .bg-stars,.bg-streamers{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+  .bg-stars,.bg-streamers{
+    position:fixed;inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:0;
+  }
   .star,.streamer{position:absolute;opacity:.22;animation:float linear infinite}
   .star{
     width:8px;height:8px;background:var(--accent);
@@ -79,11 +89,18 @@
   }
   .logo-wrap{
     position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-    background:rgba(247,250,255,.92);z-index:50;transition:opacity .5s ease,visibility .5s ease
+    background:rgba(247,250,255,.92);
+    z-index:50;
+    transition:opacity .5s ease,visibility .5s ease;
   }
   .logo-wrap.hide{opacity:0;visibility:hidden}
   .logo-box{
-    padding:22px 28px;border-radius:24px;background:white;box-shadow:0 18px 55px rgba(0,0,0,.12);text-align:center;animation:pop .8s ease
+    padding:22px 28px;
+    border-radius:24px;
+    background:white;
+    box-shadow:0 18px 55px rgba(0,0,0,.12);
+    text-align:center;
+    animation:pop .8s ease;
   }
   .logo-box img{
     max-width:min(280px,70vw);
@@ -92,7 +109,12 @@
     display:block;
   }
   @keyframes pop{from{transform:scale(.9);opacity:.2}to{transform:scale(1);opacity:1}}
-  .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;padding:0 18px 18px}
+  .grid{
+    display:grid;
+    grid-template-columns:1.25fr .75fr;
+    gap:16px;
+    padding:0 18px 18px;
+  }
   .box{
     background:#fff;
     border:1px solid var(--line);
@@ -266,148 +288,27 @@
   </section>
 </div>
 
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
 <script>
   const questions = [
-    {
-      q: 'Save trees they give us clean air',
-      o: [
-        'Save trees. They give us clean air.',
-        'Save trees? They give us clean air.',
-        'Save trees! They give us clean air?',
-        'Save trees, They give us clean air.'
-      ],
-      a: 0,
-      e: 'Two complete statements need full stops.'
-    },
-    {
-      q: 'yesterday i celebrated my birthday with my friends it was the happiest day of my life',
-      o: [
-        'Yesterday I celebrated my birthday with my friends, it was the happiest day of my life.',
-        'Yesterday I celebrated my birthday with my friends. It was the happiest day of my life.',
-        'Yesterday, I celebrated my birthday with my friends? It was the happiest day of my life.',
-        'Yesterday I celebrated my birthday with my friends! It was the happiest day of my life?'
-      ],
-      a: 1,
-      e: 'Use a full stop between two complete sentences.'
-    },
-    {
-      q: 'where do birds build their nests',
-      o: [
-        'Where do birds build their nests.',
-        'Where do birds build their nests!',
-        'Where do birds build their nests?',
-        'Where, do birds build their nests.'
-      ],
-      a: 2,
-      e: 'Questions end with a question mark.'
-    },
-    {
-      q: 'what a beautiful rainbow it is',
-      o: [
-        'What a beautiful rainbow it is?',
-        'What a beautiful rainbow, it is.',
-        'What a beautiful rainbow it is.',
-        'What a beautiful rainbow it is!'
-      ],
-      a: 3,
-      e: 'Exclamation marks show excitement or surprise.'
-    },
-    {
-      q: 'I need colours pencils glue and scissors',
-      o: [
-        'I need colours, pencils, glue and scissors.',
-        'I need colours pencils, glue and scissors.',
-        'I need colours, pencils glue, and scissors.',
-        'I need colours. pencils. glue and scissors.'
-      ],
-      a: 0,
-      e: 'Commas separate items in a list.'
-    },
-    {
-      q: 'I finished my project said Rahul',
-      o: [
-        '"I finished my project" said Rahul.',
-        '"I finished my project," said Rahul.',
-        '"I finished my project." said Rahul.',
-        '"I finished my project", said Rahul?'
-      ],
-      a: 1,
-      e: 'Direct speech often needs a comma before the reporting words.'
-    },
-    {
-      q: 'I enjoyed reading charlie and the chocolate factory',
-      o: [
-        'I enjoyed reading Charlie and the Chocolate Factory.',
-        'I enjoyed reading "Charlie and the Chocolate Factory."',
-        'I enjoyed reading Charlie and "the Chocolate Factory".',
-        'I enjoyed reading "Charlie and the chocolate factory".'
-      ],
-      a: 1,
-      e: 'Titles in speech marks should use capital letters for important words.'
-    },
-    {
-      q: 'dear students our science exhibition will be held on monday',
-      o: [
-        'Dear students, our science exhibition will be held on monday.',
-        'Dear Students our science exhibition will be held on Monday?',
-        'Dear Students, our science exhibition will be held on Monday.',
-        'Dear students our science exhibition will be held on monday!'
-      ],
-      a: 2,
-      e: 'Use a comma after the greeting and capital letters for Monday.'
-    },
-    {
-      q: 'The boys project won the competition.',
-      o: [
-        'The boys\' project won the competition.',
-        'The boys project\'s won the competition.',
-        'The boy\'s project won the competition.',
-        'The boy project won the competition.'
-      ],
-      a: 2,
-      e: 'An apostrophe shows possession for one boy.'
-    },
-    {
-      q: 'I cant come today because I am sick',
-      o: [
-        'I can\'t come today because I am sick.',
-        'I cant\' come today because I am sick.',
-        'I cant come today because I\'m sick?',
-        'I can\'t come today because I am sick?'
-      ],
-      a: 0,
-      e: 'An apostrophe is needed in can’t.'
-    },
-    {
-      q: 'the principal of green valley school visited mumbai on friday',
-      o: [
-        'The principal of Green valley school visited Mumbai on friday.',
-        'The Principal of Green Valley School visited Mumbai on Friday!',
-        'The principal of Green Valley School visited Mumbai on Friday.',
-        'The principal of green valley school visited mumbai on Friday?'
-      ],
-      a: 2,
-      e: 'Proper nouns and days begin with capital letters.'
-    },
-    {
-      q: 'wow we won the match said Ravi this is the best day ever',
-      o: [
-        '"Wow! We won the match," said Ravi. "This is the best day ever."',
-        '"Wow we won the match" said Ravi. "This is the best day ever?"',
-        'Wow! "We won the match," said Ravi. "This is the best day ever."',
-        '"Wow! We won the match." said Ravi, "This is the best day ever."'
-      ],
-      a: 0,
-      e: 'Use quotation marks, commas, and an exclamation mark for excitement.'
-    }
+    {q:'Save trees they give us clean air',o:['Save trees. They give us clean air.','Save trees? They give us clean air.','Save trees! They give us clean air?','Save trees, They give us clean air.'],a:0,e:'Two complete statements need full stops.'},
+    {q:'yesterday i celebrated my birthday with my friends it was the happiest day of my life',o:['Yesterday I celebrated my birthday with my friends, it was the happiest day of my life.','Yesterday I celebrated my birthday with my friends. It was the happiest day of my life.','Yesterday, I celebrated my birthday with my friends? It was the happiest day of my life.','Yesterday I celebrated my birthday with my friends! It was the happiest day of my life?'],a:1,e:'Use a full stop between two complete sentences.'},
+    {q:'where do birds build their nests',o:['Where do birds build their nests.','Where do birds build their nests!','Where do birds build their nests?','Where, do birds build their nests.'],a:2,e:'Questions end with a question mark.'},
+    {q:'what a beautiful rainbow it is',o:['What a beautiful rainbow it is?','What a beautiful rainbow, it is.','What a beautiful rainbow it is.','What a beautiful rainbow it is!'],a:3,e:'Exclamation marks show excitement or surprise.'},
+    {q:'I need colours pencils glue and scissors',o:['I need colours, pencils, glue and scissors.','I need colours pencils, glue and scissors.','I need colours, pencils glue, and scissors.','I need colours. pencils. glue and scissors.'],a:0,e:'Commas separate items in a list.'},
+    {q:'I finished my project said Rahul',o:['"I finished my project" said Rahul.','"I finished my project," said Rahul.','"I finished my project." said Rahul.','"I finished my project", said Rahul?'],a:1,e:'Direct speech often needs a comma before the reporting words.'},
+    {q:'I enjoyed reading charlie and the chocolate factory',o:['I enjoyed reading Charlie and the Chocolate Factory.','I enjoyed reading "Charlie and the Chocolate Factory."','I enjoyed reading Charlie and "the Chocolate Factory".','I enjoyed reading "Charlie and the chocolate factory".'],a:1,e:'Titles in speech marks should use capital letters for important words.'},
+    {q:'dear students our science exhibition will be held on monday',o:['Dear students, our science exhibition will be held on monday.','Dear Students our science exhibition will be held on Monday?','Dear Students, our science exhibition will be held on Monday.','Dear students our science exhibition will be held on monday!'],a:2,e:'Use a comma after the greeting and capital letters for Monday.'},
+    {q:'The boys project won the competition.',o:['The boys\' project won the competition.','The boys project\'s won the competition.','The boy\'s project won the competition.','The boy project won the competition.'],a:2,e:'An apostrophe shows possession for one boy.'},
+    {q:'I cant come today because I am sick',o:['I can\'t come today because I am sick.','I cant\' come today because I am sick.','I cant come today because I\'m sick?','I can\'t come today because I am sick?'],a:0,e:'An apostrophe is needed in can’t.'},
+    {q:'the principal of green valley school visited mumbai on friday',o:['The principal of Green valley school visited Mumbai on friday.','The Principal of Green Valley School visited Mumbai on Friday!','The principal of Green Valley School visited Mumbai on Friday.','The principal of green valley school visited mumbai on Friday?'],a:2,e:'Proper nouns and days begin with capital letters.'},
+    {q:'wow we won the match said Ravi this is the best day ever',o:['"Wow! We won the match," said Ravi. "This is the best day ever."','"Wow we won the match" said Ravi. "This is the best day ever?"','Wow! "We won the match," said Ravi. "This is the best day ever."','"Wow! We won the match." said Ravi, "This is the best day ever."'],a:0,e:'Use quotation marks, commas, and an exclamation mark for excitement.'}
   ];
 
-  let idx = 0;
-  let score = 0;
-  let usedRetry = false;
-  let answered = false;
-  let timer = null;
-  let timeLeft = 45;
+  let idx = 0, score = 0, usedRetry = false, answered = false, timer = null, timeLeft = 45, started = false;
 
   const total = questions.length;
   const els = {
@@ -426,12 +327,21 @@
     progress: document.getElementById('progressBar'),
     finalScore: document.getElementById('finalScore'),
     finalMsg: document.getElementById('finalMsg'),
-    cross: document.getElementById('cross')
+    cross: document.getElementById('cross'),
+    correctSound: document.getElementById('correctSound'),
+    wrongSound: document.getElementById('wrongSound'),
+    clapSound: document.getElementById('clapSound')
   };
 
   function show(s){
     [els.intro, els.quiz, els.final].forEach(x => x.classList.remove('active'));
     s.classList.add('active');
+  }
+
+  function playAudio(a){
+    if(!a) return;
+    a.currentTime = 0;
+    a.play().catch(()=>{});
   }
 
   function updateStats(){
@@ -505,10 +415,12 @@
       b.classList.add('correct');
       els.feed.className = 'feedback good';
       els.feed.textContent = 'Correct! ' + questions[idx].e;
+      playAudio(els.correctSound);
       confetti();
       els.next.disabled = false;
     }else{
       b.classList.add('wrong');
+      playAudio(els.wrongSound);
       handleWrong(false, i);
     }
     updateStats();
@@ -565,10 +477,15 @@
         pct >= 70 ? 'Strong work. Keep practicing to sharpen accuracy.' :
         'Good effort. A second round can help build confidence.';
       show(els.final);
+      if(pct >= 70) playAudio(els.clapSound);
     }
   }
 
   function start(){
+    if(!started){
+      started = true;
+      playAudio(els.clapSound);
+    }
     idx = 0;
     score = 0;
     usedRetry = false;
