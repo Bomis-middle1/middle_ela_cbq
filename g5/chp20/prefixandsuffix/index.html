@@ -1,1 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prefixes and Suffixes Interactive Quiz</title>
+  <style>
+    :root {
+      --bg-gradient-start: #f3f8fa;
+      --bg-gradient-end: #e9f2f7;
+      --primary: #4a90e2;
+      --primary-dark: #357abd;
+      --secondary-prefix: #e3f2fd;
+      --secondary-suffix: #e8f5e9;
+      --success: #2ecc71;
+      --error: #e74c3c;
+      --text: #2c3e50;
+      --text-light: #7f8c8d;
+      --card-bg: #ffffff;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Background Micro-Animations */
+    .bg-animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-shape {
+      position: absolute;
+      opacity: 0.4;
+      animation: float 15s infinite ease-in-out;
+    }
+
+    .bg-shape:nth-child(1) {
+      top: 10%; left: 10%; width: 40px; height: 40px;
+      border: 4px solid var(--primary); border-radius: 50%;
+    }
+
+    .bg-shape:nth-child(2) {
+      top: 70%; left: 80%; width: 30px; height: 30px;
+      background-color: #ffdb58; transform: rotate(45deg);
+    }
+
+    .bg-shape:nth-child(3) {
+      top: 40%; left: 85%; width: 50px; height: 15px;
+      background-color: var(--success); border-radius: 10px;
+      animation-duration: 18s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    /* Layout Containers */
+    .app-container {
+      width: 100%;
+      max-width: 650px;
+      padding: 20px;
+      z-index: 10;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 30px;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Brand Splash Screen */
+    #brand-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #ffffff;
+      z-index: 100;
+    }
+
+    .logo-img {
+      max-width: 200px;
+      height: auto;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* UI Header & Metrics */
+    .quiz-meta {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+
+    .quiz-title {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+
+    .metrics-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      background: #f8fafc;
+      padding: 10px 20px;
+      border-radius: 50px;
+      border: 1px solid #edf2f7;
+    }
+
+    .metric {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .timer-container {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .timer-badge {
+      background: var(--primary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .timer-badge.warning {
+      background: var(--error);
+      animation: shake 0.5s infinite;
+    }
+
+    /* Question Formatting */
+    .question-box {
+      text-align: left;
+      margin-bottom: 25px;
+    }
+
+    .context-text {
+      background: #f7fafc;
+      border-left: 4px solid var(--primary);
+      padding: 15px;
+      border-radius: 0 8px 8px 0;
+      font-size: 1.05rem;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .prompt-text {
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* Options Configuration */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 15px 20px;
+      text-align: left;
+      font-size: 1.05rem;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: #f8faff;
+    }
+
+    .option-btn.selected {
+      border-color: var(--primary);
+      background: #eef6ff;
+    }
+
+    .option-btn.correct-glow {
+      border-color: var(--success);
+      background: #edfbf3;
+      color: #1e7e34;
+      font-weight: 600;
+    }
+
+    .option-btn.wrong-glow {
+      border-color: var(--error);
+      background: #fdf2f2;
+      color: #b91c1c;
+    }
+
+    /* Status Indicator Badges */
+    .indicator-icon {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    /* Feedback Window */
+    .feedback-box {
+      margin-top: 20px;
+      padding: 15px 20px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 1rem;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-box.retry-alert {
+      background: #fff9db;
+      border: 1px solid #ffe066;
+      color: #856404;
+    }
+
+    .feedback-box.explanation-alert {
+      background: #edf2f7;
+      border-left: 4px solid var(--text-light);
+      color: var(--text);
+    }
+
+    /* Global Buttons */
+    .action-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      transition: all 0.2s;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .action-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    /* Confetti Canvas element */
+    #confetti-canvas {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    /* Custom Animations */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    .animate-shake {
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Dynamic Accent Badges */
+    .prefix-highlight { background-color: var(--secondary-prefix); padding: 2px 6px; border-radius: 4px; }
+    .suffix-highlight { background-color: var(--secondary-suffix); padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Engineering Tags -->
+  <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+  <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+  <audio id="snd-victory" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+  <!-- Canvas elements for FX layer -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="bg-animation">
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+  </div>
+
+  <!-- Mandatory Branding Module -->
+  <div id="brand-screen">
+    <img src="assets/logo.png" alt="Innovine Logo" class="logo-img">
+  </div>
+
+  <div class="app-container">
+    <!-- Intro Welcome Container -->
+    <div id="intro-card" class="card hidden">
+      <div class="quiz-meta">Grade 5 • English Grammar</div>
+      <h1 class="quiz-title">Word Building Lab</h1>
+      <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 25px; color: var(--text-light);">
+        Welcome to the Prefixes and Suffixes Challenge! Solve competency-based real-world word puzzles. 
+        You have exactly <strong>45 seconds</strong> per question. Good luck!
+      </p>
+      <button class="action-btn" onclick="quizController.initQuiz()">Enter Lab Challenge</button>
+    </div>
+
+    <!-- Master Interactive Game Screen -->
+    <div id="game-card" class="card hidden">
+      <div class="metrics-bar">
+        <div class="metric" id="progress-text">Q: 1/12</div>
+        <div class="timer-container">
+          <span>⏰</span>
+          <div id="timer" class="timer-badge">45</div>
+        </div>
+        <div class="metric" id="score-text">Score: 0</div>
+      </div>
+
+      <div class="question-box">
+        <div id="q-context" class="context-text"></div>
+        <div id="q-prompt" class="prompt-text"></div>
+      </div>
+
+      <div class="options-grid" id="options-box"></div>
+
+      <div id="feedback-panel" class="feedback-box hidden"></div>
+      
+      <button id="next-btn" class="action-btn hidden" onclick="quizController.handleNext()">Continue</button>
+    </div>
+
+    <!-- Final Summary Dashboard Screen -->
+    <div id="result-card" class="card hidden">
+      <div class="quiz-meta">Lab Complete</div>
+      <h1 class="quiz-title">Performance Summary</h1>
+      <div style="font-size: 3.5rem; font-weight: bold; color: var(--primary); margin: 20px 0;" id="final-score-display">
+        0/12
+      </div>
+      <p id="final-evaluation-msg" style="font-size: 1.1rem; margin-bottom: 30px; color: var(--text-light); line-height: 1.5;"></p>
+      <button class="action-btn" onclick="location.reload()">Restart Challenge</button>
+    </div>
+  </div>
+
+  <script>
+    // Pure Content Data Array Structuring
+    const quizDataset = [
+      {
+        context: "During a creative writing activity, the teacher asked students to describe a character who was not happy because he lost his favourite toy. Aarav wrote: 'The boy was happy after losing his toy.' The teacher explained that adding a prefix can change the meaning of a word. Aarav wanted to replace happy with the opposite meaning.",
+        prompt: "Which word should Aarav use?",
+        options: ["Rehappy", "Unhappy", "Dishappy", "Mishappy"],
+        answer: "Unhappy",
+        explanation: "The prefix un- means 'not'. Unhappy means not happy."
+      },
+      {
+        context: "The school librarian noticed that many books had been arranged incorrectly. She asked the students to rearrange the books properly. Riya wondered how the word rearrange got its meaning.",
+        prompt: "Which explanation is correct?",
+        options: [
+          "The suffix -re means 'a person who does something'.",
+          "The prefix -arrange means 'wrongly'.",
+          "The word has no prefix because arrange already means arrange again.",
+          "The prefix re- means 'again', so rearrange means arrange again."
+        ],
+        answer: "The prefix re- means 'again', so rearrange means arrange again.",
+        explanation: "The prefix re- means 'again'. Rearrange means to arrange again."
+      },
+      {
+        context: "During a science activity, students had to complete sentences using suitable words. Meera wrote: 'The instructions were clear, so nobody could misunderstand them.' The teacher asked her to identify the word that means 'understand wrongly'.",
+        prompt: "Which word should Meera choose?",
+        options: ["Misunderstand", "Reunderstand", "Ununderstand", "Preunderstand"],
+        answer: "Misunderstand",
+        explanation: "The prefix mis- means wrongly or incorrectly. Misunderstand means to understand wrongly."
+      },
+      {
+        context: "A chef prepared food before the guests arrived. The students described the action in a sentence: 'The chef cooked the meal before the guests came.' The teacher asked them to use a word with a prefix that means 'before'.",
+        prompt: "Which word should they use?",
+        options: ["Recook", "Uncook", "Precook", "Miscook"],
+        answer: "Precook",
+        explanation: "The prefix pre- means before. Precook means cook before the actual time of serving."
+      },
+      {
+        context: "The art teacher asked students to describe a painting full of colour and beauty. Rohan wrote: 'The painting was beauty.' The teacher explained that suffixes can help form new words.",
+        prompt: "Which word should Rohan use?",
+        options: ["Beautyful", "Beautiful", "Beautyness", "Beautyless"],
+        answer: "Beautiful",
+        explanation: "The suffix -ful means full of. Beautiful means full of beauty."
+      },
+      {
+        context: "During a classroom discussion, students were describing qualities of a good friend. Anaya wrote: 'A good friend shows kindness.' The teacher asked how the word kindness was formed.",
+        prompt: "Which explanation is correct?",
+        options: [
+          "The suffix -ness is added to kind to show a quality or state.",
+          "The prefix kind- changes the meaning of ness.",
+          "The suffix -ness means a person who does something.",
+          "The word kindness means the opposite of kind."
+        ],
+        answer: "The suffix -ness is added to kind to show a quality or state.",
+        explanation: "The suffix -ness changes an adjective into a noun showing a quality or state."
+      },
+      {
+        context: "The teacher asked students to complete this sentence: 'The rabbit moved ______ across the garden.' The word should describe the way the rabbit moved.",
+        prompt: "Which option completes the sentence correctly?",
+        options: ["Slowness", "Slower", "Slowful", "Slowly"],
+        answer: "Slowly",
+        explanation: "The suffix -ly changes an adjective into an adverb. Slowly describes how the rabbit moved."
+      },
+      {
+        context: "During a vocabulary game, students had to find the opposite of the word careful. The teacher reminded them that some suffixes can create opposite meanings.",
+        prompt: "Which word is correct?",
+        options: ["Careful", "Careless", "Uncare", "Miscare"],
+        answer: "Careless",
+        explanation: "The suffix -less means without. Careless means without care."
+      },
+      {
+        context: "A learner saw the unfamiliar word hopeful in a story. The teacher asked the learner to break the word into parts to understand its meaning.",
+        prompt: "Which explanation is correct?",
+        options: [
+          "Hopeful means without hope because -ful removes meaning.",
+          "Hope + ful means full of hope.",
+          "Hopeful means hope again because of the prefix.",
+          "Hopeful means a person who gives hope."
+        ],
+        answer: "Hope + ful means full of hope.",
+        explanation: "The suffix -ful means full of. Hopeful means full of hope."
+      },
+      {
+        context: "During a spelling activity, students had to add a prefix to create a meaningful word. The teacher gave the root word: 'agree'",
+        prompt: "Which option creates a correct new word?",
+        options: ["Unagree", "Misagree", "Reagree", "Disagree"],
+        answer: "Disagree",
+        explanation: "The prefix dis- means opposite or not. Disagree means not agree."
+      },
+      {
+        context: "The school was creating labels for people who perform different jobs. A student wrote: 'A person who paints is called a paintful.' The teacher asked the learner to correct the word.",
+        prompt: "Which word is correct?",
+        options: ["Paintless", "Painting", "Painter", "Paintness"],
+        answer: "Painter",
+        explanation: "The suffix -er is added to show a person who does an action. Painter means a person who paints."
+      },
+      {
+        context: "During a vocabulary challenge, students had to complete the sentence: 'The superhero was ______ because he helped everyone.' The teacher wanted students to use a word formed using a suffix meaning 'full of'.",
+        prompt: "Which option is correct?",
+        options: ["Helpful", "Helpness", "Unhelpful", "Mishelpful"],
+        answer: "Helpful",
+        explanation: "The suffix -ful means full of. Helpful means full of help or able to give help."
+      }
+    ];
+
+    // Interactive Engine Architecture
+    class StateController {
+      constructor(data) {
+        this.data = data;
+        this.currentIndex = 0;
+        this.score = 0;
+        this.timer = null;
+        this.timeLeft = 45; // Standard rule for grade 5
+        this.attempts = 0;
+        this.hasAnswered = false;
+      }
+
+      initQuiz() {
+        document.getElementById('intro-card').classList.add('hidden');
+        document.getElementById('game-card').classList.remove('hidden');
+        this.loadQuestion();
+      }
+
+      loadQuestion() {
+        this.hasAnswered = false;
+        this.attempts = 0;
+        this.timeLeft = 45;
+        
+        // Reset Visual Elements
+        document.getElementById('next-btn').classList.add('hidden');
+        document.getElementById('feedback-panel').className = "feedback-box hidden";
+        
+        const qData = this.data[this.currentIndex];
+        
+        // Update Metadata
+        document.getElementById('progress-text').innerText = `Q: ${this.currentIndex + 1}/${this.data.length}`;
+        document.getElementById('score-text').innerText = `Score: ${this.score}`;
+        document.getElementById('q-context').innerText = qData.context;
+        document.getElementById('q-prompt').innerText = qData.prompt;
+        
+        const optBox = document.getElementById('options-box');
+        optBox.innerHTML = '';
+
+        qData.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerHTML = `<span>${opt}</span><span class="indicator-icon"></span>`;
+          btn.onclick = () => this.evaluateSelection(btn, opt);
+          optBox.appendChild(btn);
+        });
+
+        this.startTimer();
+      }
+
+      startTimer() {
+        clearInterval(this.timer);
+        const timerBadge = document.getElementById('timer');
+        timerBadge.classList.remove('warning');
+        timerBadge.innerText = this.timeLeft;
+
+        this.timer = setInterval(() => {
+          this.timeLeft--;
+          timerBadge.innerText = this.timeLeft;
+
+          if (this.timeLeft <= 10) {
+            timerBadge.classList.add('warning');
+          }
+
+          if (this.timeLeft <= 0) {
+            clearInterval(this.timer);
+            this.handleTimeout();
+          }
+        }, 1000);
+      }
+
+      evaluateSelection(selectedBtn, chosenValue) {
+        if (this.hasAnswered) return;
+
+        const qData = this.data[this.currentIndex];
+        const isCorrect = (chosenValue === qData.answer);
+
+        if (isCorrect) {
+          clearInterval(this.timer);
+          this.hasAnswered = true;
+          this.score++;
+          document.getElementById('score-text').innerText = `Score: ${this.score}`;
+          
+          selectedBtn.classList.add('correct-glow');
+          selectedBtn.querySelector('.indicator-icon').innerHTML = '✓';
+          
+          triggerStarConfetti();
+          playSound('snd-correct');
+          this.showFinalFeedback(true);
+        } else {
+          this.attempts++;
+          selectedBtn.classList.add('animate-shake');
+          setTimeout(() => selectedBtn.classList.remove('animate-shake'), 400);
+
+          if (this.attempts === 1) {
+            // Give 1 explicit retry attempt
+            selectedBtn.classList.add('wrong-glow');
+            selectedBtn.querySelector('.indicator-icon').innerHTML = '×';
+            selectedBtn.disabled = true;
+            playSound('snd-wrong');
+            
+            const feed = document.getElementById('feedback-panel');
+            feed.className = "feedback-box retry-alert";
+            feed.innerText = "That's not quite right. Try again! Analyze the prefix/suffix meaning carefully.";
+            feed.classList.remove('hidden');
+          } else {
+            // Second incorrect attempt reveals final path
+            clearInterval(this.timer);
+            this.hasAnswered = true;
+            selectedBtn.classList.add('wrong-glow');
+            selectedBtn.querySelector('.indicator-icon').innerHTML = '×';
+            playSound('snd-wrong');
+            this.revealCorrectAnswer();
+            this.showFinalFeedback(false);
+          }
+        }
+      }
+
+      revealCorrectAnswer() {
+        const qData = this.data[this.currentIndex];
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => {
+          if (btn.innerText.includes(qData.answer)) {
+            btn.classList.add('correct-glow');
+            btn.querySelector('.indicator-icon').innerHTML = '✓';
+          }
+        });
+      }
+
+      handleTimeout() {
+        this.hasAnswered = true;
+        this.revealCorrectAnswer();
+        
+        const feed = document.getElementById('feedback-panel');
+        feed.className = "feedback-box explanation-alert";
+        feed.innerText = `Time is up! ` + this.data[this.currentIndex].explanation;
+        feed.classList.remove('hidden');
+        
+        document.getElementById('next-btn').classList.remove('hidden');
+        this.disableAllOptions();
+      }
+
+      showFinalFeedback(isCorrect) {
+        const feed = document.getElementById('feedback-panel');
+        feed.className = "feedback-box explanation-alert";
+        
+        if (isCorrect) {
+          feed.innerText = "Excellent working! " + this.data[this.currentIndex].explanation;
+        } else {
+          feed.innerText = "Incorrect. " + this.data[this.currentIndex].explanation;
+        }
+        
+        feed.classList.remove('hidden');
+        document.getElementById('next-btn').classList.remove('hidden');
+        this.disableAllOptions();
+      }
+
+      disableAllOptions() {
+        document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+      }
+
+      handleNext() {
+        this.currentIndex++;
+        if (this.currentIndex < this.data.length) {
+          this.loadQuestion();
+        } else {
+          this.showResults();
+        }
+      }
+
+      showResults() {
+        document.getElementById('game-card').classList.add('hidden');
+        document.getElementById('result-card').classList.remove('hidden');
+        
+        const finalScoreStr = `${this.score}/${this.data.length}`;
+        document.getElementById('final-score-display').innerText = finalScoreStr;
+        
+        const evalMsg = document.getElementById('final-evaluation-msg');
+        const percentage = (this.score / this.data.length) * 100;
+        
+        if (percentage >= 80) {
+          evalMsg.innerText = "Superb! You've mastered the building blocks of words perfectly. You are officially a Word Detective!";
+          playSound('snd-victory');
+          triggerStarConfetti();
+        } else if (percentage >= 50) {
+          evalMsg.innerText = "Good effort! You understand most prefixes and suffixes, but brush up on a few rule interactions to score perfectly next time.";
+        } else {
+          evalMsg.innerText = "Keep practicing! Reviewing standard roots, prefixes like mis-, un-, and suffixes like -ness or -ly will make you a pro in no time.";
+        }
+      }
+    }
+
+    // Audio Engine Handling
+    function playSound(elementId) {
+      const sound = document.getElementById(elementId);
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Audio play deferred due to browser auto-play privacy: ", e));
+      }
+    }
+
+    // Canvas Graphical Starburst Layer System
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class StarParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 6 + 4;
+        this.speedX = Math.random() * 8 - 4;
+        this.speedY = Math.random() * -6 - 3;
+        this.gravity = 0.2;
+        this.color = `hsla(${Math.random() * 50 + 45}, 100%, 60%, 1)`;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.02 + 0.015;
+      }
+
+      update() {
+        this.speedY += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.alpha -= this.decay;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        // Draw real star vector path
+        for (let i = 0; i < 5; i++) {
+          ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * this.size + this.x,
+                     Math.sin((18 + i * 72) * Math.PI / 180) * this.size + this.y);
+          ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * (this.size/2) + this.x,
+                     Math.sin((54 + i * 72) * Math.PI / 180) * (this.size/2) + this.y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function triggerStarConfetti() {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      for (let i = 0; i < 40; i++) {
+        particles.push(new StarParticle(centerX, centerY));
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].alpha <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // Application Lifecycle entry
+    const quizController = new StateController(quizDataset);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Hold Branding for exactly 5 seconds, then flip views seamlessly
+      setTimeout(() => {
+        document.getElementById('brand-screen').style.display = 'none';
+        document.getElementById('intro-card').classList.remove('hidden');
+      }, 5000);
+    });
+  </script>
+</body>
+</html>
