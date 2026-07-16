@@ -1,1 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>Innovine - Punctuation Challenge</title>
+<style>
+  :root{
+    --bg1:#eef7ff;
+    --bg2:#f7f4ff;
+    --card:rgba(255,255,255,.88);
+    --ink:#17324d;
+    --muted:#5e6f82;
+    --accent:#5b7cfa;
+    --accent2:#7b5cf6;
+    --good:#1db56a;
+    --bad:#e34d4d;
+    --line:#d9e3f1;
+    --shadow:0 18px 50px rgba(36,58,96,.12);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--bg1),var(--bg2));overflow-x:hidden}
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(91,124,250,.14), transparent 18%),
+      radial-gradient(circle at 80% 10%, rgba(123,92,246,.12), transparent 16%),
+      radial-gradient(circle at 70% 75%, rgba(29,181,106,.08), transparent 18%);
+    pointer-events:none;
+  }
+  .bg-stars,.bg-streamers{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+  .star,.streamer{position:absolute;opacity:.22;animation:float linear infinite}
+  .star{
+    width:8px;height:8px;background:var(--accent);
+    clip-path:polygon(50% 0%,61% 35%,98% 35%,69% 57%,79% 91%,50% 72%,21% 91%,31% 57%,2% 35%,39% 35%);
+  }
+  .streamer{
+    width:2px;height:90px;
+    background:linear-gradient(to bottom,rgba(91,124,250,0),rgba(91,124,250,.35),rgba(123,92,246,0));
+  }
+  @keyframes float{
+    from{transform:translateY(110vh) rotate(0deg)}
+    to{transform:translateY(-15vh) rotate(360deg)}
+  }
+  .app{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:14px;
+    position:relative;
+    z-index:1;
+  }
+  .screen{width:min(100%,920px);display:none}
+  .screen.active{display:block}
+  .panel{
+    background:var(--card);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.6);
+    box-shadow:var(--shadow);
+    border-radius:24px;
+    overflow:hidden;
+  }
+  .hero{padding:22px 18px;text-align:center;position:relative}
+  .hero h1,.hero h2{margin:0 0 8px}
+  .hero h1{font-size:clamp(1.7rem,4vw,3rem)}
+  .hero p{margin:0;color:var(--muted)}
+  .badge{
+    display:inline-flex;gap:8px;align-items:center;
+    background:#fff;
+    border:1px solid var(--line);
+    padding:8px 12px;
+    border-radius:999px;
+    color:var(--muted);
+    font-size:.92rem;
+    margin-bottom:14px;
+  }
+  .logo-wrap{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(247,250,255,.92);z-index:50;transition:opacity .5s ease,visibility .5s ease
+  }
+  .logo-wrap.hide{opacity:0;visibility:hidden}
+  .logo-box{
+    padding:22px 28px;border-radius:24px;background:white;box-shadow:0 18px 55px rgba(0,0,0,.12);text-align:center;animation:pop .8s ease
+  }
+  .logo-box img{
+    max-width:min(280px,70vw);
+    max-height:120px;
+    object-fit:contain;
+    display:block;
+  }
+  @keyframes pop{from{transform:scale(.9);opacity:.2}to{transform:scale(1);opacity:1}}
+  .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;padding:0 18px 18px}
+  .box{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:16px;
+  }
+  .stats{display:flex;gap:10px;flex-wrap:wrap}
+  .stat{
+    flex:1;min-width:120px;
+    background:linear-gradient(180deg,#fff,#f7f9ff);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:12px 14px;
+  }
+  .stat span{display:block;font-size:.82rem;color:var(--muted)}
+  .stat strong{font-size:1.2rem}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .btn{
+    border:none;border-radius:14px;padding:13px 16px;font-weight:700;cursor:pointer;transition:.2s;
+    flex:1;min-width:140px
+  }
+  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+  .btn.ghost{background:#f3f6ff;color:var(--ink);border:1px solid var(--line)}
+  .btn:hover{transform:translateY(-1px)}
+  .qtop{
+    display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap
+  }
+  .pill{
+    padding:8px 12px;border-radius:999px;background:#eff4ff;border:1px solid var(--line);
+    font-size:.9rem;color:#40536a
+  }
+  .question{font-size:1.25rem;line-height:1.45;margin:0 0 14px}
+  .options{display:grid;gap:10px}
+  .option{
+    width:100%;text-align:left;padding:14px 14px;border:1px solid var(--line);background:#fff;
+    border-radius:16px;cursor:pointer;font-size:1rem;color:var(--ink);transition:.15s;position:relative;overflow:hidden
+  }
+  .option:hover{border-color:#b8c8ff;background:#f8fbff}
+  .option.correct{background:#e9fbf1;border-color:#9ce0bb}
+  .option.wrong{background:#fff0f0;border-color:#f1b0b0}
+  .option:disabled{cursor:not-allowed;opacity:.95}
+  .feedback{
+    margin-top:12px;min-height:54px;padding:12px 14px;border-radius:16px;background:#f8fbff;border:1px dashed var(--line);color:var(--ink)
+  }
+  .feedback.good{background:#edfdf4;border-color:#a6e8bf}
+  .feedback.bad{background:#fff4f4;border-color:#f0b2b2}
+  .progress{
+    height:12px;background:#e8eef8;border-radius:999px;overflow:hidden;margin:12px 0 0
+  }
+  .progress > div{
+    height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .25s ease
+  }
+  .timerbar{
+    height:10px;background:#f1f4fb;border-radius:999px;overflow:hidden;margin-top:10px
+  }
+  .timerbar>div{
+    height:100%;width:100%;background:linear-gradient(90deg,#7b5cf6,#5b7cfa);transition:width .2s linear
+  }
+  .cross{
+    position:fixed;inset:auto 18px 18px auto;width:78px;height:78px;border-radius:50%;
+    background:rgba(255,255,255,.8);border:1px solid #ffd1d1;display:none;align-items:center;justify-content:center;
+    z-index:20;box-shadow:0 10px 30px rgba(227,77,77,.18)
+  }
+  .cross.show{display:flex;animation:pop .35s ease}
+  .cross svg{width:38px;height:38px;stroke:var(--bad);stroke-width:6;fill:none;stroke-linecap:round}
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:19;overflow:hidden}
+  .confetti span{
+    position:absolute;width:10px;height:10px;background:var(--good);
+    clip-path:polygon(50% 0%,61% 35%,98% 35%,69% 57%,79% 91%,50% 72%,21% 91%,31% 57%,2% 35%,39% 35%);
+    animation:fall 900ms ease-out forwards
+  }
+  @keyframes fall{to{transform:translateY(120px) rotate(180deg);opacity:0}}
+  .final{
+    display:grid;place-items:center;min-height:72vh;padding:18px
+  }
+  .final-card{max-width:720px;width:100%;text-align:center;padding:24px}
+  .score-big{
+    font-size:clamp(2.4rem,8vw,4.8rem);font-weight:900;color:var(--accent2);margin:8px 0
+  }
+  .small{color:var(--muted)}
+  @media (max-width:760px){
+    .grid{grid-template-columns:1fr}
+    .hero{padding:18px 16px}
+    .question{font-size:1.1rem}
+    .btn{min-width:0}
+  }
+</style>
+</head>
+<body>
+<div class="bg-stars" id="stars"></div>
+<div class="bg-streamers" id="streamers"></div>
+<div class="confetti" id="confetti"></div>
+<div class="cross" id="cross">
+  <svg viewBox="0 0 52 52">
+    <path d="M13 13 L39 39"></path>
+    <path d="M39 13 L13 39"></path>
+  </svg>
+</div>
 
+<div class="logo-wrap" id="logoWrap">
+  <div class="logo-box">
+    <img src="assets/logo.png" alt="Innovine logo">
+  </div>
+</div>
+
+<div class="app">
+  <section class="screen active" id="introScreen">
+    <div class="panel">
+      <div class="hero">
+        <div class="badge">Innovine • Chapter-based MCQ Interactive</div>
+        <h1>Punctuation Challenge</h1>
+        <p>Grade 5 • Clean, engaging, and mobile-friendly punctuation practice.</p>
+      </div>
+      <div class="grid">
+        <div class="box">
+          <h2 style="margin:0 0 10px">What you’ll do</h2>
+          <p class="small" style="margin:0 0 10px;line-height:1.6">
+            Read each question carefully, choose the best punctuation answer, and use the one retry if needed.
+            The game ends with a final challenge and a result screen.
+          </p>
+          <div class="btns">
+            <button class="btn primary" id="startBtn">Start Quiz</button>
+            <button class="btn ghost" id="reviewBtn">Review Rules</button>
+          </div>
+        </div>
+        <div class="box">
+          <div class="stats">
+            <div class="stat"><span>Total questions</span><strong id="totalCount">12</strong></div>
+            <div class="stat"><span>Timer</span><strong>45s</strong></div>
+            <div class="stat"><span>Retries</span><strong>1</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="quizScreen">
+    <div class="panel" style="margin-bottom:14px;padding:16px 18px">
+      <div class="qtop">
+        <div class="pill" id="qCounter">Question 1 of 12</div>
+        <div class="pill" id="scoreTracker">Score: 0</div>
+        <div class="pill" id="attemptTracker">Attempts left: 1</div>
+        <div class="pill" id="timerText">45s</div>
+      </div>
+      <div class="timerbar"><div id="timerBar"></div></div>
+      <div class="progress"><div id="progressBar"></div></div>
+    </div>
+
+    <div class="panel" style="padding:18px">
+      <p class="question" id="questionText"></p>
+      <div class="options" id="optionsBox"></div>
+      <div class="feedback" id="feedback">Choose the best answer to continue.</div>
+      <div class="btns" style="margin-top:14px">
+        <button class="btn ghost" id="nextBtn" disabled>Next</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="finalScreen">
+    <div class="final">
+      <div class="panel final-card">
+        <div class="badge">Final Challenge Complete</div>
+        <h2 style="margin:0 0 8px">Great work!</h2>
+        <div class="score-big" id="finalScore">0/12</div>
+        <p class="small" id="finalMsg">Your result is ready.</p>
+        <div class="btns" style="justify-content:center;max-width:420px;margin:18px auto 0">
+          <button class="btn primary" id="retryBtn">Play Again</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: 'Save trees they give us clean air',
+      o: [
+        'Save trees. They give us clean air.',
+        'Save trees? They give us clean air.',
+        'Save trees! They give us clean air?',
+        'Save trees, They give us clean air.'
+      ],
+      a: 0,
+      e: 'Two complete statements need full stops.'
+    },
+    {
+      q: 'yesterday i celebrated my birthday with my friends it was the happiest day of my life',
+      o: [
+        'Yesterday I celebrated my birthday with my friends, it was the happiest day of my life.',
+        'Yesterday I celebrated my birthday with my friends. It was the happiest day of my life.',
+        'Yesterday, I celebrated my birthday with my friends? It was the happiest day of my life.',
+        'Yesterday I celebrated my birthday with my friends! It was the happiest day of my life?'
+      ],
+      a: 1,
+      e: 'Use a full stop between two complete sentences.'
+    },
+    {
+      q: 'where do birds build their nests',
+      o: [
+        'Where do birds build their nests.',
+        'Where do birds build their nests!',
+        'Where do birds build their nests?',
+        'Where, do birds build their nests.'
+      ],
+      a: 2,
+      e: 'Questions end with a question mark.'
+    },
+    {
+      q: 'what a beautiful rainbow it is',
+      o: [
+        'What a beautiful rainbow it is?',
+        'What a beautiful rainbow, it is.',
+        'What a beautiful rainbow it is.',
+        'What a beautiful rainbow it is!'
+      ],
+      a: 3,
+      e: 'Exclamation marks show excitement or surprise.'
+    },
+    {
+      q: 'I need colours pencils glue and scissors',
+      o: [
+        'I need colours, pencils, glue and scissors.',
+        'I need colours pencils, glue and scissors.',
+        'I need colours, pencils glue, and scissors.',
+        'I need colours. pencils. glue and scissors.'
+      ],
+      a: 0,
+      e: 'Commas separate items in a list.'
+    },
+    {
+      q: 'I finished my project said Rahul',
+      o: [
+        '"I finished my project" said Rahul.',
+        '"I finished my project," said Rahul.',
+        '"I finished my project." said Rahul.',
+        '"I finished my project", said Rahul?'
+      ],
+      a: 1,
+      e: 'Direct speech often needs a comma before the reporting words.'
+    },
+    {
+      q: 'I enjoyed reading charlie and the chocolate factory',
+      o: [
+        'I enjoyed reading Charlie and the Chocolate Factory.',
+        'I enjoyed reading "Charlie and the Chocolate Factory."',
+        'I enjoyed reading Charlie and "the Chocolate Factory".',
+        'I enjoyed reading "Charlie and the chocolate factory".'
+      ],
+      a: 1,
+      e: 'Titles in speech marks should use capital letters for important words.'
+    },
+    {
+      q: 'dear students our science exhibition will be held on monday',
+      o: [
+        'Dear students, our science exhibition will be held on monday.',
+        'Dear Students our science exhibition will be held on Monday?',
+        'Dear Students, our science exhibition will be held on Monday.',
+        'Dear students our science exhibition will be held on monday!'
+      ],
+      a: 2,
+      e: 'Use a comma after the greeting and capital letters for Monday.'
+    },
+    {
+      q: 'The boys project won the competition.',
+      o: [
+        'The boys\' project won the competition.',
+        'The boys project\'s won the competition.',
+        'The boy\'s project won the competition.',
+        'The boy project won the competition.'
+      ],
+      a: 2,
+      e: 'An apostrophe shows possession for one boy.'
+    },
+    {
+      q: 'I cant come today because I am sick',
+      o: [
+        'I can\'t come today because I am sick.',
+        'I cant\' come today because I am sick.',
+        'I cant come today because I\'m sick?',
+        'I can\'t come today because I am sick?'
+      ],
+      a: 0,
+      e: 'An apostrophe is needed in can’t.'
+    },
+    {
+      q: 'the principal of green valley school visited mumbai on friday',
+      o: [
+        'The principal of Green valley school visited Mumbai on friday.',
+        'The Principal of Green Valley School visited Mumbai on Friday!',
+        'The principal of Green Valley School visited Mumbai on Friday.',
+        'The principal of green valley school visited mumbai on Friday?'
+      ],
+      a: 2,
+      e: 'Proper nouns and days begin with capital letters.'
+    },
+    {
+      q: 'wow we won the match said Ravi this is the best day ever',
+      o: [
+        '"Wow! We won the match," said Ravi. "This is the best day ever."',
+        '"Wow we won the match" said Ravi. "This is the best day ever?"',
+        'Wow! "We won the match," said Ravi. "This is the best day ever."',
+        '"Wow! We won the match." said Ravi, "This is the best day ever."'
+      ],
+      a: 0,
+      e: 'Use quotation marks, commas, and an exclamation mark for excitement.'
+    }
+  ];
+
+  let idx = 0;
+  let score = 0;
+  let usedRetry = false;
+  let answered = false;
+  let timer = null;
+  let timeLeft = 45;
+
+  const total = questions.length;
+  const els = {
+    intro: document.getElementById('introScreen'),
+    quiz: document.getElementById('quizScreen'),
+    final: document.getElementById('finalScreen'),
+    qText: document.getElementById('questionText'),
+    opts: document.getElementById('optionsBox'),
+    feed: document.getElementById('feedback'),
+    next: document.getElementById('nextBtn'),
+    qCounter: document.getElementById('qCounter'),
+    score: document.getElementById('scoreTracker'),
+    attempts: document.getElementById('attemptTracker'),
+    timerText: document.getElementById('timerText'),
+    timerBar: document.getElementById('timerBar'),
+    progress: document.getElementById('progressBar'),
+    finalScore: document.getElementById('finalScore'),
+    finalMsg: document.getElementById('finalMsg'),
+    cross: document.getElementById('cross')
+  };
+
+  function show(s){
+    [els.intro, els.quiz, els.final].forEach(x => x.classList.remove('active'));
+    s.classList.add('active');
+  }
+
+  function updateStats(){
+    els.qCounter.textContent = `Question ${idx + 1} of ${total}`;
+    els.score.textContent = `Score: ${score}`;
+    els.attempts.textContent = `Attempts left: ${usedRetry ? 0 : 1}`;
+    els.timerText.textContent = `${timeLeft}s`;
+    els.progress.style.width = `${(idx / total) * 100}%`;
+    els.timerBar.style.width = `${(timeLeft / 45) * 100}%`;
+  }
+
+  function confetti(){
+    const c = document.getElementById('confetti');
+    c.innerHTML = '';
+    for(let i = 0; i < 16; i++){
+      const s = document.createElement('span');
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top = '-12px';
+      s.style.background = ['#1db56a','#5b7cfa','#7b5cf6','#f4b740'][i % 4];
+      s.style.animationDuration = (700 + Math.random() * 450) + 'ms';
+      s.style.transform = `translateY(0) rotate(${Math.random() * 180}deg)`;
+      c.appendChild(s);
+    }
+    setTimeout(() => c.innerHTML = '', 1000);
+  }
+
+  function showCross(){
+    els.cross.classList.add('show');
+    setTimeout(() => els.cross.classList.remove('show'), 500);
+  }
+
+  function loadQ(){
+    answered = false;
+    usedRetry = false;
+    timeLeft = 45;
+    els.feed.className = 'feedback';
+    els.feed.textContent = 'Choose the best answer to continue.';
+    els.next.disabled = true;
+    els.next.textContent = idx === total - 1 ? 'See Final Challenge' : 'Next';
+    els.opts.innerHTML = '';
+
+    els.qText.textContent = questions[idx].q;
+    questions[idx].o.forEach((t, i) => {
+      const b = document.createElement('button');
+      b.className = 'option';
+      b.textContent = String.fromCharCode(65 + i) + '. ' + t;
+      b.onclick = () => pick(i, b);
+      els.opts.appendChild(b);
+    });
+
+    updateStats();
+    clearInterval(timer);
+    timer = setInterval(() => {
+      timeLeft--;
+      if(timeLeft <= 0){
+        clearInterval(timer);
+        handleWrong(true);
+      }
+      updateStats();
+    }, 1000);
+  }
+
+  function pick(i, b){
+    if(answered) return;
+    answered = true;
+    clearInterval(timer);
+    const correct = questions[idx].a;
+
+    if(i === correct){
+      score++;
+      b.classList.add('correct');
+      els.feed.className = 'feedback good';
+      els.feed.textContent = 'Correct! ' + questions[idx].e;
+      confetti();
+      els.next.disabled = false;
+    }else{
+      b.classList.add('wrong');
+      handleWrong(false, i);
+    }
+    updateStats();
+  }
+
+  function handleWrong(fromTimer, choice){
+    showCross();
+
+    if(!usedRetry){
+      usedRetry = true;
+      answered = false;
+      els.feed.className = 'feedback bad';
+      els.feed.textContent = fromTimer ? 'Time is up. You have one retry for this question.' : 'Not quite. Try once more.';
+      els.attempts.textContent = 'Attempts left: 0';
+
+      if(choice !== undefined && els.opts.children[choice]){
+        els.opts.children[choice].classList.add('wrong');
+      }
+
+      els.opts.querySelectorAll('button').forEach(x => x.disabled = false);
+
+      timeLeft = 45;
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        if(timeLeft <= 0){
+          clearInterval(timer);
+          handleWrong(true);
+        }
+        updateStats();
+      }, 1000);
+    }else{
+      const correct = questions[idx].a;
+      if(els.opts.children[correct]) els.opts.children[correct].classList.add('correct');
+      els.feed.className = 'feedback bad';
+      els.feed.textContent = `Correct answer: ${String.fromCharCode(65 + correct)}. ${questions[idx].o[correct]} — ${questions[idx].e}`;
+      els.opts.querySelectorAll('button').forEach(x => x.disabled = true);
+      els.next.disabled = false;
+      usedRetry = true;
+    }
+    updateStats();
+  }
+
+  function next(){
+    idx++;
+    if(idx < total){
+      loadQ();
+    }else{
+      clearInterval(timer);
+      els.finalScore.textContent = `${score}/${total}`;
+      const pct = Math.round((score / total) * 100);
+      els.finalMsg.textContent =
+        pct >= 90 ? 'Excellent punctuation skills!' :
+        pct >= 70 ? 'Strong work. Keep practicing to sharpen accuracy.' :
+        'Good effort. A second round can help build confidence.';
+      show(els.final);
+    }
+  }
+
+  function start(){
+    idx = 0;
+    score = 0;
+    usedRetry = false;
+    show(els.quiz);
+    loadQ();
+  }
+
+  function makeDecor(){
+    const s = document.getElementById('stars');
+    const st = document.getElementById('streamers');
+    for(let i = 0; i < 18; i++){
+      const x = document.createElement('div');
+      x.className = 'star';
+      x.style.left = Math.random() * 100 + '%';
+      x.style.animationDuration = (14 + Math.random() * 12) + 's';
+      x.style.animationDelay = (-Math.random() * 20) + 's';
+      s.appendChild(x);
+    }
+    for(let i = 0; i < 10; i++){
+      const x = document.createElement('div');
+      x.className = 'streamer';
+      x.style.left = Math.random() * 100 + '%';
+      x.style.animationDuration = (18 + Math.random() * 12) + 's';
+      x.style.animationDelay = (-Math.random() * 25) + 's';
+      st.appendChild(x);
+    }
+  }
+
+  document.getElementById('startBtn').onclick = start;
+  document.getElementById('retryBtn').onclick = () => {
+    idx = 0;
+    score = 0;
+    usedRetry = false;
+    show(els.intro);
+  };
+  document.getElementById('nextBtn').onclick = next;
+  document.getElementById('reviewBtn').onclick = () => {
+    alert('Use capital letters, full stops, question marks, exclamation marks, commas, quotation marks, and apostrophes carefully.');
+  };
+
+  makeDecor();
+  updateStats();
+  setTimeout(() => document.getElementById('logoWrap').classList.add('hide'), 5000);
+</script>
+</body>
+</html>
