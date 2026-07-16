@@ -50,14 +50,17 @@
         }
 
         .splash-logo {
-            max-width: 240px;
+            max-width: 280px;
+            width: 80%;
+            height: auto;
+            display: block;
             opacity: 0;
-            transform: scale(0.9);
-            animation: splashEntrance 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            transform: scale(0.95);
+            animation: splashEntrance 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         @keyframes splashEntrance {
-            0% { opacity: 0; transform: scale(0.9); }
+            0% { opacity: 0; transform: scale(0.95); }
             100% { opacity: 1; transform: scale(1); }
         }
 
@@ -333,7 +336,7 @@
 
 <!-- 1. INTRO SPLASH SCREEN BLOCK (5 SECONDS) -->
 <div id="splash" class="splash-screen">
-    <img src="g5/chp23/homophonesandhomographs/assets/logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/240x90?text=INNOVINE'">
+    <img src="g5/chp23/homophonesandhomographs/assets/logo.png" alt="Innovine Logo" class="splash-logo">
 </div>
 
 <!-- 2. MAIN QUIZ APP (INCLUDES LIVE SCORE BOARD & TIMER) -->
@@ -379,7 +382,7 @@
 </div>
 
 <script>
-    // Asset folder base path configuration
+    // Exact requested asset pathway matching target directories
     const assetBase = 'g5/chp23/homophonesandhomographs/assets/';
     const audioCorrect = new Audio(assetBase + 'correct.mp3');
     const audioWrong = new Audio(assetBase + 'wrong.mp3');
@@ -508,13 +511,13 @@
     let score = 0;
     let canAnswer = true;
     
-    // Countdown Timer Settings
+    // Countdown Timer Configurations
     let countdownInterval;
     let timeLeft = 20;
     const maxTime = 20;
-    const circleCircumference = 138; // 2 * pi * r (22)
+    const circleCircumference = 138;
 
-    // --- LOGO SPLASH DISMISS TIMER (5000ms) ---
+    // --- DISMISS LOGO SPLASH SCREEN AT EXACTLY 5000MS ---
     window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             const splash = document.getElementById('splash');
@@ -550,7 +553,6 @@
         const offset = circleCircumference - (timeLeft / maxTime) * circleCircumference;
         timerProgressCircle.style.strokeDashoffset = offset;
 
-        // Visual warning system change color when running out of time
         if (timeLeft <= 5) {
             timerProgressCircle.style.stroke = 'var(--danger)';
         } else {
@@ -563,7 +565,7 @@
         canAnswer = false;
 
         audioWrong.currentTime = 0;
-        audioWrong.play().catch(e => console.log("Audio awaiting activation."));
+        audioWrong.play().catch(e => console.log("Audio feedback error bypassed."));
 
         const currentQuestion = questions[currentQuestionIndex];
         const buttons = document.querySelectorAll('.option-btn');
@@ -581,7 +583,6 @@
         canAnswer = true;
         const currentQuestion = questions[currentQuestionIndex];
         
-        // Update live stats tracking
         document.getElementById('score-counter').innerText = `Score: ${score}/${questions.length}`;
         
         const progressPercent = (currentQuestionIndex / questions.length) * 100;
@@ -621,7 +622,7 @@
             document.getElementById('score-counter').innerText = `Score: ${score}/${questions.length}`;
             
             audioCorrect.currentTime = 0; 
-            audioCorrect.play().catch(e => console.log("Audio awaiting interaction."));
+            audioCorrect.play().catch(e => console.log("Audio play blocked until click interaction."));
         } else {
             selectedButton.classList.add('wrong');
             buttons.forEach(btn => {
@@ -631,7 +632,7 @@
             });
 
             audioWrong.currentTime = 0;
-            audioWrong.play().catch(e => console.log("Audio awaiting interaction."));
+            audioWrong.play().catch(e => console.log("Audio play blocked until click interaction."));
         }
 
         nextQuestionTransition();
@@ -673,7 +674,7 @@
         }
 
         audioClaps.currentTime = 0;
-        audioClaps.play().catch(e => console.log("Audio awaiting interaction."));
+        audioClaps.play().catch(e => console.log("Audio play blocked until click interaction."));
     }
 
     function resetQuiz() {
