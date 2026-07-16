@@ -387,7 +387,7 @@
   </div>
 
   <script>
-    // Configured Dataset Structures
+    // Configured Dataset Structures (With Clean Text Escaping)
     const quizDataset = [
       {
         context: "During a class discussion, the teacher asked students to describe a friend who always shares secrets by mistake. Riya wrote: 'My brother always lets the cat out of the bag when we plan surprises.' The teacher asked the class what Riya meant by this sentence.",
@@ -430,7 +430,7 @@
           "The student was spoiling the fun for others."
         ],
         answer: "The student was spoiling the fun for others.",
-        explanation: A "wet blanket" is a person who spoils the enjoyment or excitement of others.
+        explanation: "A \"wet blanket\" is a person who spoils the enjoyment or excitement of others."
       },
       {
         context: "The school announced a surprise holiday for students. Everyone was excited because such holidays do not happen often.",
@@ -473,7 +473,7 @@
           "He is telling a false or unbelievable story."
         ],
         answer: "He is telling a false or unbelievable story.",
-        explanation: A \"cock and bull story\" means a made-up or unbelievable story."
+        explanation: "A \"cock and bull story\" means a made-up or unbelievable story."
       },
       {
         context: "A teacher told students: 'Do not judge the new student too quickly. Give him a chance to prove himself.'",
@@ -716,7 +716,6 @@
         this.speedX = Math.random() * 8 - 4;
         this.speedY = Math.random() * -6 - 4;
         this.gravity = 0.22;
-        // Jungle gold and bright yellow tones
         this.color = `hsla(${Math.random() * 25 + 40}, 100%, 55%, 1)`;
         this.alpha = 1;
         this.decay = Math.random() * 0.02 + 0.015;
@@ -765,15 +764,17 @@
     }
     paintFrame();
 
-    // App Startup Boot sequence
+    // App Startup Boot sequence - Hardcoded to guarantee fallback activation
     const quizController = new CoreEngine(quizDataset);
 
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        document.getElementById('brand-screen').style.display = 'none';
-        document.getElementById('intro-card').classList.remove('hidden');
-      }, 5000);
-    });
+    setTimeout(() => {
+      const brand = document.getElementById('brand-screen');
+      const intro = document.getElementById('intro-card');
+      if (brand && brand.style.display !== 'none') {
+        brand.style.display = 'none';
+        intro.classList.remove('hidden');
+      }
+    }, 5000);
   </script>
 </body>
 </html>
