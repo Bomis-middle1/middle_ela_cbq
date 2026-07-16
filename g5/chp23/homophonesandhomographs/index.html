@@ -1,1 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 5: Chapter 23 - Homophones & Homographs Quiz</title>
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --success: #2ec4b6;
+            --danger: #e71d36;
+            --dark: #2b2d42;
+            --light: #f8f9fa;
+            
+            /* Candy Theme Palettes */
+            --candy-pink: #ffafcc;
+            --candy-blue: #a2d2ff;
+            --candy-purple: #bde0fe;
+            --candy-yellow: #ffc8dd;
+            --candy-text: #4c3b4e;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eef2f7;
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SPLASH SCREEN (VISIBLE FOR 5 SECONDS) --- */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #111215;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s;
+        }
+
+        .splash-logo {
+            max-width: 240px;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: splashEntrance 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes splashEntrance {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .splash-screen.vanished {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* --- MAIN INTERACTIVE CONTAINER --- */
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+            width: 90%;
+            max-width: 620px;
+            padding: 30px 30px 40px 30px;
+            box-sizing: border-box;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease, background 0.5s ease;
+        }
+
+        .quiz-container.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .quiz-container.candy-mode {
+            background: linear-gradient(135deg, #fff5f8 0%, #f0f7ff 100%);
+            border: 4px dashed var(--candy-pink);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--light);
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* --- LIVE STATS HEADER (SCORE & TIMER) --- */
+        .quiz-stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 0 5px;
+        }
+
+        .live-score-board {
+            background-color: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .timer-circle-wrapper {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+
+        .timer-circle-svg {
+            transform: rotate(-90deg);
+            width: 50px;
+            height: 50px;
+        }
+
+        .timer-circle-svg circle {
+            fill: none;
+            stroke-width: 4;
+        }
+
+        .timer-circle-bg {
+            stroke: #e2e8f0;
+        }
+
+        .timer-circle-progress {
+            stroke: var(--primary);
+            stroke-dasharray: 138;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+        }
+
+        .timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 15px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .context-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            margin: 0 0 10px 0;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .question-box {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            color: #1e293b;
+            text-align: left;
+        }
+
+        .hint-box {
+            font-style: italic;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 14px;
+            text-align: left;
+            background-color: #f8fafc;
+            padding: 10px 15px;
+            border-left: 3px solid #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            color: #334155;
+            transition: all 0.2s ease;
+            line-height: 1.4;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: var(--success);
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background-color: #f8d7da;
+            border-color: var(--danger);
+            color: #721c24;
+        }
+
+        /* --- CANDY CELEBRATION SCREEN --- */
+        .result-screen {
+            display: none;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .candy-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #d84a77;
+            text-shadow: 1px 1px 0px #fff, 2px 2px 0px rgba(255, 175, 204, 0.5);
+            margin: 0 0 15px 0;
+        }
+
+        .candy-badge {
+            display: inline-block;
+            background-color: var(--candy-blue);
+            color: #2b5c8f;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 0px #7fb7eb;
+        }
+
+        .candy-score-wrapper {
+            background: white;
+            border-radius: 50%;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 25px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 6px solid var(--candy-yellow);
+            box-shadow: 0 8px 16px rgba(255, 175, 204, 0.3);
+        }
+
+        .score-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--candy-text);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 12px;
+            color: #9c8c9e;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .candy-feedback {
+            color: var(--candy-text);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            padding: 0 10px;
+            line-height: 1.4;
+        }
+
+        .candy-btn {
+            background-color: #ff70a6;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 5px 0px #d6477d, 0 8px 15px rgba(255, 112, 166, 0.4);
+            transition: all 0.1s ease;
+        }
+
+        .candy-btn:hover {
+            transform: translateY(1px);
+            box-shadow: 0 4px 0px #d6477d, 0 6px 10px rgba(255, 112, 166, 0.4);
+        }
+
+        .candy-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0px #d6477d;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 1. INTRO SPLASH SCREEN BLOCK (5 SECONDS) -->
+<div id="splash" class="splash-screen">
+    <img src="g5/chp23/homophonesandhomographs/assets/logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/240x90?text=INNOVINE'">
+</div>
+
+<!-- 2. MAIN QUIZ APP (INCLUDES LIVE SCORE BOARD & TIMER) -->
+<div id="quiz-container" class="quiz-container">
+    <!-- Active Gameplay Layout -->
+    <div id="quiz-view">
+        <div class="progress-bar">
+            <div id="progress" class="progress-fill"></div>
+        </div>
+
+        <!-- Live Scoreboard and Round Countdown Circle Indicator -->
+        <div class="quiz-stats-header">
+            <div id="score-counter" class="live-score-board">Score: 0/10</div>
+            <div class="timer-circle-wrapper">
+                <svg class="timer-circle-svg">
+                    <circle class="timer-circle-bg" cx="25" cy="25" r="22"></circle>
+                    <circle id="timer-progress" class="timer-circle-progress" cx="25" cy="25" r="22"></circle>
+                </svg>
+                <div id="timer-text" class="timer-text">20</div>
+            </div>
+        </div>
+
+        <div id="context" class="context-title"></div>
+        <div id="question" class="question-box">Loading question...</div>
+        <div id="hint" class="hint-box"></div>
+
+        <div id="options" class="options-grid"></div>
+    </div>
+
+    <!-- Final Candy-Themed Results Layout -->
+    <div id="result-view" class="result-screen">
+        <div class="candy-badge">Chapter 23 Sweet Success!</div>
+        <h2 class="candy-title">Sweet Treats & Complete Beats!</h2>
+        
+        <div class="candy-score-wrapper">
+            <p class="score-number" id="final-score">0/10</p>
+            <p class="score-label">Correct</p>
+        </div>
+
+        <p class="candy-feedback" id="feedback-text">You wrapped up this chapter like a sweet piece of candy! 🍬</p>
+        <button class="candy-btn" onclick="resetQuiz()">Play Again</button>
+    </div>
+</div>
+
+<script>
+    // Asset folder base path configuration
+    const assetBase = 'g5/chp23/homophonesandhomographs/assets/';
+    const audioCorrect = new Audio(assetBase + 'correct.mp3');
+    const audioWrong = new Audio(assetBase + 'wrong.mp3');
+    const audioClaps = new Audio(assetBase + 'freesound_community-claps-44774.mp3');
+
+    // Input Dataset (10 Contextual Questions on Homophones & Homographs)
+    const questions = [
+        {
+            context: "Q1. Editing a School Newsletter (Homophones)",
+            sentence: 'The school newsletter team was preparing an article about a beach-cleaning activity. Aarav wrote: "The students collected waste near the see and helped protect marine life." Which option should Aarav use instead?',
+            hint: 'Sea means a large body of water, while see means to look with your eyes.',
+            options: [
+                'A. The students collected waste near the sea and helped protect marine life.',
+                'B. The students collected waste near the see and helped protect marine life.',
+                'C. The students collected waste near the see and helped protect marine life.',
+                'D. The students collected waste near the sea and helped protect marine life.'
+            ],
+            answer: 'A. The students collected waste near the sea and helped protect marine life.'
+        },
+        {
+            context: "Q2. Writing a Story About a Race (Homophones)",
+            sentence: 'During a story-writing activity, Meera wrote: "Rohan was very happy because he had one the race." Which sentence is written correctly?',
+            hint: 'Won means achieved victory, while one refers to the number 1.',
+            options: [
+                'A. Rohan was very happy because he had won the race.',
+                'B. Rohan was very happy because he had one the race.',
+                'C. Rohan was very happy because he had won the rase.',
+                'D. Rohan was very happy because he had one the rase.'
+            ],
+            answer: 'A. Rohan was very happy because he had won the race.'
+        },
+        {
+            context: "Q3. Creating a Recipe Card (Homophones)",
+            sentence: 'The cooking club was preparing a recipe card. A student wrote: "Add two cups of flower to the mixture." Which correction should be made?',
+            hint: 'Flour is used for cooking and baking. Flower is a part of a plant.',
+            options: [
+                'A. Add two cups of flour to the mixture because flour is used in baking.',
+                'B. Add two cups of flower to the mixture because flowers are used in recipes.',
+                'C. Add two cups of flour to the mixture because flour means a blooming plant.',
+                'D. Add two cups of flower to the mixture because flower and flour have the same meaning.'
+            ],
+            answer: 'A. Add two cups of flour to the mixture because flour is used in baking.'
+        },
+        {
+            context: "Q4. Understanding a Character Description (Homographs)",
+            sentence: 'While reading a story, students found the sentence: "The bat flew out of the cave after sunset." One student thought it was the same bat used in cricket. What should the reader understand from the sentence?',
+            hint: 'Bat is a homograph because it can mean a flying animal or a cricket bat. The context shows it is an animal here.',
+            options: [
+                'A. The bat was used to hit a ball in a game.',
+                'B. The word bat means a flying animal in this sentence.',
+                'C. The word bat means a wooden object kept in a cave.',
+                'D. The sentence has a spelling mistake.'
+            ],
+            answer: 'B. The word bat means a flying animal in this sentence.'
+        },
+        {
+            context: "Q5. Choosing the Correct Word for a Message (Homophones)",
+            sentence: 'The class monitor wrote a message: "Please come ___ my classroom after lunch." She wanted to say that the classroom was the location. Which word completes the sentence correctly?',
+            hint: 'By means near or beside. Buy means purchase and bye is used when leaving.',
+            options: ['A. buy', 'B. bye', 'C. by', 'D. bi'],
+            answer: 'C. by'
+        },
+        {
+            context: "Q6. Understanding Different Meanings of the Same Word (Homographs)",
+            sentence: 'During a science activity, the teacher wrote: "The children watched the live experiment carefully." What does "live" mean in this sentence?',
+            hint: 'Live can mean "to be alive" or "happening now". Here it means a real-time experiment.',
+            options: [
+                'A. To remain alive.',
+                'B. A performance happening in real time.',
+                'C. A place where people stay.',
+                'D. Something that is no longer happening.'
+            ],
+            answer: 'B. A performance happening in real time.'
+        },
+        {
+            context: "Q7. Correcting a Greeting Card (Homophones)",
+            sentence: 'A student designed a birthday card and wrote: "You are the best sun a person could have." Which correction makes the meaning correct?',
+            hint: 'Son means a male child, while sun is the star that gives light and heat.',
+            options: [
+                'A. You are the best son a person could have.',
+                'B. You are the best sun a person could have.',
+                'C. You are the best son a person could have.',
+                'D. You are the best son a person could have.'
+            ],
+            answer: 'A. You are the best son a person could have.'
+        },
+        {
+            context: "Q8. Interpreting a Sentence from a Story (Homograph)",
+            sentence: 'A storybook says: "The dog began to bark loudly near the old tree." A learner thought bark only referred to the sound made by a dog. What other meaning can the word "bark" have?',
+            hint: 'Bark is a homograph. It can mean a dog\'s sound or the outer covering of a tree.',
+            options: [
+                'A. The outer covering of a tree.',
+                'B. The sound made by a bird.',
+                'C. A type of animal food.',
+                'D. A place where dogs sleep.'
+            ],
+            answer: 'A. The outer covering of a tree.'
+        },
+        {
+            context: "Q9. Editing a Dialogue (Homophones)",
+            sentence: 'During a play rehearsal, a student wrote: "I will meet you over their after the show." Which sentence is correct?',
+            hint: 'There refers to a place. Their shows possession and they\'re means they are.',
+            options: [
+                'A. I will meet you over there after the show.',
+                'B. I will meet you over their after the show.',
+                'C. I will meet you over they\'re after the show.',
+                'D. I will meet you over there\'re after the show.'
+            ],
+            answer: 'A. I will meet you over there after the show.'
+        },
+        {
+            context: "Q10. Analysing a Sentence in Context (Homograph)",
+            sentence: 'During a debate, a student said: "I object to this decision because it is unfair." What does "object" mean in this sentence?',
+            hint: 'Object is a homograph. It can mean a thing or to disagree, depending on the context.',
+            options: [
+                'A. A thing that can be seen or touched.',
+                'B. To disagree or protest against something.',
+                'C. A classroom item kept on a table.',
+                'D. A goal that someone wants to achieve.'
+            ],
+            answer: 'B. To disagree or protest against something.'
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let canAnswer = true;
+    
+    // Countdown Timer Settings
+    let countdownInterval;
+    let timeLeft = 20;
+    const maxTime = 20;
+    const circleCircumference = 138; // 2 * pi * r (22)
+
+    // --- LOGO SPLASH DISMISS TIMER (5000ms) ---
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('splash');
+            const container = document.getElementById('quiz-container');
+            
+            splash.classList.add('vanished');
+            container.classList.add('active');
+            
+            loadQuestion(); 
+        }, 5000); 
+    });
+
+    function startTimer() {
+        clearInterval(countdownInterval);
+        timeLeft = maxTime;
+        updateTimerVisuals();
+        
+        countdownInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerVisuals();
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                handleTimeout();
+            }
+        }, 1000);
+    }
+
+    function updateTimerVisuals() {
+        document.getElementById('timer-text').innerText = timeLeft;
+        
+        const timerProgressCircle = document.getElementById('timer-progress');
+        const offset = circleCircumference - (timeLeft / maxTime) * circleCircumference;
+        timerProgressCircle.style.strokeDashoffset = offset;
+
+        // Visual warning system change color when running out of time
+        if (timeLeft <= 5) {
+            timerProgressCircle.style.stroke = 'var(--danger)';
+        } else {
+            timerProgressCircle.style.stroke = 'var(--primary)';
+        }
+    }
+
+    function handleTimeout() {
+        if (!canAnswer) return;
+        canAnswer = false;
+
+        audioWrong.currentTime = 0;
+        audioWrong.play().catch(e => console.log("Audio awaiting activation."));
+
+        const currentQuestion = questions[currentQuestionIndex];
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => {
+            btn.setAttribute('disabled', 'true');
+            if (btn.innerText === currentQuestion.answer) {
+                btn.classList.add('correct');
+            }
+        });
+
+        nextQuestionTransition();
+    }
+
+    function loadQuestion() {
+        canAnswer = true;
+        const currentQuestion = questions[currentQuestionIndex];
+        
+        // Update live stats tracking
+        document.getElementById('score-counter').innerText = `Score: ${score}/${questions.length}`;
+        
+        const progressPercent = (currentQuestionIndex / questions.length) * 100;
+        document.getElementById('progress').style.width = `${progressPercent}%`;
+
+        document.getElementById('context').innerText = currentQuestion.context;
+        document.getElementById('question').innerText = currentQuestion.sentence;
+        document.getElementById('hint').innerText = `Hint: ${currentQuestion.hint}`;
+        
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+
+        currentQuestion.options.forEach(option => {
+            const button = document.createElement('button');
+            button.innerText = option;
+            button.classList.add('option-btn');
+            button.addEventListener('click', () => handleAnswer(button, option));
+            optionsContainer.appendChild(button);
+        });
+
+        startTimer();
+    }
+
+    function handleAnswer(selectedButton, selectedOption) {
+        if (!canAnswer) return;
+        canAnswer = false;
+        clearInterval(countdownInterval);
+
+        const currentQuestion = questions[currentQuestionIndex];
+        const buttons = document.querySelectorAll('.option-btn');
+
+        buttons.forEach(btn => btn.setAttribute('disabled', 'true'));
+
+        if (selectedOption === currentQuestion.answer) {
+            selectedButton.classList.add('correct');
+            score++;
+            document.getElementById('score-counter').innerText = `Score: ${score}/${questions.length}`;
+            
+            audioCorrect.currentTime = 0; 
+            audioCorrect.play().catch(e => console.log("Audio awaiting interaction."));
+        } else {
+            selectedButton.classList.add('wrong');
+            buttons.forEach(btn => {
+                if (btn.innerText === currentQuestion.answer) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            audioWrong.currentTime = 0;
+            audioWrong.play().catch(e => console.log("Audio awaiting interaction."));
+        }
+
+        nextQuestionTransition();
+    }
+
+    function nextQuestionTransition() {
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }, 2000);
+    }
+
+    function showResults() {
+        clearInterval(countdownInterval);
+        document.getElementById('progress').style.width = '100%';
+        document.getElementById('quiz-view').style.display = 'none';
+        
+        const container = document.getElementById('quiz-container');
+        container.classList.add('candy-mode');
+        
+        const resultView = document.getElementById('result-view');
+        resultView.style.display = 'block';
+        
+        document.getElementById('final-score').innerText = `${score}/${questions.length}`;
+        
+        const feedbackText = document.getElementById('feedback-text');
+        if(score === questions.length) {
+            feedbackText.innerText = "Perfect! You wrapped up this final chapter like a master confectioner! 🍬🏆";
+        } else if (score >= 7) {
+            feedbackText.innerText = "Super sweet score! Your homophone and homograph skills are top-tier! 🍭⭐";
+        } else if (score >= 5) {
+            feedbackText.innerText = "Good job! You got a sweet taste of victory, keep practicing! 🍪✨";
+        } else {
+            feedbackText.innerText = "Don't sour! A little more practice and you will crush these tricky words next time! 🍫";
+        }
+
+        audioClaps.currentTime = 0;
+        audioClaps.play().catch(e => console.log("Audio awaiting interaction."));
+    }
+
+    function resetQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        
+        const container = document.getElementById('quiz-container');
+        container.classList.remove('candy-mode');
+        
+        document.getElementById('result-view').style.display = 'none';
+        document.getElementById('quiz-view').style.display = 'block';
+        loadQuestion();
+    }
+</script>
+
+</body>
+</html>
