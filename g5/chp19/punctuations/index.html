@@ -416,6 +416,7 @@
       els.feed.className = 'feedback good';
       els.feed.textContent = 'Correct! ' + questions[idx].e;
       playAudio(els.correctSound);
+      setTimeout(() => playAudio(els.clapSound), 180);
       confetti();
       els.next.disabled = false;
     }else{
@@ -477,14 +478,12 @@
         pct >= 70 ? 'Strong work. Keep practicing to sharpen accuracy.' :
         'Good effort. A second round can help build confidence.';
       show(els.final);
-      if(pct >= 70) playAudio(els.clapSound);
     }
   }
 
   function start(){
     if(!started){
       started = true;
-      playAudio(els.clapSound);
     }
     idx = 0;
     score = 0;
