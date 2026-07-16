@@ -1,1 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Idioms and Phrases Interactive Quiz</title>
+  <style>
+    :root {
+      --bg-gradient-start: #f0f7f4;
+      --bg-gradient-end: #e1ede6;
+      --primary: #2e7d32;
+      --primary-dark: #1b5e20;
+      --accent-idiom: #fef3c7;
+      --success: #2ecc71;
+      --error: #e74c3c;
+      --text: #2c3e50;
+      --text-light: #607d8b;
+      --card-bg: #ffffff;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Background Jungle Micro-Animations */
+    .bg-animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-shape {
+      position: absolute;
+      opacity: 0.25;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .bg-shape:nth-child(1) {
+      top: 15%; left: 8%; width: 35px; height: 35px;
+      border: 4px solid var(--primary); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    }
+
+    .bg-shape:nth-child(2) {
+      top: 75%; left: 85%; width: 25px; height: 25px;
+      background-color: #ffb300; border-radius: 50%;
+    }
+
+    .bg-shape:nth-child(3) {
+      top: 35%; left: 90%; width: 40px; height: 40px;
+      border: 3px solid #81c784; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      animation-duration: 25s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+      50% { transform: translateY(-25px) rotate(90deg) scale(1.1); }
+    }
+
+    /* Main Layout Containers */
+    .app-container {
+      width: 100%;
+      max-width: 650px;
+      padding: 20px;
+      z-index: 10;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 12px 35px rgba(46, 125, 50, 0.08);
+      padding: 35px;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s ease;
+      border: 1px solid #d4e5d9;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Brand Splash Screen Module */
+    #brand-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #ffffff;
+      z-index: 100;
+    }
+
+    .logo-img {
+      max-width: 200px;
+      height: auto;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    /* Game Header and Metrics Bar */
+    .quiz-meta {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .quiz-title {
+      font-size: 1.9rem;
+      margin-bottom: 25px;
+      color: var(--primary);
+    }
+
+    .metrics-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: #f4f9f5;
+      padding: 12px 24px;
+      border-radius: 50px;
+      border: 1px solid #e1ede4;
+    }
+
+    .metric {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--primary);
+    }
+
+    .timer-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timer-badge {
+      background: var(--primary);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 14px;
+      min-width: 45px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .timer-badge.warning {
+      background: var(--error);
+      animation: shake 0.5s infinite;
+    }
+
+    /* Core Context Block Formatting */
+    .question-box {
+      text-align: left;
+      margin-bottom: 25px;
+    }
+
+    .context-text {
+      background: #fafdfb;
+      border-left: 5px solid var(--primary);
+      padding: 16px;
+      border-radius: 0 12px 12px 0;
+      font-size: 1.08rem;
+      line-height: 1.55;
+      margin-bottom: 18px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .prompt-text {
+      font-size: 1.18rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    /* Options Interactive Configuration */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 25px;
+    }
+
+    .option-btn {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 16px 22px;
+      text-align: left;
+      font-size: 1.05rem;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: #f4fbf5;
+    }
+
+    .option-btn.selected {
+      border-color: var(--primary);
+      background: #edf7ee;
+    }
+
+    .option-btn.correct-glow {
+      border-color: var(--success);
+      background: #edfff4;
+      color: #155724;
+      font-weight: 600;
+    }
+
+    .option-btn.wrong-glow {
+      border-color: var(--error);
+      background: #fff5f5;
+      color: #721c24;
+    }
+
+    .indicator-icon {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    /* Custom Feedback Display Window */
+    .feedback-box {
+      margin-top: 20px;
+      padding: 16px 22px;
+      border-radius: 14px;
+      text-align: left;
+      font-size: 1.02rem;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-box.retry-alert {
+      background: #fffde7;
+      border: 1px solid #fff59d;
+      color: #f57f17;
+      font-weight: 500;
+    }
+
+    .feedback-box.explanation-alert {
+      background: #f1f7f3;
+      border-left: 4px solid var(--text-light);
+      color: var(--text);
+    }
+
+    /* Master Call to Action Control Elements */
+    .action-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      border-radius: 35px;
+      cursor: pointer;
+      box-shadow: 0 5px 18px rgba(46, 125, 50, 0.25);
+      transition: all 0.2s ease;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .action-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    /* Confetti Canvas Container Layer */
+    #confetti-canvas {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    /* Micro Animation Keyframes */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .animate-shake {
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Asset Hooks -->
+  <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+  <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+  <audio id="snd-victory" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+  <!-- Interactive FX Render Layer -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="bg-animation">
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+    <div class="bg-shape"></div>
+  </div>
+
+  <!-- Mandatory Brand Splash Module -->
+  <div id="brand-screen">
+    <img src="assets/logo.png" alt="Innovine Logo" class="logo-img">
+  </div>
+
+  <div class="app-container">
+    <!-- Intro / Entrance Hub Container -->
+    <div id="intro-card" class="card hidden">
+      <div class="quiz-meta">Grade 5 • English Vocabulary</div>
+      <h1 class="quiz-title">Idioms Exploration Trail</h1>
+      <p style="font-size: 1.12rem; line-height: 1.6; margin-bottom: 25px; color: var(--text-light);">
+        Welcome to the Idioms & Phrases Expedition! Discover the hidden, real meanings behind visual expressions. 
+        You have exactly <strong>45 seconds</strong> to think through each question. Let's begin!
+      </p>
+      <button class="action-btn" onclick="quizController.initQuiz()">Start Expedition</button>
+    </div>
+
+    <!-- Active Gameplay Interaction Screen -->
+    <div id="game-card" class="card hidden">
+      <div class="metrics-bar">
+        <div class="metric" id="progress-text">Q: 1/10</div>
+        <div class="timer-container">
+          <span>⏰</span>
+          <div id="timer" class="timer-badge">45</div>
+        </div>
+        <div class="metric" id="score-text">Score: 0</div>
+      </div>
+
+      <div class="question-box">
+        <div id="q-context" class="context-text"></div>
+        <div id="q-prompt" class="prompt-text"></div>
+      </div>
+
+      <div class="options-grid" id="options-box"></div>
+
+      <div id="feedback-panel" class="feedback-box hidden"></div>
+      
+      <button id="next-btn" class="action-btn hidden" onclick="quizController.handleNext()">Continue Trail</button>
+    </div>
+
+    <!-- Summary / Performance Feedback Dashboard -->
+    <div id="result-card" class="card hidden">
+      <div class="quiz-meta">Expedition Complete</div>
+      <h1 class="quiz-title">Trail Log Review</h1>
+      <div style="font-size: 3.8rem; font-weight: 800; color: var(--primary); margin: 20px 0;" id="final-score-display">
+        0/10
+      </div>
+      <p id="final-evaluation-msg" style="font-size: 1.15rem; margin-bottom: 30px; color: var(--text-light); line-height: 1.6;"></p>
+      <button class="action-btn" onclick="location.reload()">Explore Again</button>
+    </div>
+  </div>
+
+  <script>
+    // Configured Dataset Structures
+    const quizDataset = [
+      {
+        context: "During a class discussion, the teacher asked students to describe a friend who always shares secrets by mistake. Riya wrote: 'My brother always lets the cat out of the bag when we plan surprises.' The teacher asked the class what Riya meant by this sentence.",
+        prompt: "Which explanation is correct?",
+        options: [
+          "Her brother takes a cat out of a bag.",
+          "Her brother reveals secrets accidentally.",
+          "Her brother keeps all surprises inside a bag.",
+          "Her brother likes carrying a cat around."
+        ],
+        answer: "Her brother reveals secrets accidentally.",
+        explanation: "'Let the cat out of the bag' means to reveal a secret accidentally."
+      },
+      {
+        context: "The school organising a quiz competition. Aarav had practised many times and felt that answering the questions would be very easy.",
+        prompt: "Which idiom best describes Aarav's situation?",
+        options: ["A piece of cake", "A wet blanket", "Once in a blue moon", "To smell a rat"],
+        answer: "A piece of cake",
+        explanation: "'A piece of cake' means something that is very easy to do."
+      },
+      {
+        context: "During the art exhibition, Meera's painting received many compliments. Her teacher said: 'Meera, your hard work has finally paid off.'",
+        prompt: "What did the teacher mean?",
+        options: [
+          "Meera received money for her painting.",
+          "Meera's painting was sold in the exhibition.",
+          "Meera's efforts produced a good result.",
+          "Meera stopped working on her painting."
+        ],
+        answer: "Meera's efforts produced a good result.",
+        explanation: "'Paid off' means that efforts resulted in success."
+      },
+      {
+        context: "During a group project, one student kept complaining and did not allow others to enjoy the activity. The teacher said: 'Do not be a wet blanket during the project.'",
+        prompt: "What did the teacher mean?",
+        options: [
+          "The student should bring a blanket for the activity.",
+          "The student should complete the project quickly.",
+          "The student should work alone without help.",
+          "The student was spoiling the fun for others."
+        ],
+        answer: "The student was spoiling the fun for others.",
+        explanation: A "wet blanket" is a person who spoils the enjoyment or excitement of others.
+      },
+      {
+        context: "The school announced a surprise holiday for students. Everyone was excited because such holidays do not happen often.",
+        prompt: "Which idiom best describes this situation?",
+        options: ["Once in a blue moon", "Full of beans", "A bed of roses", "Hit the nail on the head"],
+        answer: "Once in a blue moon",
+        explanation: "'Once in a blue moon' means something that happens very rarely."
+      },
+      {
+        context: "During the examination, Kabir carefully checked his answers before submitting his paper. His friend said: 'You really hit the nail on the head by checking your answers carefully.'",
+        prompt: "What does the idiom mean here?",
+        options: [
+          "Kabir made a mistake in his answers.",
+          "Kabir did something exactly right.",
+          "Kabir finished his paper very quickly.",
+          "Kabir copied answers from someone."
+        ],
+        answer: "Kabir did something exactly right.",
+        explanation: "'Hit the nail on the head' means to do or say something exactly correctly."
+      },
+      {
+        context: "A student was writing a story about a character who had a lot of energy and was always ready to participate.",
+        prompt: "Which sentence uses the correct idiom?",
+        options: [
+          "The puppy was a wet blanket because it ran around happily.",
+          "The puppy was once in a blue moon because it played outside.",
+          "The puppy was full of beans and jumped around all day.",
+          "The puppy was a piece of cake because it was energetic."
+        ],
+        answer: "The puppy was full of beans and jumped around all day.",
+        explanation: "'Full of beans' means full of energy and enthusiasm."
+      },
+      {
+        context: "During a discussion, Neha said: 'I don't believe his excuse. I think he is making up a cock and bull story.'",
+        prompt: "What does Neha mean?",
+        options: [
+          "He is telling a story about animals.",
+          "He is sharing an interesting true story.",
+          "He is creating a story for a competition.",
+          "He is telling a false or unbelievable story."
+        ],
+        answer: "He is telling a false or unbelievable story.",
+        explanation: A \"cock and bull story\" means a made-up or unbelievable story."
+      },
+      {
+        context: "A teacher told students: 'Do not judge the new student too quickly. Give him a chance to prove himself.'",
+        prompt: "Which idiom matches this advice?",
+        options: [
+          "Give someone the cold shoulder",
+          "Turn over a new leaf",
+          "Pull someone's leg",
+          "Have your cake and eat it too"
+        ],
+        answer: "Turn over a new leaf",
+        explanation: "'Turn over a new leaf' means to make a fresh start or improve one's behaviour."
+      },
+      {
+        context: "During a science project, Rohan tried to do all the tasks alone because he wanted everything to be perfect. His teammate told him: 'You cannot have your cake and eat it too.'",
+        prompt: "What does this idiom mean?",
+        options: [
+          "You cannot expect to have two opposite advantages at the same time.",
+          "You should always share your food with others.",
+          "You should not work hard on difficult tasks.",
+          "You should celebrate every achievement with cake."
+        ],
+        answer: "You cannot expect to have two opposite advantages at the same time.",
+        explanation: "'Have your cake and eat it too' means wanting two benefits that may not be possible together."
+      }
+    ];
+
+    // Engine Core Controller
+    class CoreEngine {
+      constructor(data) {
+        this.data = data;
+        this.currentIndex = 0;
+        this.score = 0;
+        this.timer = null;
+        this.timeLeft = 45;
+        this.attempts = 0;
+        this.hasAnswered = false;
+      }
+
+      initQuiz() {
+        document.getElementById('intro-card').classList.add('hidden');
+        document.getElementById('game-card').classList.remove('hidden');
+        this.loadQuestion();
+      }
+
+      loadQuestion() {
+        this.hasAnswered = false;
+        this.attempts = 0;
+        this.timeLeft = 45;
+        
+        document.getElementById('next-btn').classList.add('hidden');
+        document.getElementById('feedback-panel').className = "feedback-box hidden";
+        
+        const qData = this.data[this.currentIndex];
+        
+        document.getElementById('progress-text').innerText = `Q: ${this.currentIndex + 1}/${this.data.length}`;
+        document.getElementById('score-text').innerText = `Score: ${this.score}`;
+        document.getElementById('q-context').innerText = qData.context;
+        document.getElementById('q-prompt').innerText = qData.prompt;
+        
+        const optBox = document.getElementById('options-box');
+        optBox.innerHTML = '';
+
+        qData.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerHTML = `<span>${opt}</span><span class="indicator-icon"></span>`;
+          btn.onclick = () => this.evaluateSelection(btn, opt);
+          optBox.appendChild(btn);
+        });
+
+        this.startTimer();
+      }
+
+      startTimer() {
+        clearInterval(this.timer);
+        const timerBadge = document.getElementById('timer');
+        timerBadge.classList.remove('warning');
+        timerBadge.innerText = this.timeLeft;
+
+        this.timer = setInterval(() => {
+          this.timeLeft--;
+          timerBadge.innerText = this.timeLeft;
+
+          if (this.timeLeft <= 10) {
+            timerBadge.classList.add('warning');
+          }
+
+          if (this.timeLeft <= 0) {
+            clearInterval(this.timer);
+            this.handleTimeout();
+          }
+        }, 1000);
+      }
+
+      evaluateSelection(selectedBtn, chosenValue) {
+        if (this.hasAnswered) return;
+
+        const qData = this.data[this.currentIndex];
+        const isCorrect = (chosenValue === qData.answer);
+
+        if (isCorrect) {
+          clearInterval(this.timer);
+          this.hasAnswered = true;
+          this.score++;
+          document.getElementById('score-text').innerText = `Score: ${this.score}`;
+          
+          selectedBtn.classList.add('correct-glow');
+          selectedBtn.querySelector('.indicator-icon').innerHTML = '✓';
+          
+          triggerStarBurst();
+          playSound('snd-correct');
+          this.showFinalFeedback(true);
+        } else {
+          this.attempts++;
+          selectedBtn.classList.add('animate-shake');
+          setTimeout(() => selectedBtn.classList.remove('animate-shake'), 400);
+
+          if (this.attempts === 1) {
+            selectedBtn.classList.add('wrong-glow');
+            selectedBtn.querySelector('.indicator-icon').innerHTML = '×';
+            selectedBtn.disabled = true;
+            playSound('snd-wrong');
+            
+            const feed = document.getElementById('feedback-panel');
+            feed.className = "feedback-box retry-alert";
+            feed.innerText = "That's close, but the idiom hides a different clue. Try one more time!";
+            feed.classList.remove('hidden');
+          } else {
+            clearInterval(this.timer);
+            this.hasAnswered = true;
+            selectedBtn.classList.add('wrong-glow');
+            selectedBtn.querySelector('.indicator-icon').innerHTML = '×';
+            playSound('snd-wrong');
+            this.revealCorrectAnswer();
+            this.showFinalFeedback(false);
+          }
+        }
+      }
+
+      revealCorrectAnswer() {
+        const qData = this.data[this.currentIndex];
+        document.querySelectorAll('.option-btn').forEach(btn => {
+          if (btn.innerText.includes(qData.answer)) {
+            btn.classList.add('correct-glow');
+            btn.querySelector('.indicator-icon').innerHTML = '✓';
+          }
+        });
+      }
+
+      handleTimeout() {
+        this.hasAnswered = true;
+        this.revealCorrectAnswer();
+        
+        const feed = document.getElementById('feedback-panel');
+        feed.className = "feedback-box explanation-alert";
+        feed.innerText = `Out of time! ` + this.data[this.currentIndex].explanation;
+        feed.classList.remove('hidden');
+        
+        document.getElementById('next-btn').classList.remove('hidden');
+        this.disableAllOptions();
+      }
+
+      showFinalFeedback(isCorrect) {
+        const feed = document.getElementById('feedback-panel');
+        feed.className = "feedback-box explanation-alert";
+        
+        if (isCorrect) {
+          feed.innerText = "Spot on! " + this.data[this.currentIndex].explanation;
+        } else {
+          feed.innerText = "Not quite. " + this.data[this.currentIndex].explanation;
+        }
+        
+        feed.classList.remove('hidden');
+        document.getElementById('next-btn').classList.remove('hidden');
+        this.disableAllOptions();
+      }
+
+      disableAllOptions() {
+        document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+      }
+
+      handleNext() {
+        this.currentIndex++;
+        if (this.currentIndex < this.data.length) {
+          this.loadQuestion();
+        } else {
+          this.showResults();
+        }
+      }
+
+      showResults() {
+        document.getElementById('game-card').classList.add('hidden');
+        document.getElementById('result-card').classList.remove('hidden');
+        
+        const finalStr = `${this.score}/${this.data.length}`;
+        document.getElementById('final-score-display').innerText = finalStr;
+        
+        const evalMsg = document.getElementById('final-evaluation-msg');
+        const percentage = (this.score / this.data.length) * 100;
+        
+        if (percentage >= 80) {
+          evalMsg.innerText = "Magnificent! You traversed the entire idiom trail perfectly and uncovered every figurative context clue.";
+          playSound('snd-victory');
+          triggerStarBurst();
+        } else if (percentage >= 50) {
+          evalMsg.innerText = "Excellent tracking! You safely mapped out most idioms. Recheck the tricky ones to secure a perfect log entry next time.";
+        } else {
+          evalMsg.innerText = "Don't lose your way! Review common contextual phrases like 'a wet blanket' or 'cock and bull story' to breeze through the trail.";
+        }
+      }
+    }
+
+    // Audio Playback Engine
+    function playSound(id) {
+      const clip = document.getElementById(id);
+      if (clip) {
+        clip.currentTime = 0;
+        clip.play().catch(err => console.log("System Audio deferral logged: ", err));
+      }
+    }
+
+    // High Performance FX Star Layer
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class JungleStar {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 7 + 4;
+        this.speedX = Math.random() * 8 - 4;
+        this.speedY = Math.random() * -6 - 4;
+        this.gravity = 0.22;
+        // Jungle gold and bright yellow tones
+        this.color = `hsla(${Math.random() * 25 + 40}, 100%, 55%, 1)`;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.02 + 0.015;
+      }
+
+      update() {
+        this.speedY += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.alpha -= this.decay;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * this.size + this.x,
+                     Math.sin((18 + i * 72) * Math.PI / 180) * this.size + this.y);
+          ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * (this.size/2) + this.x,
+                     Math.sin((54 + i * 72) * Math.PI / 180) * (this.size/2) + this.y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function triggerStarBurst() {
+      const cX = window.innerWidth / 2;
+      const cY = window.innerHeight / 2;
+      for (let i = 0; i < 45; i++) {
+        particles.push(new JungleStar(cX, cY));
+      }
+    }
+
+    function paintFrame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].alpha <= 0) particles.splice(i, 1);
+      }
+      requestAnimationFrame(paintFrame);
+    }
+    paintFrame();
+
+    // App Startup Boot sequence
+    const quizController = new CoreEngine(quizDataset);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        document.getElementById('brand-screen').style.display = 'none';
+        document.getElementById('intro-card').classList.remove('hidden');
+      }, 5000);
+    });
+  </script>
+</body>
+</html>
