@@ -49,14 +49,35 @@
             transition: opacity 0.8s ease-in-out, visibility 0.8s;
         }
 
+        /* Container to handle image hiding and text fallback showing */
+        .logo-container {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: splashEntrance 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
         .splash-logo {
             max-width: 280px;
             width: 80%;
             height: auto;
             display: block;
-            opacity: 0;
-            transform: scale(0.95);
-            animation: splashEntrance 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        /* Custom stylish fallback design if the image fails to load */
+        .logo-fallback {
+            display: none;
+            color: #ffffff;
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            border: 4px solid #ffffff;
+            padding: 15px 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            font-family: 'Montserrat', 'Arial Black', sans-serif;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
         @keyframes splashEntrance {
@@ -111,7 +132,7 @@
             transition: width 0.3s ease;
         }
 
-        /* --- LIVE STATS HEADER (SCORE & TIMER) --- */
+        /* --- LIVE STATS HEADER --- */
         .quiz-stats-header {
             display: flex;
             justify-content: space-between;
@@ -236,7 +257,7 @@
             color: #721c24;
         }
 
-        /* --- CANDY CELEBRATION SCREEN --- */
+        /* --- FINAL SUCCESS SCREEN --- */
         .result-screen {
             display: none;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -334,20 +355,23 @@
 </head>
 <body>
 
-<!-- 1. INTRO SPLASH SCREEN BLOCK (5 SECONDS) -->
+<!-- 1. INTRO SPLASH SCREEN BLOCK (5 SECONDS WITH SMART BACKUP) -->
 <div id="splash" class="splash-screen">
-    <img src="g5/chp23/homophonesandhomographs/assets/logo.png" alt="Innovine Logo" class="splash-logo">
+    <div class="logo-container">
+        <!-- Logo Image attempts to load your exact path -->
+        <img id="logo-img" src="g5/chp23/homophonesandhomographs/assets/logo.png" alt="Innovine" class="splash-logo" onerror="handleLogoError()">
+        <!-- Fallback text styling kicks in automatically if the image can't be fetched -->
+        <div id="logo-text" class="logo-fallback">INNOVINE</div>
+    </div>
 </div>
 
 <!-- 2. MAIN QUIZ APP (INCLUDES LIVE SCORE BOARD & TIMER) -->
 <div id="quiz-container" class="quiz-container">
-    <!-- Active Gameplay Layout -->
     <div id="quiz-view">
         <div class="progress-bar">
             <div id="progress" class="progress-fill"></div>
         </div>
 
-        <!-- Live Scoreboard and Round Countdown Circle Indicator -->
         <div class="quiz-stats-header">
             <div id="score-counter" class="live-score-board">Score: 0/10</div>
             <div class="timer-circle-wrapper">
@@ -382,7 +406,13 @@
 </div>
 
 <script>
-    // Exact requested asset pathway matching target directories
+    // Fallback handler if local directory issues block logo.png
+    function handleLogoError() {
+        document.getElementById('logo-img').style.display = 'none';
+        document.getElementById('logo-text').style.display = 'block';
+    }
+
+    // Exact requested asset directory setup
     const assetBase = 'g5/chp23/homophonesandhomographs/assets/';
     const audioCorrect = new Audio(assetBase + 'correct.mp3');
     const audioWrong = new Audio(assetBase + 'wrong.mp3');
@@ -565,7 +595,7 @@
         canAnswer = false;
 
         audioWrong.currentTime = 0;
-        audioWrong.play().catch(e => console.log("Audio feedback error bypassed."));
+        audioWrong.play().catch(e => console.log("Audio feedback bypassed."));
 
         const currentQuestion = questions[currentQuestionIndex];
         const buttons = document.querySelectorAll('.option-btn');
@@ -622,7 +652,7 @@
             document.getElementById('score-counter').innerText = `Score: ${score}/${questions.length}`;
             
             audioCorrect.currentTime = 0; 
-            audioCorrect.play().catch(e => console.log("Audio play blocked until click interaction."));
+            audioCorrect.play().catch(e => console.log("Audio blocked by browser autoplay restriction."));
         } else {
             selectedButton.classList.add('wrong');
             buttons.forEach(btn => {
@@ -632,7 +662,7 @@
             });
 
             audioWrong.currentTime = 0;
-            audioWrong.play().catch(e => console.log("Audio play blocked until click interaction."));
+            audioWrong.play().catch(e => console.log("Audio blocked by browser autoplay restriction."));
         }
 
         nextQuestionTransition();
@@ -674,7 +704,7 @@
         }
 
         audioClaps.currentTime = 0;
-        audioClaps.play().catch(e => console.log("Audio play blocked until click interaction."));
+        audioClaps.play().catch(e => console.log("Audio blocked by browser autoplay restriction."));
     }
 
     function resetQuiz() {
