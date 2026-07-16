@@ -18,22 +18,72 @@
             background-color: #eef2f7;
             color: var(--dark);
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow: hidden;
         }
 
+        /* --- INNOVINE SPLASH SCREEN --- */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #111215; /* Sleek, dark premium backdrop */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s;
+        }
+
+        .splash-logo {
+            max-width: 220px;
+            opacity: 0;
+            transform: scale(0.85);
+            animation: splashEntrance 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes splashEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .splash-screen.vanished {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* --- MAIN INTERACTIVE CONTAINER --- */
         .quiz-container {
             background: white;
             border-radius: 16px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            width: 100%;
+            width: 90%;
             max-width: 550px;
             padding: 30px;
             box-sizing: border-box;
             text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .quiz-container.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .header {
@@ -45,8 +95,8 @@
             margin-bottom: 25px;
         }
 
-        .logo {
-            max-height: 60px;
+        .game-logo {
+            max-height: 50px;
             margin-bottom: 10px;
             object-fit: contain;
         }
@@ -160,12 +210,17 @@
 </head>
 <body>
 
-<div class="quiz-container">
-    <!-- Active Quiz View -->
+<!-- 1. INNOVINE SPLASH SCREEN LAYER -->
+<div id="splash" class="splash-screen">
+    <img src="assets/logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/200x80?text=INNOVINE'">
+</div>
+
+<!-- 2. GAME WINDOW CONTAINER -->
+<div id="quiz-container" class="quiz-container">
+    <!-- Active Game View -->
     <div id="quiz-view">
         <div class="header">
-            <!-- Dynamically uses your logo asset -->
-            <img src="assets/logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+            <img src="assets/logo.png" alt="Innovine Logo" class="game-logo" onerror="this.style.display='none'">
             <h1>Figures of Speech</h1>
             <h2>Grade 5 • Chapter 22</h2>
         </div>
@@ -177,9 +232,7 @@
         <div id="question" class="question-box">Loading question...</div>
         <div id="hint" class="hint-box"></div>
 
-        <div id="options" class="options-grid">
-            <!-- Buttons dynamically injected here -->
-        </div>
+        <div id="options" class="options-grid"></div>
     </div>
 
     <!-- Final Results View -->
@@ -197,7 +250,7 @@
     const audioWrong = new Audio('assets/wrong.mp3');
     const audioClaps = new Audio('assets/freesound_community-claps-44774.mp3');
 
-    // 5th Grade Level Figure of Speech Questions
+    // Lesson Data
     const questions = [
         {
             sentence: '"The autumn leaves danced across the driveway."',
@@ -213,7 +266,7 @@
         },
         {
             sentence: '"Our classroom was a zoo during the indoor recess."',
-            hint: 'Directly states the classroom *was* a zoo without using "like" or "as".',
+            hint: 'Directly states the classroom was a zoo without using "like" or "as".',
             options: ['Metaphor', 'Simile', 'Personification', 'Hyperbole'],
             answer: 'Metaphor'
         },
@@ -229,19 +282,32 @@
     let score = 0;
     let canAnswer = true;
 
+    // --- TIMED SPLASH HANDLER ---
+    window.addEventListener('DOMContentLoaded', () => {
+        // 1. Let the entrance CSS animation build for 1.8 seconds 
+        // 2. Then trigger the vanishing sequence
+        setTimeout(() => {
+            const splash = document.getElementById('splash');
+            const container = document.getElementById('quiz-container');
+            
+            splash.classList.add('vanished');       // Smoothly transitions splash layer out
+            container.classList.add('active');      // Fades up the core game layout
+            
+            // Render first question as soon as game reveals
+            loadQuestion(); 
+        }, 2500); 
+    });
+
     function loadQuestion() {
         canAnswer = true;
         const currentQuestion = questions[currentQuestionIndex];
         
-        // Update progress bar
         const progressPercent = (currentQuestionIndex / questions.length) * 100;
         document.getElementById('progress').style.width = `${progressPercent}%`;
 
-        // Set text items
         document.getElementById('question').innerText = currentQuestion.sentence;
         document.getElementById('hint').innerText = `Hint: ${currentQuestion.hint}`;
         
-        // Clear and build options buttons
         const optionsContainer = document.getElementById('options');
         optionsContainer.innerHTML = '';
 
@@ -261,21 +327,16 @@
         const currentQuestion = questions[currentQuestionIndex];
         const buttons = document.querySelectorAll('.option-btn');
 
-        // Disable all buttons immediately to freeze choices
         buttons.forEach(btn => btn.setAttribute('disabled', 'true'));
 
         if (selectedOption === currentQuestion.answer) {
-            // Correct Answer Actions
             selectedButton.classList.add('correct');
             score++;
             
-            audioCorrect.currentTime = 0; // Rewind in case of rapid clicks
-            audioCorrect.play().catch(e => console.log("Audio play blocked by browser autonomy laws until user interactions occur."));
+            audioCorrect.currentTime = 0; 
+            audioCorrect.play().catch(e => console.log("Audio play deferred until active user touch events."));
         } else {
-            // Wrong Answer Actions
             selectedButton.classList.add('wrong');
-            
-            // Highlight the correct answer for visual feedback
             buttons.forEach(btn => {
                 if (btn.innerText === currentQuestion.answer) {
                     btn.classList.add('correct');
@@ -283,10 +344,9 @@
             });
 
             audioWrong.currentTime = 0;
-            audioWrong.play().catch(e => console.log("Audio play blocked."));
+            audioWrong.play().catch(e => console.log("Audio play deferred."));
         }
 
-        // Advance to next screen after 2 seconds so they can see the correction
         setTimeout(() => {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
@@ -306,9 +366,8 @@
         
         document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
         
-        // Play the community celebration claps track
         audioClaps.currentTime = 0;
-        audioClaps.play().catch(e => console.log("Audio play blocked."));
+        audioClaps.play().catch(e => console.log("Audio play deferred."));
     }
 
     function resetQuiz() {
@@ -318,9 +377,6 @@
         document.getElementById('quiz-view').style.display = 'block';
         loadQuestion();
     }
-
-    // Initialize the module on script load
-    loadQuestion();
 </script>
 
 </body>
