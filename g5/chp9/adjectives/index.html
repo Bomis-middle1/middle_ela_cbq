@@ -26,7 +26,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
         }
 
@@ -86,7 +86,7 @@
             border: 3px solid #1f192e;
             border-radius: 16px;
             padding: 25px;
-            margin-bottom: 35px;
+            margin-bottom: 25px;
             position: relative;
             box-shadow: inset 0 0 20px rgba(0,210,211,0.2);
             overflow: hidden;
@@ -147,16 +147,25 @@
             background: rgba(255, 107, 107, 0.1) !important;
             border-color: var(--error) !important;
             color: #fff;
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .cross-badge { position: absolute; top: 8px; right: 12px; color: var(--error); font-size: 0.85rem; display: none; }
         .mod-block.wrong .cross-badge { display: inline; }
 
         .explanation-panel {
-            margin-top: 25px; background: rgba(0, 210, 211, 0.05);
-            border-left: 4px solid var(--neon-cyan); padding: 20px; border-radius: 8px;
-            display: none; font-size: 0.95rem; line-height: 1.6;
+            margin-top: 25px; 
+            background: rgba(0, 210, 211, 0.08);
+            border-left: 4px solid var(--neon-cyan); 
+            padding: 20px; 
+            border-radius: 8px;
+            display: none; 
+            font-size: 0.95rem; 
+            line-height: 1.6;
+            animation: fadeIn 0.3s ease-in-out;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .action-btn {
             background: linear-gradient(135deg, var(--neon-cyan) 0%, #00a8ff 100%);
@@ -217,14 +226,13 @@
             <div class="question-text" id="field-question">Question Statement</div>
         </div>
 
-        <div class="mod-grid" id="grid-options">
-            </div>
+        <div class="mod-grid" id="grid-options"></div>
 
         <div class="explanation-panel" id="box-explanation">
             <strong style="color:var(--neon-cyan); display:block; margin-bottom: 5px;">Director's Operational Note:</strong>
             <span id="text-explanation"></span>
             <br>
-            <button class="action-btn" style="padding: 8px 25px; font-size: 0.8rem;" onclick="app.stepNext()">Next Sequence</button>
+            <button class="action-btn" style="padding: 10px 28px; font-size: 0.85rem; margin-top: 15px;" onclick="app.stepNext()">Next Sequence</button>
         </div>
     </div>
 
@@ -286,11 +294,11 @@
                 explain: "The possessive modifier tracking a female singular owner directly preceding a singular noun is always 'her'."
             },
             {
-                context: "Word Formation Track: Root base 'care'",
-                question: "Which option correctly forms a descriptor adjective used to characterize individuals or items?",
-                options: ["careless", "caring", "carely", "carement"],
-                correct: 1,
-                explain: "'Caring' successfully shifts the root word into an active adjective category descriptor form."
+                context: "Word Formation Track: Base word 'care'",
+                question: "Form a positive descriptive adjective from 'care' that describes someone who shows kindness and concern for others.",
+                options: ["caring", "carefully", "carefulness", "carement"],
+                correct: 0,
+                explain: "'Caring' is a descriptive adjective formed from 'care' to describe a helpful, empathetic persona."
             },
             {
                 context: "Advanced Syntax Placement: \"He bought a shoes new black pair.\"",
@@ -300,11 +308,11 @@
                 explain: "Proper adjective ordering scales age attributes ('new') directly before color classifications ('black')."
             },
             {
-                context: "Critical Error Detection: \"There are little chairs in the auditorium for guests.\"",
-                question: "The inspector checks whether adjective usage is correct for countable nouns. What is the best correction?",
-                options: ["There are little chair in the auditorium.", "There are a little chairs in the auditorium.", "There are many chairs in the auditorium.", "There is little chairs in the auditorium."],
-                correct: 2,
-                explain: "Plural countable things like 'chairs' cannot take 'little'. 'Many' matches the description logic criteria."
+                context: "Critical Error Detection: \"There are little chairs in the auditorium for a massive audience of 500 guests.\"",
+                question: "The sentence incorrectly uses 'little' with countable chairs. Choose the option that fixes the modifier to show there are NOT enough chairs.",
+                options: ["There are few chairs in the auditorium.", "There are little chairs in the auditorium.", "There is little chair in the auditorium.", "There are a little chairs in the auditorium."],
+                correct: 0,
+                explain: "'Chairs' is a countable plural noun. 'Few' correctly expresses an insufficient number of countable items without 'little'."
             },
             {
                 context: "Context Demonstratives: \"___ charts here and ___ charts over there must be submitted.\"",
@@ -336,9 +344,11 @@
             init() {
                 setTimeout(() => {
                     const layer = document.getElementById('brand-layer');
-                    layer.style.opacity = '0';
-                    setTimeout(() => layer.style.display = 'none', 500);
-                }, 5000);
+                    if (layer) {
+                        layer.style.opacity = '0';
+                        setTimeout(() => layer.style.display = 'none', 500);
+                    }
+                }, 1500);
             }
 
             switchView(targetId) {
@@ -423,7 +433,7 @@
                     this.playAudio('sfx-correct');
                     triggerStarConfetti();
 
-                    setTimeout(() => this.stepNext(), 1500);
+                    setTimeout(() => this.stepNext(), 1200);
                 } else {
                     this.attempts++;
                     element.classList.add('wrong');
@@ -459,8 +469,10 @@
                 const monitor = document.getElementById('monitor-screen');
                 monitor.style.borderColor = "var(--error)";
 
+                const expPanel = document.getElementById('box-explanation');
                 document.getElementById('text-explanation').innerText = currentQ.explain;
-                document.getElementById('box-explanation').style.display = 'block';
+                expPanel.style.display = 'block';
+                expPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
 
             triggerIndicator(symbol, color) {
