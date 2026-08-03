@@ -209,10 +209,10 @@
 
   <div class="container" id="result-screen">
     <h1 id="result-title">Quest Over!</h1>
-    <div class="meta-info">Your Compiled Performance Metrics</div>
+    <div class="meta-info">Your Meadow Performance Metrics</div>
     <div style="text-align: center; font-size: 3.5rem; margin: 15px 0; font-weight: bold; color: #d63384;">⭐ <span id="final-score">0</span></div>
     <div id="result-message" style="text-align: center; margin-bottom: 25px; padding: 0 10px; line-height: 1.5;"></div>
-    <button class="btn" onclick="restartGame()">Restart Matrix 🌸</button>
+    <button class="btn" onclick="restartGame()">Restart Quest 🌸</button>
   </div>
 
   <audio id="sound-correct" src="assets/correct.mp3" preload="auto"></audio>
@@ -220,7 +220,7 @@
   <audio id="sound-cheer" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
   <script>
-    // --- Shuffled and Balanced Matrix Questions Data ---
+    // --- Shuffled and Balanced Questions Data ---
     const quizData = [
       {
         passage: "During track practice, Kabir ran fast to hit his baseline time target. He didn't focus on matching anyone else; his only goal was to run cleanly without slipping on the damp turf.",
@@ -375,7 +375,6 @@
       if(i === correct) {
         clearInterval(timerInterval);
         btn.classList.add('correct');
-        // Quicker responses earn an explicit premium modifier points
         score += (10 + Math.floor(timeLeft / 5));
         document.getElementById('score-text').innerText = `Stars: ${score}`;
         playAudio('sound-correct');
