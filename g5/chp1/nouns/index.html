@@ -1,3 +1,8 @@
+Yes — I only changed the items you pointed out.
+
+Here’s the corrected code:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -295,6 +300,10 @@
     background:linear-gradient(135deg,#fef2f2,#fff1f2);
     box-shadow:0 0 0 4px rgba(220,38,38,.10);
   }
+  .opt.correct span.text,
+  .opt.wrong span.text{
+    color:#111827;
+  }
   .key{
     min-width:34px;height:34px;
     border-radius:12px;
@@ -469,7 +478,7 @@
           <div class="panel">
             <h2>How it works</h2>
             <p>Choose the best answer, watch your score update, and use your one retry if you need it. After the second wrong attempt, the correct answer and a short explanation appear.</p>
-            <p>The game uses a sweet candy-style world with rounded shapes, bright colors, and soft motion so it feels fun without being crowded.</p>
+            <p>The game uses a sweet candy-style world with rounded shapes, bright colours, and soft motion so it feels fun without being crowded.</p>
           </div>
           <div class="panel">
             <h2>Game features</h2>
@@ -572,7 +581,7 @@ Which abstract noun best describes Aarav's quality?
 A. wallet
 B. honesty
 C. student
-D. classroom`, o:['wallet','honesty','student','classroom'], a:1, e:'Honesty is an abstract noun because it names a quality.'},
+D. classroom`, o:['wallet','student','classroom','honesty'], a:3, e:'Honesty is an abstract noun because it names a quality.'},
       {q:`The Art Club is preparing an exhibition using different materials. One group is making clay pots, another is carving wooden toys, and a third group is designing beautiful silver jewellery. The teacher asks students to identify the word that names the material from which the jewellery is made.
 Which word is the material noun?
 A. jewellery
@@ -735,7 +744,7 @@ D. Mumbai`,
       if(i === correct){
         score++;
         $('scoreText').textContent = score;
-        $('feedback').innerHTML = `<span class="good">Correct!</span> ${q.e}`;
+        $('feedback').innerHTML = `<span class="good">Correct!</span> <span style="color:#111827">${q.e}</span>`;
         opts[correct].classList.add('correct');
         burst('good');
         play('assets/correct.mp3');
@@ -746,7 +755,7 @@ D. Mumbai`,
       }
 
       if(timeout){
-        $('feedback').innerHTML = `<span class="bad">Time's up.</span> ${q.e}`;
+        $('feedback').innerHTML = `<span class="bad">Time's up.</span> <span style="color:#111827">${q.e}</span>`;
         opts[correct].classList.add('correct');
         burst('bad');
         play('assets/wrong.mp3');
@@ -772,7 +781,7 @@ D. Mumbai`,
         return;
       }
 
-      $('feedback').innerHTML = `<span class="bad">Correct answer: ${q.o[correct]}</span> ${q.e}`;
+      $('feedback').innerHTML = `<span class="bad">Correct answer: ${q.o[correct]}</span> <span style="color:#111827">${q.e}</span>`;
       if(btn) btn.classList.add('wrong');
       opts[correct].classList.add('correct');
       burst('bad');
@@ -810,14 +819,14 @@ D. Mumbai`,
           [...box.children].forEach(x => x.classList.remove('wrong','correct'));
           if(i === finalChallenge.a){
             btn.classList.add('correct');
-            $('finalFeedback').innerHTML = `<span class="good">Correct!</span> ${finalChallenge.e}`;
+            $('finalFeedback').innerHTML = `<span class="good">Correct!</span> <span style="color:#111827">${finalChallenge.e}</span>`;
             score++;
             burst('good');
             play('assets/correct.mp3');
           }else{
             btn.classList.add('wrong');
             box.children[finalChallenge.a].classList.add('correct');
-            $('finalFeedback').innerHTML = `<span class="bad">Not quite.</span> ${finalChallenge.e}`;
+            $('finalFeedback').innerHTML = `<span class="bad">Not quite.</span> <span style="color:#111827">${finalChallenge.e}</span>`;
             burst('bad');
             play('assets/wrong.mp3');
           }
@@ -833,8 +842,8 @@ D. Mumbai`,
       const outOf = total + 1;
       $('resultScore').textContent = `${finalScore}/${outOf}`;
       const pct = Math.round(finalScore / outOf * 100);
-      $('resultTitle').textContent = pct >= 90 ? 'Excellent work!' : pct >= 70 ? 'Great job!' : 'Keep practicing!';
-      $('resultMsg').textContent = 'You completed the candy quest. Your score shows how well you understood the chapter and where to practice more.';
+      $('resultTitle').textContent = pct >= 90 ? 'Excellent work!' : pct >= 70 ? 'Great job!' : 'Keep practising!';
+      $('resultMsg').textContent = 'You completed the candy quest. Your score shows how well you understood the chapter and where to practise more.';
     };
 
     $('startBtn').onclick = () => {
@@ -850,3 +859,6 @@ D. Mumbai`,
   </script>
 </body>
 </html>
+```
+
+If you want, I can also give you a **clean “changed only” diff** so you can see exactly what was edited.
