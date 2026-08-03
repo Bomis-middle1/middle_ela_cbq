@@ -229,7 +229,7 @@
 </head>
 <body>
 
-<!-- ================= SPLASH (logo, 5 seconds, then removed forever — never shown again) ================= -->
+<!-- ================= SPLASH ================= -->
 <div id="splash">
   <img src="assets/logo.png" alt="Innovine">
 </div>
@@ -322,7 +322,7 @@
      explain:"'Across' means moving from one side to the other."},
     {q:"Learners keep following the riverbank for two kilometres without crossing it. They walked ______ the river.", opts:["along","through","across","into"], correct:0,
      explain:"'Along' means moving beside something while following its length."},
-    {q:"At the aquarium, a dolphin jumps through a large ring in the water. The dolphin jumped ______ the ring.", opts:["into","through","around","above"], correct:1,
+    {q:"At the aquarium, a dolphin jumps while performing a trick with a large ring in the water. The dolphin jumped ______ the ring.", opts:["into","through","around","above"], correct:1,
      explain:"'Through' means passing from one side to the other, inside something."},
     {q:"Chocolates are shared with every learner in Class 5. Which preposition correctly completes: 'The chocolates were shared ______ all the learners.'?", opts:["beside","across","among","between"], correct:2,
      explain:"'Among' is used for more than two people."},
@@ -330,7 +330,7 @@
      explain:"'On' is used when something is in contact with a surface."}
   ];
 
-  var TIME_PER_Q = 45; // grade 5 -> 45 seconds
+  var TIME_PER_Q = 45;
   var POINTS_FIRST = 10, POINTS_SECOND = 5;
 
   /* ---------------- State ---------------- */
@@ -378,16 +378,16 @@
 
   el.maxScore.textContent = QUESTIONS.length * POINTS_FIRST;
 
-  /* ---------------- Splash logo (5s, then removed forever — no logo shown anywhere after) ---------------- */
+  /* ---------------- Splash logo ---------------- */
   setTimeout(function(){
     el.splash.classList.add('fade');
     setTimeout(function(){
-      el.splash.remove(); // logo never appears again
+      el.splash.remove();
       showScreen('introScreen');
     }, 650);
   }, 5000);
 
-  /* ---------------- Background skyline (generated once) ---------------- */
+  /* ---------------- Background skyline ---------------- */
   (function buildSkyline(){
     var sky = document.getElementById('skyline');
     var count = 9;
@@ -401,7 +401,6 @@
       b.style.height = h+'px';
       b.style.left = (i*(100/count)) + '%';
       b.style.background = palette[i % palette.length];
-      // windows
       var wc = Math.floor(h/26);
       for(var j=0;j<wc;j++){
         var win = document.createElement('div');
@@ -484,13 +483,11 @@
 
   function onTimeUp(){
     if(state.locked) return;
-    // Treat as a used attempt
     state.attempts++;
     var buttons = el.optionsBox.querySelectorAll('.opt-btn');
     buttons.forEach(function(b){ b.disabled = true; });
     if(state.attempts < 2){
       showRetryBanner("⏰ Time's up! Take one more shot at it.");
-      // give a fresh short window for the retry
       state.timeLeft = TIME_PER_Q;
       buttons.forEach(function(b){ b.disabled = false; });
       startTimer();
@@ -617,7 +614,7 @@
 
   function flashCross(){
     el.crossFlash.classList.remove('show');
-    void el.crossFlash.offsetWidth; // restart animation
+    void el.crossFlash.offsetWidth;
     el.crossFlash.classList.add('show');
   }
 
