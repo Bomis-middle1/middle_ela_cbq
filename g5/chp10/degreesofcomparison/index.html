@@ -350,17 +350,27 @@
   .feedback{
     min-height:50px;
     border-radius:16px;
-    padding:12px 16px;
-    font-weight:800;
+    padding:14px 16px;
+    font-weight:700;
     display:flex;
-    align-items:center;
-    gap:10px;
+    flex-direction:column;
+    justify-content:center;
+    gap:6px;
     line-height:1.4;
     font-size:13px;
+    text-align:left;
   }
   .feedback.ok{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}
   .feedback.bad{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
   .feedback.neutral{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+  .feedback-title{
+    font-weight:900;
+    font-size:14px;
+  }
+  .feedback-explanation{
+    font-size:13px;
+    opacity:0.95;
+  }
   .footer-actions{
     display:flex;
     justify-content:space-between;
@@ -754,7 +764,7 @@ function renderQuestion(){
   attempts = 0;
   canRetry = true;
   el('feedback').className = 'feedback neutral';
-  el('feedback').textContent = 'Choose the best answer to continue.';
+  el('feedback').innerHTML = 'Choose the best answer to continue.';
   el('nextBtn').classList.add('hide');
   el('questionText').textContent = questions[idx].q;
   el('questionNote').textContent = 'Select one answer only.';
@@ -789,7 +799,7 @@ function handleWrong(fromTimer=false){
     canRetry = false;
     el('lives').textContent = '1';
     el('feedback').className = 'feedback bad';
-    el('feedback').textContent = 'Wrong answer. Try one more time.';
+    el('feedback').innerHTML = 'Wrong answer. Try one more time.';
     el('helperText').textContent = 'You have 1 retry left.';
     return;
   }
@@ -797,7 +807,10 @@ function handleWrong(fromTimer=false){
   clearInterval(t);
   el('lives').textContent = '0';
   el('feedback').className = 'feedback bad';
-  el('feedback').innerHTML = `Correct answer: <strong>${questions[idx].o[questions[idx].a]}</strong><br>${questions[idx].e}`;
+  el('feedback').innerHTML = `
+    <div class="feedback-title">Correct Answer: ${questions[idx].o[questions[idx].a]}</div>
+    <div class="feedback-explanation">${questions[idx].e}</div>
+  `;
   el('helperText').textContent = 'Explanation shown after the second wrong attempt or timeout.';
   btns.forEach((b,k)=>{
     if(k === questions[idx].a) b.classList.add('correct');
@@ -816,7 +829,7 @@ function choose(i, btn){
     score++;
     el('score').textContent = score;
     el('feedback').className = 'feedback ok';
-    el('feedback').textContent = 'Correct! Great thinking.';
+    el('feedback').innerHTML = 'Correct! Great thinking.';
     btn.classList.add('correct');
     burst('star');
     playSound('correctSound');
@@ -861,7 +874,7 @@ el('restartBtn').onclick = ()=>{
   el('score').textContent = 0;
   el('timer').textContent = '45';
   el('feedback').className = 'feedback neutral';
-  el('feedback').textContent = 'Choose the best answer to continue.';
+  el('feedback').innerHTML = 'Choose the best answer to continue.';
   el('helperText').textContent = 'One retry after the first wrong attempt.';
   show('introContent');
 };
