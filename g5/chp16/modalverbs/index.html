@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Superhero Training Academy — Modal Verbs | Grade 5</title>
+<title>Superhero Training Academy — Prepositions | Grade 5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -133,7 +133,7 @@
   }
   .timer-box.low{color:var(--wrong);}
 
-  /* ---------- Signature element: power-up badge rack ---------- */
+  /* ---------- Badge rack ---------- */
   .badge-rack{
     width:100%; max-width:560px; display:flex; gap:6px; margin-bottom:18px; z-index:1; position:relative;
     justify-content:center; flex-wrap:wrap;
@@ -163,7 +163,7 @@
   }
   .opt-btn .opt-letter{
     background:var(--navy); color:#fff; width:28px; height:28px; border-radius:8px;
-    display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
     font-family:'Bangers',cursive; font-size:16px;
   }
   .opt-btn:hover:not(:disabled){border-color:var(--blue); transform:translateY(-1px);}
@@ -229,7 +229,7 @@
 </head>
 <body>
 
-<!-- ================= SPLASH (logo, 5 seconds, then removed forever — never shown again) ================= -->
+<!-- ================= SPLASH ================= -->
 <div id="splash">
   <img src="assets/logo.png" alt="Innovine">
 </div>
@@ -244,12 +244,12 @@
 <div class="screen" id="introScreen">
   <div class="card" style="text-align:center;">
     <span class="eyebrow">Superhero Training Academy</span>
-    <h1 class="title-main">Modal Verb Powers</h1>
-    <p class="subtitle">Master each power — ability, permission, possibility, and more — to earn your hero badges!</p>
+    <h1 class="title-main">Preposition Power</h1>
+    <p class="subtitle">Master prepositions of place, time, and direction to pinpoint targets and power up your hero skills!</p>
     <div class="meta-row" style="justify-content:center;">
       <span class="meta-pill">Grade 5</span>
       <span class="meta-pill">English</span>
-      <span class="meta-pill">Chapter 16 · Modal Verbs</span>
+      <span class="meta-pill">Chapter 17 · Prepositions</span>
       <span class="meta-pill">10 Questions</span>
     </div>
     <button class="btn-primary" id="startBtn">Begin Training ⚡</button>
@@ -302,29 +302,69 @@
 
   /* ---------------- Data ---------------- */
   var QUESTIONS = [
-    {q:"Rohan has been practising guitar for two years and wants to play at the talent show. Which sentence best describes his ability?", opts:["Rohan can play the guitar.","Rohan may play the guitar.","Rohan must play the guitar.","Rohan should play the guitar."], correct:0,
-     explain:"'Can' is used to express ability."},
-    {q:"Sneha finishes her book early and wants to politely ask the librarian for another one. Which sentence is most appropriate?", opts:["Can I borrow another book?","Shall I borrow another book?","May I borrow another book?","Must I borrow another book?"], correct:2,
-     explain:"'May' is commonly used to ask for permission politely."},
-    {q:"There is only a small, uncertain chance of rain during the school picnic. Which sentence best describes the situation?", opts:["It will rain tomorrow.","It must rain tomorrow.","It can rain tomorrow.","It might rain tomorrow."], correct:3,
-     explain:"'Might' shows a possibility with lower certainty."},
-    {q:"The lab rules say safety goggles are compulsory during experiments. Which sentence correctly expresses this rule?", opts:["Learners may wear safety goggles.","Learners should wear safety goggles.","Learners must wear safety goggles.","Learners could wear safety goggles."], correct:2,
-     explain:"'Must' expresses obligation or necessity."},
-    {q:"Ananya's brother wants to give her a helpful suggestion, not an order, about reducing screen time. Which sentence is most suitable?", opts:["You must reduce your screen time.","You should reduce your screen time.","You can reduce your screen time.","You might reduce your screen time."], correct:1,
-     explain:"'Should' is used to give advice."},
-    {q:"A former student could run long distances very quickly back when he was in Grade 5. Which sentence correctly describes his past ability?", opts:["He can run long distances.","He will run long distances.","He must run long distances.","He could run long distances."], correct:3,
-     explain:"'Could' is used to express ability in the past."},
-    {q:"Riya forgot her notebook and wants to politely ask to borrow her friend's for one period. Which sentence is the best choice?", opts:["Could you lend me your notebook for one period?","Must you lend me your notebook?","Shall you lend me your notebook?","You will lend me your notebook."], correct:0,
-     explain:"'Could' makes a polite request."},
-    {q:"The Eco Club leader assures the principal that fifty saplings will definitely be planted by month's end. Which sentence best expresses this promise?", opts:["We may complete the work this month.","We should complete the work this month.","We will complete the work this month.","We could complete the work this month."], correct:2,
-     explain:"'Will' expresses determination or future action."},
-    {q:"One learner says 'Everyone should drink water regularly,' and another says 'Everyone must drink water during sports because the coach made it compulsory.' Which statement correctly matches the situation?", opts:["Both statements express advice.","The first statement expresses obligation, while the second expresses advice.","The first statement expresses advice, while the second expresses obligation.","Both statements express permission."], correct:2,
-     explain:"'Should' gives advice, while 'must' expresses obligation."},
-    {q:"Before the museum trip, the teacher reminds everyone to stay with the group and follow instructions carefully — this is compulsory. Which learner used the most suitable modal verb?", opts:["We may stay with our group during the visit.","We could stay with our group during the visit.","We can stay with our group during the visit.","We must stay with our group during the visit."], correct:3,
-     explain:"'Must' is appropriate because following the teacher's instructions is compulsory."}
+    {
+      q: "The hero hides _____ the shadow of the tall tower to stay invisible. Which preposition correctly describes location?",
+      opts: ["under", "in", "above", "on"],
+      correct: 1,
+      explain: "'In' is used to show location within an area or space like a shadow."
+    },
+    {
+      q: "The annual superhero assembly starts exactly _____ 9:00 AM on Monday. Which preposition of time is correct?",
+      opts: ["on", "at", "in", "by"],
+      correct: 1,
+      explain: "'At' is used for specific clock times."
+    },
+    {
+      q: "Rescue teams swept _____ the narrow tunnel to reach the hidden cavern. Which preposition shows movement inside an enclosed space?",
+      opts: ["across", "through", "over", "along"],
+      correct: 1,
+      explain: "'Through' indicates movement within a three-dimensional space or enclosure."
+    },
+    {
+      q: "The secret mission was planned carefully _____ the summer holidays. Which preposition best shows time duration?",
+      opts: ["during", "at", "on", "into"],
+      correct: 0,
+      explain: "'During' specifies a period of time throughout which an event happens."
+    },
+    {
+      q: "The flying speedster zoomed high _____ the clouds to escape radar detection. Which preposition shows position higher than an object?",
+      opts: ["under", "above", "between", "beside"],
+      correct: 1,
+      explain: "'Above' refers to a position higher than something else."
+    },
+    {
+      q: "A hidden control panel is situated right _____ the two mainframe computers. Which preposition refers to position relative to two points?",
+      opts: ["among", "between", "behind", "against"],
+      correct: 1,
+      explain: "'Between' is used when referencing the space separating two distinct objects."
+    },
+    {
+      q: "The trainees marched bravely _____ the storm to complete their endurance test. Which preposition shows movement against or into something?",
+      opts: ["into", "onto", "towards", "from"],
+      correct: 0,
+      explain: "'Into' indicates movement entering inside a surrounding condition or place."
+    },
+    {
+      q: "Hero headquarters will remain closed for maintenance _____ Friday _____ Sunday. Which pair of prepositions correctly defines a time range?",
+      opts: ["from... to", "between... at", "since... until", "at... on"],
+      correct: 0,
+      explain: "'From... to' marks the starting point and ending point of a time period."
+    },
+    {
+      q: "The guard dog rested silently _____ the main entrance gate. Which preposition indicates location at a specific point or landmark?",
+      opts: ["in", "at", "on", "into"],
+      correct: 1,
+      explain: "'At' pinpoints a specific spot or location."
+    },
+    {
+      q: "The tactical map was spread out flat _____ the large conference table. Which preposition indicates position on a surface?",
+      opts: ["in", "at", "on", "over"],
+      correct: 2,
+      explain: "'On' indicates contact with and position atop a surface."
+    }
   ];
 
-  var TIME_PER_Q = 45; // grade 5 -> 45 seconds
+  var TIME_PER_Q = 45;
   var POINTS_FIRST = 10, POINTS_SECOND = 5;
 
   /* ---------------- State ---------------- */
@@ -372,7 +412,7 @@
 
   el.maxScore.textContent = QUESTIONS.length * POINTS_FIRST;
 
-  /* ---------------- Build badge rack (one per question) ---------------- */
+  /* ---------------- Build badge rack ---------------- */
   (function buildBadges(){
     for(var i=0;i<QUESTIONS.length;i++){
       var b = document.createElement('div');
@@ -388,11 +428,11 @@
     if(b) b.classList.add('earned');
   }
 
-  /* ---------------- Splash logo (5s, then removed forever — no logo shown anywhere after) ---------------- */
+  /* ---------------- Splash logo ---------------- */
   setTimeout(function(){
     el.splash.classList.add('fade');
     setTimeout(function(){
-      el.splash.remove(); // logo never appears again
+      el.splash.remove();
       showScreen('introScreen');
     }, 650);
   }, 5000);
@@ -597,7 +637,7 @@
 
   function flashCross(){
     el.crossFlash.classList.remove('show');
-    void el.crossFlash.offsetWidth; // restart animation
+    void el.crossFlash.offsetWidth;
     el.crossFlash.classList.add('show');
   }
 
