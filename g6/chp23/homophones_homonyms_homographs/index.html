@@ -55,6 +55,7 @@ button:hover {
   border-radius: 10px;
   cursor: pointer;
   font-size: 15px;
+  text-align: left;
   transition: background 0.2s;
 }
 
@@ -98,36 +99,40 @@ img {
 
 <body>
 
-<!-- SPLASH -->
+<!-- SPLASH SCREEN -->
 <div id="splash" class="center">
-  <h2>CBQ Quiz Game</h2>
-  <p>Loading...</p>
+  <div class="card">
+    <h2>Welcome to CBQ Quiz!</h2>
+    <p>Loading game resources...</p>
+    <button onclick="showIntro()">Continue</button>
+  </div>
 </div>
 
-<!-- INTRO -->
+<!-- INTRO SCREEN -->
 <div id="intro" class="center" style="display:none;">
   <div class="card">
     <h2>Homophones, Homonyms & Homographs</h2>
-    <p>Test your knowledge across 5 interactive questions.</p>
+    <p>Read each question carefully and select the best answer before the timer runs out!</p>
     <button onclick="startGame()">START QUIZ</button>
   </div>
 </div>
 
-<!-- OBSERVE -->
+<!-- OBSERVE SCREEN -->
 <div id="observe" class="center" style="display:none;">
   <div class="card">
     <h3>Observe Carefully</h3>
-    <img id="obsImg" alt="Question Graphic">
-    <button onclick="nextFromObserve()">Next</button>
+    <img id="obsImg" alt="Observation Graphic">
+    <br>
+    <button onclick="nextFromObserve()">Proceed to Question</button>
   </div>
 </div>
 
-<!-- QUIZ -->
+<!-- QUIZ SCREEN -->
 <div id="quiz" class="center" style="display:none;">
   <div class="card">
     <div class="top">
       <div>Score: <span id="score">0</span></div>
-      <div>Time: <span id="time">45</span>s</div>
+      <div>Time Left: <span id="time">45</span>s</div>
     </div>
 
     <div class="progress"><div class="fill" id="fill"></div></div>
@@ -137,7 +142,7 @@ img {
   </div>
 </div>
 
-<!-- RESULT -->
+<!-- RESULT SCREEN -->
 <div id="result" class="center" style="display:none;">
   <div class="card">
     <h2 id="finalMsg"></h2>
@@ -162,7 +167,7 @@ const questions = [
   },
   {
     type: "observe",
-    image: "https://via.placeholder.com/400x200?text=Worksheet+Image",
+    image: "https://via.placeholder.com/500x200?text=Worksheet:+they%27re+/+their+/+there",
     q: "Q6. [Worksheet Sentence Set] Which set correctly fills all four blanks in order?",
     options: [
       "they're / their / there / they're",
@@ -174,8 +179,8 @@ const questions = [
   },
   {
     type: "observe",
-    image: "https://via.placeholder.com/400x200?text=Sentence+Pairs+Chart",
-    q: "Q7. What type of word relationship is shown in these sentence pairs?",
+    image: "https://via.placeholder.com/500x200?text=Sentence+Pairs:+Bat,+Bark,+Light,+Bank",
+    q: "Q7. What type of word relationship is shown in the sentence pairs?",
     options: ["Homophones", "Homographs", "Homonyms", "Antonyms"],
     answer: "Homonyms"
   },
@@ -195,15 +200,17 @@ const questions = [
 let index = 0;
 let score = 0;
 let time = 45;
-let timer;
+let timer = null;
 
-// Automatically hide splash screen after 1.5s on window load
-window.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    document.getElementById("splash").style.display = "none";
-    document.getElementById("intro").style.display = "flex";
-  }, 1500);
+// Auto-advance splash to intro after 1.5s
+window.addEventListener("load", () => {
+  setTimeout(showIntro, 1500);
 });
+
+function showIntro() {
+  document.getElementById("splash").style.display = "none";
+  document.getElementById("intro").style.display = "flex";
+}
 
 function startGame() {
   document.getElementById("intro").style.display = "none";
@@ -220,12 +227,12 @@ function load() {
   updateProgressBar();
 
   if (q.type === "observe") {
+    document.getElementById("quiz").style.display = "none";
     document.getElementById("observe").style.display = "flex";
     document.getElementById("obsImg").src = q.image;
-    return;
+  } else {
+    showQ(q);
   }
-
-  showQ(q);
 }
 
 function nextFromObserve() {
@@ -237,12 +244,17 @@ function showQ(q) {
   document.getElementById("quiz").style.display = "flex";
   document.getElementById("qtext").innerText = q.q;
 
-  let html = "";
-  q.options.forEach(o => {
-    html += `<div class="option" onclick="check('${o.replace(/'/g, "\\'")}')">${o}</div>`;
+  let optionsContainer = document.getElementById("options");
+  optionsContainer.innerHTML = "";
+
+  q.options.forEach(optText => {
+    let div = document.createElement("div");
+    div.className = "option";
+    div.innerText = optText;
+    div.onclick = function() { check(optText); };
+    optionsContainer.appendChild(div);
   });
 
-  document.getElementById("options").innerHTML = html;
   startTimer();
 }
 
@@ -300,5 +312,6 @@ function end() {
     "Score: " + score + "/" + questions.length + " (" + percent + "%)";
 }
 </script>
+
 </body>
 </html>
