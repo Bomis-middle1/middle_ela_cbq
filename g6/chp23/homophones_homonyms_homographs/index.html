@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CBQ Game</title>
+<title>CBQ Game - Homophones, Homonyms, Homographs</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -29,7 +29,7 @@ body {
   border-radius: 16px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.12);
   width: 92%;
-  max-width: 600px;
+  max-width: 700px;
 }
 
 button {
@@ -57,19 +57,29 @@ button:hover {
   font-size: 15px;
   text-align: left;
   transition: background 0.2s;
+  white-space: pre-line;
 }
 
 .option:hover {
   background: #e3f2fd;
 }
 
-img {
+img.logo-img {
+  width: 180px;
+  max-width: 80%;
+  margin-bottom: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+img.obs-img {
   max-width: 100%;
-  max-height: 220px;
+  max-height: 250px;
   object-fit: contain;
   border-radius: 12px;
-  margin: 10px 0;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin: 14px 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 .top {
@@ -94,6 +104,13 @@ img {
   background: #4caf50;
   transition: width 0.3s ease;
 }
+
+#qtext {
+  white-space: pre-line;
+  text-align: left;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
 </style>
 </head>
 
@@ -101,18 +118,14 @@ img {
 
 <!-- SPLASH SCREEN -->
 <div id="splash" class="center">
-  <div class="card">
-    <h2>Welcome to CBQ Quiz!</h2>
-    <p>Loading game resources...</p>
-    <button onclick="showIntro()">Continue</button>
-  </div>
+  <img id="mainLogo" src="assets/innovine-logo.png" class="logo-img" alt="Innovine Logo">
 </div>
 
 <!-- INTRO SCREEN -->
 <div id="intro" class="center" style="display:none;">
   <div class="card">
-    <h2>Homophones, Homonyms & Homographs</h2>
-    <p>Read each question carefully and select the best answer before the timer runs out!</p>
+    <h2>Chapter 23: Homophones, Homonyms & Homographs</h2>
+    <p>Read each question carefully and choose the correct answer before the time runs out!</p>
     <button onclick="startGame()">START QUIZ</button>
   </div>
 </div>
@@ -121,9 +134,9 @@ img {
 <div id="observe" class="center" style="display:none;">
   <div class="card">
     <h3>Observe Carefully</h3>
-    <img id="obsImg" alt="Observation Graphic">
+    <img id="obsImg" class="obs-img" alt="Observation Reference Graphic">
     <br>
-    <button onclick="nextFromObserve()">Proceed to Question</button>
+    <button onclick="nextFromObserve()">Next</button>
   </div>
 </div>
 
@@ -151,49 +164,169 @@ img {
   </div>
 </div>
 
+<!-- AUDIO ELEMENTS -->
+<audio id="clap" src="assets/clapping.mp3" preload="auto"></audio>
+<audio id="correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
 <script>
 const questions = [
   {
     type: "text",
     q: "Q1. Riya is texting directions to Aarav: \"Come to the park. I am ___ waiting for you near the gate.\" Which word correctly fills the blank?",
-    options: ["their", "there", "here", "hear"],
-    answer: "there"
+    options: ["a) their", "b) there", "c) here", "d) hear"],
+    answer: "c) here"
   },
   {
     type: "text",
     q: "Q2. Meera is writing a recipe: \"Mix one cup of ___ with sugar and knead into dough.\" Which homophone is correct?",
-    options: ["flower", "flour", "floor", "fleur"],
-    answer: "flour"
-  },
-  {
-    type: "observe",
-    image: "https://via.placeholder.com/500x200?text=Worksheet:+they%27re+/+their+/+there",
-    q: "Q6. [Worksheet Sentence Set] Which set correctly fills all four blanks in order?",
-    options: [
-      "they're / their / there / they're",
-      "they're / there / their / their",
-      "there / their / they're / there",
-      "their / there / they're / their"
-    ],
-    answer: "there / their / they're / there"
-  },
-  {
-    type: "observe",
-    image: "https://via.placeholder.com/500x200?text=Sentence+Pairs:+Bat,+Bark,+Light,+Bank",
-    q: "Q7. What type of word relationship is shown in the sentence pairs?",
-    options: ["Homophones", "Homographs", "Homonyms", "Antonyms"],
-    answer: "Homonyms"
+    options: ["a) flower", "b) flour", "c) floor", "d) fleur"],
+    answer: "b) flour"
   },
   {
     type: "text",
-    q: "Q8. A student writes: \"I need to right a letter to my teacher.\" What is the error?",
+    q: "Q3. Rohan's science teacher wrote two sentences on the board:\nSentence A: \"The doctor dressed the wound carefully.\"\nSentence B: \"She wound the thread around the bobbin.\"\nWhat does this tell us about the word 'wound'?",
     options: [
-      "'right' is wrong → write",
-      "'right' is correct",
-      "'right' → rite",
-      "'right' → wright"
+      "a) It is a homophone — same sound, different spelling",
+      "b) It is a homograph — same spelling but different pronunciation and meaning",
+      "c) It is a homonym — same sound and spelling, same meaning",
+      "d) Both sentences use 'wound' in exactly the same way"
     ],
-    answer: "'right' is wrong → write"
+    answer: "b) It is a homograph — same spelling but different pronunciation and meaning"
+  },
+  {
+    type: "text",
+    q: "Q4. A student reads: \"The bank was flooded after the heavy rains.\" His friend reads: \"I deposited my savings at the bank.\" Both used the same word. What kind of word is 'bank'?",
+    options: [
+      "a) Homophone — sounds the same as another word",
+      "b) Homograph — spelled the same but pronounced differently",
+      "c) Homonym — same spelling and pronunciation but different meanings",
+      "d) They are two completely different words"
+    ],
+    answer: "c) Homonym — same spelling and pronunciation but different meanings"
+  },
+  {
+    type: "text",
+    q: "Q5. Aarav is writing a story set in a medieval castle. He writes: \"The brave ___ rode through the dark ___.\" Which homophone pair correctly fills both blanks?",
+    options: [
+      "a) night / knight",
+      "b) knight / night",
+      "c) knight / knight",
+      "d) night / night"
+    ],
+    answer: "b) knight / night"
+  },
+  {
+    type: "observe",
+    image: "assets/picture1.png",
+    q: "Q6. Which set correctly fills all four blanks in order?",
+    options: [
+      "a) their / there / they're / their",
+      "b) they're / there / their / their",
+      "c) there / their / they're / there",
+      "d) they're / their / there / they're"
+    ],
+    answer: "b) they're / there / their / their"
+  },
+  {
+    type: "observe",
+    image: "assets/picture2.png",
+    q: "Q7. All four pairs show the same type of word relationship. What is it?",
+    options: [
+      "a) Homophones — same sound, different spelling",
+      "b) Homographs — same spelling, different pronunciation",
+      "c) Homonyms — same spelling and sound, but different meanings",
+      "d) Antonyms — words with opposite meanings"
+    ],
+    answer: "c) Homonyms — same spelling and sound, but different meanings"
+  },
+  {
+    type: "text",
+    q: "Q8. A student writes: \"I need to right a letter to my teacher.\" What is the error and how should it be fixed?",
+    options: [
+      "a) 'right' is spelled incorrectly — it should be 'rite'",
+      "b) 'right' is the wrong homophone — the correct word here is 'write'",
+      "c) There is no error — 'right' is correct in this context",
+      "d) 'right' should be replaced with 'wright'"
+    ],
+    answer: "b) 'right' is the wrong homophone — the correct word here is 'write'"
+  },
+  {
+    type: "text",
+    q: "Q9. Read these two sentences: \"Be careful — the lead pipe is very heavy.\" \"The captain will lead the team onto the field.\" What type of word is 'lead' in these sentences and why?",
+    options: [
+      "a) Homophone — 'lead' sounds different from another word spelled differently",
+      "b) Homonym — same spelling and sound but different meanings",
+      "c) Homograph — same spelling but different pronunciation and meaning",
+      "d) Both sentences use 'lead' with exactly the same meaning"
+    ],
+    answer: "c) Homograph — same spelling but different pronunciation and meaning"
+  },
+  {
+    type: "text",
+    q: "Q10. Sort these word pairs into two groups — Homophones and Homonyms:\nP: there / their\nQ: bark (dog) / bark (tree)\nR: flour / flower\nS: light (lamp) / light (not heavy)",
+    options: [
+      "a) Homophones: P, Q — Homonyms: R, S",
+      "b) Homophones: Q, S — Homonyms: P, R",
+      "c) Homophones: P, R — Homonyms: Q, S",
+      "d) Homophones: R, S — Homonyms: P, Q"
+    ],
+    answer: "c) Homophones: P, R — Homonyms: Q, S"
+  },
+  {
+    type: "text",
+    q: "Q11. Classify each pair of underlined words — Homophone, Homonym or Homograph:\n1. \"I could not bear the pain.\" / \"A bear lives in the forest.\"\n2. \"She shed a tear when she heard the news.\" / \"He made a tear in the paper.\"\n3. \"The knight guarded the castle.\" / \"It was a cold night.\"\n4. \"She sat by the river bank.\" / \"The bank closes at 5 PM.\"",
+    options: [
+      "a) 1=Homograph, 2=Homophone, 3=Homonym, 4=Homograph",
+      "b) 1=Homonym, 2=Homograph, 3=Homophone, 4=Homonym",
+      "c) 1=Homophone, 2=Homonym, 3=Homograph, 4=Homophone",
+      "d) 1=Homograph, 2=Homonym, 3=Homophone, 4=Homograph"
+    ],
+    answer: "b) 1=Homonym, 2=Homograph, 3=Homophone, 4=Homonym"
+  },
+  {
+    type: "text",
+    q: "Q12. Three of the following word pairs are homophones. One is NOT. Which is the odd one out?",
+    options: [
+      "a) write / right",
+      "b) flour / flower",
+      "c) hear / here",
+      "d) bat / bat"
+    ],
+    answer: "d) bat / bat"
+  },
+  {
+    type: "text",
+    q: "Q13. A student wrote this paragraph: \"Their going to the market too buy too kilos of flower. They're bags are very heavy.\" Identify ALL the homophone errors:",
+    options: [
+      "a) Their→They're; too→to; too→two; flower→flour; They're→Their",
+      "b) Their is correct; too→to; flower→flour; They're is correct",
+      "c) Their→There; too→two; flower is correct; They're→Their",
+      "d) There are no errors — all homophones are used correctly"
+    ],
+    answer: "a) Their→They're; too→to; too→two; flower→flour; They're→Their"
+  },
+  {
+    type: "text",
+    q: "Q14. A student writes: \"The doctor treated his wound\" and then changes it to \"He wound the bandage around his arm.\" What has happened to the word 'wound' between the two sentences?",
+    options: [
+      "a) It has become a homophone — it now sounds different and is spelled differently",
+      "b) It is being used as a homograph — same spelling but different pronunciation and meaning in each sentence",
+      "c) It has become a homonym — the pronunciation is the same in both sentences",
+      "d) The word has been used incorrectly in the second sentence"
+    ],
+    answer: "b) It is being used as a homograph — same spelling but different pronunciation and meaning in each sentence"
+  },
+  {
+    type: "text",
+    q: "Q15. Assertion: The words 'to', 'too' and 'two' are homophones but cannot be used interchangeably.\nReason: Although they sound identical, each has a distinct meaning and spelling — 'to' shows direction/purpose, 'too' means also/excessively, and 'two' is the number.",
+    options: [
+      "a) Both are correct; the reason correctly explains the assertion.",
+      "b) Both are correct; but the reason does NOT explain the assertion.",
+      "c) The assertion is correct; the reason is wrong.",
+      "d) Both are wrong — all three words mean the same thing."
+    ],
+    answer: "a) Both are correct; the reason correctly explains the assertion."
   }
 ];
 
@@ -202,7 +335,7 @@ let score = 0;
 let time = 45;
 let timer = null;
 
-// Auto-advance splash to intro after 1.5s
+// Transition from splash to intro after 1.5 seconds
 window.addEventListener("load", () => {
   setTimeout(showIntro, 1500);
 });
@@ -268,6 +401,7 @@ function startTimer() {
     document.getElementById("time").innerText = time;
     if (time <= 0) {
       clearInterval(timer);
+      playSound("wrong");
       next();
     }
   }, 1000);
@@ -280,8 +414,24 @@ function check(opt) {
   if (opt === q.answer) {
     score++;
     document.getElementById("score").innerText = score;
+    playSound("correct");
+  } else {
+    playSound("wrong");
   }
+  
   next();
+}
+
+function playSound(audioId) {
+  try {
+    let sound = document.getElementById(audioId);
+    if (sound) {
+      sound.currentTime = 0;
+      sound.play().catch(e => console.log("Audio playback deferred or unavailable."));
+    }
+  } catch (err) {
+    console.log("Audio playback error caught.");
+  }
 }
 
 function next() {
@@ -303,9 +453,15 @@ function end() {
 
   let percent = Math.round((score / questions.length) * 100);
   let msg = "Keep Practising!";
-  if (percent >= 70) msg = "🏆 Outstanding!";
-  else if (percent >= 60) msg = "🌟 Excellent!";
-  else if (percent >= 45) msg = "😊 Good Job!";
+  if (percent >= 70) {
+    msg = "🏆 Outstanding!";
+    playSound("clap");
+  } else if (percent >= 60) {
+    msg = "🌟 Excellent!";
+    playSound("clap");
+  } else if (percent >= 45) {
+    msg = "😊 Good Job!";
+  }
 
   document.getElementById("finalMsg").innerText = msg;
   document.getElementById("finalScore").innerText =
