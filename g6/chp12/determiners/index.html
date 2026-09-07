@@ -63,11 +63,20 @@ body {
     align-items: center;
 }
 
+/* 5-SECOND SPLASH LOGO ANIMATION */
 #splash img {
     width: 180px;
     height: auto;
     margin-bottom: 24px;
-    animation: smoothPop 2.5s ease-in-out infinite;
+    animation: logoIntro 5s ease-in-out forwards;
+}
+
+@keyframes logoIntro {
+    0% { opacity: 0; transform: scale(0.8); }
+    20% { opacity: 1; transform: scale(1.05); }
+    40% { transform: scale(1); }
+    80% { opacity: 1; transform: scale(1.02); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
 #splash h1 {
@@ -83,11 +92,6 @@ body {
     font-size: 2.2rem;
     display: block;
     margin-top: 6px;
-}
-
-@keyframes smoothPop {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); }
-    50% { transform: scale(1.04); filter: drop-shadow(0 12px 20px rgba(79,70,229,0.15)); }
 }
 
 @keyframes screenReveal {
@@ -226,7 +230,8 @@ body {
 .option.correct {
     background: var(--correct-bg) !important;
     border-color: var(--correct) !important;
-    color: #065f46;
+    color: #065f46 !important;
+    font-weight: 700;
     transform: none !important;
     box-shadow: none !important;
 }
@@ -234,7 +239,8 @@ body {
 .option.wrong {
     background: var(--wrong-bg) !important;
     border-color: var(--wrong) !important;
-    color: #991b1b;
+    color: #991b1b !important;
+    font-weight: 700;
     animation: dynamicShake 0.4s ease-in-out;
     transform: none !important;
     box-shadow: none !important;
@@ -320,7 +326,7 @@ body {
     border-radius: 2px;
     z-index: 999;
     pointer-events: none;
-    animation: fallingStream 3s linear forwards;
+    animation: fallingStream 2.5s linear forwards;
 }
 
 @keyframes fallingStream {
@@ -390,11 +396,9 @@ body {
 </div>
 
 <!-- AUDIO EMBED PIPELINES -->
-<audio id="correct" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="wrong" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="click" src="assets/click.mp3" preload="auto"></audio>
-<audio id="clap" src="assets/clapping.mp3" preload="auto"></audio>
-<audio id="over" src="assets/gameover.mp3" preload="auto"></audio>
+<audio id="sound-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="sound-clap" src="assets/clapping.mp3" preload="auto"></audio>
 
 <script>
 /* ---------------- MATRIX DATABASE ---------------- */
@@ -453,7 +457,7 @@ const questions = [
         hint: "Look for bare quantifiers like 'few' or 'little' without an 'a' prefix, which describe a lacking/negative state."
     },
     {
-        q: "Sort the following group of quantifiers based on noun patterns: few, much, many, little",
+        q: "Sort the following group of quantifiers based on noun patterns: P=few, Q=much, R=many, S=little",
         options: [
             "Countable: P,Q – Uncountable: R,S",
             "Countable: Q,S – Uncountable: P,R",
@@ -461,7 +465,7 @@ const questions = [
             "Countable: R,S – Uncountable: P,Q"
         ],
         answer: "Countable: P,R – Uncountable: Q,S",
-        hint: "'Few' and 'many' pair with countable objects. 'Much' and 'little' qualify uncountable concepts."
+        hint: "'Few' (P) and 'many' (R) pair with countable objects. 'Much' (Q) and 'little' (S) qualify uncountable concepts."
     },
     {
         q: "Identify the types in matching order: A dog, These mangoes, Much work, The Taj Mahal",
@@ -532,11 +536,15 @@ function initiateChallengeSession() {
     document.getElementById("splash").style.display = "none";
     document.getElementById("game").style.display = "block";
     
-    // Scramble questions and internal option sets to maximize repeat value
+    // Safely shuffle options and index maps
     workingDataset = shakeArray([...questions]).map(item => {
+        const shuffledOpts = shakeArray([...item.options]);
         return {
-            ...item,
-            options: shakeArray([...item.options])
+            q: item.q,
+            hint: item.hint,
+            image: item.image,
+            options: shuffledOpts,
+            correctIndex: shuffledOpts.indexOf(item.answer)
         };
     });
 
@@ -562,7 +570,7 @@ function presentQuestionCard() {
     document.getElementById("question").innerText = currentItem.q;
     document.getElementById("feedbackBox").innerHTML = "";
 
-    // Parse illustrative support graphics
+    // Load contextual images if available
     let graphicContainer = document.getElementById("imageBox");
     if (currentItem.image) {
         graphicContainer.innerHTML = `<img src="assets/${currentItem.image}" alt="Grammar Task Context Graphic">`;
@@ -572,65 +580,74 @@ function presentQuestionCard() {
         graphicContainer.innerHTML = "";
     }
 
-    // Build interactive node array elements
+    // Build interactive option nodes
     let inputContainer = document.getElementById("options");
     inputContainer.innerHTML = "";
 
-    currentItem.options.forEach(optionText => {
+    currentItem.options.forEach((optionText, optIdx) => {
         let node = document.createElement("div");
         node.className = "option";
         node.innerText = optionText;
-        node.onclick = () => processAnswerValidation(node, optionText, currentItem.answer, currentItem.hint);
+        node.onclick = () => processAnswerValidation(node, optIdx, currentItem.correctIndex, currentItem.hint);
         inputContainer.appendChild(node);
     });
 }
 
-function processAnswerValidation(selectedDomNode, userSelectionText, absoluteAnswerString, hintString) {
-    triggerAudioPlayback("click");
+function processAnswerValidation(selectedDomNode, selectedIndex, correctIndex, hintString) {
     let optionsNodeList = document.querySelectorAll(".option");
     let feedbackArea = document.getElementById("feedbackBox");
 
-    // Correct hit logic path
-    if (userSelectionText === absoluteAnswerString) {
+    // Correct Answer Selected
+    if (selectedIndex === correctIndex) {
         optionsNodeList.forEach(el => el.classList.add("lock-clicks"));
         selectedDomNode.classList.add("correct");
         validScore++;
-        triggerAudioPlayback("correct");
-        feedbackArea.innerHTML = "<span style='color:var(--correct);'>✨ Splendid answer! Keep it up.</span>";
+        
+        // Immediate Correct Sound & Confetti
+        triggerAudioPlayback("sound-correct");
+        deployParticleConfetti(35);
+
+        feedbackArea.innerHTML = "<span style='color:var(--correct);'>✨ Correct! Well done.</span>";
         
         updateDisplayPanel();
-        setTimeout(() => { activeIdx++; presentQuestionCard(); }, 1800);
+        setTimeout(() => { 
+            activeIdx++; 
+            presentQuestionCard(); 
+        }, 1800);
         return;
     }
 
-    // False hit path - Second chance engine branch
+    // Incorrect Answer - First Attempt
     if (currentAttempt === 1) {
         currentAttempt++;
         selectedDomNode.classList.add("wrong");
         selectedDomNode.classList.add("disabled-node");
-        triggerAudioPlayback("wrong");
-        feedbackArea.innerHTML = `<span style='color:var(--hint-color);'>⚠️ <b>Not quite right! Try again.</b><br><small style="color:var(--text-muted)"><b>Hint:</b> ${hintString}</small></span>`;
+        
+        // Immediate Wrong Sound
+        triggerAudioPlayback("sound-wrong");
+
+        feedbackArea.innerHTML = `<span style='color:var(--hint-color);'>⚠️ <b>Incorrect! Try again.</b><br><small style="color:var(--text-muted)"><b>Hint:</b> ${hintString}</small></span>`;
     } else {
-        // Ultimate milestone mistake branch
+        // Incorrect Answer - Second Attempt
         optionsNodeList.forEach(el => el.classList.add("lock-clicks"));
         selectedDomNode.classList.add("wrong");
         invalidScore++;
-        triggerAudioPlayback("wrong");
-        feedbackArea.innerHTML = "<span style='color:var(--wrong);'>✕ Incorrect. Let's look at the correct solution.</span>";
+        
+        // Immediate Wrong Sound
+        triggerAudioPlayback("sound-wrong");
 
-        optionsNodeList.forEach(el => {
-            if (el.innerText === absoluteAnswerString) {
-                el.classList.add("correct");
-            }
-        });
+        feedbackArea.innerHTML = "<span style='color:var(--wrong);'>✕ Incorrect. Showing the right answer below.</span>";
+
+        if (optionsNodeList[correctIndex]) {
+            optionsNodeList[correctIndex].classList.add("correct");
+        }
 
         updateDisplayPanel();
         
-        // Timeout fix added here to advance past double mistakes
         setTimeout(() => { 
             activeIdx++; 
             presentQuestionCard(); 
-        }, 3200);
+        }, 3000);
     }
 }
 
@@ -646,7 +663,6 @@ function terminateQuizGame() {
     let finalRatio = Math.round((validScore / workingDataset.length) * 100);
     document.getElementById("finalScore").innerText = `${validScore}/${workingDataset.length} (${finalRatio}%)`;
 
-    // Process decorative review metrics
     let awardStars = "★";
     if (finalRatio >= 90) awardStars = "★★★★★";
     else if (finalRatio >= 75) awardStars = "★★★★";
@@ -655,13 +671,11 @@ function terminateQuizGame() {
 
     document.getElementById("stars").innerText = awardStars;
 
-    let remarkMsg = "Keep studying! Review countable vs uncountable modifiers to sharpen your skills.";
-    if (finalRatio >= 80) {
-        remarkMsg = "Exceptional Determiner Mastery! Brilliant grammar skills! 🌟";
-        triggerAudioPlayback("clap");
-        deployParticleConfetti();
-    } else {
-        triggerAudioPlayback("over");
+    let remarkMsg = "Keep practicing! Review countable vs uncountable modifiers.";
+    if (finalRatio >= 75) {
+        remarkMsg = "Outstanding Determiner Mastery! Amazing job! 🌟";
+        triggerAudioPlayback("sound-clap");
+        deployParticleConfetti(80);
     }
 
     document.getElementById("remark").innerText = remarkMsg;
@@ -677,30 +691,31 @@ function triggerAudioPlayback(domId) {
     if (targetedAudio) {
         targetedAudio.volume = systemVolume;
         targetedAudio.currentTime = 0;
-        targetedAudio.play().catch(() => { /* Standard bypass block for browser policy */ });
+        targetedAudio.play().catch(() => {});
     }
 }
 
-function deployParticleConfetti() {
+function deployParticleConfetti(count = 40) {
     const colorSwatches = ["#4f46e5", "#3b82f6", "#10b981", "#f59e0b", "#ec4899"];
-    for (let i = 0; i < 65; i++) {
+    for (let i = 0; i < count; i++) {
         let p = document.createElement("div");
         p.className = "confetti-particle";
         p.style.left = Math.random() * 100 + "vw";
         p.style.backgroundColor = colorSwatches[Math.floor(Math.random() * colorSwatches.length)];
-        p.style.animationDuration = (Math.random() * 1.4 + 1.6) + "s";
+        p.style.animationDuration = (Math.random() * 1.2 + 1.3) + "s";
         p.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
         document.body.appendChild(p);
-        setTimeout(() => p.remove(), 3000);
+        setTimeout(() => p.remove(), 2500);
     }
 }
 
 function shakeArray(arrayTarget) {
-    for (let currentMarker = arrayTarget.length - 1; currentMarker > 0; currentMarker--) {
+    let arr = [...arrayTarget];
+    for (let currentMarker = arr.length - 1; currentMarker > 0; currentMarker--) {
         let replacementIndex = Math.floor(Math.random() * (currentMarker + 1));
-        [arrayTarget[currentMarker], arrayTarget[replacementIndex]] = [arrayTarget[replacementIndex], arrayTarget[currentMarker]];
+        [arr[currentMarker], arr[replacementIndex]] = [arr[replacementIndex], arr[currentMarker]];
     }
-    return arrayTarget;
+    return arr;
 }
 </script>
 
