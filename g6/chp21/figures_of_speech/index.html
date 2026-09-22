@@ -2,329 +2,751 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Grade 6 Figures of Speech</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Grade 6 Figures of Speech - Interactive Challenge</title>
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(135deg,#fff1eb,#ace0f9);
-overflow-x:hidden;
+:root {
+  --primary: #6366f1;
+  --primary-glow: rgba(99, 102, 241, 0.4);
+  --success: #10b981;
+  --success-glow: rgba(16, 185, 129, 0.4);
+  --error: #ef4444;
+  --error-glow: rgba(239, 68, 68, 0.4);
+  --warning: #f59e0b;
+  --bg-dark: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --text-main: #1e293b;
 }
 
-.screen{
-display:none;
-min-height:100vh;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-padding:15px;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.active{display:flex;}
-
-.logo{
-width:220px;
-animation:zoom 2s ease;
+body {
+  min-height: 100dvh;
+  background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #0284c7);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  padding: 12px;
 }
 
-@keyframes zoom{
-from{transform:scale(0.4);opacity:0;}
-to{transform:scale(1);opacity:1;}
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.card{
-background:white;
-width:95%;
-max-width:750px;
-padding:20px;
-border-radius:18px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 820px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.q{
-font-size:18px;
-font-weight:bold;
-margin-bottom:10px;
+.active { display: flex; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.option{
-background:#f1f1f1;
-padding:12px;
-margin:8px 0;
-border-radius:10px;
-cursor:pointer;
-font-size:16px;
-transition:0.2s;
+/* LOGO & SPLASH */
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
-.option:hover{background:#ddd;}
-
-.correct{background:#2ecc71!important;color:white;}
-.wrong{background:#e74c3c!important;color:white;}
-
-.top{
-display:flex;
-justify-content:space-between;
-width:100%;
-max-width:750px;
-margin-bottom:10px;
-font-size:16px;
+.logo {
+  width: min(280px, 75vw);
+  height: auto;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+  animation: logoPulse 2.5s ease-in-out infinite alternate;
 }
 
-img{
-max-width:100%;
-border-radius:10px;
-margin:10px 0;
+@keyframes logoPulse {
+  from { transform: scale(0.95); }
+  to { transform: scale(1.03); }
 }
 
-#timer{
-font-weight:bold;
-color:#d63031;
+/* CONTAINER / CARD */
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  width: 100%;
+  padding: clamp(18px, 4vw, 32px);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35),
+              0 0 0 1px rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
+/* DASHBOARD HEADER */
+.dashboard {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(10px);
+  padding: 12px 20px;
+  border-radius: 18px;
+  color: #fff;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: clamp(14px, 3vw, 17px);
+}
+
+.timer-ring {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-ring circle {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.timer-circle-bg { stroke: rgba(255,255,255,0.15); }
+.timer-circle-progress {
+  stroke: #f59e0b;
+  stroke-dasharray: 113;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear, stroke 0.3s;
+}
+
+#timer-text {
+  position: absolute;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.volume-control input {
+  width: 60px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* PROGRESS BAR */
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(222, 226, 230, 0.6);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #6366f1, #06b6d4);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* QUESTION CONTENT */
+.q-box {
+  font-size: clamp(16px, 3.5vw, 20px);
+  font-weight: 700;
+  line-height: 1.5;
+  color: #0f172a;
+}
+
+.q-img {
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 2px solid #e2e8f0;
+  margin-top: 10px;
+  background: #f8fafc;
+}
+
+/* OPTIONS GRID */
+.options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.option-btn {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  padding: clamp(12px, 2.5vh, 16px);
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: clamp(14px, 3vw, 17px);
+  font-weight: 600;
+  color: #334155;
+  text-align: left;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.option-btn:hover:not(.disabled) {
+  border-color: var(--primary);
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.option-btn:active:not(.disabled) {
+  transform: translateY(0);
+}
+
+.option-btn.correct {
+  background: #d1fae5 !important;
+  border-color: var(--success) !important;
+  color: #065f46 !important;
+  box-shadow: 0 4px 14px var(--success-glow);
+}
+
+.option-btn.wrong {
+  background: #fee2e2 !important;
+  border-color: var(--error) !important;
+  color: #991b1b !important;
+  box-shadow: 0 4px 14px var(--error-glow);
+}
+
+.option-btn.disabled {
+  cursor: default;
+  opacity: 0.8;
+}
+
+/* EXPLANATION BOX */
+.explanation-box {
+  background: #f0fdf4;
+  border-left: 5px solid var(--success);
+  padding: 14px;
+  border-radius: 12px;
+  font-size: clamp(13px, 2.8vw, 15px);
+  color: #166534;
+  line-height: 1.5;
+  animation: slideDown 0.3s ease;
+}
+
+.explanation-box.try-again {
+  background: #fffbebfb;
+  border-left-color: var(--warning);
+  color: #92400e;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* RESTART & BUTTONS */
+.action-btn {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px var(--primary-glow);
+  transition: all 0.2s ease;
+  align-self: center;
+  margin-top: 10px;
+}
+
+.action-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px var(--primary-glow);
+}
+
+/* RESULT SCREEN */
+.result-card {
+  text-align: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.result-score {
+  font-size: clamp(36px, 8vw, 56px);
+  font-weight: 900;
+  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.result-badge {
+  font-size: clamp(16px, 3.5vw, 22px);
+  font-weight: 700;
+  color: #334155;
+}
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
+<!-- SPLASH SCREEN -->
 <div class="screen active" id="splash">
-<img src="assets/innovine-logo.png" class="logo">
+  <div class="logo-container">
+    <img src="assets/innovine-logo.png" class="logo" alt="Logo" id="logoImg">
+  </div>
 </div>
 
-<!-- GAME -->
+<!-- GAME SCREEN -->
 <div class="screen" id="game">
+  <div class="dashboard">
+    <div class="stat-item">⭐ <span id="score">0</span></div>
+    
+    <div class="stat-item">
+      <div class="timer-ring">
+        <svg viewBox="0 0 40 40">
+          <circle class="timer-circle-bg" cx="20" cy="20" r="18" />
+          <circle class="timer-circle-progress" id="timerProgress" cx="20" cy="20" r="18" />
+        </svg>
+        <span id="timer-text">45</span>
+      </div>
+    </div>
 
-<div class="top">
-<div>Score: <span id="score">0</span></div>
-<div>⏱ <span id="timer">45</span></div>
-<div>🔊 <input type="range" min="0" max="1" step="0.1" id="vol"></div>
+    <div class="volume-control">
+      <span>🔊</span>
+      <input type="range" min="0" max="1" step="0.1" id="vol" value="1">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+
+    <div class="q-box" id="qbox"></div>
+    <div class="options-grid" id="obox"></div>
+    <div id="expContainer"></div>
+  </div>
 </div>
 
-<div class="card">
-<div id="qbox"></div>
-<div id="obox"></div>
-<div id="exp"></div>
-</div>
-
-</div>
-
-<!-- RESULT -->
+<!-- RESULT SCREEN -->
 <div class="screen" id="result">
-<div class="card">
-<h2>Final Result</h2>
-<div id="final"></div>
-<button onclick="location.reload()">Restart</button>
+  <div class="card result-card">
+    <h2>🏆 Mission Complete!</h2>
+    <div class="result-score" id="finalScore">0 / 0</div>
+    <div class="result-badge" id="finalBadge">Great Job!</div>
+    <button class="action-btn" onclick="restartGame()">Play Again 🔄</button>
+  </div>
 </div>
-</div>
-
-<audio id="correct" src="assets/correct.mp3"></audio>
-<audio id="wrong" src="assets/wrong.mp3"></audio>
-<audio id="clap" src="assets/clapping.mp3"></audio>
 
 <script>
+/* ---------------------------------------------------------
+   WEB AUDIO API SYNTHESIZER (ZERO FILE DEPENDENCY)
+--------------------------------------------------------- */
+let audioCtx = null;
+let masterVolume = 1;
 
-const questions = [
-{
-q:`You are writing a poem about a fast runner. Which sentence helps the reader imagine his speed by comparing it to something else using “like” or “as”?`,
-o:["He is a lightning bolt on the track.","He runs as fast as the wind.","He ran to the finish line quickly.","The track was long and dusty."],
-a:1,
-exp:"Simile uses 'as fast as' comparison."
-},
-{
-q:`You are describing a very cold room. Which sentence describe the room by directly comparing it to something else without using "like" or "as".`,
-o:["The room was like a refrigerator.","The room was as cold as ice.","The room was an icebox.","It was very cold in the room."],
-a:2,
-exp:"Metaphor makes direct comparison without 'like/as'."
-},
-{
-q:`You are writing a poem about a windy evening: "The wind whistled through the trees and tugged at the curtains." Which figure of speech is being used?`,
-o:["Hyperbole","Alliteration","Personification","Onomatopoeia"],
-a:2,
-exp:"Wind is given human actions → Personification."
-},
-{
-q:`You are extremely hungry after football practice. "I am so hungry I could eat a horse!" What figure of speech is this?`,
-o:["Personification","Hyperbole","Idiom","Metaphor"],
-a:1,
-exp:"Extreme exaggeration → Hyperbole."
-},
-{
-q:`"Break a leg!" What does it mean?`,
-o:["I hope you get injured.","Good luck with your performance.","Dance faster.","Sit down."],
-a:1,
-exp:"Idiomatic expression meaning good luck."
-},
-
-{
-q:`[picture1] Identify figures of speech in the poem.`,
-o:["Simile & Hyperbole","Personification & Alliteration","Metaphor & Onomatopoeia","Alliteration & Simile"],
-a:1,
-img:"picture1.png",
-exp:"Personification + Alliteration observed."
-},
-
-{
-q:`[picture2] What figure of speech is shown?`,
-o:["Alliteration","Personification","Onomatopoeia","Hyperbole"],
-a:2,
-img:"picture2.png",
-exp:"Sound words like BUZZ, CRASH → Onomatopoeia."
-},
-
-{
-q:`Which sentence repeats starting sounds?`,
-o:["Stars winked at me.","Laughter is medicine.","Seven slippery snakes slid slowly.","Million times told."],
-a:2,
-exp:"Repeated 's' sound → Alliteration."
-},
-
-{
-q:`Fire swallowed forest / I've told you thousand times`,
-o:["Simile/Metaphor","Personification/Hyperbole","Alliteration/Idiom","Onomatopoeia/Personification"],
-a:1,
-exp:"Fire acts human + exaggeration."
-},
-
-{
-q:`Simile vs Metaphor classification`,
-o:["Simile: P,R Metaphor: Q,S","Simile: P,Q Metaphor: R,S","Simile: Q,S Metaphor: P,R","Simile: R,S Metaphor: P,Q"],
-a:2,
-exp:"Like/as = simile, direct = metaphor."
-},
-
-{
-q:`Classify figures of speech`,
-o:["1-P,2-I,3-H,4-O","1-H,2-O,3-I,4-P","1-I,2-P,3-O,4-H","1-O,2-H,3-P,4-I"],
-a:2,
-exp:"Correct classification logic."
-},
-
-{
-q:`Odd one out`,
-o:["Stars danced","Ran like wind","Million times","Sun rises east"],
-a:3,
-exp:"Only literal sentence."
-},
-
-{
-q:`Wrong label identification`,
-o:["a","b","c","d"],
-a:1,
-exp:"Classroom was a zoo → Metaphor not simile."
-},
-
-{
-q:`Effect of simile change`,
-o:["Wrong grammar","Slower meaning","More vivid description","Becomes metaphor"],
-a:2,
-exp:"Simile improves imagery."
-},
-
-{
-q:`Buzzing bee assertion`,
-o:["Both correct & explained","Both correct no link","Assertion correct","Both wrong"],
-a:0,
-exp:"Buzz mimics sound → onomatopoeia."
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
 }
+
+document.getElementById("vol").addEventListener("input", (e) => {
+  masterVolume = parseFloat(e.target.value);
+});
+
+function playSound(type) {
+  initAudio();
+  if (!audioCtx || masterVolume <= 0) return;
+
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  if (type === "correct") {
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(523.25, now); // C5
+    osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1); // E5
+    osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2); // G5
+    
+    gain.gain.setValueAtTime(0.3 * masterVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+    
+    osc.start(now);
+    osc.stop(now + 0.4);
+  } else if (type === "wrong") {
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(180, now);
+    osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+    
+    gain.gain.setValueAtTime(0.3 * masterVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+    
+    osc.start(now);
+    osc.stop(now + 0.35);
+  } else if (type === "complete") {
+    // Fanfare chords
+    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = "triangle";
+      o.frequency.setValueAtTime(freq, now + idx * 0.1);
+      g.gain.setValueAtTime(0.2 * masterVolume, now + idx * 0.1);
+      g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.5);
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.start(now + idx * 0.1);
+      o.stop(now + idx * 0.1 + 0.5);
+    });
+  }
+}
+
+/* ---------------------------------------------------------
+   QUESTIONS DATASET
+--------------------------------------------------------- */
+const questions = [
+  {
+    q: `You are writing a poem about a fast runner. Which sentence helps the reader imagine his speed by comparing it to something else using “like” or “as”?`,
+    o: ["He is a lightning bolt on the track.", "He runs as fast as the wind.", "He ran to the finish line quickly.", "The track was long and dusty."],
+    a: 1,
+    exp: "A <b>Simile</b> compares two different things using 'like' or 'as' (e.g., 'as fast as the wind')."
+  },
+  {
+    q: `You are describing a very cold room. Which sentence describes the room by directly comparing it to something else without using "like" or "as"?`,
+    o: ["The room was like a refrigerator.", "The room was as cold as ice.", "The room was an icebox.", "It was very cold in the room."],
+    a: 2,
+    exp: "A <b>Metaphor</b> makes a direct comparison without using 'like' or 'as' (e.g., 'The room was an icebox')."
+  },
+  {
+    q: `You are writing a poem about a windy evening: "The wind whistled through the trees and tugged at the curtains." Which figure of speech is being used?`,
+    o: ["Hyperbole", "Alliteration", "Personification", "Onomatopoeia"],
+    a: 2,
+    exp: "<b>Personification</b> gives human qualities (whistling, tugging) to non-human things (the wind)."
+  },
+  {
+    q: `You are extremely hungry after football practice: "I am so hungry I could eat a horse!" What figure of speech is this?`,
+    o: ["Personification", "Hyperbole", "Idiom", "Metaphor"],
+    a: 1,
+    exp: "<b>Hyperbole</b> uses extreme exaggeration to make a strong point."
+  },
+  {
+    q: `"Break a leg!" What does this figure of speech mean?`,
+    o: ["I hope you get injured.", "Good luck with your performance.", "Dance faster.", "Sit down."],
+    a: 1,
+    exp: "An <b>Idiom</b> is an expression whose meaning cannot be understood from its literal words. 'Break a leg' means good luck!"
+  },
+  {
+    q: `Identify the figures of speech in the poem below:`,
+    o: ["Simile & Hyperbole", "Personification & Alliteration", "Metaphor & Onomatopoeia", "Alliteration & Simile"],
+    a: 1,
+    img: "picture1.png",
+    exp: "The text combines human actions given to nature (Personification) and repeated consonant sounds (Alliteration)."
+  },
+  {
+    q: `What figure of speech is illustrated in the picture?`,
+    o: ["Alliteration", "Personification", "Onomatopoeia", "Hyperbole"],
+    a: 2,
+    img: "picture2.png",
+    exp: "<b>Onomatopoeia</b> uses sound-imitation words like BUZZ, CRASH, or BANG."
+  },
+  {
+    q: `Which sentence features repeated starting consonant sounds?`,
+    o: ["Stars winked at me.", "Laughter is medicine.", "Seven slippery snakes slid slowly.", "I have told you a million times."],
+    a: 2,
+    exp: "<b>Alliteration</b> is the repetition of initial consonant sounds ('Seven slippery snakes...')."
+  },
+  {
+    q: `Identify figures of speech: "The fire swallowed the entire forest" / "I've told you a thousand times!"`,
+    o: ["Simile / Metaphor", "Personification / Hyperbole", "Alliteration / Idiom", "Onomatopoeia / Personification"],
+    a: 1,
+    exp: "Fire 'swallowing' is Personification; 'a thousand times' is extreme Hyperbole."
+  },
+  {
+    q: `Classify the following: (P) As brave as a lion, (Q) Life is a rollercoaster, (R) He slept like a log, (S) Time is money.`,
+    o: ["Simile: P,R | Metaphor: Q,S", "Simile: P,Q | Metaphor: R,S", "Simile: Q,S | Metaphor: P,R", "Simile: R,S | Metaphor: P,Q"],
+    a: 0,
+    exp: "Similes (P, R) use 'as/like'; Metaphors (Q, S) make direct statements of comparison."
+  },
+  {
+    q: `Match figures of speech: (1) "Kick the bucket", (2) "The sun greeted me", (3) "BAM!", (4) "Dying of boredom".`,
+    o: ["1-Idiom, 2-Personification, 3-Onomatopoeia, 4-Hyperbole", "1-Hyperbole, 2-Onomatopoeia, 3-Idiom, 4-Personification", "1-Idiom, 2-Hyperbole, 3-Onomatopoeia, 4-Personification", "1-Onomatopoeia, 2-Hyperbole, 3-Personification, 4-Idiom"],
+    a: 0,
+    exp: "1 = Idiom, 2 = Personification, 3 = Onomatopoeia, 4 = Hyperbole."
+  },
+  {
+    q: `Which sentence is the ODD ONE OUT?`,
+    o: ["The stars danced playfully in the sky.", "He ran like the wind.", "I've told you a million times.", "The sun rises in the east."],
+    a: 3,
+    exp: "'The sun rises in the east' is a factual literal statement. All others use figurative language!"
+  },
+  {
+    q: `Which identification is INCORRECT?`,
+    o: ["a) 'The wind whispered' → Personification", "b) 'The classroom was a zoo' → Simile", "c) 'Buzzing bee' → Onomatopoeia", "d) 'Heart of gold' → Metaphor"],
+    a: 1,
+    exp: "'The classroom was a zoo' is a Metaphor, not a Simile, because it doesn't use 'like' or 'as'."
+  },
+  {
+    q: `How does changing "He ran fast" to "He ran like a cheetah" affect the writing?`,
+    o: ["Makes it grammatically incorrect", "Slows down the story", "Creates a more vivid visual image for the reader", "Turns the sentence into a metaphor"],
+    a: 2,
+    exp: "Adding a simile creates strong visual imagery that elevates the reader's imagination."
+  },
+  {
+    q: `Assertion: "The buzzing bee flew away" uses Onomatopoeia.<br>Reason: "Buzzing" mimics the sound made by a bee.`,
+    o: ["Both Assertion & Reason are correct and Reason explains Assertion.", "Both are correct but Reason does not explain Assertion.", "Assertion is correct, Reason is incorrect.", "Both Assertion and Reason are incorrect."],
+    a: 0,
+    exp: "Onomatopoeia words imitate real sound effects, making both assertion and reason correct."
+  }
 ];
 
-let i=0,score=0,attempt=0,timer=45,interval;
+/* ---------------------------------------------------------
+   GAME ENGINE STATE
+--------------------------------------------------------- */
+let currentIndex = 0;
+let score = 0;
+let attempts = 0;
+let timer = 45;
+let timerInterval = null;
+let isAnswered = false;
 
-const qbox=document.getElementById("qbox");
-const obox=document.getElementById("obox");
-const exp=document.getElementById("exp");
+const qbox = document.getElementById("qbox");
+const obox = document.getElementById("obox");
+const expContainer = document.getElementById("expContainer");
 
-function start(){
-document.getElementById("splash").classList.remove("active");
-document.getElementById("game").classList.add("active");
-load();
-startTimer();
-}
+// Splash sequence
+window.addEventListener("load", () => {
+  const logoImg = document.getElementById("logoImg");
+  const transitionToGame = () => {
+    setTimeout(() => {
+      document.getElementById("splash").classList.remove("active");
+      document.getElementById("game").classList.add("active");
+      startGame();
+    }, 1800);
+  };
 
-function load(){
-clearInterval(interval);
-timer=45;
-attempt=0;
-
-let q=questions[i];
-
-qbox.innerHTML=q.q;
-obox.innerHTML="";
-exp.innerHTML="";
-document.getElementById("score").innerText=score;
-
-if(q.img){
-let im=document.createElement("img");
-im.src="assets/"+q.img;
-qbox.appendChild(im);
-}
-
-q.o.forEach((o,idx)=>{
-let d=document.createElement("div");
-d.className="option";
-d.innerText=o;
-d.onclick=()=>check(idx,q,d);
-obox.appendChild(d);
+  if (logoImg.complete) transitionToGame();
+  else logoImg.onload = transitionToGame;
+  logoImg.onerror = transitionToGame;
 });
+
+function startGame() {
+  currentIndex = 0;
+  score = 0;
+  document.getElementById("score").innerText = score;
+  loadQuestion();
 }
 
-function check(idx,q,el){
+function loadQuestion() {
+  clearInterval(timerInterval);
+  timer = 45;
+  attempts = 0;
+  isAnswered = false;
 
-if(idx===q.a){
-el.classList.add("correct");
-score++;
-document.getElementById("correct").play();
-exp.innerHTML=q.exp;
-setTimeout(next,1200);
-}
-else{
-attempt++;
-el.classList.add("wrong");
-document.getElementById("wrong").play();
+  updateTimerUI();
+  updateProgressBar();
 
-if(attempt===1){
-exp.innerHTML="Try again!";
-}
-else{
-exp.innerHTML="❌ Correct Answer: <b>"+q.o[q.a]+"</b><br>📘 "+q.exp;
-setTimeout(next,2000);
-}
-}
-}
+  const q = questions[currentIndex];
+  
+  // Render question text & image if present
+  qbox.innerHTML = q.q;
+  if (q.img) {
+    const img = document.createElement("img");
+    img.src = "assets/" + q.img;
+    img.className = "q-img";
+    img.onerror = () => img.style.display = 'none'; // Graceful fallback
+    qbox.appendChild(img);
+  }
 
-function next(){
-i++;
-if(i<questions.length)load();
-else end();
-}
+  // Clear previous options & explanation
+  obox.innerHTML = "";
+  expContainer.innerHTML = "";
 
-function startTimer(){
-interval=setInterval(()=>{
-timer--;
-document.getElementById("timer").innerText=timer;
-if(timer<=0)next();
-},1000);
-}
+  // Render options
+  q.o.forEach((optText, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.innerHTML = `<span>${optText}</span>`;
+    btn.onclick = () => checkAnswer(idx, q, btn);
+    obox.appendChild(btn);
+  });
 
-function end(){
-document.getElementById("game").classList.remove("active");
-document.getElementById("result").classList.add("active");
-document.getElementById("clap").play();
-document.getElementById("final").innerHTML=
-"Score: "+score+"/"+questions.length;
+  startTimer();
 }
 
-window.onload=()=>{
-setTimeout(start,5000);
-};
+function checkAnswer(selectedIdx, q, btnElement) {
+  if (isAnswered) return;
 
-document.getElementById("vol").oninput=(e)=>{
-document.querySelectorAll("audio").forEach(a=>a.volume=e.target.value);
-};
+  if (selectedIdx === q.a) {
+    isAnswered = true;
+    clearInterval(timerInterval);
+    btnElement.classList.add("correct");
+    playSound("correct");
+    score++;
+    document.getElementById("score").innerText = score;
 
+    showExplanation(q.exp, false);
+    disableOptions();
+
+    setTimeout(nextQuestion, 1600);
+  } else {
+    attempts++;
+    btnElement.classList.add("wrong");
+    playSound("wrong");
+
+    if (attempts === 1) {
+      showExplanation("💡 <b>Try again!</b> Re-read the choices carefully.", true);
+    } else {
+      isAnswered = true;
+      clearInterval(timerInterval);
+      showExplanation(`❌ <b>Correct Answer:</b> ${q.o[q.a]}<br>${q.exp}`, false);
+      highlightCorrectOption(q.a);
+      disableOptions();
+
+      setTimeout(nextQuestion, 2400);
+    }
+  }
+}
+
+function highlightCorrectOption(correctIdx) {
+  const buttons = obox.querySelectorAll(".option-btn");
+  if (buttons[correctIdx]) {
+    buttons[correctIdx].classList.add("correct");
+  }
+}
+
+function disableOptions() {
+  const buttons = obox.querySelectorAll(".option-btn");
+  buttons.forEach(b => b.classList.add("disabled"));
+}
+
+function showExplanation(text, isTryAgain) {
+  expContainer.innerHTML = `
+    <div class="explanation-box ${isTryAgain ? 'try-again' : ''}">
+      ${text}
+    </div>
+  `;
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timer--;
+    updateTimerUI();
+
+    if (timer <= 0) {
+      clearInterval(timerInterval);
+      playSound("wrong");
+      showExplanation(`⏰ <b>Time's up!</b> Correct answer was: ${questions[currentIndex].o[questions[currentIndex].a]}`, false);
+      highlightCorrectOption(questions[currentIndex].a);
+      disableOptions();
+      setTimeout(nextQuestion, 2200);
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  document.getElementById("timer-text").innerText = timer;
+  const circle = document.getElementById("timerProgress");
+  const maxDash = 113; // 2 * PI * 18
+  const offset = maxDash - (timer / 45) * maxDash;
+  circle.style.strokeDashoffset = offset;
+
+  if (timer <= 10) {
+    circle.style.stroke = "#ef4444";
+  } else {
+    circle.style.stroke = "#f59e0b";
+  }
+}
+
+function updateProgressBar() {
+  const progress = ((currentIndex + 1) / questions.length) * 100;
+  document.getElementById("progressBar").style.width = progress + "%";
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < questions.length) {
+    loadQuestion();
+  } else {
+    endGame();
+  }
+}
+
+function endGame() {
+  clearInterval(timerInterval);
+  document.getElementById("game").classList.remove("active");
+  document.getElementById("result").classList.add("active");
+
+  playSound("complete");
+
+  const finalScoreEl = document.getElementById("finalScore");
+  const finalBadgeEl = document.getElementById("finalBadge");
+
+  finalScoreEl.innerText = `${score} / ${questions.length}`;
+
+  const pct = (score / questions.length) * 100;
+  if (pct === 100) {
+    finalBadgeEl.innerText = "🌟 Perfect Masterclass! Outstanding!";
+  } else if (pct >= 75) {
+    finalBadgeEl.innerText = "🎉 Excellent Figures of Speech Scholar!";
+  } else if (pct >= 50) {
+    finalBadgeEl.innerText = "👏 Good Effort! Keep Practicing!";
+  } else {
+    finalBadgeEl.innerText = "💪 Review the topics and try again!";
+  }
+}
+
+function restartGame() {
+  document.getElementById("result").classList.remove("active");
+  document.getElementById("game").classList.add("active");
+  startGame();
+}
 </script>
 
 </body>
