@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Grade 6 Figures of Speech - Interactive Challenge</title>
 
 <style>
@@ -15,7 +15,7 @@
   --error-glow: rgba(239, 68, 68, 0.4);
   --warning: #f59e0b;
   --bg-dark: #0f172a;
-  --card-bg: rgba(255, 255, 255, 0.92);
+  --card-bg: rgba(255, 255, 255, 0.94);
   --text-main: #1e293b;
 }
 
@@ -29,7 +29,7 @@
 }
 
 body {
-  min-height: 100dvh;
+  min-height: 100vh;
   background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #0284c7);
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
@@ -65,6 +65,18 @@ body {
 }
 
 /* LOGO & SPLASH */
+#splash {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #0f172a;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.8s ease;
+}
+
 .logo-container {
   display: flex;
   flex-direction: column;
@@ -73,15 +85,15 @@ body {
 }
 
 .logo {
-  width: min(280px, 75vw);
+  width: min(320px, 75vw);
   height: auto;
-  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+  filter: drop-shadow(0 10px 25px rgba(99, 102, 241, 0.4));
   animation: logoPulse 2.5s ease-in-out infinite alternate;
 }
 
 @keyframes logoPulse {
   from { transform: scale(0.95); }
-  to { transform: scale(1.03); }
+  to { transform: scale(1.05); }
 }
 
 /* CONTAINER / CARD */
@@ -189,7 +201,7 @@ body {
 
 /* QUESTION CONTENT */
 .q-box {
-  font-size: clamp(16px, 3.5vw, 20px);
+  font-size: clamp(15px, 3.2vw, 19px);
   font-weight: 700;
   line-height: 1.5;
   color: #0f172a;
@@ -197,11 +209,11 @@ body {
 
 .q-img {
   width: 100%;
-  max-height: 240px;
+  max-height: 250px;
   object-fit: contain;
   border-radius: 14px;
-  border: 2px solid #e2e8f0;
-  margin-top: 10px;
+  border: 2px solid #cbd5e1;
+  margin-top: 12px;
   background: #f8fafc;
 }
 
@@ -219,7 +231,7 @@ body {
   padding: clamp(12px, 2.5vh, 16px);
   border-radius: 14px;
   cursor: pointer;
-  font-size: clamp(14px, 3vw, 17px);
+  font-size: clamp(14px, 2.8vw, 16px);
   font-weight: 600;
   color: #334155;
   text-align: left;
@@ -235,10 +247,6 @@ body {
   background: #f8fafc;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px var(--primary-glow);
-}
-
-.option-btn:active:not(.disabled) {
-  transform: translateY(0);
 }
 
 .option-btn.correct {
@@ -257,7 +265,7 @@ body {
 
 .option-btn.disabled {
   cursor: default;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 /* EXPLANATION BOX */
@@ -329,10 +337,11 @@ body {
 
 <body>
 
-<!-- SPLASH SCREEN -->
+<!-- 5-SECOND SPLASH SCREEN -->
 <div class="screen active" id="splash">
   <div class="logo-container">
-    <img src="assets/innovine-logo.png" class="logo" alt="Logo" id="logoImg">
+    <img src="assets/innovine-logo.png" class="logo" alt="Innovine Logo" id="logoImg" onerror="this.style.display='none'; document.getElementById('altSplashText').style.display='block';">
+    <h1 id="altSplashText" style="display:none; color:white; font-size:2rem;">Innovine Education</h1>
   </div>
 </div>
 
@@ -371,37 +380,53 @@ body {
 <!-- RESULT SCREEN -->
 <div class="screen" id="result">
   <div class="card result-card">
-    <h2>🏆 Mission Complete!</h2>
-    <div class="result-score" id="finalScore">0 / 0</div>
+    <h2>🏆 Chapter 21 Completed!</h2>
+    <div class="result-score" id="finalScore">0 / 15</div>
     <div class="result-badge" id="finalBadge">Great Job!</div>
     <button class="action-btn" onclick="restartGame()">Play Again 🔄</button>
   </div>
 </div>
 
+<!-- AUDIO ASSETS -->
+<audio id="sndCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sndWrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="sndClap" src="assets/clapping.mp3" preload="auto"></audio>
+
 <script>
 /* ---------------------------------------------------------
-   WEB AUDIO API SYNTHESIZER (ZERO FILE DEPENDENCY)
+   AUDIO ENGINE (HTML Audio + Synthesizer Fallback)
 --------------------------------------------------------- */
 let audioCtx = null;
 let masterVolume = 1;
 
-function initAudio() {
+document.getElementById("vol").addEventListener("input", (e) => {
+  masterVolume = parseFloat(e.target.value);
+  document.getElementById("sndCorrect").volume = masterVolume;
+  document.getElementById("sndWrong").volume = masterVolume;
+  document.getElementById("sndClap").volume = masterVolume;
+});
+
+function playSound(type) {
+  if (masterVolume <= 0) return;
+
+  let elemId = type === "correct" ? "sndCorrect" : (type === "wrong" ? "sndWrong" : "sndClap");
+  let audioElem = document.getElementById(elemId);
+
+  if (audioElem && audioElem.readyState >= 2) {
+    audioElem.currentTime = 0;
+    audioElem.play().catch(() => playSynthFallback(type));
+  } else {
+    playSynthFallback(type);
+  }
+}
+
+function playSynthFallback(type) {
   if (!audioCtx) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (AudioContext) audioCtx = new AudioContext();
   }
-  if (audioCtx && audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-}
-
-document.getElementById("vol").addEventListener("input", (e) => {
-  masterVolume = parseFloat(e.target.value);
-});
-
-function playSound(type) {
-  initAudio();
-  if (!audioCtx || masterVolume <= 0) return;
+  if (!audioCtx) return;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
 
   const now = audioCtx.currentTime;
   const osc = audioCtx.createOscillator();
@@ -412,142 +437,151 @@ function playSound(type) {
 
   if (type === "correct") {
     osc.type = "sine";
-    osc.frequency.setValueAtTime(523.25, now); // C5
-    osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1); // E5
-    osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2); // G5
-    
-    gain.gain.setValueAtTime(0.3 * masterVolume, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-    
+    osc.frequency.setValueAtTime(523.25, now);
+    osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+    gain.gain.setValueAtTime(0.2 * masterVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
     osc.start(now);
-    osc.stop(now + 0.4);
+    osc.stop(now + 0.3);
   } else if (type === "wrong") {
     osc.type = "sawtooth";
     osc.frequency.setValueAtTime(180, now);
-    osc.frequency.linearRampToValueAtTime(110, now + 0.3);
-    
-    gain.gain.setValueAtTime(0.3 * masterVolume, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-    
+    osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+    gain.gain.setValueAtTime(0.25 * masterVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
     osc.start(now);
-    osc.stop(now + 0.35);
-  } else if (type === "complete") {
-    // Fanfare chords
+    osc.stop(now + 0.3);
+  } else {
     [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
       const o = audioCtx.createOscillator();
       const g = audioCtx.createGain();
       o.type = "triangle";
-      o.frequency.setValueAtTime(freq, now + idx * 0.1);
-      g.gain.setValueAtTime(0.2 * masterVolume, now + idx * 0.1);
-      g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.5);
+      o.frequency.setValueAtTime(freq, now + idx * 0.08);
+      g.gain.setValueAtTime(0.2 * masterVolume, now + idx * 0.08);
+      g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.4);
       o.connect(g);
       g.connect(audioCtx.destination);
-      o.start(now + idx * 0.1);
-      o.stop(now + idx * 0.1 + 0.5);
+      o.start(now + idx * 0.08);
+      o.stop(now + idx * 0.08 + 0.4);
     });
   }
 }
 
 /* ---------------------------------------------------------
-   QUESTIONS DATASET
+   FULL QUESTIONS & ANSWERS DATASET
 --------------------------------------------------------- */
 const questions = [
   {
-    q: `You are writing a poem about a fast runner. Which sentence helps the reader imagine his speed by comparing it to something else using “like” or “as”?`,
-    o: ["He is a lightning bolt on the track.", "He runs as fast as the wind.", "He ran to the finish line quickly.", "The track was long and dusty."],
+    q: "Q1. You are writing a poem about a fast runner. Which sentence helps the reader imagine his speed by comparing it to something else using “like” or “as”?",
+    o: ["a) He is a lightning bolt on the track.", "b) He runs as fast as the wind.", "c) He ran to the finish line quickly.", "d) The track was long and dusty."],
     a: 1,
-    exp: "A <b>Simile</b> compares two different things using 'like' or 'as' (e.g., 'as fast as the wind')."
+    exp: "'As fast as' uses the comparison structure → <b>Simile</b>."
   },
   {
-    q: `You are describing a very cold room. Which sentence describes the room by directly comparing it to something else without using "like" or "as"?`,
-    o: ["The room was like a refrigerator.", "The room was as cold as ice.", "The room was an icebox.", "It was very cold in the room."],
+    q: "Q2. You are describing a very cold room. Which sentence describe the room by directly comparing it to something else without using \"like\" or \"as\".",
+    o: ["a) The room was like a refrigerator.", "b) The room was as cold as ice.", "c) The room was an icebox.", "d) It was very cold in the room."],
     a: 2,
-    exp: "A <b>Metaphor</b> makes a direct comparison without using 'like' or 'as' (e.g., 'The room was an icebox')."
+    exp: "'Was an icebox' = direct equation without 'like/as' → <b>Metaphor</b>."
   },
   {
-    q: `You are writing a poem about a windy evening: "The wind whistled through the trees and tugged at the curtains." Which figure of speech is being used?`,
-    o: ["Hyperbole", "Alliteration", "Personification", "Onomatopoeia"],
+    q: "Q3. You are writing a poem about a windy evening. You write: \"The wind whistled through the trees and tugged at the curtains.\" Which figure of speech is being used?",
+    o: ["a) Hyperbole", "b) Alliteration", "c) Personification", "d) Onomatopoeia"],
     a: 2,
-    exp: "<b>Personification</b> gives human qualities (whistling, tugging) to non-human things (the wind)."
+    exp: "Wind 'whistling' and 'tugging' are human actions given to a non-human thing → <b>Personification</b>."
   },
   {
-    q: `You are extremely hungry after football practice: "I am so hungry I could eat a horse!" What figure of speech is this?`,
-    o: ["Personification", "Hyperbole", "Idiom", "Metaphor"],
+    q: "Q4. You are extremely hungry after football practice. You tell your mom: \"I am so hungry I could eat a horse!\" Since you clearly don't mean this literally, what figure of speech is this?",
+    o: ["a) Personification", "b) Hyperbole", "c) Idiom", "d) Metaphor"],
     a: 1,
-    exp: "<b>Hyperbole</b> uses extreme exaggeration to make a strong point."
+    exp: "Eating a horse is a gross exaggeration used for dramatic effect → <b>Hyperbole</b>."
   },
   {
-    q: `"Break a leg!" What does this figure of speech mean?`,
-    o: ["I hope you get injured.", "Good luck with your performance.", "Dance faster.", "Sit down."],
+    q: "Q5. Before his friend goes on stage for a school play, Rohan says: \"Break a leg!\" His friend smiles and walks on confidently. What does the idiom actually mean here?",
+    o: ["a) I hope you have an accident.", "b) Good luck with your performance.", "c) You should dance faster.", "d) Sit down and rest."],
     a: 1,
-    exp: "An <b>Idiom</b> is an expression whose meaning cannot be understood from its literal words. 'Break a leg' means good luck!"
+    exp: "'Break a leg' is a theatre <b>Idiom</b> meaning good luck!"
   },
   {
-    q: `Identify the figures of speech in the poem below:`,
-    o: ["Simile & Hyperbole", "Personification & Alliteration", "Metaphor & Onomatopoeia", "Alliteration & Simile"],
+    q: "Q6. [picture1.png] A student's poem displayed on a classroom wall. Identify the two figures of speech used in these lines.",
+    o: ["a) Simile and Hyperbole", "b) Personification and Alliteration", "c) Metaphor and Onomatopoeia", "d) Alliteration and Simile"],
     a: 1,
     img: "picture1.png",
-    exp: "The text combines human actions given to nature (Personification) and repeated consonant sounds (Alliteration)."
+    exp: "Sun 'smiled/slipped' = <b>Personification</b>; repeated 's' sounds = <b>Alliteration</b>."
   },
   {
-    q: `What figure of speech is illustrated in the picture?`,
-    o: ["Alliteration", "Personification", "Onomatopoeia", "Hyperbole"],
+    q: "Q7. [picture2.png] A comic book page showing four panels. What figure of speech do all four panels demonstrate?",
+    o: ["a) Alliteration — repetition of starting sounds", "b) Personification — giving objects human qualities", "c) Onomatopoeia — words that sound like the noise they describe", "d) Hyperbole — extreme exaggeration for effect"],
     a: 2,
     img: "picture2.png",
-    exp: "<b>Onomatopoeia</b> uses sound-imitation words like BUZZ, CRASH, or BANG."
+    exp: "BUZZ, CRASH, PITTER-PATTER, SLAM — all words that sound like the noise they represent → <b>Onomatopoeia</b>."
   },
   {
-    q: `Which sentence features repeated starting consonant sounds?`,
-    o: ["Stars winked at me.", "Laughter is medicine.", "Seven slippery snakes slid slowly.", "I have told you a million times."],
+    q: "Q8. Which sentence creates a strong sound effect by repeating the same starting sound in several words?",
+    o: ["a) The stars winked at me from the dark sky.", "b) Laughter is the best medicine.", "c) Seven slippery snakes slid slowly southward.", "d) I have told you a million times!"],
     a: 2,
-    exp: "<b>Alliteration</b> is the repetition of initial consonant sounds ('Seven slippery snakes...')."
+    exp: "'Seven slippery snakes slid slowly' repeats initial consonant sounds → <b>Alliteration</b>."
   },
   {
-    q: `Identify figures of speech: "The fire swallowed the entire forest" / "I've told you a thousand times!"`,
-    o: ["Simile / Metaphor", "Personification / Hyperbole", "Alliteration / Idiom", "Onomatopoeia / Personification"],
+    q: "Q9. Match each example to its correct figure of speech: 1. \"The fire swallowed the entire forest.\" 2. \"I've told you a thousand times!\"",
+    o: ["a) 1=Simile; 2=Metaphor", "b) 1=Personification; 2=Hyperbole", "c) 1=Alliteration; 2=Idiom", "d) 1=Onomatopoeia; 2=Personification"],
     a: 1,
-    exp: "Fire 'swallowing' is Personification; 'a thousand times' is extreme Hyperbole."
+    exp: "Fire 'swallowing' = <b>Personification</b>; 'thousand times' = extreme exaggeration → <b>Hyperbole</b>."
   },
   {
-    q: `Classify the following: (P) As brave as a lion, (Q) Life is a rollercoaster, (R) He slept like a log, (S) Time is money.`,
-    o: ["Simile: P,R | Metaphor: Q,S", "Simile: P,Q | Metaphor: R,S", "Simile: Q,S | Metaphor: P,R", "Simile: R,S | Metaphor: P,Q"],
-    a: 0,
-    exp: "Similes (P, R) use 'as/like'; Metaphors (Q, S) make direct statements of comparison."
+    q: "Q10. Sort these sentences into two groups — Simile and Metaphor: P: \"Her voice is music to my ears.\" Q: \"He fought like a lion in the final match.\" R: \"Life is a journey with no map.\" S: \"The baby's skin was as soft as velvet.\"",
+    o: ["a) Simile: P, R — Metaphor: Q, S", "b) Simile: P, Q — Metaphor: R, S", "c) Simile: Q, S — Metaphor: P, R", "d) Simile: R, S — Metaphor: P, Q"],
+    a: 2,
+    exp: "Q & S use 'like/as' → <b>Simile</b>; P & R make direct comparisons → <b>Metaphor</b>."
   },
   {
-    q: `Match figures of speech: (1) "Kick the bucket", (2) "The sun greeted me", (3) "BAM!", (4) "Dying of boredom".`,
-    o: ["1-Idiom, 2-Personification, 3-Onomatopoeia, 4-Hyperbole", "1-Hyperbole, 2-Onomatopoeia, 3-Idiom, 4-Personification", "1-Idiom, 2-Hyperbole, 3-Onomatopoeia, 4-Personification", "1-Onomatopoeia, 2-Hyperbole, 3-Personification, 4-Idiom"],
-    a: 0,
-    exp: "1 = Idiom, 2 = Personification, 3 = Onomatopoeia, 4 = Hyperbole."
+    q: "Q11. Classify each sentence by its figure of speech — Personification, Onomatopoeia, Hyperbole or Idiom: 1. \"It is raining cats and dogs outside.\" 2. \"The thunder roared angrily across the sky.\" 3. \"The clock ticked and tocked in the silent room.\" 4. \"I have so much homework — I could cry for a year!\"",
+    o: ["a) 1=Personification, 2=Idiom, 3=Hyperbole, 4=Onomatopoeia", "b) 1=Hyperbole, 2=Onomatopoeia, 3=Idiom, 4=Personification", "c) 1=Idiom, 2=Personification, 3=Onomatopoeia, 4=Hyperbole", "d) 1=Onomatopoeia, 2=Hyperbole, 3=Personification, 4=Idiom"],
+    a: 2,
+    exp: "1 = <b>Idiom</b>, 2 = <b>Personification</b>, 3 = <b>Onomatopoeia</b>, 4 = <b>Hyperbole</b>."
   },
   {
-    q: `Which sentence is the ODD ONE OUT?`,
-    o: ["The stars danced playfully in the sky.", "He ran like the wind.", "I've told you a million times.", "The sun rises in the east."],
+    q: "Q12. Three of these sentences contain figures of speech. One is a literal statement. Which is the odd one out?",
+    o: ["a) The stars danced across the sky.", "b) He ran like the wind.", "c) I have told you a million times.", "d) The sun rises in the east."],
     a: 3,
-    exp: "'The sun rises in the east' is a factual literal statement. All others use figurative language!"
+    exp: "'The sun rises in the east' is a literal fact, whereas the other three sentences use figurative language."
   },
   {
-    q: `Which identification is INCORRECT?`,
-    o: ["a) 'The wind whispered' → Personification", "b) 'The classroom was a zoo' → Simile", "c) 'Buzzing bee' → Onomatopoeia", "d) 'Heart of gold' → Metaphor"],
+    q: "Q13. A student labelled four sentences in her notebook. One label is wrong. Find it.\na) \"Peter Piper picked a peck of pickled peppers.\" — labelled Alliteration\nb) \"The classroom was a zoo.\" — labelled Simile\nc) \"I'm so tired I could sleep for a century.\" — labelled Hyperbole\nd) \"The kettle hummed on the stove.\" — labelled Personification\nWhich option correctly identifies the wrongly labelled sentence?",
+    o: [
+      "a) Sentence (a) — it is not Alliteration; it is Onomatopoeia.",
+      "b) Sentence (b) — it is not a Simile; it is a Metaphor because it says the classroom is a zoo, not like a zoo.",
+      "c) Sentence (c) — it is not Hyperbole; it is a Simile.",
+      "d) Sentence (d) — it is not Personification; it is Onomatopoeia."
+    ],
     a: 1,
-    exp: "'The classroom was a zoo' is a Metaphor, not a Simile, because it doesn't use 'like' or 'as'."
+    exp: "'The classroom was a zoo' is a <b>Metaphor</b>, not a Simile, because it makes a direct comparison without using 'like' or 'as'."
   },
   {
-    q: `How does changing "He ran fast" to "He ran like a cheetah" affect the writing?`,
-    o: ["Makes it grammatically incorrect", "Slows down the story", "Creates a more vivid visual image for the reader", "Turns the sentence into a metaphor"],
+    q: "Q14. A student changes \"He ran very fast\" to \"He ran like the wind.\" What is the effect of this change?",
+    o: [
+      "a) The sentence becomes grammatically incorrect",
+      "b) The meaning changes completely — he is now slower than before",
+      "c) The figure of speech (Simile) makes the description more vivid and imaginative without changing the core meaning",
+      "d) The sentence becomes a Metaphor because 'wind' is used as a comparison"
+    ],
     a: 2,
-    exp: "Adding a simile creates strong visual imagery that elevates the reader's imagination."
+    exp: "A <b>Simile</b> adds vivid imagery and creative flair while preserving the core factual meaning."
   },
   {
-    q: `Assertion: "The buzzing bee flew away" uses Onomatopoeia.<br>Reason: "Buzzing" mimics the sound made by a bee.`,
-    o: ["Both Assertion & Reason are correct and Reason explains Assertion.", "Both are correct but Reason does not explain Assertion.", "Assertion is correct, Reason is incorrect.", "Both Assertion and Reason are incorrect."],
+    q: "Q15. Assertion: \"The buzzing bee flew away\" contains Onomatopoeia. Reason: The word 'buzzing' mimics the actual sound a bee makes — the word itself sounds like the thing it describes.",
+    o: [
+      "a) Both are correct; the reason correctly explains the assertion.",
+      "b) Both are correct; but the reason does NOT explain the assertion.",
+      "c) The assertion is correct; the reason is wrong.",
+      "d) Both are wrong."
+    ],
     a: 0,
-    exp: "Onomatopoeia words imitate real sound effects, making both assertion and reason correct."
+    exp: "'Buzzing' is a sound-imitation word, making both the assertion and reason correct."
   }
 ];
 
 /* ---------------------------------------------------------
-   GAME ENGINE STATE
+   GAME ENGINE & TIMING
 --------------------------------------------------------- */
 let currentIndex = 0;
 let score = 0;
@@ -560,20 +594,17 @@ const qbox = document.getElementById("qbox");
 const obox = document.getElementById("obox");
 const expContainer = document.getElementById("expContainer");
 
-// Splash sequence
+// Exactly 5 Seconds Splash Screen Timeout
 window.addEventListener("load", () => {
-  const logoImg = document.getElementById("logoImg");
-  const transitionToGame = () => {
+  setTimeout(() => {
+    const splash = document.getElementById("splash");
+    splash.style.opacity = "0";
     setTimeout(() => {
-      document.getElementById("splash").classList.remove("active");
+      splash.style.display = "none";
       document.getElementById("game").classList.add("active");
       startGame();
-    }, 1800);
-  };
-
-  if (logoImg.complete) transitionToGame();
-  else logoImg.onload = transitionToGame;
-  logoImg.onerror = transitionToGame;
+    }, 800);
+  }, 5000);
 });
 
 function startGame() {
@@ -594,25 +625,37 @@ function loadQuestion() {
 
   const q = questions[currentIndex];
   
-  // Render question text & image if present
-  qbox.innerHTML = q.q;
-  if (q.img) {
+  // Clean question text of inline image markers
+  let cleanText = q.q.replace(/\[picture\d+\.png\]\s*/, '');
+  
+  // Format multi-line questions properly
+  qbox.innerHTML = cleanText.replace(/\n/g, "<br>");
+
+  // Assign image if present or declared in question
+  let imageFile = q.img;
+  if (!imageFile) {
+    if (q.q.includes("picture1")) imageFile = "picture1.png";
+    if (q.q.includes("picture2")) imageFile = "picture2.png";
+  }
+
+  if (imageFile) {
     const img = document.createElement("img");
-    img.src = "assets/" + q.img;
+    img.src = "assets/" + imageFile;
     img.className = "q-img";
-    img.onerror = () => img.style.display = 'none'; // Graceful fallback
+    img.alt = "Question Visual Asset";
+    img.onerror = () => img.style.display = 'none';
     qbox.appendChild(img);
   }
 
-  // Clear previous options & explanation
+  // Clear choices and feedback
   obox.innerHTML = "";
   expContainer.innerHTML = "";
 
-  // Render options
+  // Render option buttons
   q.o.forEach((optText, idx) => {
     const btn = document.createElement("button");
     btn.className = "option-btn";
-    btn.innerHTML = `<span>${optText}</span>`;
+    btn.innerHTML = `<span>${optText.replace(/\n/g, "<br>")}</span>`;
     btn.onclick = () => checkAnswer(idx, q, btn);
     obox.appendChild(btn);
   });
@@ -693,7 +736,7 @@ function startTimer() {
 function updateTimerUI() {
   document.getElementById("timer-text").innerText = timer;
   const circle = document.getElementById("timerProgress");
-  const maxDash = 113; // 2 * PI * 18
+  const maxDash = 113;
   const offset = maxDash - (timer / 45) * maxDash;
   circle.style.strokeDashoffset = offset;
 
@@ -723,7 +766,7 @@ function endGame() {
   document.getElementById("game").classList.remove("active");
   document.getElementById("result").classList.add("active");
 
-  playSound("complete");
+  playSound("clapping");
 
   const finalScoreEl = document.getElementById("finalScore");
   const finalBadgeEl = document.getElementById("finalBadge");
