@@ -3,428 +3,708 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Idioms Quiz Game</title>
+<title>Grade 6 English: Idioms Quiz Game</title>
+
+<!-- Google Fonts & Canvas Confetti -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-*{box-sizing:border-box;font-family:Arial, sans-serif;margin:0;padding:0}
-body{
-  background: linear-gradient(120deg,#e3f2fd,#fff3e0,#e8f5e9);
-  overflow-x:hidden;
-  min-height:100vh;
+:root {
+  --primary-purple: #6c5ce7;
+  --secondary-purple: #a29bfe;
+  --accent-yellow: #fdcb6e;
+  --correct-green: #00b894;
+  --wrong-red: #ff7675;
+  --dark-text: #2d3436;
 }
 
-/* Floating background sparkles */
-.sparkle{
-  position:fixed;
-  width:6px;height:6px;
-  background:#fff;
-  border-radius:50%;
-  opacity:0.6;
-  animation: floatUp 10s linear infinite;
-}
-@keyframes floatUp{
-  0%{transform:translateY(100vh);opacity:0}
-  50%{opacity:1}
-  100%{transform:translateY(-10vh);opacity:0}
+* {
+  box-sizing: border-box;
+  font-family: 'Nunito', sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-/* Splash */
-#splash{
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-}
-#splash img{
-  width:80%;
-  max-width:300px;
-  animation: fadeIn 2s ease-in-out;
-}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-/* Screens */
-.screen{
-  display:none;
-  padding:20px;
-  text-align:center;
-}
-.active{display:block;}
-
-/* Card */
-.card{
-  background:#fff;
-  padding:20px;
-  margin:20px auto;
-  max-width:800px;
-  border-radius:15px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.1);
+body {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 }
 
-/* Buttons */
-button{
-  padding:12px 20px;
-  margin-top:15px;
-  border:none;
-  border-radius:10px;
-  font-size:16px;
-  cursor:pointer;
-  background:#1976d2;
-  color:white;
-}
-button:hover{background:#0d47a1}
-
-/* Question */
-.option{
-  display:block;
-  padding:12px;
-  margin:10px 0;
-  border-radius:10px;
-  background:#f1f1f1;
-  cursor:pointer;
-  transition:0.2s;
-}
-.option:hover{background:#e0e0e0}
-
-.correct{background:#c8e6c9 !important}
-.wrong{background:#ffcdd2 !important}
-
-.shake{
-  animation:shake 0.3s;
-}
-@keyframes shake{
-  0%{transform:translateX(0)}
-  25%{transform:translateX(-5px)}
-  50%{transform:translateX(5px)}
-  75%{transform:translateX(-5px)}
-  100%{transform:translateX(0)}
+/* Dynamic Canvas Particle Background */
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
 }
 
-/* Progress */
-#progressBar{
-  width:100%;
-  background:#ddd;
-  border-radius:10px;
-  overflow:hidden;
-  margin:10px 0;
-}
-#progress{
-  height:10px;
-  width:0%;
-  background:#4caf50;
-}
-
-/* Timer */
-#timer{
-  font-weight:bold;
-  color:#d32f2f;
+/* Splash Screen */
+#splash {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.8s ease;
 }
 
-/* Image */
-.qimg{
-  max-width:90%;
-  border-radius:12px;
-  border:2px solid #ddd;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
-  margin:10px 0;
+#splash img {
+  width: 75%;
+  max-width: 320px;
+  filter: drop-shadow(0 0 20px rgba(162, 155, 254, 0.4));
+  animation: pulse 2s infinite ease-in-out;
 }
 
-/* Confetti */
-.confetti{
-  position:fixed;
-  width:8px;height:8px;
-  background:red;
-  top:0;
-  animation: fall 2s linear forwards;
-}
-@keyframes fall{
-  to{transform:translateY(100vh) rotate(360deg);opacity:0}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
-/* Badge */
-.badge{
-  font-size:20px;
-  margin-top:10px;
-  font-weight:bold;
+/* Screen Wrapper */
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 850px;
+  padding: 20px;
+  z-index: 10;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Final Challenge */
-.final{
-  background:linear-gradient(135deg,#fff176,#81d4fa);
-  padding:20px;
-  border-radius:15px;
+.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
+/* Glassmorphism Card Container */
+.card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 35px 30px;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+/* Headings */
+h1, h2, h3 {
+  font-family: 'Fredoka', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+h1 { font-size: 2.8rem; color: #fff; margin-bottom: 8px; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+h2 { font-size: 2rem; color: var(--accent-yellow); margin-bottom: 15px; }
+h3 { font-size: 1.3rem; color: var(--secondary-purple); margin-bottom: 20px; }
+
+p { font-size: 1.1rem; line-height: 1.6; color: #e2e8f0; }
+
+/* Interactive Call to Action Buttons */
+.btn-main {
+  padding: 14px 38px;
+  margin-top: 25px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+  color: #2d3436;
+  box-shadow: 0 10px 20px rgba(225, 112, 85, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-main:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 28px rgba(225, 112, 85, 0.4);
+}
+
+.btn-main:active { transform: translateY(1px); }
+
+/* Status Header & Timer Bar */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.badge-tag {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Progress Tracker */
+#progressBar {
+  width: 100%;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 25px;
+}
+
+#progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #00b894, #55efc4);
+  border-radius: 20px;
+  transition: width 0.4s ease;
+}
+
+/* Answer Options Grid */
+#options, #bonusOptions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.option {
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--dark-text);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.option:hover {
+  transform: translateY(-2px);
+  background: #ffffff;
+  border-color: var(--secondary-purple);
+}
+
+.correct {
+  background: var(--correct-green) !important;
+  color: white !important;
+  border-color: #00896c !important;
+  animation: pop 0.3s ease;
+}
+
+.wrong {
+  background: var(--wrong-red) !important;
+  color: white !important;
+  border-color: #d63031 !important;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+.shake {
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* Question Visuals */
+.qimg {
+  max-width: 100%;
+  max-height: 260px;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  margin: 15px 0;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Feedback Box */
+#msg {
+  margin-top: 15px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  min-height: 1.6em;
+}
+
+/* End Game Metrics */
+.score-card {
+  font-size: 3rem;
+  font-family: 'Fredoka', sans-serif;
+  color: var(--accent-yellow);
+  margin: 15px 0;
+}
+
+.badge-display {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+  padding: 12px 24px;
+  border-radius: 50px;
+  display: inline-block;
+  margin-top: 15px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- Sparkles -->
-<script>
-for(let i=0;i<25;i++){
-  let s=document.createElement("div");
-  s.className="sparkle";
-  s.style.left=Math.random()*100+"vw";
-  s.style.animationDuration=(5+Math.random()*5)+"s";
-  document.body.appendChild(s);
-}
-</script>
+<!-- Ambient Animated Canvas -->
+<canvas id="bg-canvas"></canvas>
 
-<!-- Splash -->
+<!-- Splash Screen (5 Seconds Duration) -->
 <div id="splash">
-  <img src="assets/innovine-logo.png" />
+  <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('splash-title').style.display='block';" />
+  <h1 id="splash-title" style="display:none; color:white;">Innovine Education</h1>
 </div>
 
-<!-- Intro -->
+<!-- Intro Screen -->
 <div id="intro" class="screen">
   <div class="card">
     <h1>Chapter 22: Idioms</h1>
-    <h3>Grade 6 | English</h3>
-    <p>Topic: Idioms</p>
-    <button onclick="showInstructions()">Start</button>
+    <h3>Grade 6 | English Language Arts</h3>
+    <p>Test your knowledge of figurative language and master idioms through this interactive challenge!</p>
+    <button class="btn-main" onclick="showInstructions()">Start Game</button>
   </div>
 </div>
 
-<!-- Instructions -->
+<!-- Instructions Screen -->
 <div id="instructions" class="screen">
   <div class="card">
-    <h2>Instructions</h2>
-    <p>• One question at a time</p>
-    <p>• Timer per question</p>
-    <p>• 2 attempts allowed</p>
-    <p>• Score updates automatically</p>
-    <button onclick="startQuiz()">Start Quiz</button>
+    <h2>Game Rules</h2>
+    <div style="text-align: left; max-width: 480px; margin: 0 auto; line-height: 2;">
+      <p>✔️ <b>15 Questions:</b> Answer competency-based questions sequentially.</p>
+      <p>⏳ <b>45-Second Timer:</b> Complete each question before time runs out.</p>
+      <p>🎯 <b>2 Attempts:</b> Earn 10 points on your first correct try.</p>
+      <p>🏆 <b>Final Challenge:</b> Win 20 bonus points at the end!</p>
+    </div>
+    <button class="btn-main" onclick="startQuiz()">Begin Quiz</button>
   </div>
 </div>
 
-<!-- Quiz -->
+<!-- Quiz Screen -->
 <div id="quiz" class="screen">
   <div class="card">
-    <h3 id="qInfo"></h3>
+    <div class="status-bar">
+      <span class="badge-tag" id="qInfo">Question 1 of 15</span>
+      <span class="badge-tag">Score: <span id="score" style="color:var(--accent-yellow)">0</span></span>
+      <span class="badge-tag">⏱️ <span id="timer" style="color:#ff7675">45</span>s</span>
+    </div>
+
     <div id="progressBar"><div id="progress"></div></div>
-    <p>Score: <span id="score">0</span></p>
-    <p>Time: <span id="timer"></span></p>
 
     <div id="imgContainer"></div>
-    <h2 id="question"></h2>
+    <h2 id="question" style="color:#fff; font-size:1.3rem; margin-top:10px; text-align: left;"></h2>
     <div id="options"></div>
     <p id="msg"></p>
   </div>
 </div>
 
-<!-- Final Challenge -->
+<!-- Final Challenge Screen -->
 <div id="final" class="screen">
-  <div class="card final">
-    <h2>🏆 Final Challenge</h2>
-    <p id="bonusQ"></p>
+  <div class="card">
+    <h2>🏆 Final Challenge!</h2>
+    <p>Solve this final question to unlock your master badge and bonus points:</p>
+    <h3 id="bonusQ" style="color: #fff; margin-top: 20px; text-align: left;"></h3>
     <div id="bonusOptions"></div>
   </div>
 </div>
 
-<!-- Result -->
+<!-- Result Screen -->
 <div id="result" class="screen">
   <div class="card">
-    <h2>Results</h2>
-    <p id="finalScore"></p>
-    <p id="percent"></p>
-    <p id="badge"></p>
-    <button onclick="location.reload()">Restart Quiz</button>
+    <h2>Quiz Results</h2>
+    <div class="score-card" id="finalScore">0</div>
+    <p id="percent" style="font-size: 1.3rem; margin-bottom: 10px;"></p>
+    <div class="badge-display" id="badge">⭐ Grammar Beginner</div>
+    <br>
+    <button class="btn-main" onclick="location.reload()">Play Again</button>
   </div>
 </div>
 
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/clapping.mp3"></audio>
+<!-- Audio Assets -->
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clapping.mp3" preload="auto"></audio>
 
 <script>
+// --- Background Particle Animation ---
+const canvas = document.getElementById("bg-canvas");
+const ctx = canvas.getContext("2d");
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 3 + 1;
+    this.speedY = Math.random() * 0.5 + 0.2;
+    this.opacity = Math.random() * 0.5 + 0.2;
+  }
+  update() {
+    this.y -= this.speedY;
+    if (this.y < 0) {
+      this.y = canvas.height;
+      this.x = Math.random() * canvas.width;
+    }
+  }
+  draw() {
+    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 50; i++) particles.push(new Particle());
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// --- Questions Database ---
 const questions = [
-{q:"Priya studied all night before her board exam. Her mom found her at 2 AM with her books still open. Which idiom best describes what Priya was doing?",o:["Breaking the ice","Burning the midnight oil","Biting the bullet","Kicking the bucket"],a:1,e:"Studying through the night = burning the midnight oil"},
-{q:"Aarav's new gaming laptop cost ₹1,20,000. His dad looked at the bill and said, 'This really ___!'",o:["broke the ice","hit the nail on the head","cost an arm and a leg","burned the midnight oil"],a:2,e:"Something extremely expensive = costs an arm and a leg"},
-{q:"Riya said the real reason canteen food is bad is poor planning. Teacher said she ___",o:["pulled someone's leg","hit the nail on the head","barked up the wrong tree","broken the ice"],a:1,e:"Identifying exact truth = hitting the nail on the head"},
-{q:"Stop ___ what's done is done.",o:["biting the bullet","burning the midnight oil","crying over spilt milk","breaking the ice"],a:2,e:"Useless regret = crying over spilt milk"},
-{q:"Investigators were clearly ___",o:["in hot water","barking up the wrong tree","pulling someone's leg","biting the bullet"],a:1,e:"Wrong suspicion = barking up the wrong tree"},
-{q:"[picture1:] Meera starts conversation between awkward students. Which idiom?",o:["She pulled their leg","She broke the ice","She hit the nail on the head","She bit the bullet"],a:1,e:"Starting conversation = breaking the ice"},
-{q:"[picture2:] Match speech bubbles idiom question",o:["1=burn midnight oil...","1=bite bullet...","1=pull leg...","1=bite bullet again"],a:1,e:"Correct matching logic"},
-{q:"Riya is in hot water now means?",o:["Feeling warm","In trouble","Working hard","Excited"],a:1,e:"In hot water = trouble"},
-{q:"Correct use of 'pull someone's leg'?",o:["Stopping fall","Joking about winning lottery","Medical check","Tug of war"],a:1,e:"Means joking/teasing"},
-{q:"Negative vs positive idioms",o:["P,Q negative","Q,S negative","P,R negative Q,S positive","R,S negative"],a:2,e:"Classification logic"},
-{q:"Effort vs mistake",o:["1,4 effort","2,3 effort","1,3 effort","3,4 effort"],a:2,e:"Effort = burn midnight oil, bite bullet"},
-{q:"Odd one out",o:["Bite bullet","Burn midnight oil","In hot water","Cry over spilt milk"],a:1,e:"Only working hard idiom"},
-{q:"Incorrect idiom usage",o:["a","b","c","d"],a:3,e:"Kick the bucket used wrongly"},
-{q:"Effect of idiom",o:["less serious","unclear","same meaning vivid","incorrect grammar"],a:2,e:"Idioms add expressiveness"},
-{q:"Best idiom for difficulty decision",o:["cry over spilt milk","bite bullet","kick bucket","break ice"],a:1,e:"Endure difficulty bravely"}
+  {
+    q: "Q1. Priya studied all night before her board exam. Her mom found her at 2 AM with her books still open. Which idiom best describes what Priya was doing?",
+    o: ["a) Breaking the ice", "b) Burning the midnight oil", "c) Biting the bullet", "d) Kicking the bucket"],
+    a: 1,
+    e: "Burning the midnight oil means staying up late into the night working or studying."
+  },
+  {
+    q: "Q2. Aarav's new gaming laptop cost ₹1,20,000. His dad looked at the bill and said, \"This really ___!\" Which idiom correctly completes the sentence?",
+    o: ["a) broke the ice", "b) hit the nail on the head", "c) cost an arm and a leg", "d) burned the midnight oil"],
+    a: 2,
+    e: "Cost an arm and a leg means something is extremely expensive."
+  },
+  {
+    q: "Q3. During a school debate, Riya said: \"The real reason our canteen food is unhealthy is because of poor planning, not lack of budget.\" Her teacher smiled and said, \"Riya, you've really ___.\" Which idiom fits?",
+    o: ["a) pulled someone's leg", "b) hit the nail on the head", "c) barked up the wrong tree", "d) broken the ice"],
+    a: 1,
+    e: "Hit the nail on the head means to state or identify the exact truth or issue."
+  },
+  {
+    q: "Q4. Rohan failed his cycle test because he hadn't practised. He kept complaining about it for weeks. His friend finally said, \"Stop ___ — what's done is done. Just prepare better next time.\" Which idiom fits?",
+    o: ["a) biting the bullet", "b) burning the midnight oil", "c) crying over spilt milk", "d) breaking the ice"],
+    a: 2,
+    e: "Crying over spilt milk means dwelling uselessly on past mistakes that cannot be changed."
+  },
+  {
+    q: "Q5. The police suspected Mr. Sharma stole the documents, but the real thief turned out to be someone else entirely. A reporter wrote: \"The investigators were clearly ___.\" Which idiom fits?",
+    o: ["a) in hot water", "b) barking up the wrong tree", "c) pulling someone's leg", "d) biting the bullet"],
+    a: 1,
+    e: "Barking up the wrong tree means pursuing a mistaken line of thought or accusing the wrong person."
+  },
+  {
+    q: "Q6. [picture1.png] A classroom scene — two students who don't know each other are sitting awkwardly at a table. A third student walks over, smiles, and says: \"Hi! I'm Meera. I love your notebook cover — is that a spaceship?\" The two students immediately relax and start chatting. Which idiom best describes what Meera did?",
+    o: ["a) She pulled their leg", "b) She broke the ice", "c) She hit the nail on the head", "d) She bit the bullet"],
+    a: 1,
+    e: "Break the ice means to relieve tension or overcome awkwardness when starting a conversation."
+  },
+  {
+    q: "Q7. [picture2.png] A school notice showing four speech bubbles. Match each bubble to the correct idiom:",
+    o: [
+      "a) 1=burn the midnight oil, 2=cost an arm and a leg, 3=pull someone's leg, 4=bite the bullet",
+      "b) 1=bite the bullet, 2=cost an arm and a leg, 3=pull someone's leg, 4=burn the midnight oil",
+      "c) 1=pull someone's leg, 2=burn the midnight oil, 3=bite the bullet, 4=cost an arm and a leg",
+      "d) 1=bite the bullet, 2=pull someone's leg, 3=cost an arm and a leg, 4=burn the midnight oil"
+    ],
+    a: 1,
+    e: "Matches the illustrated speech bubbles correctly."
+  },
+  {
+    q: "Q8. Riya forgot to submit her homework and was called by the teacher. Her friend whispered, \"You’re in hot water now.\" What does her friend mean in this situation?",
+    o: ["a) Riya is feeling very warm", "b) Riya is in trouble or a difficult situation", "c) Riya is working very hard", "d) Riya is excited about something"],
+    a: 1,
+    e: "In hot water means being in trouble or facing serious difficulty."
+  },
+  {
+    q: "Q9. Which sentence uses the idiom 'pull someone's leg' correctly?",
+    o: [
+      "a) He pulled his friend's leg to stop him from falling.",
+      "b) She was pulling his leg when she said she'd won a million rupees — it was just a joke.",
+      "c) The doctor pulled his leg gently to check for injury.",
+      "d) They pulled each other's legs in the tug-of-war competition."
+    ],
+    a: 1,
+    e: "Pulling someone's leg means joking with them or teasing them."
+  },
+  {
+    q: "Q10. Sort these idioms into two groups — idioms that mean something negative or problematic and idioms that mean something positive or helpful:\nP: in hot water\nQ: hit the nail on the head\nR: barking up the wrong tree\nS: break the ice",
+    o: [
+      "a) Negative: P, Q — Positive: R, S",
+      "b) Negative: Q, S — Positive: P, R",
+      "c) Negative: P, R — Positive: Q, S",
+      "d) Negative: R, S — Positive: P, Q"
+    ],
+    a: 2,
+    e: "Negative: P (in hot water) & R (barking up the wrong tree). Positive: Q (hit nail on head) & S (break the ice)."
+  },
+  {
+    q: "Q11. Classify each idiom by what it relates to — effort/action or mistake/regret:\n1. burn the midnight oil\n2. cry over spilt milk\n3. bite the bullet\n4. barking up the wrong tree",
+    o: [
+      "a) Effort/Action: 1, 4 — Mistake/Regret: 2, 3",
+      "b) Effort/Action: 2, 3 — Mistake/Regret: 1, 4",
+      "c) Effort/Action: 1, 3 — Mistake/Regret: 2, 4",
+      "d) Effort/Action: 3, 4 — Mistake/Regret: 1, 2"
+    ],
+    a: 2,
+    e: "1 and 3 relate to Effort/Action; 2 and 4 relate to Mistake/Regret."
+  },
+  {
+    q: "Q12. Three of the following idioms are related to dealing with difficulties, problems, or mistakes. One is mainly about working hard. Which is the odd one out?",
+    o: ["a) Bite the bullet", "b) Burn the midnight oil", "c) In hot water", "d) Cry over spilt milk"],
+    a: 1,
+    e: "Burn the midnight oil specifically refers to working hard or studying late."
+  },
+  {
+    q: "Q13. A student used idioms in four sentences. One idiom is used incorrectly. Find it:",
+    o: [
+      "a) \"She burned the midnight oil to finish her project before the deadline.\"",
+      "b) \"He broke the ice at the party by cracking a funny joke.\"",
+      "c) \"They were barking up the wrong tree when they blamed the wrong student.\"",
+      "d) \"After losing the match, the coach said, 'Let's cry over spilt milk and try harder next time.'\""
+    ],
+    a: 3,
+    e: "Sentence (d) uses 'cry over spilt milk' incorrectly because you are supposed to NOT cry over spilt milk."
+  },
+  {
+    q: "Q14. Neha got caught copying in her exam and was called to the principal's office. Her friend whispered: \"You're really in hot water now.\" What is the effect of using this idiom instead of saying \"You are in trouble\"?",
+    o: [
+      "a) The meaning changes — being in hot water is less serious than being in trouble",
+      "b) The idiom makes the statement unclear — her friend should have spoken literally",
+      "c) The idiom conveys the same meaning as 'you are in trouble' but makes the language more vivid and expressive",
+      "d) Using an idiom here is grammatically incorrect"
+    ],
+    a: 2,
+    e: "Idioms enrich imagery and make language more expressive while retaining original meaning."
+  },
+  {
+    q: "Q15. You are writing a story about a character who finally decides to do something difficult, even though they are nervous about it. Which idiom best fits?",
+    o: [
+      "a) Cry over spilt milk — because the decision has already been made",
+      "b) Bite the bullet — because it means to endure something difficult and go ahead with it bravely",
+      "c) Kick the bucket — because the character is taking a risk",
+      "d) Break the ice — because the character is doing something for the first time"
+    ],
+    a: 1,
+    e: "Bite the bullet means facing a difficult situation with courage."
+  }
 ];
 
-let index=0,score=0,attempt=0,time=45,interval;
+let index = 0, score = 0, attempt = 0, time = 45, interval;
+let order = [...Array(questions.length).keys()].sort(() => Math.random() - 0.5);
 
-let order = [...Array(questions.length).keys()].sort(()=>Math.random()-0.5);
-let used = [];
+// Audio Helper to handle browser autoplay policies
+function playAudio(id) {
+  const audio = document.getElementById(id);
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+  }
+}
 
-setTimeout(()=>{
-document.getElementById("splash").style.display="none";
-document.getElementById("intro").classList.add("active");
-},5000);
+// 5 Seconds Splash Screen Timeout
+setTimeout(() => {
+  const splash = document.getElementById("splash");
+  splash.style.opacity = "0";
+  setTimeout(() => {
+    splash.style.display = "none";
+    document.getElementById("intro").classList.add("active");
+  }, 800);
+}, 5000);
 
-function showInstructions(){
+function showInstructions() {
   document.getElementById("intro").classList.remove("active");
   document.getElementById("instructions").classList.add("active");
 }
 
-function startQuiz(){
+function startQuiz() {
   document.getElementById("instructions").classList.remove("active");
   document.getElementById("quiz").classList.add("active");
   loadQ();
 }
 
-function loadQ(){
-  if(index>=questions.length){finalChallenge();return;}
-  attempt=0;
-  time=45;
-  let q=questions[order[index]];
-  used.push(order[index]);
+function loadQ() {
+  if (index >= questions.length) { finalChallenge(); return; }
+  attempt = 0;
+  time = 45;
+  let q = questions[order[index]];
 
-  document.getElementById("qInfo").innerText=`Question ${index+1} of ${questions.length}`;
-  document.getElementById("question").innerText=q.q;
-  document.getElementById("msg").innerText="";
-  document.getElementById("imgContainer").innerHTML="";
+  document.getElementById("qInfo").innerText = `Question ${index + 1} of ${questions.length}`;
+  
+  // Format question text and remove image markers if present
+  let cleanQText = q.q.replace(/\[picture\d+\.png\]\s*/, '');
+  document.getElementById("question").innerText = cleanQText;
+  document.getElementById("msg").innerText = "";
+  document.getElementById("imgContainer").innerHTML = "";
 
-  if(q.q.includes("picture1")){
-    document.getElementById("imgContainer").innerHTML='<img class="qimg" src="assets/picture1.png">';
+  // Assign image assets to corresponding picture questions
+  if (q.q.includes("picture1")) {
+    document.getElementById("imgContainer").innerHTML = '<img class="qimg" src="assets/picture1.png" alt="Question Illustration 1">';
+  } else if (q.q.includes("picture2")) {
+    document.getElementById("imgContainer").innerHTML = '<img class="qimg" src="assets/picture2.png" alt="Question Illustration 2">';
   }
-  if(q.q.includes("picture2")){
-    document.getElementById("imgContainer").innerHTML='<img class="qimg" src="assets/picture2.png">';
-  }
 
-  let opts=q.o.map((op,i)=>({text:op,idx:i}));
-  opts.sort(()=>Math.random()-0.5);
+  let opts = q.o.map((op, i) => ({ text: op, idx: i }));
+  opts.sort(() => Math.random() - 0.5);
 
-  let correct=opts.findIndex(o=>o.idx===q.a);
+  let correct = opts.findIndex(o => o.idx === q.a);
 
-  let html="";
-  opts.forEach((o,i)=>{
-    html+=`<div class='option' onclick='check(${i},${correct})'>${o.text}</div>`;
+  let html = "";
+  opts.forEach((o, i) => {
+    html += `<div class='option' onclick='check(${i},${correct})'>${o.text}</div>`;
   });
 
-  document.getElementById("options").innerHTML=html;
-
+  document.getElementById("options").innerHTML = html;
   startTimer();
   updateProgress();
 }
 
-function startTimer(){
+function startTimer() {
   clearInterval(interval);
-  interval=setInterval(()=>{
+  document.getElementById("timer").innerText = time;
+  interval = setInterval(() => {
     time--;
-    document.getElementById("timer").innerText=time;
-    if(time<=0){
+    document.getElementById("timer").innerText = time;
+    if (time <= 0) {
       clearInterval(interval);
       wrongAttempt(true);
     }
-  },1000);
+  }, 1000);
 }
 
-function check(i,c){
-  let opts=document.querySelectorAll(".option");
-  if(i===c){
+function check(i, c) {
+  let opts = document.querySelectorAll("#options .option");
+  if (i === c) {
     opts[i].classList.add("correct");
-    document.getElementById("correctSound").play();
-    score+=10;
-    document.getElementById("score").innerText=score;
+    playAudio("correctSound");
+    score += 10;
+    document.getElementById("score").innerText = score;
     clearInterval(interval);
-    createConfetti();
-    setTimeout(()=>{index++;loadQ();},1500);
-  }else{
-    wrongAttempt(false,i);
+    triggerConfetti();
+    setTimeout(() => { index++; loadQ(); }, 1200);
+  } else {
+    wrongAttempt(false, i);
   }
 }
 
-function wrongAttempt(timeout=false,i){
-  document.getElementById("wrongSound").play();
+function wrongAttempt(timeout = false, i) {
+  playAudio("wrongSound");
   attempt++;
 
-  let opts=document.querySelectorAll(".option");
-  if(i!==undefined) opts[i].classList.add("wrong");
+  let opts = document.querySelectorAll("#options .option");
+  if (i !== undefined) opts[i].classList.add("wrong");
 
-  document.getElementById("quiz").classList.add("shake");
-  setTimeout(()=>document.getElementById("quiz").classList.remove("shake"),300);
+  const card = document.querySelector("#quiz .card");
+  card.classList.add("shake");
+  setTimeout(() => card.classList.remove("shake"), 400);
 
-  if(attempt<2 && !timeout){
-    document.getElementById("msg").innerText="Try Again!";
+  if (attempt < 2 && !timeout) {
+    document.getElementById("msg").style.color = "#ff7675";
+    document.getElementById("msg").innerText = "Not quite! Try one more time.";
     return;
   }
 
-  let q=questions[order[index]];
-  document.getElementById("msg").innerText=`Correct Answer: ${q.o[q.a]} — ${q.e}`;
+  let q = questions[order[index]];
+  document.getElementById("msg").style.color = "#fdcb6e";
+  document.getElementById("msg").innerText = `Correct: ${q.o[q.a]} — ${q.e}`;
 
-  setTimeout(()=>{
-    index++;
-    loadQ();
-  },2500);
+  clearInterval(interval);
+  setTimeout(() => { index++; loadQ(); }, 2400);
 }
 
-function updateProgress(){
-  document.getElementById("progress").style.width=((index/questions.length)*100)+"%";
+function updateProgress() {
+  document.getElementById("progress").style.width = ((index / questions.length) * 100) + "%";
 }
 
-function finalChallenge(){
+function finalChallenge() {
   document.getElementById("quiz").classList.remove("active");
   document.getElementById("final").classList.add("active");
 
-  let q=questions[Math.floor(Math.random()*questions.length)];
-  document.getElementById("bonusQ").innerText=q.q;
+  let q = questions[Math.floor(Math.random() * questions.length)];
+  let cleanQText = q.q.replace(/\[picture\d+\.png\]\s*/, '');
+  document.getElementById("bonusQ").innerText = cleanQText;
 
-  let html="";
-  q.o.forEach((o,i)=>{
-    html+=`<div class='option' onclick='finish(${i},${q.a})'>${o}</div>`;
+  let html = "";
+  q.o.forEach((o, i) => {
+    html += `<div class='option' onclick='finish(${i},${q.a})'>${o}</div>`;
   });
 
-  document.getElementById("bonusOptions").innerHTML=html;
+  document.getElementById("bonusOptions").innerHTML = html;
 }
 
-function finish(i,a){
-  if(i===a){
-    score+=20;
-    document.getElementById("clapSound").play();
-    createConfetti();
+function finish(i, a) {
+  if (i === a) {
+    score += 20;
+    playAudio("clapSound");
+    triggerConfetti();
   }
   showResult();
 }
 
-function showResult(){
+function showResult() {
   document.getElementById("final").classList.remove("active");
   document.getElementById("result").classList.add("active");
 
-  let total=questions.length*10;
-  let percent=Math.round((score/(total+20))*100);
+  let totalPossible = (questions.length * 10) + 20;
+  let percent = Math.round((score / totalPossible) * 100);
 
-  document.getElementById("finalScore").innerText="Score: "+score;
-  document.getElementById("percent").innerText="Percentage: "+percent+"%";
+  document.getElementById("finalScore").innerText = `${score} pts`;
+  document.getElementById("percent").innerText = `Accuracy: ${percent}%`;
 
-  let badge="⭐ Grammar Beginner";
-  if(percent>60) badge="🌟 Grammar Explorer";
-  if(percent>80) badge="🏅 Grammar Champion";
-  if(percent>95) badge="👑 Grammar Master";
+  let badge = "⭐ Grammar Beginner";
+  if (percent > 60) badge = "🌟 Grammar Explorer";
+  if (percent > 80) badge = "🏅 Grammar Champion";
+  if (percent > 95) badge = "👑 Grammar Master";
 
-  document.getElementById("badge").innerText=badge;
+  document.getElementById("badge").innerText = badge;
 
-  if(percent>80) document.getElementById("clapSound").play();
-}
-
-function createConfetti(){
-  for(let i=0;i<30;i++){
-    let c=document.createElement("div");
-    c.className="confetti";
-    c.style.left=Math.random()*100+"vw";
-    c.style.background=["red","blue","green","yellow"][Math.floor(Math.random()*4)];
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),2000);
+  if (percent > 70) {
+    playAudio("clapSound");
+    triggerConfetti();
   }
 }
 
+function triggerConfetti() {
+  if (typeof confetti === 'function') {
+    confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+  }
+}
 </script>
 
 </body>
