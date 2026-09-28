@@ -3,1024 +3,704 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 7 English - Continuous Tenses Learning Arena</title>
+    <title>Grade 8 - Continuous Tenses Interactive Quiz | Innovine</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #0ea5e9;
-            --accent: #f59e0b;
-            --background: #f0fdf4;
-            --surface: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
             --success: #10b981;
             --error: #ef4444;
-            --border: #cbd5e1;
-            --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body.high-contrast {
-            --primary: #000000;
-            --primary-dark: #000000;
-            --secondary: #1d4ed8;
-            --accent: #c2410c;
-            --background: #ffffff;
-            --surface: #ffffff;
-            --text: #000000;
-            --text-light: #334155;
-            --success: #047857;
-            --error: #b91c1c;
-            --border: #000000;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: var(--font);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--background);
-            color: var(--text);
+            background: var(--bg-gradient);
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
             position: relative;
-            padding: 15px;
         }
 
-        /* Animated Grammar Environment Elements */
-        .ambient-layer {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            overflow: hidden;
-        }
-
-        .ambient-icon {
-            position: absolute;
-            font-size: 32px;
-            opacity: 0.05;
-            animation: floatUp 22s infinite linear;
-            user-select: none;
-            color: var(--primary);
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(105vh) translateX(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.15; }
-            90% { opacity: 0.15; }
-            100% { transform: translateY(-10vh) translateX(100px) rotate(360deg); opacity: 0; }
-        }
-
-        /* Mandatory Centered Logo Fullscreen Splash Screen */
+        /* Splash Screen / Innovine Logo Flash */
         #splash-screen {
-            display: flex;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: #ffffff;
-            z-index: 9999;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            opacity: 1;
-            transition: opacity 0.6s ease-in-out;
+            z-index: 1000;
+            animation: fadeOut 0.5s ease 4.5s forwards;
         }
 
         #splash-screen img {
-            max-width: 80%;
-            width: 420px;
+            max-width: 200px;
             height: auto;
+            animation: pulseLogo 1.5s infinite alternate;
         }
 
-        .game-card {
-            display: none;
+        #splash-screen p {
+            margin-top: 15px;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        @keyframes pulseLogo {
+            0% { transform: scale(1); opacity: 0.9; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* Background Animations (Stars/Streamers) */
+        .bg-particles {
+            position: absolute;
             width: 100%;
-            max-width: 850px;
-            background: var(--surface);
-            padding: 35px;
-            border-radius: 24px;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.06);
-            border: 2px solid var(--border);
-            z-index: 10;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(99, 102, 241, 0.15);
+            animation: floatParticle 10s infinite linear;
+            border-radius: 50%;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Container */
+        .quiz-container {
             position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 700px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Intro Screen */
+        .intro-content {
             text-align: center;
         }
 
-        h1 { color: var(--primary-dark); font-size: 2.3rem; font-weight: 800; margin-bottom: 12px; }
-        p { color: var(--text-light); font-size: 1.15rem; line-height: 1.6; margin-bottom: 25px; }
-
-        .badge {
-            background-color: rgba(37, 99, 235, 0.1);
+        .intro-content h1 {
+            font-size: 2rem;
             color: var(--primary);
-            padding: 6px 18px;
-            border-radius: 50px;
-            font-weight: 700;
-            display: inline-block;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-bottom: 10px;
         }
 
-        .action-btn {
-            background-color: var(--accent);
-            color: #ffffff;
+        .intro-content p {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
             border: none;
-            padding: 16px 36px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-            text-transform: uppercase;
-        }
-
-        .action-btn:hover { background-color: #d97706; transform: translateY(-2px); }
-        .action-btn:active { transform: translateY(1px); }
-
-        /* HUD Metric Overlay Bars */
-        .hud-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 25px;
-            background-color: rgba(37, 99, 235, 0.03);
-            padding: 15px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            align-items: center;
-        }
-
-        .hud-node { display: flex; flex-direction: column; align-items: center; }
-        .hud-label { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; font-weight: 700; }
-        .hud-value { font-size: 1.3rem; color: var(--primary-dark); font-weight: 800; margin-top: 2px; }
-
-        .progress-track {
-            width: 100%; height: 12px;
-            background-color: #e2e8f0;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-bottom: 25px;
-        }
-
-        .progress-fill {
-            height: 100%; width: 0%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transition: width 0.3s ease;
-        }
-
-        .question-container {
-            text-align: left;
-            font-size: 1.35rem;
+            padding: 12px 30px;
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--text);
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .options-box {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-
-        .choice-btn {
-            background-color: var(--surface);
-            border: 2px solid var(--border);
-            color: var(--text);
-            padding: 16px 22px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
-            text-align: left;
-            transition: all 0.2s ease;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Quiz Header */
+        .quiz-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-        }
-
-        .choice-btn:hover:not(:disabled) {
-            border-color: var(--primary);
-            background-color: rgba(37, 99, 235, 0.02);
-            transform: translateX(4px);
-        }
-
-        .choice-btn.correct-state {
-            background-color: #ecfdf5 !important;
-            border-color: var(--success) !important;
-            color: var(--success) !important;
-            font-weight: 700;
-        }
-
-        .choice-btn.wrong-state {
-            background-color: #fef2f2 !important;
-            border-color: var(--error) !important;
-            color: var(--error) !important;
-            font-weight: 700;
-            animation: elementShake 0.4s ease;
-        }
-
-        @keyframes elementShake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
-        }
-
-        .explanation-banner {
-            margin-top: 20px;
-            padding: 16px;
-            border-radius: 12px;
-            background-color: #f8fafc;
-            border-left: 5px solid var(--secondary);
-            text-align: left;
-            display: none;
-        }
-
-        .control-utility-tray {
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
             align-items: center;
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 850px;
-            z-index: 20;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
         }
 
-        .tray-toggle-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 8px 14px;
-            border-radius: 8px;
+        .stat-badge {
+            background: #eef2ff;
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
             font-weight: 600;
-            cursor: pointer;
-            color: var(--text-light);
             font-size: 0.9rem;
         }
 
-        .volume-box {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
-            color: var(--text-light);
+        .timer-badge {
+            background: #fef2f2;
+            color: var(--error);
+            padding: 6px 14px;
+            border-radius: 20px;
             font-weight: 600;
+            font-size: 0.9rem;
         }
 
-        /* Challenge Sorting Runway Elements */
-        .sorting-board {
-            background: rgba(37, 99, 235, 0.01);
-            border: 2px dashed var(--secondary);
-            padding: 20px;
-            border-radius: 16px;
-            margin: 20px 0;
+        /* Question Styles */
+        .question-category {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: 700;
         }
 
-        .slots-row {
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             margin-bottom: 20px;
         }
 
-        .target-column {
+        .option-btn {
             background: #f8fafc;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .column-title { font-weight: 700; font-size: 0.9rem; text-transform: uppercase; color: var(--primary-dark); margin-bottom: 8px; }
-
-        .drop-bucket {
-            background: #ffffff;
-            border: 2px dashed #cbd5e1;
-            padding: 12px;
-            min-height: 80px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .drop-bucket.occupied {
-            background: var(--primary);
-            color: #ffffff;
-            border-style: solid;
-        }
-
-        .chips-pool {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px;
-            background: #ffffff;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .sentence-chip {
-            background: var(--surface);
-            border: 2px solid var(--secondary);
-            color: var(--secondary);
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .sentence-chip.allocated { opacity: 0.25; pointer-events: none; }
-
-        .confetti-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 999;
-        }
-
-        .star-item {
-            position: absolute; width: 12px; height: 12px;
-            background: #f59e0b;
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            animation: starFall 2.2s linear forwards;
-        }
-
-        @keyframes starFall {
-            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
-        }
-
-        .review-scrollway {
-            max-height: 380px;
-            overflow-y: auto;
+            border: 2px solid #e2e8f0;
+            padding: 14px 18px;
             text-align: left;
-            margin: 20px 0;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: #fafafa;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-main);
+            font-weight: 500;
         }
 
-        .review-node { padding: 16px; border-bottom: 1px solid var(--border); }
-        .review-node:last-child { border-bottom: none; }
+        .option-btn:hover:not(:disabled) {
+            background: #eef2ff;
+            border-color: var(--primary);
+        }
 
-        @media (max-width: 650px) {
-            .game-card { padding: 20px; }
-            h1 { font-size: 1.75rem; }
-            .hud-bar { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .slots-row { grid-template-columns: 1fr; }
+        .option-btn.correct {
+            background: #d1fae5 !important;
+            border-color: var(--success) !important;
+            color: #065f46;
+        }
+
+        .option-btn.incorrect {
+            background: #fee2e2 !important;
+            border-color: var(--error) !important;
+            color: #991b1b;
+        }
+
+        /* Feedback & Explanation Box */
+        .feedback-box {
+            margin-top: 15px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        .feedback-box.info {
+            background: #e0f2fe;
+            color: #0369a1;
+            border-left: 4px solid #0284c7;
+        }
+
+        .feedback-box.error-msg {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid var(--error);
+        }
+
+        /* Result Screen */
+        .result-content {
+            text-align: center;
+        }
+
+        .result-content h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--success);
+            margin: 20px 0;
+        }
+
+        .result-message {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        /* Confetti / Red Cross Overlay indicators */
+        .indicator-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            pointer-events: none;
+        }
+
+        /* Confetti styling */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            animation: fallConfetti 1s ease-out forwards;
+        }
+
+        @keyframes fallConfetti {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) translateX(50px) rotate(360deg) scale(0.5); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="ambient-layer" id="ambient-container"></div>
-    <div class="confetti-canvas" id="star-layer"></div>
-
-    <audio id="audio-click" src="assets/click.mp3" preload="auto"></audio>
-    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="audio-clapping" src="assets/clapping.mp3" preload="auto"></audio>
-
-    <div class="control-utility-tray" id="tray-panel" style="display:none;">
-        <div class="volume-box">
-            <label for="slider-volume">Vol:</label>
-            <input type="range" id="slider-volume" min="0" max="1" step="0.1" value="0.6" style="width:65px;">
-        </div>
-        <button class="tray-toggle-btn" id="btn-mute" onclick="toggleMuteAudio()">🔊 Mute</button>
-        <button class="tray-toggle-btn" onclick="toggleHighContrast()">🌓 Contrast</button>
-    </div>
-
+    <!-- Splash Screen with Innovine Logo -->
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Branding Identity Placeholder">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+        <p>Loading Interactive Chapter...</p>
     </div>
 
-    <div id="screen-welcome" class="game-card">
-        <div class="badge">Grade 7 English Grammar</div>
-        <h1>Continuous Tenses Learning Arena</h1>
-        <p>Explore the mechanics of ongoing actions! Master the structural configurations of Present Continuous, Past Continuous, and Future Continuous paradigms inside our interactive diagnostic dashboard.</p>
-        
-        <div style="background: rgba(37,99,235,0.02); padding: 15px; border-radius: 12px; margin-bottom: 25px; text-align: left; font-size: 0.95rem; line-height: 1.5;">
-            <strong>Instructions & Features:</strong>
-            <ul style="margin-left: 20px; margin-top: 5px; color: var(--text-light);">
-                <li>Every question features an individual countdown timeline of <strong>45 seconds</strong>.</li>
-                <li>Choosing an incorrect path triggers <strong>one extra retry attempt</strong>.</li>
-                <li>You can select your options using keys <kbd>A</kbd>, <kbd>B</kbd>, <kbd>C</kbd>, or <kbd>D</kbd> on your keyboard.</li>
-            </ul>
-        </div>
-        <button class="action-btn" onclick="startGameSession()">Start Challenge</button>
-    </div>
+    <!-- Background Ambient Particles -->
+    <div class="bg-particles" id="particles"></div>
 
-    <div id="screen-assessment" class="game-card">
-        <div class="hud-bar">
-            <div class="hud-node">
-                <span class="hud-label">Progress</span>
-                <span class="hud-value" id="hud-txt-progress">1 / 20</span>
-            </div>
-            <div class="hud-node">
-                <span class="hud-label">Score Tracker</span>
-                <span class="hud-value" id="hud-txt-score">Score: 0 / 20</span>
-            </div>
-            <div class="hud-node">
-                <span class="hud-label">Attempts</span>
-                <span class="hud-value" id="hud-txt-attempt">Try 1 / 2</span>
-            </div>
-            <div class="hud-node">
-                <span class="hud-label">Timer</span>
-                <span class="hud-value" id="hud-txt-timer" style="color: var(--accent);">45s</span>
+    <div class="quiz-container">
+        <!-- Screen 1: Intro -->
+        <div id="screen-intro" class="screen active">
+            <div class="intro-content">
+                <h1>Continuous Tenses Mastery</h1>
+                <p>Grade 8 • English Grammar • Chapter 3</p>
+                <p style="margin-bottom: 20px; font-size: 0.95rem;">Test your understanding of Present, Past, and Future Continuous tenses through competency-based scenarios, error detection, and case studies. You get 45 seconds per question with 1 retry on mistakes!</p>
+                <button class="btn" onclick="startQuiz()">Start Quiz</button>
             </div>
         </div>
 
-        <div class="progress-track">
-            <div class="progress-fill" id="hud-progress-fill-bar"></div>
+        <!-- Screen 2: Question Flow -->
+        <div id="screen-quiz" class="screen">
+            <div class="quiz-header">
+                <div class="stat-badge" id="progress-indicator">Question 1 of 15</div>
+                <div class="stat-badge" id="score-indicator">Score: 0</div>
+                <div class="timer-badge" id="timer-indicator">⏱ 45s</div>
+            </div>
+
+            <div class="question-category" id="q-category">Scenario-Based</div>
+            <div class="question-text" id="q-text">Loading question...</div>
+
+            <div class="options-grid" id="options-container">
+                <!-- Dynamic options injected here -->
+            </div>
+
+            <div class="feedback-box" id="feedback-box"></div>
+            
+            <button class="btn" id="next-btn" style="display: none; margin-top: 15px; width: 100%;" onclick="nextQuestion()">Next Question</button>
         </div>
 
-        <div class="question-container" id="assessment-question-text">Loading question matrix vector...</div>
-        <div class="options-box" id="assessment-options-grid"></div>
-
-        <div class="explanation-banner" id="assessment-explanation-box"></div>
-    </div>
-
-    <div id="screen-challenge" class="game-card">
-        <div class="badge">🎁 Reward Master Challenge</div>
-        <h1>Timeline Sorting Challenge</h1>
-        <p>Correctly match the ongoing continuous tense constructions with their correct structural category profiles!</p>
-        
-        <div class="sorting-board">
-            <div class="slots-row">
-                <div class="target-column">
-                    <div class="column-title">Present Continuous</div>
-                    <div class="drop-bucket" onclick="clearSelectedSlot(0)" id="bucket-0">Tap to place</div>
-                </div>
-                <div class="target-column">
-                    <div class="column-title">Past Continuous</div>
-                    <div class="drop-bucket" onclick="clearSelectedSlot(1)" id="bucket-1">Tap to place</div>
-                </div>
-                <div class="target-column">
-                    <div class="column-title">Future Continuous</div>
-                    <div class="drop-bucket" onclick="clearSelectedSlot(2)" id="bucket-2">Tap to place</div>
-                </div>
+        <!-- Screen 3: Result -->
+        <div id="screen-result" class="screen">
+            <div class="result-content">
+                <h2>Quiz Completed!</h2>
+                <p class="result-message">Great job exploring Continuous Tenses!</p>
+                <div class="score-display" id="final-score-display">0 / 15</div>
+                <p id="performance-remark" style="margin-bottom: 25px; font-weight: 600;"></p>
+                <button class="btn" onclick="restartQuiz()">Restart Quiz</button>
             </div>
-
-            <div class="chips-pool" id="challenge-chips-runway"></div>
-        </div>
-
-        <button class="action-btn" onclick="verifyBonusChallengeState()" style="background-color: var(--primary);">Evaluate Sorting Matrix</button>
-    </div>
-
-    <div id="screen-result" class="game-card">
-        <div class="badge">Assessment Terminated</div>
-        <h1 id="res-badge-title">Evaluating Score Matrix...</h1>
-        <p id="res-badge-desc">Performance breakdown review parameters.</p>
-
-        <div style="font-size: 3.5rem; margin: 15px 0;">📊</div>
-
-        <div class="hud-bar" style="max-width: 550px; margin: 0 auto 25px auto;">
-            <div class="hud-node">
-                <span class="hud-label">Final Points</span>
-                <span class="hud-value" id="res-score-ratio">0 / 20</span>
-            </div>
-            <div class="hud-node">
-                <span class="hud-label">Percentage</span>
-                <span class="hud-value" id="res-score-percent">0%</span>
-            </div>
-            <div class="hud-node">
-                <span class="hud-label">Correct</span>
-                <span class="hud-value" id="res-count-correct" style="color: var(--success);">0</span>
-            </div>
-            <div class="hud-node">
-                <span class="hud-label">Wrong</span>
-                <span class="hud-value" id="res-count-wrong" style="color: var(--error);">0</span>
-            </div>
-        </div>
-
-        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-            <button class="action-btn" onclick="startGameSession()">Restart Game</button>
-            <button class="action-btn" onclick="startGameSession()" style="background-color: var(--secondary);">Play Again</button>
-            <button class="action-btn" onclick="launchItemizedReviewLogs()" style="background-color: var(--text-light);">Review Answers</button>
         </div>
     </div>
 
-    <div id="screen-review" class="game-card">
-        <div class="badge">Audit Framework View</div>
-        <h1>Diagnostic History Items</h1>
-        <p>Review the exact morphological parameters specified for each problem stem vector.</p>
-
-        <div class="review-scrollway" id="review-injection-scrollbox"></div>
-
-        <button class="action-btn" onclick="switchView('screen-welcome')" style="background-color: var(--primary-dark);">Return to Menu</button>
-    </div>
+    <!-- Audio Elements -->
+    <audio id="audio-correct" src="assets/correct.mp3"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3"></audio>
+    <audio id="audio-clapping" src="assets/clapping.mp3"></audio>
 
     <script>
-        // IMMUTABLE SOURCE DATA LAYER POOL MATRIX
-        const sourceDataMatrixPool = [
+        // Generate Background Particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            p.style.left = `${Math.random() * 100}%`;
+            p.style.top = `${Math.random() * 100}%`;
+            const size = `${Math.random() * 8 + 4}px`;
+            p.style.width = size;
+            p.style.height = size;
+            p.style.animationDuration = `${Math.random() * 6 + 6}s`;
+            p.style.animationDelay = `${Math.random() * 5}s`;
+            particlesContainer.appendChild(p);
+        }
+
+        // 15 Competency-Based Questions (Questions 1-12: Question Flow, 13-15: Final Challenge)
+        const questions = [
             {
-                q: "1. The girl is reading a comic book while sitting under a tree. Which tense is used in the sentence “The girl is reading a comic book”?",
-                options: ["a) Simple present", "b) Present continuous", "c) Past continuous", "d) Future continuous"],
-                ans: "b) Present continuous",
-                exp: "Correct Answer: b) Present continuous\nBrief Explanation: The verb pattern 'is reading' combines the present helper auxiliary with the primary verb form ending in -ing to reflect a current action."
+                category: "Scenario-Based",
+                text: "Look at the classroom! The teacher is explaining a diagram while the students ______ notes diligently in their notebooks.",
+                options: ["are writing", "write", "wrote", "will write"],
+                correct: 0,
+                explanation: "We use the Present Continuous tense ('are writing') for actions happening right now at the time of speaking."
             },
             {
-                q: "2. The teacher was writing on the board when the bell rang. Which tense is used in “was writing”?",
-                options: ["a) Present continuous", "b) Past continuous", "c) Future continuous", "d) Present perfect continuous"],
-                ans: "b) Past continuous",
-                exp: "Correct Answer: b) Past continuous\nBrief Explanation: The element 'was writing' uses a past singular auxiliary linked with an -ing verb participle to outline an ongoing historical baseline task."
+                category: "Application",
+                text: "My father is working extra hours this month because he ______ a novel that will be published soon.",
+                options: ["is writing", "writes", "wrote", "has written"],
+                correct: 0,
+                explanation: "The Present Continuous is used for an action going on over a period of time including now, even if not happening at this exact second."
             },
             {
-                q: "3. “At 8 PM tonight, we will be having dinner with our friends.” Which tense is used in “will be having”?",
-                options: ["a) Simple future", "b) Future continuous", "c) Present continuous", "d) Past continuous"],
-                ans: "b) Future continuous",
-                exp: "Correct Answer: b) Future continuous\nBrief Explanation: 'Will be having' uses the future indicator modal and progressive aspect template to frame continuous actions forward in time."
+                category: "Case-Based",
+                text: "Rohan's travel itinerary confirms: 'Flight AI-202 lands tomorrow.' How can Rohan express his departure in the present continuous for near future arrangements?",
+                options: ["I am leaving by the next train tomorrow.", "I leave tomorrow.", "I left yesterday.", "I will leave next week."],
+                correct: 0,
+                explanation: "An action or event definitely planned to take place in the near future can be expressed using the Present Continuous tense."
             },
             {
-                q: "4. Choose the sentence in the present continuous tense.",
-                options: ["a) She plays the piano beautifully.", "b) She is playing the piano beautifully.", "c) She played the piano beautifully.", "d) She will play the piano beautifully."],
-                ans: "b) She is playing the piano beautifully.",
-                exp: "Correct Answer: b) She is playing the piano beautifully.\nBrief Explanation: The configuration 'is playing' specifies an ongoing continuous action path synchronized with the present speech moment."
+                category: "Reasoning",
+                text: "Why is the sentence 'You're always interrupting me when I'm speaking!' an example of Present Continuous?",
+                options: [
+                    "To show the speaker's disapproval and annoyance of a frequent action.",
+                    "To state a permanent scientific fact.",
+                    "To describe a completed action in the past.",
+                    "To indicate a routine habit every morning."
+                ],
+                correct: 0,
+                explanation: "Present Continuous with words like 'always' can express the speaker's disapproval or irritation toward a recurring habit."
             },
             {
-                q: "5. Choose the sentence in the past continuous tense.",
-                options: ["a) They were playing football when it started to rain.", "b) They play football when it starts to rain.", "c) They will play football when it starts to rain.", "d) They are playing football when it started to rain."],
-                ans: "a) They were playing football when it started to rain.",
-                exp: "Correct Answer: a) They were playing football when it started to rain.\nBrief Explanation: 'Were playing' frames a plural continuous task context that was ongoing in the past when interrupted by an external event."
+                category: "Error Detection",
+                text: "Identify which of the following sentences contains an incorrect verb tense structure:",
+                options: [
+                    "They were playing chess when the lights went out.",
+                    "She are playing badminton right now.",
+                    "I am learning to drive this month.",
+                    "He is coming tomorrow."
+                ],
+                correct: 1,
+                explanation: "Option B is incorrect because the singular subject 'She' requires the helping verb 'is', not 'are' ('She is playing...')."
             },
             {
-                q: "6. Choose the sentence in the future continuous tense.",
-                options: ["a) I am studying for the test tomorrow.", "b) I studied for the test tomorrow.", "c) I will be studying for the test tomorrow.", "d) I have studied for the test tomorrow."],
-                ans: "c) I will be studying for the test tomorrow.",
-                exp: "Correct Answer: c) I will be studying for the test tomorrow.\nBrief Explanation: The phrase 'will be studying' projects a continuous progressive task planned during future time horizons."
+                category: "Data-Based / Scenario",
+                text: "At exactly 8 o'clock yesterday evening, what were you doing? Complete the sentence: 'I ______ my breakfast when the bell rang.'",
+                options: ["was having", "had", "have", "will have"],
+                correct: 0,
+                explanation: "Past Continuous ('was having') is used to express an action that was in progress at a specific point of time in the past."
             },
             {
-                q: "7. Which sentence shows an action happening now?",
-                options: ["a) The children are laughing in the garden.", "b) The children laughed in the garden.", "c) The children will laugh in the garden.", "d) The children have laughed in the garden."],
-                ans: "a) The children are laughing in the garden.",
-                exp: "Correct Answer: a) The children are laughing in the garden.\nBrief Explanation: Present continuous constructions ('are laughing') are the accurate method to convey immediate ongoing conditions."
+                category: "Case-Based",
+                text: "During the power outage last night, 'While I was writing letters, she ______ to the radio.' Select the correct verb form for parallel past actions.",
+                options: ["was listening", "listened", "listens", "will listen"],
+                correct: 0,
+                explanation: "When describing two continuous actions going on at the same time in the past, both clauses take the past continuous tense."
             },
             {
-                q: "8. “By this time tomorrow, Riya _ on her project at home.” Which option completes the sentence correctly?",
-                options: ["a) works", "b) worked", "c) will be working", "d) has worked"],
-                ans: "c) will be working",
-                exp: "Correct Answer: c) will be working\nBrief Explanation: The descriptive timeline prompt 'By this time tomorrow' requires a matching future continuous structural marker."
+                category: "Application",
+                text: "Complete the sentence describing an interrupted past action: 'She ______ when the phone suddenly rang.'",
+                options: ["was sleeping", "slept", "sleeps", "is sleeping"],
+                correct: 0,
+                explanation: "The past continuous ('was sleeping') describes an ongoing action that was interrupted by another action in simple past ('rang')."
             },
             {
-                q: "9. “While I _ dinner, my brother was watching TV.” Which option completes the sentence correctly?",
-                options: ["a) cook", "b) was cooking", "c) will cook", "d) had cooked"],
-                ans: "b) was cooking",
-                exp: "Correct Answer: b) was cooking\nBrief Explanation: Parallel long actions happening concurrently in the past are bound together via corresponding past continuous markers."
+                category: "Error Detection",
+                text: "Find the error in this past continuous sentence: 'They was studying when I called them.'",
+                options: [
+                    "Change 'was' to 'were' because 'They' is plural.",
+                    "Change 'studying' to 'study'.",
+                    "Change 'called' to 'calling'.",
+                    "No error exists."
+                ],
+                correct: 0,
+                explanation: "The plural subject 'They' requires the past auxiliary verb 'were', making it 'They were studying'."
             },
             {
-                q: "10. “At 5 o’clock yesterday, the boys _ cricket in the park.” Which option completes the sentence correctly?",
-                options: ["a) are playing", "b) were playing", "c) will be playing", "d) play"],
-                ans: "b) were playing",
-                key: "b",
-                exp: "Correct Answer: b) were playing\nBrief Explanation: A clear localized point in historical records ('At 5 o’clock yesterday') with plural actors calls for 'were playing'."
+                category: "Application",
+                text: "Planning ahead for tonight: 'At 10 PM tonight, I ______ for my English board exam.'",
+                options: ["will be studying", "will study", "studied", "study"],
+                correct: 0,
+                explanation: "Future Continuous ('will be studying') is used for an ordinary continuous action at a specific time in the future."
             },
             {
-                q: "11. Which sentence is correct?",
-                options: ["a) She are playing badminton right now.", "b) She is playing badminton right now.", "c) She was playing badminton right now.", "d) She will be playing badminton right now."],
-                ans: "b) She is playing badminton right now.",
-                exp: "Correct Answer: b) She is playing badminton right now.\nBrief Explanation: Singular pronouns ('She') match with the baseline auxiliary 'is' under current active present progressives."
+                category: "Scenario-Based",
+                text: "Talking about weather predictions in the mountains: 'When I reach Mussoorie tomorrow afternoon, it ______ there.'",
+                options: ["will be raining", "rains", "rained", "is raining"],
+                correct: 0,
+                explanation: "Future continuous is used to describe an action that will be in progress at a given point of time in the future."
             },
             {
-                q: "12. Which sentence is correct?",
-                options: ["a) They was studying when I called them.", "b) They were studying when I called them.", "c) They are studied when I called them.", "d) They will studying when I called them."],
-                ans: "b) They were studying when I called them.",
-                exp: "Correct Answer: b) They were studying when I called them.\nBrief Explanation: Plural structural subjects ('They') command past auxiliary alignment markers using 'were'."
+                category: "Application",
+                text: "Expressing future leisure: 'This time next week, we ______ on the sunny beaches of Goa.'",
+                options: ["will be lounging", "will lounge", "lounged", "are lounging"],
+                correct: 0,
+                explanation: "Future continuous ('will be lounging') correctly highlights an extended action in progress at a future timeframe."
+            },
+            // Final Challenge (Questions 13 - 15)
+            {
+                category: "Final Challenge • Reasoning",
+                text: "Which sentence correctly demonstrates the Future Continuous tense indicating an event that will take place in the future?",
+                options: [
+                    "Ranjan will be helping Sonam tomorrow.",
+                    "Ranjan helps Sonam every day.",
+                    "Ranjan helped Sonam yesterday.",
+                    "Ranjan has helped Sonam."
+                ],
+                correct: 0,
+                explanation: "Option A uses 'will be helping', which follows the structure (Subject + shall/will be + Verb-ing) for future events in progress."
             },
             {
-                q: "13. Which sentence is correct?",
-                options: ["a) I will waiting for you at the bus stop tomorrow.", "b) I will be waiting for you at the bus stop tomorrow.", "c) I I am wait for you at the bus stop tomorrow.", "d) I waited for you at the bus stop tomorrow."],
-                ans: "b) I will be waiting for you at the bus stop tomorrow.",
-                exp: "Correct Answer: b) I will be waiting for you at the bus stop tomorrow.\nBrief Explanation: Accurate future progressive structures require the 'will' modal, the aspect marker 'be', and the action verb ending in -ing."
+                category: "Final Challenge • Mixed Tenses",
+                text: "Read the sentence: 'At this time yesterday, we were travelling to Delhi.' Which tense does this represent?",
+                options: ["Past Continuous Tense", "Present Continuous Tense", "Future Continuous Tense", "Simple Past Tense"],
+                correct: 0,
+                explanation: "The presence of 'were' + 'travelling' indicating an action in progress at a past time defines the Past Continuous Tense."
             },
             {
-                q: "14. Which sentence is correct?",
-                options: ["a) He is goes to the market now.", "b) He was goes to the market now.", "c) He is going to the market now.", "d) He will going to the market now."],
-                ans: "c) He is going to the market now.",
-                exp: "Correct Answer: c) He is going to the market now.\nBrief Explanation: Active present progressive profiles take an unchanged base verb stem linked directly with the -ing continuous marker."
-            },
-            {
-                q: "15. Which option rewrites “She reads a novel” in the present continuous tense?",
-                options: ["a) She is reading a novel.", "b) She was reading a novel.", "c) She will be reading a novel.", "d) She has read a novel."],
-                ans: "a) She is reading a novel.",
-                exp: "Correct Answer: a) She is reading a novel.\nBrief Explanation: The core template of the continuous aspect shifts 'reads' into the ongoing singular design 'is reading'."
-            },
-            {
-                q: "16. Which option rewrites “They sang loudly yesterday” in the past continuous tense?",
-                options: ["a) They are singing loudly yesterday.", "b) They were singing loudly when I arrived.", "c) They will be singing loudly yesterday.", "d) They have sung loudly yesterday."],
-                ans: "b) They were singing loudly when I arrived.",
-                exp: "Correct Answer: b) They were singing loudly when I arrived.\nBrief Explanation: Converting into past continuous patterns generates 'were singing', framing a background action that was active in the past."
-            },
-            {
-                q: "17. Which option rewrites “We will eat dinner together” in the future continuous tense?",
-                options: ["a) We are eating dinner together.", "b) We were eating dinner together.", "c) We will be eating dinner together.", "d) We have eaten dinner together."],
-                ans: "c) We will be eating dinner together.",
-                exp: "Correct Answer: c) We will be eating dinner together.\nBrief Explanation: The future linear aspect conversion replaces base modal actions with progressive 'will be eating'."
-            },
-            {
-                q: "18. Which option rewrites “The teacher checks the answer sheets” in the present continuous tense?",
-                options: ["a) The teacher is checking the answer sheets.", "b) The teacher was checking the answer sheets.", "c) The teacher will be checking the answer sheets.", "d) The teacher has checked the answer sheets."],
-                ans: "a) The teacher is checking the answer sheets.",
-                exp: "Correct Answer: a) The teacher is checking the answer sheets.\nBrief Explanation: Changing simple statements into current frames yields the present tense continuous pattern 'is checking'."
-            },
-            {
-                q: "19. Which option rewrites “He painted the walls last night” in the past continuous tense?",
-                options: ["a) He is painting the walls last night.", "b) He was painting the walls last night.", "c) He will be painting the walls last night.", "d) He has painted the walls last night."],
-                ans: "b) He was painting the walls last night.",
-                exp: "Correct Answer: b) He was painting the walls last night.\nBrief Explanation: Transposing simple past events into a progressive view uses the singular past aspect structure 'was painting'."
-            },
-            {
-                q: "20. Which sentence best shows two actions happening at the same time in the past?",
-                options: ["a) While I was writing letters, she was listening to the radio.", "b) While I write letters, she listens to the radio.", "c) While I will write letters, she will listen to the radio.", "d) While I have written letters, she has listened to the radio."],
-                ans: "a) While I was writing letters, she was listening to the radio.",
-                exp: "Correct Answer: a) While I was writing letters, she was listening to the radio.\nBrief Explanation: Dual clauses linked via 'While' use matching past continuous configurations to anchor parallel concurrent timelines."
+                category: "Final Challenge • Error Correction",
+                text: "Correct the following faulty sentence: 'I will waiting for you at the bus stop tomorrow.'",
+                options: [
+                    "I will be waiting for you at the bus stop tomorrow.",
+                    "I am waiting for you at the bus stop tomorrow.",
+                    "I waited for you at the bus stop tomorrow.",
+                    "I will waited for you at the bus stop tomorrow."
+                ],
+                correct: 0,
+                explanation: "The future continuous requires 'will be' + '-ing' form ('will be waiting'), not just 'will waiting'."
             }
         ];
 
-        // LOGISTIC ENGINE CONTROLLERS
-        let operationalQuestionsList = [];
-        let indexPointer = 0;
-        let diagnosticScorePoints = 0;
-        let attemptCounterLimit = 2;
-        let clockTimerThread = null;
-        let remainingSecondsCount = 45;
-        let appAudioMutedState = false;
-        let activeChallengeTrackingSlots = [null, null, null];
-        let structuralAuditHistoryLog = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer;
+        let timeLeft = 45; // Grade 8 timer: 45 seconds per question
+        let wrongAttempts = 0;
 
-        window.onload = function() {
-            spawnBackgroundGraphics();
-            
-            // Fixed 5-Second Brand Image Fade Loop Sequence
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    document.getElementById('control-utility-tray').style.display = 'flex';
-                    switchView('screen-welcome');
-                }, 600);
-            }, 5000);
+        const splashScreen = document.getElementById('splash-screen');
+        const screenIntro = document.getElementById('screen-intro');
+        const screenQuiz = document.getElementById('screen-quiz');
+        const screenResult = document.getElementById('screen-result');
 
-            bindVolumeInputControl();
-            registerKeyboardShortcuts();
-        };
+        const qCategory = document.getElementById('q-category');
+        const qText = document.getElementById('q-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const scoreIndicator = document.getElementById('score-indicator');
+        const timerIndicator = document.getElementById('timer-indicator');
+        const feedbackBox = document.getElementById('feedback-box');
+        const nextBtn = document.getElementById('next-btn');
 
-        function spawnBackgroundGraphics() {
-            const viewport = document.getElementById('ambient-container');
-            const icons = ['⏰', '📅', '⏳', '📚', '✏️', '✨'];
-            for(let i=0; i<20; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'ambient-icon';
-                particle.innerText = icons[Math.floor(Math.random() * icons.length)];
-                particle.style.left = `${Math.random() * 100}vw`;
-                particle.style.animationDelay = `${Math.random() * 10}s`;
-                particle.style.animationDuration = `${Math.random() * 8 + 15}s`;
-                viewport.appendChild(particle);
-            }
+        const audioCorrect = document.getElementById('audio-correct');
+        const audioWrong = document.getElementById('audio-wrong');
+        const audioClapping = document.getElementById('audio-clapping');
+
+        function startQuiz() {
+            screenIntro.classList.remove('active');
+            screenQuiz.classList.add('active');
+            loadQuestion();
         }
 
-        function switchView(targetScreenId) {
-            document.querySelectorAll('.game-card').forEach(card => card.style.display = 'none');
-            document.getElementById(targetScreenId).style.display = 'block';
-        }
+        function loadQuestion() {
+            clearInterval(timer);
+            timeLeft = 45;
+            wrongAttempts = 0;
+            timerIndicator.textContent = `⏱ ${timeLeft}s`;
+            feedbackBox.style.display = 'none';
+            feedbackBox.className = 'feedback-box';
+            nextBtn.style.display = 'none';
 
-        function bindVolumeInputControl() {
-            document.getElementById('slider-volume').addEventListener('input', function(e) {
-                const value = e.target.value;
-                document.getElementById('audio-click').volume = value;
-                document.getElementById('audio-correct').volume = value;
-                document.getElementById('audio-wrong').volume = value;
-                document.getElementById('audio-clapping').volume = value;
-            });
-        }
+            const q = questions[currentQuestionIndex];
+            qCategory.textContent = q.category;
+            qText.textContent = q.text;
+            progressIndicator.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            scoreIndicator.textContent = `Score: ${score}`;
 
-        function registerKeyboardShortcuts() {
-            window.addEventListener('keydown', function(e) {
-                if(document.getElementById('screen-assessment').style.display === 'block') {
-                    const keysMap = { 'a':0, 'b':1, 'c':2, 'd':3, 'A':0, 'B':1, 'C':2, 'D':3 };
-                    if(e.key in keysMap) {
-                        const btns = document.querySelectorAll('.choice-btn');
-                        if(btns && btns[keysMap[e.key]] && !btns[keysMap[e.key]].disabled) {
-                            btns[keysMap[e.key]].click();
-                        }
-                    }
-                }
-            });
-        }
-
-        function randomizeArrayData(targetArr) {
-            for (let i = targetArr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [targetArr[i], targetArr[j]] = [targetArr[j], targetArr[i]];
-            }
-            return targetArr;
-        }
-
-        function startGameSession() {
-            playAudioTrack('audio-click');
-            operationalQuestionsList = randomizeArrayData(JSON.parse(JSON.stringify(sourceDataMatrixPool)));
-            operationalQuestionsList.forEach(item => randomizeArrayData(item.options));
-
-            indexPointer = 0;
-            diagnosticScorePoints = 0;
-            structuralAuditHistoryLog = [];
-            switchView('screen-assessment');
-            loadActiveQuestionItem();
-        }
-
-        function loadActiveQuestionItem() {
-            attemptCounterLimit = 2;
-            remainingSecondsCount = 45;
-            document.getElementById('assessment-explanation-box').style.display = 'none';
-            refreshHUDSignals();
-
-            const activeNode = operationalQuestionsList[indexPointer];
-            document.getElementById('assessment-question-text').innerText = activeNode.q;
-
-            const targetGrid = document.getElementById('assessment-options-grid');
-            targetGrid.innerHTML = '';
-
-            activeNode.options.forEach(optionString => {
-                const optionButton = document.createElement('button');
-                optionButton.className = 'choice-btn';
-                optionButton.innerHTML = `<span>${optionString}</span>`;
-                optionButton.onclick = () => evaluationPipe(optionButton, optionString);
-                targetGrid.appendChild(optionButton);
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.classList.add('option-btn');
+                btn.textContent = opt;
+                btn.onclick = () => selectOption(idx, btn);
+                optionsContainer.appendChild(btn);
             });
 
-            initiateQuestionCountdownTimer();
+            startTimer();
         }
 
-        function initiateQuestionCountdownTimer() {
-            clearInterval(clockTimerThread);
-            document.getElementById('hud-txt-timer').innerText = `${remainingSecondsCount}s`;
-            clockTimerThread = setInterval(() => {
-                remainingSecondsCount--;
-                document.getElementById('hud-txt-timer').innerText = `${remainingSecondsCount}s`;
-                if(remainingSecondsCount <= 0) {
-                    clearInterval(clockTimerThread);
-                    handleTimeExpiryScenario();
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                timerIndicator.textContent = `⏱ ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    handleTimeOut();
                 }
             }, 1000);
         }
 
-        function refreshHUDSignals() {
-            document.getElementById('hud-txt-progress').innerText = `${indexPointer + 1} / 20`;
-            document.getElementById('hud-txt-score').innerText = `Score: ${diagnosticScorePoints} / 20`;
-            document.getElementById('hud-txt-attempt').innerText = `Try ${3 - attemptCounterLimit} / 2`;
-            const fillRatio = (indexPointer / 20) * 100;
-            document.getElementById('hud-progress-fill-bar').style.width = `${fillRatio}%`;
+        function handleTimeOut() {
+            const q = questions[currentQuestionIndex];
+            disableAllOptions();
+            audioWrong.play().catch(() => {});
+            feedbackBox.className = 'feedback-box error-msg show';
+            feedbackBox.innerHTML = `<strong>Time's up!</strong> Correct Answer: <strong>${q.options[q.correct]}</strong><br>${q.explanation}`;
+            nextBtn.style.display = 'block';
         }
 
-        function evaluationPipe(selectedElement, stringPayload) {
-            playAudioTrack('audio-click');
-            const activeNode = operationalQuestionsList[indexPointer];
-            const identityMatchEvaluator = stringPayload.trim() === activeNode.ans.trim();
+        function disableAllOptions() {
+            const buttons = optionsContainer.getElementsByClassName('option-btn');
+            for (let btn of buttons) {
+                btn.disabled = true;
+            }
+        }
 
-            if(identityMatchEvaluator) {
-                clearInterval(clockTimerThread);
-                selectedElement.classList.add('correct-state');
-                selectedElement.innerHTML += ' <span>⭐</span>';
-                freezeOptionsSelectionGrid();
-                diagnosticScorePoints++;
-                refreshHUDSignals();
-                triggerStarShowerConfetti();
-                playAudioTrack('audio-correct');
+        function selectOption(selectedIndex, btnElement) {
+            const q = questions[currentQuestionIndex];
 
-                recordAuditHistoryLog(stringPayload, true);
-                setTimeout(cascadeNextSequenceStep, 2000);
+            if (selectedIndex === q.correct) {
+                // Correct Answer on first or second try
+                clearInterval(timer);
+                disableAllOptions();
+                btnElement.classList.add('correct');
+                audioCorrect.play().catch(() => {});
+                
+                if (wrongAttempts === 0) {
+                    score += 10;
+                } else {
+                    score += 5; // Reduced points for retry
+                }
+                scoreIndicator.textContent = `Score: ${score}`;
+
+                feedbackBox.className = 'feedback-box info show';
+                feedbackBox.innerHTML = `<strong>Correct!</strong> ${q.explanation}`;
+                nextBtn.style.display = 'block';
+                showConfetti(btnElement);
             } else {
-                attemptCounterLimit--;
-                selectedElement.classList.add('wrong-state');
-                selectedElement.innerHTML += ' <span>❌</span>';
-                selectedElement.disabled = true;
-                playAudioTrack('audio-wrong');
-                refreshHUDSignals();
+                // Wrong Answer
+                wrongAttempts++;
+                if (wrongAttempts === 1) {
+                    // First retry allowed
+                    audioWrong.play().catch(() => {});
+                    btnElement.classList.add('incorrect');
+                    btnElement.disabled = true;
+                    feedbackBox.className = 'feedback-box error-msg show';
+                    feedbackBox.innerHTML = `<strong>Incorrect!</strong> You have 1 retry left. Try another option!`;
+                } else {
+                    // Second wrong attempt: show correct answer & explanation
+                    clearInterval(timer);
+                    disableAllOptions();
+                    audioWrong.play().catch(() => {});
+                    btnElement.classList.add('incorrect');
+                    
+                    // Highlight correct button
+                    const buttons = optionsContainer.getElementsByClassName('option-btn');
+                    buttons[q.correct].classList.add('correct');
 
-                if(attemptCounterLimit <= 0) {
-                    clearInterval(clockTimerThread);
-                    freezeOptionsSelectionGrid();
-                    recordAuditHistoryLog(stringPayload, false);
-                    exposeCorrectAnswerOverlay();
+                    feedbackBox.className = 'feedback-box error-msg show';
+                    feedbackBox.innerHTML = `<strong>Incorrect!</strong> Correct Answer: <strong>${q.options[q.correct]}</strong><br>${q.explanation}`;
+                    nextBtn.style.display = 'block';
                 }
             }
         }
 
-        function handleTimeExpiryScenario() {
-            freezeOptionsSelectionGrid();
-            recordAuditHistoryLog("[TIMER EXPIRED]", false);
-            exposeCorrectAnswerOverlay();
+        function showConfetti(element) {
+            const rect = element.getBoundingClientRect();
+            for (let i = 0; i < 6; i++) {
+                const conf = document.createElement('div');
+                conf.classList.add('confetti');
+                conf.style.left = `${rect.left + rect.width / 2 + (Math.random() * 60 - 30)}px`;
+                conf.style.top = `${rect.top + window.scrollY}px`;
+                conf.style.background = ['#10b981', '#6366f1', '#f59e0b', '#ec4899'][Math.floor(Math.random() * 4)];
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 1000);
+            }
         }
 
-        function freezeOptionsSelectionGrid() {
-            document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
-        }
-
-        function recordAuditHistoryLog(userResponse, passStatus) {
-            const activeNode = operationalQuestionsList[indexPointer];
-            structuralAuditHistoryLog.push({
-                stem: activeNode.q,
-                userAnswer: userResponse,
-                validAnswer: activeNode.ans,
-                ruleMessage: activeNode.exp,
-                isCorrect: passStatus
-            });
-        }
-
-        function exposeCorrectAnswerOverlay() {
-            const activeNode = operationalQuestionsList[indexPointer];
-            document.querySelectorAll('.choice-btn').forEach(btn => {
-                if(btn.innerText.trim().startsWith(activeNode.ans.trim().substring(0, 8))) {
-                    btn.classList.add('correct-state');
-                }
-            });
-
-            const banner = document.getElementById('assessment-explanation-box');
-            banner.innerHTML = `<strong>Correct Answer:</strong> ${activeNode.ans}<br><br><strong>Brief Explanation:</strong> ${activeNode.exp.replace(/Correct Answer:.*\n/g, '')}`;
-            banner.style.display = 'block';
-
-            setTimeout(cascadeNextSequenceStep, 5000);
-        }
-
-        function cascadeNextSequenceStep() {
-            indexPointer++;
-            if(indexPointer < 20) {
-                loadActiveQuestionItem();
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
             } else {
-                initiateBonusLevelArena();
+                showResults();
             }
         }
 
-        function initiateBonusLevelArena() {
-            switchView('screen-challenge');
-            activeChallengeTrackingSlots = [null, null, null];
-            
-            for(let i=0; i<3; i++) {
-                const targetBox = document.getElementById(`bucket-${i}`);
-                targetBox.innerText = "Tap to place";
-                targetBox.classList.remove('occupied');
-            }
+        function showResults() {
+            screenQuiz.classList.remove('active');
+            screenResult.classList.add('active');
+            audioClapping.play().catch(() => {});
 
-            const challengeSentences = [
-                { text: "The girl is reading a comic book.", aspect: "Present Continuous" },
-                { text: "The teacher was writing on the board.", aspect: "Past Continuous" },
-                { text: "We will be having dinner with friends.", aspect: "Future Continuous" }
-            ];
+            const maxPossibleScore = questions.length * 10;
+            document.getElementById('final-score-display').textContent = `${score} / ${maxPossibleScore}`;
 
-            const randomChips = randomizeArrayData([...challengeSentences]);
-            const runway = document.getElementById('challenge-chips-runway');
-            runway.innerHTML = '';
-
-            randomChips.forEach((data, index) => {
-                const chip = document.createElement('div');
-                chip.className = 'sentence-chip';
-                chip.innerText = data.text;
-                chip.id = `bonus-chip-${index}`;
-                chip.onclick = () => assignChipToAvailableBucket(data.text, data.aspect, chip.id);
-                runway.appendChild(chip);
-            });
-        }
-
-        function assignChipToAvailableBucket(content, label, elementId) {
-            playAudioTrack('audio-click');
-            const firstEmptyIndex = activeChallengeTrackingSlots.findIndex(slot => slot === null);
-            if(firstEmptyIndex === -1) return;
-
-            activeChallengeTrackingSlots[firstEmptyIndex] = { content, label, elementId };
-            
-            const slotUI = document.getElementById(`bucket-${firstEmptyIndex}`);
-            slotUI.innerText = content;
-            slotUI.classList.add('occupied');
-
-            document.getElementById(elementId).classList.add('allocated');
-        }
-
-        function clearSelectedSlot(slotIndex) {
-            if(!activeChallengeTrackingSlots[slotIndex]) return;
-            playAudioTrack('audio-click');
-
-            const referenceData = activeChallengeTrackingSlots[slotIndex];
-            document.getElementById(referenceData.elementId).classList.remove('allocated');
-
-            const slotUI = document.getElementById(`bucket-${slotIndex}`);
-            slotUI.innerText = "Tap to place";
-            slotUI.classList.remove('occupied');
-
-            activeChallengeTrackingSlots[slotIndex] = null;
-        }
-
-        function verifyBonusChallengeState() {
-            const expectedSequenceLabels = ["Present Continuous", "Past Continuous", "Future Continuous"];
-            let sortingAccuracyFlag = true;
-
-            for(let i=0; i<3; i++) {
-                if(!activeChallengeTrackingSlots[i] || activeChallengeTrackingSlots[i].label !== expectedSequenceLabels[i]) {
-                    sortingAccuracyFlag = false;
-                }
-            }
-
-            if(sortingAccuracyFlag) {
-                playAudioTrack('audio-correct');
-                triggerStarShowerConfetti();
-                alert("⭐ Excellent job! Your timeline configurations match perfectly!");
+            const remark = document.getElementById('performance-remark');
+            if (score >= 120) {
+                remark.textContent = "🌟 Outstanding! You have mastered Continuous Tenses!";
+            } else if (score >= 80) {
+                remark.textContent = "👍 Good job! You have a solid grasp of progressive structures.";
             } else {
-                playAudioTrack('audio-wrong');
-                alert("❌ Some timeline structures are misplaced. Check their continuous tense markers and try again!");
-            }
-
-            setTimeout(launchTerminalSummaryView, 1000);
-        }
-
-        function launchTerminalSummaryView() {
-            switchView('screen-result');
-            playAudioTrack('audio-clapping');
-
-            document.getElementById('res-score-ratio').innerText = `${diagnosticScorePoints} / 20`;
-            const absolutePercentage = Math.round((diagnosticScorePoints / 20) * 100);
-            document.getElementById('res-score-percent').innerText = `${absolutePercentage}%`;
-            document.getElementById('res-count-correct').innerText = diagnosticScorePoints;
-            document.getElementById('res-count-wrong').innerText = 20 - diagnosticScorePoints;
-
-            const titleNode = document.getElementById('res-badge-title');
-            const descNode = document.getElementById('res-badge-desc');
-
-            if(absolutePercentage >= 90) {
-                titleNode.innerText = "🏆 Tense Master!";
-                descNode.innerText = "Phenomenal capability verified! You have standard conceptual control over ongoing action profiles.";
-            } else if(absolutePercentage >= 75) {
-                titleNode.innerText = "🌟 Excellent!";
-                descNode.innerText = "Superb execution. Minor structural discrepancies observed under alternative timeline options.";
-            } else if(absolutePercentage >= 50) {
-                titleNode.innerText = "🎉 Great Job!";
-                descNode.innerText = "Solid functional performance. Review auxillary alignments to avoid matching mistakes.";
-            } else {
-                titleNode.innerText = "📘 Keep Practising!";
-                descNode.innerText = "Continuous structures require further validation checks. Re-run the diagnostic suite to master.";
+                remark.textContent = "💡 Keep practicing! Review the rules for Present, Past, and Future Continuous tenses.";
             }
         }
 
-        function launchItemizedReviewLogs() {
-            const container = document.getElementById('review-injection-scrollbox');
-            container.innerHTML = '';
-
-            structuralAuditHistoryLog.forEach((log, i) => {
-                const node = document.createElement('div');
-                node.className = 'review-node';
-                node.style.borderLeft = log.isCorrect ? '6px solid var(--success)' : '6px solid var(--error)';
-
-                node.innerHTML = `
-                    <div style="font-weight:700; margin-bottom:6px; color:var(--primary-dark);">${log.stem}</div>
-                    <div style="font-size:0.95rem; margin-bottom:3px;">Your Choice: <span style="font-weight:700; color:${log.isCorrect?'var(--success)':'var(--error)'};">${log.userAnswer}</span></div>
-                    <div style="font-size:0.95rem; margin-bottom:8px;">Correct Choice: <span style="font-weight:700; color:var(--success);">${log.validAnswer}</span></div>
-                    <div style="font-size:0.9rem; padding:10px; background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; line-height:1.4; color:var(--text-light); white-space:pre-wrap;">${log.ruleMessage}</div>
-                `;
-                container.appendChild(node);
-            });
-
-            switchView('screen-review');
-        }
-
-        function playAudioTrack(id) {
-            if(appAudioMutedState) return;
-            const element = document.getElementById(id);
-            if(element) {
-                element.currentTime = 0;
-                element.play().catch(() => {});
-            }
-        }
-
-        function toggleMuteAudio() {
-            appAudioMutedState = !appAudioMutedState;
-            document.getElementById('btn-mute').innerText = appAudioMutedState ? "🔇 Muted" : "🔊 Mute";
-        }
-
-        function toggleHighContrast() {
-            document.body.classList.toggle('high-contrast');
-        }
-
-        function triggerStarShowerConfetti() {
-            const viewLayer = document.getElementById('star-layer');
-            for(let i=0; i<30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'star-item';
-                particle.style.left = `${Math.random() * 100}vw`;
-                particle.style.backgroundColor = ['#2563eb','#0ea5e9','#f59e0b','#10b981'][Math.floor(Math.random()*4)];
-                particle.style.animationDelay = `${Math.random() * 0.4}s`;
-                viewLayer.appendChild(particle);
-                setTimeout(() => particle.remove(), 2200);
-            }
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            screenResult.classList.remove('active');
+            screenQuiz.classList.add('active');
+            loadQuestion();
         }
     </script>
 </body>
