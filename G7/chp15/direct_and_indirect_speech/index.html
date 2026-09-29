@@ -15,16 +15,16 @@
             --card-white: #ffffff;
             --success-green: #2ec4b6;
             --danger-red: #e71d36;
-            --panel-radius: 20px;
-            --elem-radius: 12px;
-            --classic-shadow: 0 10px 30px rgba(43, 58, 103, 0.08);
+            --panel-radius: 16px;
+            --elem-radius: 10px;
+            --classic-shadow: 0 8px 24px rgba(43, 58, 103, 0.08);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -35,22 +35,31 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px;
+            padding: 12px;
             overflow-x: hidden;
             position: relative;
         }
 
+        .ambient-decorations-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
         .container {
             width: 100%;
-            max-width: 720px;
+            max-width: 680px;
             display: none;
             position: relative;
             z-index: 10;
-            animation: panelFadeIn 0.4s ease-out forwards;
+            will-change: transform, opacity;
+            animation: panelFadeIn 0.3s ease-out forwards;
         }
 
         @keyframes panelFadeIn {
-            0% { transform: scale(0.97); opacity: 0; }
+            0% { transform: scale(0.98); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
 
@@ -64,33 +73,33 @@
             justify-content: center;
             z-index: 9999;
             opacity: 1;
-            padding: 24px;
+            padding: 20px;
             text-align: center;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
         }
 
         .splash-title {
-            font-size: 22px;
+            font-size: clamp(20px, 5vw, 24px);
             font-weight: 700;
             color: var(--slate-blue);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .splash-sub {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: #64748b;
             letter-spacing: 0.5px;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(65, 179, 163, 0.1);
+            width: 36px;
+            height: 36px;
+            border: 4px solid rgba(65, 179, 163, 0.15);
             border-top-color: var(--mint-teal);
             border-radius: 50%;
-            animation: spin 1s infinite linear;
+            animation: spin 0.8s infinite linear;
         }
 
         @keyframes spin {
@@ -100,7 +109,7 @@
 
         .quiz-card {
             background: var(--card-white);
-            padding: clamp(22px, 5vw, 36px);
+            padding: clamp(18px, 4vw, 32px);
             border-radius: var(--panel-radius);
             width: 100%;
             box-shadow: var(--classic-shadow);
@@ -110,30 +119,30 @@
 
         h1, h2 {
             color: var(--slate-blue);
-            font-size: clamp(22px, 4.5vw, 28px);
+            font-size: clamp(20px, 4vw, 26px);
             font-weight: 800;
-            line-height: 1.3;
-            margin-bottom: 8px;
+            line-height: 1.25;
+            margin-bottom: 6px;
         }
 
         .subtitle {
             color: var(--mint-teal);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
         }
 
         .audio-ctrl-strip {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px;
-            background: rgba(43, 58, 103, 0.05);
-            padding: 10px 20px;
-            border-radius: 30px;
-            margin-bottom: 24px;
+            gap: 12px;
+            background: rgba(43, 58, 103, 0.04);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
             width: fit-content;
             margin-left: auto;
             margin-right: auto;
@@ -143,7 +152,7 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--slate-blue);
             display: flex;
@@ -154,14 +163,14 @@
         .hud-wrapper {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            gap: 6px;
             background: var(--slate-blue);
-            padding: 12px;
+            padding: 10px;
             border-radius: var(--elem-radius);
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: white;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             text-align: center;
         }
 
@@ -173,7 +182,7 @@
         }
 
         .hud-val {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--mint-teal);
         }
 
@@ -184,27 +193,27 @@
 
         .progress-container {
             width: 100%;
-            height: 10px;
+            height: 8px;
             background: rgba(43, 58, 103, 0.08);
-            border-radius: 20px;
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .progress-fill {
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, var(--mint-teal), var(--success-green));
-            transition: width 0.3s ease;
+            transition: width 0.25s ease;
         }
 
         .question-statement {
-            font-size: clamp(16px, 3.8vw, 17px);
+            font-size: clamp(15px, 3.5vw, 17px);
             font-weight: 600;
             color: var(--deep-purple);
             text-align: left;
-            margin-bottom: 20px;
-            line-height: 1.5;
+            margin-bottom: 18px;
+            line-height: 1.45;
             white-space: pre-line;
         }
 
@@ -212,7 +221,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .option-node {
@@ -220,29 +229,28 @@
             background: #ffffff;
             border: 2px solid #e2e8f0;
             border-radius: var(--elem-radius);
-            padding: 14px 18px;
-            font-size: 14.5px;
+            padding: 12px 16px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--deep-purple);
             text-align: left;
             cursor: pointer;
-            transition: all 0.1s ease;
-            line-height: 1.4;
+            transition: border-color 0.1s ease, background-color 0.1s ease, transform 0.1s ease;
+            line-height: 1.35;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            user-select: none;
         }
 
         .option-node:hover:not(.locked-state) {
             border-color: var(--slate-blue);
-            background: rgba(43, 58, 103, 0.01);
-            transform: translateY(-1px);
+            background: rgba(43, 58, 103, 0.015);
         }
 
         .option-node.locked-state {
-            cursor: not-allowed;
-            opacity: 0.8;
+            cursor: default;
         }
 
         .option-node.correct-look {
@@ -251,80 +259,103 @@
             color: var(--success-green) !important;
             font-weight: 700;
         }
+        .option-node.correct-look::after {
+            content: "✔";
+            font-size: 14px;
+            color: var(--success-green);
+            flex-shrink: 0;
+        }
 
         .option-node.wrong-look {
             background: #ffebee !important;
             border-color: var(--danger-red) !important;
             color: var(--danger-red) !important;
             font-weight: 700;
+            animation: shakeWidget 0.3s ease-in-out;
+        }
+        .option-node.wrong-look::after {
+            content: "❌";
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        @keyframes shakeWidget {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            50% { transform: translateX(4px); }
+            75% { transform: translateX(-2px); }
         }
 
         #feedback-alert {
-            margin-top: 8px;
-            font-size: 18px;
+            margin-top: 6px;
+            font-size: 16px;
             font-weight: 800;
             display: none;
             text-align: center;
         }
 
         #explanation-card {
-            margin-top: 16px;
-            padding: 16px 20px;
+            margin-top: 14px;
+            padding: 14px 16px;
             border-radius: var(--elem-radius);
             background: #f8fafc;
-            border-left: 5px solid var(--slate-blue);
-            font-size: 14.5px;
-            line-height: 1.6;
+            border-left: 4px solid var(--slate-blue);
+            font-size: 14px;
+            line-height: 1.5;
             color: #4a5568;
             text-align: left;
             display: none;
         }
 
         .btn-ui-action {
-            padding: 14px 28px;
+            padding: 12px 24px;
             border: none;
             border-radius: var(--elem-radius);
             background: var(--amber-gold);
             color: white;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            transition: all 0.2s ease;
-            margin: 8px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin: 6px;
             display: inline-block;
-            box-shadow: 0 4px 12px rgba(226, 125, 96, 0.25);
+            box-shadow: 0 4px 10px rgba(226, 125, 96, 0.2);
+            user-select: none;
         }
 
         .btn-ui-action:hover {
             background: var(--gold-dark);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
         .review-scroll-container {
-            max-height: 380px;
+            max-height: 320px;
             overflow-y: auto;
-            margin-top: 20px;
-            padding-right: 6px;
+            margin-top: 16px;
+            padding-right: 4px;
             text-align: left;
+            -webkit-overflow-scrolling: touch;
         }
+
         .review-item-card {
             background: #f8fafc;
             border-radius: var(--elem-radius);
-            padding: 16px;
-            margin-bottom: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
             border: 1px solid #e2e8f0;
         }
+
         .final-challenge-badge {
             background: linear-gradient(135deg, #ffd700, var(--amber-gold));
             color: white;
             font-weight: 800;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 14px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 13px;
             display: inline-block;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
     </style>
 </head>
@@ -336,6 +367,7 @@
         <div class="spinner"></div>
     </div>
 
+    <!-- Intro Screen -->
     <div id="intro-screen" class="container" style="display: block;">
         <div class="quiz-card">
             <h1>Chapter 15 — Direct and Indirect Speech</h1>
@@ -349,7 +381,12 @@
         </div>
     </div>
 
+    <!-- Question Screen -->
     <div id="question-screen" class="container">
+        <div class="audio-ctrl-strip" style="padding: 4px 12px; margin-bottom: 10px;">
+            <button onclick="toggleSoundEffects()" id="sfx-toggle-game-btn">🔊 Sound: ON</button>
+        </div>
+        
         <div class="hud-wrapper">
             <div class="hud-block">
                 <div>Progress</div>
@@ -379,7 +416,7 @@
             <div id="activeOptionsStack" class="options-stack"></div>
             <div id="feedback-alert"></div>
             <div id="explanation-card"></div>
-            <button id="next-btn" class="btn-ui-action" style="display: none; margin-top: 20px;" onclick="proceedToNextQuestion()">Next Question</button>
+            <button id="next-btn" class="btn-ui-action" style="display: none; margin-top: 16px;" onclick="proceedToNextQuestion()">Next Question</button>
         </div>
     </div>
 
@@ -452,18 +489,20 @@
 
         window.onload = function() {
             setTimeout(() => {
-                document.getElementById('splash-screen').style.opacity = '0';
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
                 setTimeout(() => {
-                    document.getElementById('splash-screen').style.display = 'none';
+                    splash.style.display = 'none';
                     document.getElementById('intro-screen').style.display = 'block';
-                }, 500);
-            }, 800);
+                }, 400);
+            }, 600);
         };
 
         function toggleSoundEffects() {
             soundEnabled = !soundEnabled;
             const btnText = soundEnabled ? "🔊 Sound: ON" : "🔇 Sound: OFF";
             document.getElementById('sfx-toggle-btn').innerText = btnText;
+            document.getElementById('sfx-toggle-game-btn').innerText = btnText;
         }
 
         function initializeQuizEngine() {
@@ -512,7 +551,7 @@
                 document.getElementById('timer-display').innerText = timeLeft + 's';
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    handleAnswerSelection(-1); // Time out
+                    handleAnswerSelection(-1);
                 }
             }, 1000);
         }
